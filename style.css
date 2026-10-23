@@ -1,19 +1,13 @@
 
-/* =====================================
-   1. OSNOVNE NASTAVITVE
-===================================== */
-
 :root {
-  --green: #31543b;
-  --green-hover: #243f2c;
-  --green-light: #e9eee6;
-  --background: #f8f8f5;
+  --green-dark: #294632;
+  --green-main: #477344;
+  --green-light: #e6eadf;
+  --cream: #f7f6f0;
   --white: #ffffff;
-  --text: #292f2a;
-  --muted: #6b726b;
-  --border: #dedfd8;
-
-  --max-width: 1160px;
+  --text: #292e29;
+  --text-muted: #666d63;
+  --border: #dedfd5;
 }
 
 * {
@@ -22,25 +16,31 @@
 
 html {
   scroll-behavior: smooth;
-  scroll-padding-top: 85px;
+  scroll-padding-top: 90px;
 }
 
 body {
   margin: 0;
-  background: var(--background);
+  background: var(--cream);
   color: var(--text);
   font-family: Arial, Helvetica, sans-serif;
   font-size: 16px;
-  line-height: 1.7;
+  line-height: 1.65;
 }
 
 img {
-  display: block;
   max-width: 100%;
 }
 
 a {
-  color: inherit;
+  color: var(--green-dark);
+}
+
+a:focus-visible,
+button:focus-visible,
+input:focus-visible {
+  outline: 3px solid #8b9c70;
+  outline-offset: 3px;
 }
 
 button,
@@ -48,67 +48,20 @@ input {
   font: inherit;
 }
 
-h1,
-h2,
-h3,
-p {
-  margin-top: 0;
-}
-
-h1,
-h2,
-h3 {
-  line-height: 1.2;
-}
-
-h1,
-h2 {
-  letter-spacing: -0.035em;
-}
-
-h1 {
-  font-size: clamp(2.6rem, 6vw, 5rem);
-  font-weight: 600;
-}
-
-h2 {
-  font-size: clamp(2rem, 4vw, 3rem);
-  font-weight: 600;
-}
-
-h3 {
-  font-size: 1.2rem;
-  font-weight: 600;
-}
-
-a:focus-visible,
-button:focus-visible,
-input:focus-visible {
-  outline: 3px solid #83a17d;
-  outline-offset: 3px;
-}
-
-button {
-  -webkit-tap-highlight-color: transparent;
-}
-
-/* =====================================
-   2. GLAVA IN NAVIGACIJA
-===================================== */
+/* Glava in navigacija */
 
 .site-header {
   position: sticky;
   top: 0;
-  z-index: 100;
-  background: var(--background);
+  z-index: 10;
+  background: var(--white);
   border-bottom: 1px solid var(--border);
 }
 
 .header-inner {
-  width: min(var(--max-width), calc(100% - 48px));
-  min-height: 76px;
+  width: min(1120px, calc(100% - 40px));
+  min-height: 86px;
   margin: 0 auto;
-
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -116,253 +69,218 @@ button {
 }
 
 .logo {
-  display: inline-flex;
+  display: flex;
   align-items: center;
   gap: 12px;
-
-  color: var(--green);
+  color: var(--green-dark);
   text-decoration: none;
+  font-size: 1.05rem;
   font-weight: 700;
 }
 
-.logo-number {
-  width: 40px;
-  height: 40px;
-
-  display: grid;
-  place-items: center;
-
-  background: var(--green);
-  color: var(--white);
-  font-size: 1.15rem;
+.logo-image {
+  display: block;
+  width: 64px;
+  height: 64px;
+  object-fit: contain;
 }
 
 .main-nav {
   display: flex;
   align-items: center;
-  gap: 25px;
+  flex-wrap: wrap;
+  gap: 24px;
 }
 
 .main-nav a {
   color: var(--text);
-  font-size: 0.9rem;
   text-decoration: none;
+  font-size: 0.94rem;
 }
 
 .main-nav a:hover {
-  color: var(--green);
+  color: var(--green-main);
+  text-decoration: underline;
+  text-underline-offset: 5px;
 }
-
-/* Gumb za mobilni meni */
 
 .menu-toggle {
   display: none;
-  width: 42px;
-  height: 42px;
-  padding: 9px;
-
-  background: transparent;
   border: 1px solid var(--border);
+  border-radius: 4px;
+  padding: 7px 12px;
+  background: var(--white);
+  color: var(--green-dark);
   cursor: pointer;
 }
 
-.menu-toggle span {
-  display: block;
-  height: 2px;
-  margin: 5px 0;
-  background: var(--green);
-}
-
-/* =====================================
-   3. UVODNA SEKCIJA
-===================================== */
+/* Uvodni del */
 
 .hero {
-  min-height: 520px;
-  padding: 90px 24px;
-
+  min-height: 450px;
   display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: flex-start;
-
-  background: var(--green-light);
+  align-items: center;
+  background: #e6eadf;
+  border-bottom: 1px solid var(--border);
 }
 
 .hero-content {
-  width: min(100%, var(--max-width));
+  width: min(1120px, calc(100% - 40px));
   margin: 0 auto;
+  padding: 70px 0;
 }
 
 .eyebrow {
-  margin-bottom: 18px;
-
-  color: var(--green);
-  font-size: 0.76rem;
+  margin: 0 0 12px;
+  color: var(--green-main);
+  font-size: 0.78rem;
   font-weight: 700;
-  letter-spacing: 0.12em;
+  letter-spacing: 1.5px;
   text-transform: uppercase;
 }
 
 .hero h1 {
-  max-width: 850px;
-  margin-bottom: 24px;
-  color: var(--green);
+  max-width: 760px;
+  margin: 0 0 22px;
+  color: var(--green-dark);
+  font-size: clamp(2.4rem, 5vw, 4.4rem);
+  line-height: 1.08;
+  letter-spacing: -1.5px;
 }
 
-.hero h1 span {
-  display: block;
-  color: #617b60;
-}
-
-.hero-text {
-  max-width: 620px;
-  margin-bottom: 30px;
-
-  color: #50594f;
+.hero-description {
+  max-width: 660px;
+  margin: 0 0 28px;
+  color: #4e574d;
   font-size: 1.08rem;
-}
-
-.hero-note {
-  display: none;
 }
 
 /* Gumbi */
 
 .button {
-  min-height: 46px;
-  padding: 12px 20px;
-
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: 12px;
-
-  border: 1px solid var(--green);
-  background: var(--green);
+  display: inline-block;
+  padding: 11px 20px;
+  border: 1px solid var(--green-dark);
+  border-radius: 4px;
+  background: var(--green-dark);
   color: var(--white);
-
-  font-size: 0.95rem;
-  font-weight: 600;
+  text-align: center;
   text-decoration: none;
+  font-weight: 700;
   cursor: pointer;
 }
 
 .button:hover {
-  background: var(--green-hover);
-  border-color: var(--green-hover);
+  background: var(--green-main);
+  border-color: var(--green-main);
 }
 
-/* =====================================
-   4. SKUPNA POSTAVITEV
-===================================== */
+/* Splošni razdelki */
 
 .content-section {
-  width: min(var(--max-width), calc(100% - 48px));
-  margin: 0 auto;
-  padding: 85px 0;
+  padding: 76px 20px;
+  scroll-margin-top: 80px;
 }
 
 .section-heading {
   max-width: 720px;
-  margin-bottom: 38px;
+  margin: 0 auto 38px;
+  text-align: center;
+}
+
+.section-heading h2 {
+  margin: 0 0 14px;
+  color: var(--green-dark);
+  font-size: clamp(1.8rem, 3vw, 2.6rem);
+  line-height: 1.2;
 }
 
 .section-heading > p:last-child {
-  color: var(--muted);
+  color: var(--text-muted);
 }
-
-/* =====================================
-   5. PREDSTAVITEV SDG 13
-===================================== */
 
 .intro-grid {
   display: grid;
-  grid-template-columns: 1.4fr 1fr;
-  align-items: start;
-  gap: 65px;
+  grid-template-columns: 1.5fr 1fr;
+  gap: 48px;
+  width: min(1000px, 100%);
+  margin: 0 auto;
 }
 
-.intro-grid > div p {
-  margin-bottom: 18px;
+.intro-text h3,
+.fact-box h3 {
+  margin-top: 0;
+  color: var(--green-dark);
+}
+
+.intro-text p {
+  color: #50564e;
 }
 
 .fact-box {
-  padding: 28px;
+  align-self: start;
+  padding: 26px;
   background: var(--green-light);
-  border-left: 4px solid var(--green);
-}
-
-.fact-number {
-  display: block;
-  margin-bottom: 15px;
-
-  color: var(--green);
-  font-size: 4.5rem;
-  font-weight: 700;
-  line-height: 1;
-}
-
-.fact-box h3 {
-  margin-bottom: 12px;
-  color: var(--green);
-}
-
-.fact-box p {
-  color: #50594f;
+  border-left: 4px solid var(--green-main);
 }
 
 .fact-box a {
-  font-size: 0.9rem;
-  font-weight: 600;
+  font-weight: 700;
+  text-underline-offset: 4px;
 }
 
-/* =====================================
-   6. GALERIJA
-===================================== */
+/* Galerija */
 
 .gallery-section {
+  background: var(--white);
   border-top: 1px solid var(--border);
+  border-bottom: 1px solid var(--border);
 }
 
 .gallery-filters {
   display: flex;
+  justify-content: center;
   flex-wrap: wrap;
   gap: 10px;
-  margin-bottom: 30px;
+  margin: 0 auto 16px;
 }
 
 .filter-button {
-  padding: 9px 15px;
-
-  background: transparent;
+  padding: 8px 15px;
+  border: 1px solid #cfd3c8;
+  border-radius: 4px;
+  background: var(--white);
   color: var(--text);
-  border: 1px solid #c9cec5;
-
-  font-size: 0.9rem;
   cursor: pointer;
 }
 
-.filter-button:hover {
-  background: var(--green-light);
+.filter-button:hover,
+.filter-button.active {
+  background: var(--green-dark);
+  border-color: var(--green-dark);
+  color: var(--white);
 }
 
-.filter-button.active {
-  background: var(--green);
-  color: var(--white);
-  border-color: var(--green);
+.gallery-status {
+  margin: 0 auto 24px;
+  color: var(--text-muted);
+  text-align: center;
+  font-size: 0.9rem;
 }
 
 .gallery-grid {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 38px 24px;
+  gap: 24px;
+  width: min(1120px, 100%);
+  margin: 0 auto;
 }
 
 .gallery-card {
   min-width: 0;
   margin: 0;
-  background: var(--white);
+  overflow: hidden;
+  background: var(--cream);
   border: 1px solid var(--border);
 }
 
@@ -371,8 +289,9 @@ button {
 }
 
 .gallery-card img {
+  display: block;
   width: 100%;
-  aspect-ratio: 4 / 3;
+  height: 225px;
   object-fit: cover;
   background: var(--green-light);
 }
@@ -382,272 +301,221 @@ button {
 }
 
 .photo-category {
-  display: block;
-  margin-bottom: 10px;
-
-  color: var(--green);
-  font-size: 0.72rem;
+  color: var(--green-main);
+  font-size: 0.75rem;
   font-weight: 700;
-  letter-spacing: 0.08em;
+  letter-spacing: 1px;
   text-transform: uppercase;
 }
 
 .gallery-card h3 {
-  margin-bottom: 10px;
-  color: var(--text);
+  margin: 8px 0;
+  color: var(--green-dark);
+  font-size: 1.15rem;
 }
 
-.gallery-card figcaption p {
-  margin-bottom: 14px;
-  color: var(--muted);
-  font-size: 0.92rem;
+.gallery-card p {
+  margin-bottom: 0;
+  color: var(--text-muted);
+  font-size: 0.94rem;
 }
 
-.gallery-card small {
-  color: var(--muted);
-  font-size: 0.8rem;
-}
-
-.gallery-status {
-  min-height: 1.5em;
-  margin-top: 20px;
-  color: var(--muted);
-  font-size: 0.9rem;
-}
-
-/* =====================================
-   7. KAJ LAHKO STORIMO
-===================================== */
-
-.action-section {
-  background: var(--green-light);
-}
-
-.action-content {
-  padding-top: 75px;
-  padding-bottom: 75px;
-}
+/* Predlogi ukrepov */
 
 .action-list {
-  border-top: 1px solid #cbd4c7;
+  width: min(850px, 100%);
+  margin: 0 auto;
 }
 
 .action-item {
   display: grid;
-  grid-template-columns: 50px 1fr;
-  gap: 18px;
+  grid-template-columns: 65px 1fr;
+  gap: 20px;
+  padding: 24px 0;
+  border-bottom: 1px solid var(--border);
+}
 
-  padding: 25px 0;
-  border-bottom: 1px solid #cbd4c7;
+.action-item:first-child {
+  border-top: 1px solid var(--border);
 }
 
 .action-number {
-  color: var(--green);
+  color: var(--green-main);
+  font-size: 1.4rem;
   font-weight: 700;
-  font-size: 0.95rem;
 }
 
 .action-item h3 {
-  margin-bottom: 8px;
-  color: var(--green);
+  margin: 0 0 6px;
+  color: var(--green-dark);
 }
 
 .action-item p {
-  max-width: 760px;
-  margin-bottom: 0;
-  color: #50594f;
+  margin: 0;
+  color: var(--text-muted);
 }
 
-/* =====================================
-   8. KVIZ
-===================================== */
+/* Kviz */
 
 .quiz-section {
-  max-width: 900px;
+  background: #e6eadf;
+  border-top: 1px solid var(--border);
+  border-bottom: 1px solid var(--border);
 }
 
 .quiz-form {
-  padding: 30px;
-  background: var(--white);
-  border: 1px solid var(--border);
+  width: min(760px, 100%);
+  margin: 0 auto;
 }
 
 .quiz-question {
   min-width: 0;
-  margin: 0 0 30px;
-  padding: 0;
-  border: 0;
+  margin: 0 0 24px;
+  padding: 22px;
+  border: 1px solid #d0d5c9;
+  border-radius: 4px;
+  background: var(--white);
 }
 
 .quiz-question legend {
-  width: 100%;
-  margin-bottom: 15px;
-
-  color: var(--green);
+  max-width: 100%;
+  padding: 0 8px;
+  color: var(--green-dark);
   font-weight: 700;
 }
 
 .quiz-option {
   display: flex;
   align-items: flex-start;
-  gap: 12px;
-
-  margin-bottom: 8px;
-  padding: 12px;
-
+  gap: 10px;
+  margin-top: 14px;
   cursor: pointer;
-}
-
-.quiz-option:hover {
-  background: var(--background);
 }
 
 .quiz-option input {
   flex-shrink: 0;
   margin-top: 6px;
-  accent-color: var(--green);
+  accent-color: var(--green-main);
 }
 
 .quiz-result {
-  margin-top: 20px;
+  margin-top: 24px;
+  padding: 0;
   white-space: pre-line;
-  font-weight: 600;
 }
 
 .quiz-result:not(:empty) {
-  padding: 16px;
-  background: var(--green-light);
-  border-left: 3px solid var(--green);
+  padding: 20px;
+  border: 1px solid #cfd3c8;
+  border-left: 4px solid var(--green-main);
+  background: var(--white);
 }
 
 .quiz-result.error {
-  background: #f7e8e3;
-  border-left-color: #a13e2b;
-  color: #792e20;
+  border-left-color: #9a493e;
 }
 
-/* =====================================
-   9. EKIPA
-===================================== */
+/* Ekipa */
 
 .team-section {
-  border-top: 1px solid var(--border);
+  background: var(--white);
 }
 
 .team-grid {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 35px;
+  gap: 24px;
+  width: min(850px, 100%);
+  margin: 0 auto;
 }
 
 .team-member {
-  padding-top: 22px;
-  border-top: 2px solid var(--green);
+  padding: 26px;
+  border: 1px solid var(--border);
+  background: var(--cream);
 }
 
-.member-label {
-  display: block;
-  margin-bottom: 20px;
-
-  color: var(--muted);
-  font-size: 0.75rem;
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
+.team-number {
+  color: var(--green-main);
+  font-size: 0.8rem;
+  font-weight: 700;
+  letter-spacing: 1px;
 }
 
 .team-member h3 {
-  color: var(--green);
+  margin: 8px 0;
+  color: var(--green-dark);
 }
 
-.team-member p,
-.team-note {
-  color: var(--muted);
+.team-member p {
+  margin-bottom: 0;
+  color: var(--text-muted);
 }
 
-.team-note {
-  margin-top: 25px;
-  font-size: 0.88rem;
-}
-
-/* =====================================
-   10. NOGA STRANI
-===================================== */
+/* Noga strani */
 
 .site-footer {
-  padding: 38px 0;
-  background: var(--green);
+  background: var(--green-dark);
   color: var(--white);
 }
 
 .footer-inner {
-  width: min(var(--max-width), calc(100% - 48px));
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  width: min(1120px, calc(100% - 40px));
   margin: 0 auto;
-}
-
-.footer-logo {
-  margin-bottom: 20px;
-  color: var(--white);
-}
-
-.footer-logo .logo-number {
-  background: var(--white);
-  color: var(--green);
+  padding: 24px 0;
 }
 
 .footer-inner p {
-  margin-bottom: 6px;
+  margin: 0;
   font-size: 0.9rem;
 }
 
-.footer-small {
-  color: #e1e9df;
-  font-size: 0.8rem !important;
+.footer-inner a {
+  color: var(--white);
+  text-decoration: none;
 }
 
-/* =====================================
-   11. TABLICE
-===================================== */
+.footer-inner a:hover {
+  text-decoration: underline;
+}
 
-@media (max-width: 950px) {
+/* Tablice in telefoni */
+
+@media (max-width: 900px) {
   .main-nav {
     gap: 14px;
   }
 
   .main-nav a {
-    font-size: 0.8rem;
-  }
-
-  .intro-grid {
-    gap: 35px;
+    font-size: 0.88rem;
   }
 
   .gallery-grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
+
+  .intro-grid {
+    gap: 28px;
+  }
 }
 
-/* =====================================
-   12. MOBILNI TELEFONI
-===================================== */
-
 @media (max-width: 700px) {
-  html {
-    scroll-padding-top: 70px;
+  .header-inner {
+    position: relative;
+    min-height: 76px;
   }
 
-  .header-inner {
-    width: calc(100% - 32px);
-    min-height: 66px;
+  .logo-image {
+    width: 52px;
+    height: 52px;
   }
 
   .logo {
-    gap: 9px;
-    font-size: 0.9rem;
-  }
-
-  .logo-number {
-    width: 36px;
-    height: 36px;
+    font-size: 0.95rem;
   }
 
   .menu-toggle {
@@ -655,19 +523,17 @@ button {
   }
 
   .main-nav {
+    display: none;
     position: absolute;
     top: 100%;
-    left: 0;
-    right: 0;
-
-    display: none;
+    left: -20px;
+    right: -20px;
+    padding: 16px 20px 22px;
+    background: var(--white);
+    border-bottom: 1px solid var(--border);
     flex-direction: column;
     align-items: stretch;
     gap: 0;
-
-    padding: 10px 20px;
-    background: var(--background);
-    border-bottom: 1px solid var(--border);
   }
 
   .main-nav.open {
@@ -675,80 +541,54 @@ button {
   }
 
   .main-nav a {
-    padding: 12px 0;
-    border-bottom: 1px solid var(--border);
-    font-size: 0.95rem;
-  }
-
-  .main-nav a:last-child {
-    border-bottom: 0;
-  }
-
-  .hero {
-    min-height: 460px;
-    padding: 65px 22px;
-  }
-
-  .hero-text {
+    padding: 11px 0;
+    border-bottom: 1px solid #eeeeea;
     font-size: 1rem;
   }
 
-  .content-section {
-    width: calc(100% - 40px);
+  .hero {
+    min-height: auto;
+  }
+
+  .hero-content {
     padding: 60px 0;
+  }
+
+  .hero h1 {
+    letter-spacing: -0.7px;
+  }
+
+  .content-section {
+    padding: 54px 20px;
   }
 
   .intro-grid {
     grid-template-columns: 1fr;
-    gap: 25px;
+    gap: 20px;
   }
 
   .gallery-grid {
     grid-template-columns: 1fr;
-    gap: 28px;
+    max-width: 480px;
   }
 
   .gallery-card img {
-    aspect-ratio: 4 / 3;
-  }
-
-  .action-content {
-    padding-top: 60px;
-    padding-bottom: 60px;
-  }
-
-  .action-item {
-    grid-template-columns: 35px 1fr;
-    gap: 12px;
-  }
-
-  .quiz-form {
-    padding: 20px;
+    height: 240px;
   }
 
   .team-grid {
     grid-template-columns: 1fr;
-    gap: 30px;
   }
 
   .footer-inner {
-    width: calc(100% - 40px);
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
   }
 }
-
-/* =====================================
-   13. DOSTOPNOST
-===================================== */
 
 @media (prefers-reduced-motion: reduce) {
   html {
     scroll-behavior: auto;
-  }
-
-  *,
-  *::before,
-  *::after {
-    scroll-behavior: auto !important;
-    transition-duration: 0.01ms !important;
   }
 }
