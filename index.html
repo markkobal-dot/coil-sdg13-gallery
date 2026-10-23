@@ -1,22 +1,169 @@
 
+<!DOCTYPE html>
+<html lang="sl">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-  <title>SDG 13 – Podnebni ukrepi</title>
-
-  <meta
-    name="description"
-    content="Spletna galerija dijakov o podnebnih spremembah in podnebnih ukrepih."
-  >
+  <title>SDG 13 | Podnebni ukrepi</title>
+  <meta name="description" content="Spoznaj podnebne spremembe in ukrepe za zaščito našega planeta.">
 
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 
-  <link
-    href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&family=Poppins:wght@400;500;600;700;800&display=swap"
-    rel="stylesheet"
-  >
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 
   <link rel="stylesheet" href="style.css">
+  <script src="script.js" defer></script>
 </head>
+<body>
+
+  <nav class="navbar">
+    <a href="#domov" class="logo">🌍 SDG 13</a>
+    <div class="nav-links">
+      <a href="#domov">Domov</a>
+      <a href="#problem">Problem</a>
+      <a href="#galerija">Galerija</a>
+      <a href="#kviz">Kviz</a>
+      <a href="#ekipa">O projektu</a>
+    </div>
+  </nav>
+
+  <header id="domov" class="hero">
+    <div class="hero-content">
+      <span class="oznaka">13. cilj trajnostnega razvoja</span>
+      <h1>Naš planet.<br>Naša odgovornost.</h1>
+      <p>
+        Podnebne spremembe so izziv za vse nas.
+        Skupaj lahko ustvarimo bolj zeleno in trajnostno prihodnost.
+      </p>
+      <a href="#galerija" class="gumb">Razišči galerijo ↓</a>
+    </div>
+    <div class="hero-icon" aria-hidden="true">🌱</div>
+  </header>
+
+  <main>
+    <section id="problem" class="uvod">
+      <span class="oznaka">Zakaj je pomembno?</span>
+      <h2>Čas je za podnebne ukrepe</h2>
+      <p>
+        SDG 13 je cilj trajnostnega razvoja, ki poziva k nujnim
+        ukrepom za boj proti podnebnim spremembam in njihovim
+        posledicam. Z varčevanjem z energijo, odgovornim ravnanjem
+        in varovanjem narave lahko tudi sami prispevamo k spremembam.
+      </p>
+    </section>
+
+    <section id="galerija">
+      <span class="oznaka">V objektivu dijakov</span>
+      <h2>Naša galerija</h2>
+      <p class="opis">
+        Fotografije, ki prikazujejo naravo, podnebne izzive
+        in rešitve za boljšo prihodnost.
+      </p>
+
+      <div class="filtri">
+        <button type="button" class="filter active" data-filter="vse">Vse</button>
+        <button type="button" class="filter" data-filter="narava">Narava</button>
+        <button type="button" class="filter" data-filter="problem">Podnebni izzivi</button>
+        <button type="button" class="filter" data-filter="resitve">Rešitve</button>
+      </div>
+
+      <div class="galerija">
+        <figure data-category="narava">
+          <img src="images/dijakA/podnebje1.jpg" alt="Narava in zeleno okolje" loading="lazy">
+          <figcaption>Narava je naše bogastvo <span>Dijak A</span></figcaption>
+        </figure>
+
+        <figure data-category="problem">
+          <img src="images/dijakA/podnebje2.jpg" alt="Primer podnebnega izziva" loading="lazy">
+          <figcaption>Podnebni izzivi <span>Dijak A</span></figcaption>
+        </figure>
+
+        <figure data-category="resitve">
+          <img src="images/dijakA/podnebje3.jpg" alt="Okolju prijazna rešitev" loading="lazy">
+          <figcaption>Vsako dejanje šteje <span>Dijak A</span></figcaption>
+        </figure>
+
+        <figure data-category="narava">
+          <img src="images/dijakB/podnebje1.jpg" alt="Rastline in naravno okolje" loading="lazy">
+          <figcaption>Varujmo naravo <span>Dijak B</span></figcaption>
+        </figure>
+
+        <figure data-category="problem">
+          <img src="images/dijakB/podnebje2.jpg" alt="Posledice spreminjanja podnebja" loading="lazy">
+          <figcaption>Naš spreminjajoči se planet <span>Dijak B</span></figcaption>
+        </figure>
+
+        <figure data-category="resitve">
+          <img src="images/dijakB/podnebje3.jpg" alt="Primer trajnostnega ukrepa" loading="lazy">
+          <figcaption>Rešitve za prihodnost <span>Dijak B</span></figcaption>
+        </figure>
+      </div>
+      <p class="opomba">
+        Fotografije zamenjajta s svojimi. Imena datotek v kodi
+        morajo biti enaka dejanskim imenom fotografij.
+      </p>
+    </section>
+
+    <section id="kviz" class="kviz">
+      <span class="oznaka">Preizkusi se</span>
+      <h2>Koliko veš o podnebju?</h2>
+      <p>Kaj je eden od glavnih ciljev SDG 13?</p>
+
+      <form id="kviz-form">
+        <label class="odgovor">
+          <input type="radio" name="odgovor" value="a">
+          Povečati uporabo fosilnih goriv
+        </label>
+
+        <label class="odgovor">
+          <input type="radio" name="odgovor" value="b">
+          Ukrepati proti podnebnim spremembam
+        </label>
+
+        <label class="odgovor">
+          <input type="radio" name="odgovor" value="c">
+          Povečati količino odpadkov
+        </label>
+
+        <button type="submit" class="gumb">Preveri odgovor</button>
+      </form>
+
+      <p id="rezultat" role="status" aria-live="polite"></p>
+    </section>
+
+    <section id="ekipa">
+      <span class="oznaka">Kdo stoji za projektom?</span>
+      <h2>Najina zgodba</h2>
+
+      <div class="ekipa">
+        <article class="clan">
+          <div class="avatar">A</div>
+          <h3>Dijak A</h3>
+          <p>Uvod v SDG 13, fotografije in oblikovanje naslovnice.</p>
+        </article>
+
+        <article class="clan">
+          <div class="avatar">B</div>
+          <h3>Dijak B</h3>
+          <p>Raziskava podnebnih sprememb, fotografije in vsebina galerije.</p>
+        </article>
+      </div>
+
+      <p class="skupaj">
+        Skupaj skrbiva za razvoj spletne strani, kviz, testiranje
+        in objavo projekta.
+      </p>
+    </section>
+  </main>
+
+  <footer>
+    <p class="footer-logo">🌿 SDG 13 – Podnebni ukrepi</p>
+    <p>Majhna dejanja. Velike spremembe.</p>
+    <p class="footer-small">Šolski projekt · Skupno delo dveh dijakov</p>
+  </footer>
+
+</body>
+</html>
+
