@@ -1,107 +1,22 @@
 
-<!DOCTYPE html>
-<html lang="sl">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>SDG 12 – Odgovorna poraba</title>
+
+  <title>SDG 13 – Podnebni ukrepi</title>
+
+  <meta
+    name="description"
+    content="Spletna galerija dijakov o podnebnih spremembah in podnebnih ukrepih."
+  >
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+  <link
+    href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&family=Poppins:wght@400;500;600;700;800&display=swap"
+    rel="stylesheet"
+  >
+
   <link rel="stylesheet" href="style.css">
 </head>
-<body>
-  <header>
-    <h1>SDG 12: Odgovorna poraba in proizvodnja</h1>
-    <p>Majhne spremembe za bolj trajnostno prihodnost.</p>
-    <a href="#galerija" class="gumb">Oglej si galerijo</a>
-  </header>
-
-  <nav>
-    <a href="#domov">Domov</a>
-    <a href="#galerija">Galerija</a>
-    <a href="#kviz">Kviz</a>
-    <a href="#ekipa">O projektu</a>
-  </nav>
-
-  <main>
-    <section id="domov">
-      <h2>Zakaj je SDG 12 pomemben?</h2>
-      <p>
-        Naš planet ima omejene vire. Z odgovornim nakupovanjem,
-        ponovno uporabo predmetov in zmanjševanjem odpadkov
-        lahko vsi prispevamo k bolj trajnostnemu svetu.
-      </p>
-    </section>
-
-    <section id="galerija">
-      <h2>Naša galerija</h2>
-
-      <div class="filtri">
-        <button onclick="filterPhotos('vse')">Vse</button>
-        <button onclick="filterPhotos('recikliranje')">Recikliranje</button>
-        <button onclick="filterPhotos('narava')">Narava</button>
-        <button onclick="filterPhotos('ponovna-uporaba')">Ponovna uporaba</button>
-      </div>
-
-      <div class="galerija">
-        <figure data-category="recikliranje">
-          <img src="images/dijakA/fotografija1.jpg"
-               alt="Ločevanje odpadkov">
-          <figcaption>Ločevanje odpadkov – dijak A</figcaption>
-        </figure>
-
-        <figure data-category="narava">
-          <img src="images/dijakB/fotografija1.jpg"
-               alt="Narava in trajnost">
-          <figcaption>Varujmo naravo – dijak B</figcaption>
-        </figure>
-
-        <figure data-category="ponovna-uporaba">
-          <img src="images/dijakA/fotografija2.jpg"
-               alt="Ponovna uporaba predmetov">
-          <figcaption>Uporabimo ponovno</figcaption>
-        </figure>
-      </div>
-    </section>
-
-    <section id="kviz">
-      <h2>Preveri svoje znanje</h2>
-      <p>Kaj je eden od ciljev SDG 12?</p>
-
-      <label>
-        <input type="radio" name="odgovor" value="a">
-        Povečanje količine odpadkov
-      </label>
-      <br>
-      <label>
-        <input type="radio" name="odgovor" value="b">
-        Odgovorna poraba in proizvodnja
-      </label>
-      <br>
-      <label>
-        <input type="radio" name="odgovor" value="c">
-        Več nepotrebnih nakupov
-      </label>
-      <br><br>
-
-      <button onclick="preveriKviz()">Preveri odgovor</button>
-      <p id="rezultat" aria-live="polite"></p>
-    </section>
-
-    <section id="ekipa">
-      <h2>O projektu</h2>
-      <p>
-        Projekt sta pripravila dva dijaka. Skupaj raziskujeva
-        odgovorno porabo, predstavljava svoje fotografije
-        in spodbujava trajnostne navade.
-      </p>
-      <p>Dijak A: uvod, fotografije in oblikovanje.</p>
-      <p>Dijak B: raziskava problema, fotografije in kviz.</p>
-    </section>
-  </main>
-
-  <footer>
-    <p>SDG 12 – Vsaka odgovorna odločitev šteje!</p>
-  </footer>
-
-  <script src="script.js"></script>
-</body>
-</html>
