@@ -1,11 +1,19 @@
 
+/* =====================================
+   1. OSNOVNE NASTAVITVE
+===================================== */
+
 :root {
-  --bg: #f7f7f2;
-  --text: #252b25;
-  --green: #304b38;
-  --muted: #747970;
-  --line: #dedfd7;
-  --white: #fff;
+  --green: #31543b;
+  --green-hover: #243f2c;
+  --green-light: #e9eee6;
+  --background: #f8f8f5;
+  --white: #ffffff;
+  --text: #292f2a;
+  --muted: #6b726b;
+  --border: #dedfd8;
+
+  --max-width: 1160px;
 }
 
 * {
@@ -14,117 +22,130 @@
 
 html {
   scroll-behavior: smooth;
-  scroll-padding-top: 90px;
+  scroll-padding-top: 85px;
 }
 
 body {
   margin: 0;
-  background: var(--bg);
+  background: var(--background);
   color: var(--text);
   font-family: Arial, Helvetica, sans-serif;
   font-size: 16px;
-  line-height: 1.65;
+  line-height: 1.7;
 }
 
 img {
   display: block;
-  width: 100%;
+  max-width: 100%;
 }
 
 a {
   color: inherit;
 }
 
-h1, h2, h3, p {
+button,
+input {
+  font: inherit;
+}
+
+h1,
+h2,
+h3,
+p {
   margin-top: 0;
 }
 
-h1, h2, h3 {
-  line-height: 1.15;
+h1,
+h2,
+h3 {
+  line-height: 1.2;
+}
+
+h1,
+h2 {
   letter-spacing: -0.035em;
 }
 
 h1 {
-  max-width: 850px;
-  margin-bottom: 24px;
-  font-size: clamp(42px, 7vw, 82px);
+  font-size: clamp(2.6rem, 6vw, 5rem);
   font-weight: 600;
 }
 
 h2 {
-  margin-bottom: 20px;
-  font-size: clamp(30px, 4vw, 46px);
+  font-size: clamp(2rem, 4vw, 3rem);
   font-weight: 600;
 }
 
 h3 {
-  font-size: 21px;
+  font-size: 1.2rem;
   font-weight: 600;
-}
-
-button, input {
-  font: inherit;
-}
-
-button, a {
-  -webkit-tap-highlight-color: transparent;
 }
 
 a:focus-visible,
 button:focus-visible,
 input:focus-visible {
-  outline: 2px solid #6c8a70;
-  outline-offset: 4px;
+  outline: 3px solid #83a17d;
+  outline-offset: 3px;
 }
 
-/* NAVIGACIJA */
+button {
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* =====================================
+   2. GLAVA IN NAVIGACIJA
+===================================== */
 
 .site-header {
   position: sticky;
   top: 0;
-  z-index: 10;
-  background: var(--bg);
-  border-bottom: 1px solid var(--line);
+  z-index: 100;
+  background: var(--background);
+  border-bottom: 1px solid var(--border);
 }
 
 .header-inner {
-  width: min(1200px, calc(100% - 64px));
+  width: min(var(--max-width), calc(100% - 48px));
   min-height: 76px;
-  margin: auto;
+  margin: 0 auto;
+
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 30px;
+  gap: 24px;
 }
 
 .logo {
-  display: flex;
+  display: inline-flex;
   align-items: center;
   gap: 12px;
+
   color: var(--green);
   text-decoration: none;
   font-weight: 700;
 }
 
 .logo-number {
-  display: grid;
   width: 40px;
   height: 40px;
+
+  display: grid;
   place-items: center;
+
   background: var(--green);
   color: var(--white);
-  font-size: 19px;
+  font-size: 1.15rem;
 }
 
 .main-nav {
   display: flex;
   align-items: center;
-  gap: 28px;
+  gap: 25px;
 }
 
 .main-nav a {
   color: var(--text);
-  font-size: 14px;
+  font-size: 0.9rem;
   text-decoration: none;
 }
 
@@ -132,138 +153,200 @@ input:focus-visible {
   color: var(--green);
 }
 
+/* Gumb za mobilni meni */
+
 .menu-toggle {
   display: none;
+  width: 42px;
+  height: 42px;
+  padding: 9px;
+
+  background: transparent;
+  border: 1px solid var(--border);
+  cursor: pointer;
 }
 
-/* UVOD */
+.menu-toggle span {
+  display: block;
+  height: 2px;
+  margin: 5px 0;
+  background: var(--green);
+}
+
+/* =====================================
+   3. UVODNA SEKCIJA
+===================================== */
 
 .hero {
-  min-height: 560px;
-  padding: 110px max(32px, calc((100% - 1200px) / 2));
+  min-height: 520px;
+  padding: 90px 24px;
+
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: flex-start;
-  background: #e9eee5;
+
+  background: var(--green-light);
+}
+
+.hero-content {
+  width: min(100%, var(--max-width));
+  margin: 0 auto;
 }
 
 .eyebrow {
+  margin-bottom: 18px;
+
+  color: var(--green);
+  font-size: 0.76rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.hero h1 {
+  max-width: 850px;
   margin-bottom: 24px;
   color: var(--green);
-  font-size: 12px;
-  font-weight: 700;
-  letter-spacing: 0.13em;
-  text-transform: uppercase;
 }
 
 .hero h1 span {
   display: block;
-  color: var(--green);
+  color: #617b60;
 }
 
 .hero-text {
-  max-width: 590px;
+  max-width: 620px;
   margin-bottom: 30px;
-  color: #535b51;
-  font-size: 18px;
-}
 
-.button {
-  display: inline-flex;
-  align-items: center;
-  gap: 14px;
-  padding: 13px 20px;
-  background: var(--green);
-  color: var(--white);
-  border: 1px solid var(--green);
-  text-decoration: none;
-  cursor: pointer;
-  transition: background 160ms ease;
-}
-
-.button:hover {
-  background: #243b2b;
+  color: #50594f;
+  font-size: 1.08rem;
 }
 
 .hero-note {
   display: none;
 }
 
-/* VSEBINA */
+/* Gumbi */
+
+.button {
+  min-height: 46px;
+  padding: 12px 20px;
+
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+
+  border: 1px solid var(--green);
+  background: var(--green);
+  color: var(--white);
+
+  font-size: 0.95rem;
+  font-weight: 600;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.button:hover {
+  background: var(--green-hover);
+  border-color: var(--green-hover);
+}
+
+/* =====================================
+   4. SKUPNA POSTAVITEV
+===================================== */
 
 .content-section {
-  width: min(1200px, calc(100% - 64px));
-  margin: auto;
-  padding: 100px 0;
+  width: min(var(--max-width), calc(100% - 48px));
+  margin: 0 auto;
+  padding: 85px 0;
 }
 
 .section-heading {
-  max-width: 690px;
-  margin-bottom: 42px;
+  max-width: 720px;
+  margin-bottom: 38px;
 }
 
 .section-heading > p:last-child {
   color: var(--muted);
 }
 
+/* =====================================
+   5. PREDSTAVITEV SDG 13
+===================================== */
+
 .intro-grid {
   display: grid;
   grid-template-columns: 1.4fr 1fr;
-  gap: 100px;
   align-items: start;
+  gap: 65px;
 }
 
-.intro-grid > div {
-  max-width: 660px;
+.intro-grid > div p {
+  margin-bottom: 18px;
 }
 
 .fact-box {
-  padding: 30px;
-  background: #e9eee5;
+  padding: 28px;
+  background: var(--green-light);
+  border-left: 4px solid var(--green);
 }
 
 .fact-number {
   display: block;
-  margin-bottom: 20px;
+  margin-bottom: 15px;
+
   color: var(--green);
-  font-size: 76px;
-  font-weight: 600;
+  font-size: 4.5rem;
+  font-weight: 700;
   line-height: 1;
 }
 
+.fact-box h3 {
+  margin-bottom: 12px;
+  color: var(--green);
+}
+
 .fact-box p {
-  color: #535b51;
+  color: #50594f;
 }
 
 .fact-box a {
-  font-size: 14px;
-  font-weight: 700;
+  font-size: 0.9rem;
+  font-weight: 600;
 }
 
-/* GALERIJA */
+/* =====================================
+   6. GALERIJA
+===================================== */
 
 .gallery-section {
-  border-top: 1px solid var(--line);
+  border-top: 1px solid var(--border);
 }
 
 .gallery-filters {
   display: flex;
   flex-wrap: wrap;
   gap: 10px;
-  margin-bottom: 32px;
+  margin-bottom: 30px;
 }
 
 .filter-button {
-  padding: 9px 16px;
+  padding: 9px 15px;
+
   background: transparent;
   color: var(--text);
-  border: 1px solid #c9cdc3;
+  border: 1px solid #c9cec5;
+
+  font-size: 0.9rem;
   cursor: pointer;
-  font-size: 14px;
 }
 
-.filter-button:hover,
+.filter-button:hover {
+  background: var(--green-light);
+}
+
 .filter-button.active {
   background: var(--green);
   color: var(--white);
@@ -273,12 +356,14 @@ input:focus-visible {
 .gallery-grid {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 44px 24px;
+  gap: 38px 24px;
 }
 
 .gallery-card {
   min-width: 0;
   margin: 0;
+  background: var(--white);
+  border: 1px solid var(--border);
 }
 
 .gallery-card[hidden] {
@@ -286,105 +371,118 @@ input:focus-visible {
 }
 
 .gallery-card img {
+  width: 100%;
   aspect-ratio: 4 / 3;
   object-fit: cover;
-  background: #e9eee5;
+  background: var(--green-light);
 }
 
 .gallery-card figcaption {
-  padding-top: 18px;
+  padding: 20px;
 }
 
 .photo-category {
   display: block;
   margin-bottom: 10px;
-  color: var(--muted);
-  font-size: 11px;
-  letter-spacing: 0.1em;
+
+  color: var(--green);
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
   text-transform: uppercase;
 }
 
 .gallery-card h3 {
   margin-bottom: 10px;
+  color: var(--text);
 }
 
 .gallery-card figcaption p {
-  margin-bottom: 12px;
-  color: #62685f;
-  font-size: 14px;
+  margin-bottom: 14px;
+  color: var(--muted);
+  font-size: 0.92rem;
 }
 
 .gallery-card small {
   color: var(--muted);
-  font-size: 12px;
+  font-size: 0.8rem;
 }
 
 .gallery-status {
-  margin-top: 24px;
+  min-height: 1.5em;
+  margin-top: 20px;
   color: var(--muted);
-  font-size: 13px;
+  font-size: 0.9rem;
 }
 
-/* UKREPI */
+/* =====================================
+   7. KAJ LAHKO STORIMO
+===================================== */
 
 .action-section {
-  background: #e9eee5;
+  background: var(--green-light);
 }
 
 .action-content {
-  padding-top: 90px;
-  padding-bottom: 90px;
+  padding-top: 75px;
+  padding-bottom: 75px;
 }
 
 .action-list {
-  border-top: 1px solid #cbd2c6;
+  border-top: 1px solid #cbd4c7;
 }
 
 .action-item {
   display: grid;
-  grid-template-columns: 60px 1fr;
-  gap: 20px;
-  padding: 26px 0;
-  border-bottom: 1px solid #cbd2c6;
+  grid-template-columns: 50px 1fr;
+  gap: 18px;
+
+  padding: 25px 0;
+  border-bottom: 1px solid #cbd4c7;
 }
 
 .action-number {
   color: var(--green);
-  font-size: 14px;
   font-weight: 700;
+  font-size: 0.95rem;
 }
 
 .action-item h3 {
   margin-bottom: 8px;
+  color: var(--green);
 }
 
 .action-item p {
-  max-width: 700px;
+  max-width: 760px;
   margin-bottom: 0;
-  color: #535b51;
+  color: #50594f;
 }
 
-/* KVIZ */
+/* =====================================
+   8. KVIZ
+===================================== */
 
 .quiz-section {
   max-width: 900px;
 }
 
 .quiz-form {
-  padding: 32px;
+  padding: 30px;
   background: var(--white);
-  border: 1px solid var(--line);
+  border: 1px solid var(--border);
 }
 
 .quiz-question {
   min-width: 0;
-  margin: 0 0 32px;
+  margin: 0 0 30px;
   padding: 0;
   border: 0;
 }
 
 .quiz-question legend {
-  margin-bottom: 18px;
+  width: 100%;
+  margin-bottom: 15px;
+
   color: var(--green);
   font-weight: 700;
 }
@@ -393,16 +491,19 @@ input:focus-visible {
   display: flex;
   align-items: flex-start;
   gap: 12px;
+
   margin-bottom: 8px;
   padding: 12px;
+
   cursor: pointer;
 }
 
 .quiz-option:hover {
-  background: #f2f4ee;
+  background: var(--background);
 }
 
 .quiz-option input {
+  flex-shrink: 0;
   margin-top: 6px;
   accent-color: var(--green);
 }
@@ -414,25 +515,29 @@ input:focus-visible {
 }
 
 .quiz-result:not(:empty) {
-  padding: 18px;
-  background: #e9eee5;
+  padding: 16px;
+  background: var(--green-light);
+  border-left: 3px solid var(--green);
 }
 
 .quiz-result.error {
   background: #f7e8e3;
+  border-left-color: #a13e2b;
   color: #792e20;
 }
 
-/* EKIPA */
+/* =====================================
+   9. EKIPA
+===================================== */
 
 .team-section {
-  border-top: 1px solid var(--line);
+  border-top: 1px solid var(--border);
 }
 
 .team-grid {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 40px;
+  gap: 35px;
 }
 
 .team-member {
@@ -442,11 +547,16 @@ input:focus-visible {
 
 .member-label {
   display: block;
-  margin-bottom: 24px;
+  margin-bottom: 20px;
+
   color: var(--muted);
-  font-size: 12px;
-  text-transform: uppercase;
+  font-size: 0.75rem;
   letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.team-member h3 {
+  color: var(--green);
 }
 
 .team-member p,
@@ -455,25 +565,27 @@ input:focus-visible {
 }
 
 .team-note {
-  margin-top: 30px;
-  font-size: 13px;
+  margin-top: 25px;
+  font-size: 0.88rem;
 }
 
-/* NOGA */
+/* =====================================
+   10. NOGA STRANI
+===================================== */
 
 .site-footer {
-  padding: 42px 0;
+  padding: 38px 0;
   background: var(--green);
   color: var(--white);
 }
 
 .footer-inner {
-  width: min(1200px, calc(100% - 64px));
-  margin: auto;
+  width: min(var(--max-width), calc(100% - 48px));
+  margin: 0 auto;
 }
 
 .footer-logo {
-  margin-bottom: 24px;
+  margin-bottom: 20px;
   color: var(--white);
 }
 
@@ -484,27 +596,29 @@ input:focus-visible {
 
 .footer-inner p {
   margin-bottom: 6px;
-  font-size: 14px;
+  font-size: 0.9rem;
 }
 
 .footer-small {
-  color: #e0e8dc;
-  font-size: 12px !important;
+  color: #e1e9df;
+  font-size: 0.8rem !important;
 }
 
-/* TABLICA IN TELEFON */
+/* =====================================
+   11. TABLICE
+===================================== */
 
-@media (max-width: 850px) {
+@media (max-width: 950px) {
   .main-nav {
-    gap: 15px;
+    gap: 14px;
   }
 
   .main-nav a {
-    font-size: 12px;
+    font-size: 0.8rem;
   }
 
   .intro-grid {
-    gap: 40px;
+    gap: 35px;
   }
 
   .gallery-grid {
@@ -512,51 +626,58 @@ input:focus-visible {
   }
 }
 
-@media (max-width: 680px) {
+/* =====================================
+   12. MOBILNI TELEFONI
+===================================== */
+
+@media (max-width: 700px) {
+  html {
+    scroll-padding-top: 70px;
+  }
+
   .header-inner {
-    width: calc(100% - 36px);
-    min-height: 68px;
+    width: calc(100% - 32px);
+    min-height: 66px;
+  }
+
+  .logo {
+    gap: 9px;
+    font-size: 0.9rem;
+  }
+
+  .logo-number {
+    width: 36px;
+    height: 36px;
   }
 
   .menu-toggle {
     display: block;
-    width: 42px;
-    height: 42px;
-    padding: 9px;
-    background: transparent;
-    border: 1px solid var(--line);
-    cursor: pointer;
-  }
-
-  .menu-toggle span {
-    display: block;
-    height: 2px;
-    margin: 5px 0;
-    background: var(--green);
   }
 
   .main-nav {
     position: absolute;
     top: 100%;
-    right: 0;
     left: 0;
+    right: 0;
+
     display: none;
-    padding: 12px 20px;
-    background: var(--bg);
-    border-bottom: 1px solid var(--line);
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0;
+
+    padding: 10px 20px;
+    background: var(--background);
+    border-bottom: 1px solid var(--border);
   }
 
   .main-nav.open {
     display: flex;
-    flex-direction: column;
-    align-items: stretch;
-    gap: 0;
   }
 
   .main-nav a {
     padding: 12px 0;
-    border-bottom: 1px solid var(--line);
-    font-size: 14px;
+    border-bottom: 1px solid var(--border);
+    font-size: 0.95rem;
   }
 
   .main-nav a:last-child {
@@ -564,28 +685,27 @@ input:focus-visible {
   }
 
   .hero {
-    min-height: 480px;
-    padding: 75px 24px;
+    min-height: 460px;
+    padding: 65px 22px;
   }
 
   .hero-text {
-    font-size: 16px;
+    font-size: 1rem;
   }
 
   .content-section {
     width: calc(100% - 40px);
-    padding: 65px 0;
+    padding: 60px 0;
   }
 
-  .intro-grid,
-  .team-grid {
+  .intro-grid {
     grid-template-columns: 1fr;
-    gap: 30px;
+    gap: 25px;
   }
 
   .gallery-grid {
     grid-template-columns: 1fr;
-    gap: 36px;
+    gap: 28px;
   }
 
   .gallery-card img {
@@ -593,12 +713,12 @@ input:focus-visible {
   }
 
   .action-content {
-    padding-top: 65px;
-    padding-bottom: 65px;
+    padding-top: 60px;
+    padding-bottom: 60px;
   }
 
   .action-item {
-    grid-template-columns: 36px 1fr;
+    grid-template-columns: 35px 1fr;
     gap: 12px;
   }
 
@@ -606,10 +726,19 @@ input:focus-visible {
     padding: 20px;
   }
 
+  .team-grid {
+    grid-template-columns: 1fr;
+    gap: 30px;
+  }
+
   .footer-inner {
     width: calc(100% - 40px);
   }
 }
+
+/* =====================================
+   13. DOSTOPNOST
+===================================== */
 
 @media (prefers-reduced-motion: reduce) {
   html {
@@ -619,6 +748,7 @@ input:focus-visible {
   *,
   *::before,
   *::after {
-    transition: none !important;
+    scroll-behavior: auto !important;
+    transition-duration: 0.01ms !important;
   }
 }
