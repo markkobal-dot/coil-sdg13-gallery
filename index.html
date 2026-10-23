@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="sl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>SDG 13 – Podnebni ukrepi | Spletna galerija</title>
+<meta name="description" content="Spletna galerija o cilju trajnostnega razvoja SDG 13 – Podnebni ukrepi.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@500;700;800&family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<header class="top" id="top">
+  <a class="logo" href="#vrh">SDG 13</a>
+  <nav aria-label="Glavni meni">
+    <a href="#cilj">Cilj</a>
+    <a href="#problem">Težava</a>
+    <a href="#galerija">Galerija</a>
+    <a href="#video">Video</a>
+    <a href="#kviz">Kviz</a>
+    <a href="#anketa">Anketa</a>
+  </nav>
+</header>
+
+<main id="vrh">
+
+  <!-- NASLOVNICA (Dijak A) -->
+  <section class="hero">
+    <div class="sun" aria-hidden="true"></div>
+    <div class="hero-text">
+      <p class="tag">Cilj trajnostnega razvoja 13</p>
+      <h1>Podnebje ne more čakati.</h1>
+      <p class="lead">Fotografije, zgodbe, kviz in rešitve dveh dijakov o tem, kako se spopadamo s podnebnimi spremembami.</p>
+      <div class="btns">
+        <a class="btn primary" href="#galerija">Odpri galerijo</a>
+        <a class="btn ghost" href="#kviz">Preizkusi kviz</a>
+      </div>
+    </div>
+    <svg class="hills" viewBox="0 0 1440 360" preserveAspectRatio="none" aria-hidden="true">
+      <path fill="#2c7a6c" d="M0 190 C180 110 340 120 520 170 C720 225 860 90 1080 110 C1240 125 1360 170 1440 150 L1440 360 L0 360Z"/>
+      <path fill="#1d5a4e" d="M0 260 C200 190 380 230 560 250 C760 272 920 190 1120 210 C1280 226 1380 262 1440 250 L1440 360 L0 360Z"/>
+      <path fill="#eef4f1" d="M0 320 C240 290 420 330 640 322 C860 314 1060 280 1240 300 C1340 311 1400 325 1440 322 L1440 360 L0 360Z"/>
+    </svg>
+  </section>
+
+  <!-- UVOD V SDG (Dijak A) -->
+  <section id="cilj" class="block light">
+    <div class="split">
+      <div>
+        <h2>Kaj je SDG 13?</h2>
+        <p class="big">Združeni narodi so leta 2015 sprejeli 17 ciljev trajnostnega razvoja. Cilj 13 pravi: nujno ukrepajmo proti podnebnim spremembam in njihovim posledicam.</p>
+        <p>Višje temperature, vročinski valovi, neurja, poplave in suše se dotikajo vseh, najbolj pa tistih, ki so se nanje najslabše pripravljeni. Dopolni besedilo z lastnimi viri (Združeni narodi, ARSO, IPCC).</p>
+      </div>
+      <div class="cards">
+        <article class="mini c1"><h3>Manj izpustov</h3><p>Manj toplogrednih plinov iz energetike, prometa in industrije.</p></article>
+        <article class="mini c2"><h3>Prilagajanje</h3><p>Mesta, kmetijstvo in infrastruktura, pripravljeni na vročino, sušo in poplave.</p></article>
+        <article class="mini c3"><h3>Znanje</h3><p>Izobraževanje, da vsak razume svojo vlogo.</p></article>
+      </div>
+    </div>
+  </section>
+
+  <!-- OPIS TEŽAVE (Dijak B) -->
+  <section id="problem" class="block forest">
+    <h2>Naša težava: <span id="problem-title">vpiši naslov težave</span></h2>
+    <div class="split">
+      <p class="big">Tukaj opiši težavo, ki sta jo izbrala (npr. vročinski valovi v mestih, poplave, izguba zelenih površin, prevelika raba avtomobilov). Kje se pojavlja in koga prizadene?</p>
+      <p>Napiši, zakaj je težava pomembna in kako je povezana s ciljem 13. Dodaj vsaj en podatek ali vir.</p>
+    </div>
+    <h3>Kaj lahko naredimo?</h3>
+    <div class="actions">
+      <div class="act"><span>🚲</span><p>Rešitev 1: …</p></div>
+      <div class="act"><span>🌳</span><p>Rešitev 2: …</p></div>
+      <div class="act"><span>💡</span><p>Rešitev 3: …</p></div>
+    </div>
+  </section>
+
+  <!-- GALERIJA -->
+  <section id="galerija" class="block light">
+    <h2>Fotogalerija</h2>
+    <p class="muted">Klikni fotografijo za povečavo. Filtriraj po kategoriji ali avtorju.</p>
+    <div class="filters" role="group" aria-label="Filtri galerije">
+      <button class="chip active" data-filter="vse">Vse</button>
+      <button class="chip" data-filter="tezava">Težave</button>
+      <button class="chip" data-filter="resitev">Rešitve</button>
+      <button class="chip" data-filter="narava">Narava</button>
+      <span class="sep" aria-hidden="true"></span>
+      <button class="chip" data-author="dijakA">Dijak A</button>
+      <button class="chip" data-author="dijakB">Dijak B</button>
+    </div>
+    <div class="grid" id="grid"></div>
+  </section>
+
+  <!-- VIDEO -->
+  <section id="video" class="block night">
+    <h2>Predstavitvena videa</h2>
+    <div class="videos">
+      <figure>
+        <div class="video-frame">
+          <!-- Zamenjaj VIDEO_ID_A z ID-jem YouTube videa (Unlisted) -->
+          <iframe src="https://www.youtube.com/embed/VIDEO_ID_A" title="Predstavitev – Dijak A" allowfullscreen loading="lazy"></iframe>
+        </div>
+        <figcaption>Dijak A</figcaption>
+      </figure>
+      <figure>
+        <div class="video-frame">
+          <iframe src="https://www.youtube.com/embed/VIDEO_ID_B" title="Predstavitev – Dijak B" allowfullscreen loading="lazy"></iframe>
+        </div>
+        <figcaption>Dijak B</figcaption>
+      </figure>
+    </div>
+  </section>
+
+  <!-- KVIZ -->
+  <section id="kviz" class="block dawn">
+    <h2>Kviz: koliko veš o podnebju?</h2>
+    <div class="card" id="quiz" aria-live="polite"></div>
+  </section>
+
+  <!-- ANKETA -->
+  <section id="anketa" class="block light">
+    <h2>Anketa: kaj ti je najlažje spremeniti?</h2>
+    <form class="card" id="poll">
+      <fieldset>
+        <legend>Katero navado bi najlažje spremenil/a za podnebje?</legend>
+        <label><input type="radio" name="poll" value="Hoja ali kolo namesto avta" required> Hoja ali kolo namesto avta</label>
+        <label><input type="radio" name="poll" value="Manj porabe energije doma"> Manj porabe energije doma</label>
+        <label><input type="radio" name="poll" value="Manj zavržene hrane"> Manj zavržene hrane</label>
+        <label><input type="radio" name="poll" value="Manj nakupov novih stvari"> Manj nakupov novih stvari</label>
+      </fieldset>
+      <button class="btn primary" type="submit">Oddaj glas</button>
+    </form>
+    <div id="poll-results" class="results" aria-live="polite"></div>
+    <p class="muted">Glasovi se shranijo samo v tvojem brskalniku.</p>
+  </section>
+
+</main>
+
+<footer>
+  <p>Projekt COIL – SDG 13 Podnebni ukrepi. Avtorja: Dijak A in Dijak B.</p>
+</footer>
+
+<div class="lightbox" id="lightbox" hidden>
+  <button class="close" id="lb-close" aria-label="Zapri">×</button>
+  <button class="nav prev" id="lb-prev" aria-label="Prejšnja">‹</button>
+  <button class="nav next" id="lb-next" aria-label="Naslednja">›</button>
+  <img id="lb-img" alt="">
+  <p id="lb-cap"></p>
+</div>
+
+<script src="script.js"></script>
+</body>
+</html>
