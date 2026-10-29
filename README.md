@@ -2,7 +2,7 @@
 
 Spletna galerija o cilju trajnostnega razvoja **SDG 13 – Podnebni ukrepi** (projekt COIL).
 
-Objavljena stran: https://UPORABNISKO-IME.github.io/coil-sdg13-gallery/
+Objavljena stran: https://markkobal-dot.github.io/coil-sdg13-gallery/#cilj
 
 ## Razdelitev dela
 
