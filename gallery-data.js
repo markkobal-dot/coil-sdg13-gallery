@@ -88,7 +88,7 @@ const galleryPhotos = [ {
   author: "Photo provided by Lovro Trošt"
 },
 {
-  src: "assets/images/shade-in-our-neighbourhood.jpg",
+  src: "assets/images/shade-in-our-neighbourhood.jpg?v=20261030-tree-shade",
   title: "Shade in our neighbourhood",
   description: "A broad tree canopy shades a picnic table and grassy neighbourhood space.",
   action: "We can plant and care for trees that provide shade in shared neighbourhood spaces.",
