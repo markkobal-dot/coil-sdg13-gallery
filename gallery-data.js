@@ -90,8 +90,8 @@ const galleryPhotos = [ {
 {
   src: "assets/images/shade-in-our-neighbourhood.jpg",
   title: "Shade in our neighbourhood",
-  description: "Shaded paths, trees and covered seating give us places to escape direct sunlight on hot days.",
-  action: "We can choose shaded walking routes and help care for the trees near our school and homes.",
+  description: "A narrow neighbourhood street shaded by buildings and laundry lines overhead.",
+  action: "We can look for shaded routes and places to escape direct sun in our neighbourhood.",
   category: "solutions",
   author: "Project photo"
 },
