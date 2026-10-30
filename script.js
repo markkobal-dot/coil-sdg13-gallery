@@ -460,6 +460,7 @@ document.getElementById('poll-reset').addEventListener('click', () => {
     gallery: { title: 'The gallery', sections: ['gallery'] },
     problem: { title: 'The evidence', sections: ['problem', 'slovenia-data'] },
     'climate-story': { title: 'The climate story', sections: ['climate-story'] },
+    cities: { title: 'Cities in transition', sections: ['cities'] },
     solutions: { title: 'Take action', sections: ['solutions', 'closing'] },
     game: { title: 'Climate Mission', sections: ['game'] },
     team: { title: 'About us', sections: ['team', 'journey'] }
@@ -736,5 +737,19 @@ document.getElementById('poll-reset').addEventListener('click', () => {
     };
     slider.addEventListener('input', updateComparison);
     updateComparison();
+  }
+})();
+
+// City case studies use ordinary buttons and show one case at a time.
+(() => {
+  const buttons = [...document.querySelectorAll('[data-city]')];
+  for (const button of buttons) {
+    button.addEventListener('click', () => {
+      for (const option of buttons) {
+        const selected = option === button;
+        option.setAttribute('aria-pressed', String(selected));
+        document.getElementById('city-' + option.dataset.city).hidden = !selected;
+      }
+    });
   }
 })();

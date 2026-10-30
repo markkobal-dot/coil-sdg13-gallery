@@ -3255,3 +3255,205 @@ body[data-view="team"] .journey-section {
   font-size: 12px;
   line-height: 1.8;
 }
+
+/* Real case studies have their own destination, away from the short story. */
+.cities-section {
+  background: var(--cream);
+ 
+}
+.city-picker {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
+  margin: 32px 0;
+ 
+}
+.city-picker button {
+  padding: 18px;
+  text-align: left;
+  border: 1px solid #b7c2ae;
+  background: transparent;
+  color: var(--ink);
+  font: 500 20px Manrope, Arial, sans-serif;
+  cursor: pointer;
+ 
+}
+.city-picker button span {
+  display: block;
+  margin-top: 8px;
+  font: 400 12px/1.5 Manrope, Arial, sans-serif;
+ 
+}
+.city-picker button[aria-pressed="true"] {
+  background: #183d2d;
+  color: #fffaf0;
+  border-color: #183d2d;
+ 
+}
+.city-panel-heading {
+  margin: 38px 0 26px;
+ 
+}
+.city-panel-heading h3 {
+  margin: 12px 0 0;
+  font: 500 clamp(26px, 3vw, 38px)/1.2 Manrope, Arial, sans-serif;
+  letter-spacing: -.035em;
+ 
+}
+.city-case-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr);
+  gap: 40px;
+  align-items: start;
+ 
+}
+.cities-section .city-photo {
+  width: 100%;
+  max-width: none;
+  margin: 0;
+ 
+}
+.cities-section .city-photo .photo-zoom {
+  position: relative;
+  display: block;
+  width: 100%;
+  aspect-ratio: 3 / 2;
+  padding: 0;
+  border: 0;
+  overflow: hidden;
+ 
+}
+.cities-section .city-photo img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  max-height: none;
+  object-fit: cover;
+ 
+}
+.cities-section .comparison-before {
+  position: absolute;
+  inset: 0;
+  clip-path: inset(0 50% 0 0);
+ 
+}
+.city-photo figcaption {
+  padding: 12px 0;
+  color: var(--muted);
+  font-size: 11px;
+  line-height: 1.7;
+ 
+}
+.city-photo figcaption a {
+  color: var(--ink);
+ 
+}
+.city-facts {
+  margin: 0 0 20px;
+ 
+}
+.city-facts > div {
+  padding: 16px 0;
+  border-top: 1px solid #b7c2ae;
+ 
+}
+.city-facts dt {
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: .1em;
+  color: var(--accent);
+  margin-bottom: 8px;
+ 
+}
+.city-facts dd {
+  margin: 0;
+  font-size: 14px;
+  line-height: 1.75;
+ 
+}
+.city-panel .local-evidence-item p {
+  font-size: 12px;
+  line-height: 1.8;
+ 
+}
+.city-panel .local-evidence a {
+  color: var(--ink);
+  font-size: 12px;
+ 
+}
+.city-footnote {
+  font-size: 12px;
+  line-height: 1.7;
+  color: var(--muted);
+ 
+}
+.city-comparison-table {
+  margin-top: 40px;
+  padding: 20px 0;
+  border-top: 1px solid #b7c2ae;
+  border-bottom: 1px solid #b7c2ae;
+ 
+}
+.city-comparison-table summary {
+  cursor: pointer;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  min-height: 44px;
+  list-style: none;
+  font-size: 18px;
+ 
+}
+.city-comparison-table summary::-webkit-details-marker {
+  display: none;
+ 
+}
+.city-comparison-table[open] summary > span {
+  transform: rotate(45deg);
+ 
+}
+.city-comparison-table p {
+  font-size: 13px;
+  line-height: 1.7;
+ 
+}
+.city-table-scroll {
+  overflow-x: auto;
+ 
+}
+.city-comparison-table table {
+  width: 100%;
+  min-width: 640px;
+  border-collapse: collapse;
+  font-size: 12px;
+  line-height: 1.7;
+ 
+}
+.city-comparison-table caption {
+  text-align: left;
+  padding: 14px 0;
+  font-size: 12px;
+ 
+}
+.city-comparison-table th, .city-comparison-table td {
+  text-align: left;
+  vertical-align: top;
+  padding: 14px;
+  border-bottom: 1px solid #cbd2c3;
+ 
+}
+.cities-takeaway {
+  margin: 26px 0 0;
+  max-width: 780px;
+  font-size: 14px;
+  line-height: 1.8;
+ 
+}
+.city-comparison-table summary:focus-visible {
+  outline: 3px solid #c6502d;
+  outline-offset: 4px;
+ 
+}
+@media (min-width: 1025px) and (max-width: 1350px) { .nav-edition { display: none; } #navlinks { gap: 18px; } }
+@media (max-width: 800px) { .city-case-layout { grid-template-columns: 1fr; gap: 20px; } }
+@media (max-width: 540px) { .city-picker { gap: 6px; } .city-picker button { padding: 12px 8px; font-size: 14px; } .city-picker button span { font-size: 10px; } }
