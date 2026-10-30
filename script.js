@@ -4,7 +4,6 @@
 const galleryGrid = document.getElementById('photo-grid');
 const galleryCards = [];
 let activeCategory = 'all';
-let activeMedia = 'all';
 let activeAuthor = 'all';
 let visiblePhotoIndices = galleryPhotos.map((_, index) => index);
 const mediaType = (photo) => photo.src.endsWith('.svg') ? 'study' : 'photograph';
@@ -64,9 +63,8 @@ function filterCollection() {
   visiblePhotoIndices = [];
   galleryCards.forEach((card, index) => {
     const matchesCategory = activeCategory === 'all' || card.dataset.category === activeCategory;
-    const matchesMedia = activeMedia === 'all' || card.dataset.media === activeMedia;
     const matchesAuthor = activeAuthor === 'all' || card.dataset.author === activeAuthor;
-    card.hidden = !(matchesCategory && matchesMedia && matchesAuthor);
+    card.hidden = !(matchesCategory && matchesAuthor);
     if (!card.hidden) visiblePhotoIndices.push(index);
   });
   const count = visiblePhotoIndices.length;
@@ -90,10 +88,6 @@ document.getElementById('gallery-author').addEventListener('change', (event) => 
   filterCollection();
 });
 
-document.getElementById('gallery-media').addEventListener('change', (event) => {
-  activeMedia = event.target.value;
-  filterCollection();
-});
 filterCollection();
 
 // The same accessible viewer opens photographs, field images and the chart.
@@ -273,30 +267,38 @@ window.addEventListener('app:view', (event) => {
 
 // Quiz and browser-local poll.
 (() => {
-const questions = [ {
-  q: 'What can help people stay cooler in a neighbourhood during a heatwave?',
-  options: ['Remove trees and add more dark paving',
-  'Plant and protect trees that provide shade',
-  'Close shaded public spaces'],
-  answer: 1,
-  explanation: 'Trees provide shade and can help cool nearby streets, making outdoor places more comfortable during hot weather.'
-},
-{
-  q: 'What is a sensible way to keep a home cooler on a hot day?',
-  options: ['Use blinds or shutters to block direct sun',
-  'Run air conditioning with the windows open',
-  'Open windows while outside air is hotter than indoors'],
-  answer: 0,
-  explanation: 'Shading windows can reduce heat entering the home. Ventilate when the outside air is cooler.'
-},
-{
-  q: 'Which choice can help limit future warming as we travel locally?',
-  options: ['Drive alone for every short trip',
-  'Walk, cycle or take public transport when practical',
-  'Leave the car running while waiting'],
-  answer: 1,
-  explanation: 'These options can reduce transport emissions. Walking and cycling also create no tailpipe emissions.'
-}];
+const questions = [
+  {
+    q: 'An exposed bus stop needs relief this summer. Which option most directly provides shade now?',
+    options: [
+      'Plant young trees and wait for their canopies to grow',
+      'Install a well-ventilated shade structure and plan suitable tree planting',
+      'Resurface the waiting area with lighter paving alone'
+    ],
+    answer: 1,
+    explanation: 'Built shade can block direct sun immediately. Trees can add shade and other benefits as they grow. Lighter paving can help address surface heating, but does not itself shade a waiting passenger.'
+  },
+  {
+    q: 'A growing town funds planting and adds solar panels. What would best show whether its wider climate impact is improving?',
+    options: [
+      'Track emissions, land cover and tree survival over time alongside the projects',
+      'Compare the amount of money spent with another town',
+      'Use the number of newly announced projects as the main measure'
+    ],
+    answer: 0,
+    explanation: 'Funding and completed projects show action, but outcomes also need monitoring. Emissions data, changes in land cover and the survival of planted trees help reveal what has actually improved.'
+  },
+  {
+    q: 'Outside air is hotter than the air inside your home. Which approach makes the most sense?',
+    options: [
+      'Open all windows immediately to create airflow',
+      'Shade sun-facing windows and ventilate when the outside air becomes cooler',
+      'Keep windows shut through the cooler night as well as the hot afternoon'
+    ],
+    answer: 1,
+    explanation: 'Shading limits incoming solar heat. Ventilation can help when outside air is cooler; opening windows while it is hotter outside can add heat. A fan may improve comfort without bringing in hotter air.'
+  }
+];
 let qi = 0, score = 0, answered = false;
 const qtext = document.getElementById('quiz-question'), qopts = document.getElementById('quiz-options'), feedback = document.getElementById('quiz-feedback'), next = document.getElementById('quiz-next');
 function showQuestion() {
