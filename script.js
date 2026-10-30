@@ -723,3 +723,32 @@ document.getElementById('poll-reset').addEventListener('click', () => {
   activate(0);
   scheduleScrollSync();
 })();
+
+// Native controls support mouse, touch and keyboard without an animation loop.
+(() => {
+  const slider = document.getElementById('paris-comparison');
+  if (slider) {
+    const updateComparison = () => {
+      const value = Math.max(0, Math.min(100, Number(slider.value)));
+      document.getElementById('paris-before-overlay').style.clipPath = `inset(0 ${100 - value}% 0 0)`;
+      document.getElementById('paris-comparison-divider').style.left = value + '%';
+      slider.setAttribute('aria-valuetext', `${value} percent before, ${100 - value} percent after`);
+    };
+    slider.addEventListener('input', updateComparison);
+    updateComparison();
+  }
+  const options = [...document.querySelectorAll('[data-proposal]')];
+  const updateProposal = () => {
+    const selected = [];
+    for (const option of options) {
+      document.getElementById(option.dataset.proposal).style.display = option.checked ? '' : 'none';
+      if (option.checked) selected.push(option.parentNode.textContent.trim());
+    }
+    document.getElementById('school-proposal-scene').setAttribute('aria-label',
+      'School entrance concept. Selected proposals: ' + (selected.join(', ') || 'none'));
+  };
+  if (options.length) {
+    options.forEach(option => option.addEventListener('change', updateProposal));
+    updateProposal();
+  }
+})();

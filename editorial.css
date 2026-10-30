@@ -3175,3 +3175,34 @@ body[data-view="team"] .journey-section {
   color: var(--ink);
   text-underline-offset: 3px;
 }
+
+/* Optional details keep the core story focused. */
+#climate-story .story-real-photo .photo-zoom { position: relative; }
+#climate-story .story-real-photo .comparison-before {
+  position: absolute;
+  inset: 0;
+  clip-path: inset(0 50% 0 0);
+}
+.comparison-divider { position: absolute; top: 0; bottom: 0; left: 50%; width: 2px; background: #fff; box-shadow: 0 0 5px #0005; }
+.comparison-label { position: absolute; top: 12px; padding: 5px 9px; background: #183d2de6; color: #fff; border-radius: 3px; font: 600 11px Arial; }
+.comparison-label-before { left: 12px; }
+.comparison-label-after { right: 12px; }
+.comparison-control { display: flex; gap: 14px; align-items: center; margin-top: 12px; font-size: 11px; }
+.comparison-control input { flex: 1; min-width: 0; min-height: 32px; accent-color: #244f3c; cursor: ew-resize; }
+.story-followup { margin: clamp(36px, 6vw, 72px) auto 0; max-width: 1200px; border-top: 1px solid #b7c2ae; }
+.story-local-fact { padding: 26px 0; }
+#climate-story .story-local-fact p { margin: 10px 0; max-width: 720px; font-size: 14px; line-height: 1.7; }
+.story-local-fact a { color: var(--ink); font-size: 12px; text-underline-offset: 4px; }
+.school-proposal { border-top: 1px solid #b7c2ae; border-bottom: 1px solid #b7c2ae; }
+.school-proposal summary { display: flex; align-items: center; justify-content: space-between; gap: 16px; padding: 22px 0; cursor: pointer; list-style: none; font-size: 16px; }
+.school-proposal summary::-webkit-details-marker { display: none; }
+.school-proposal[open] summary > span { transform: rotate(45deg); }
+.proposal-content { padding-bottom: 24px; max-width: 800px; }
+.proposal-content p { font-size: 13px; line-height: 1.7; }
+.proposal-options { display: flex; flex-wrap: wrap; gap: 8px 20px; margin: 16px 0; padding: 0; border: 0; }
+.proposal-options legend { margin-bottom: 10px; font-size: 12px; }
+.proposal-options label { display: flex; align-items: center; gap: 8px; min-height: 44px; font-size: 13px; cursor: pointer; }
+.proposal-options input { width: 18px; height: 18px; accent-color: #244f3c; }
+#school-proposal-scene { display: block; width: 100%; height: auto; border-radius: 4px; }
+.proposal-note { color: var(--muted); }
+.school-proposal summary:focus-visible { outline: 3px solid #c6502d; outline-offset: 4px; }
