@@ -737,18 +737,4 @@ document.getElementById('poll-reset').addEventListener('click', () => {
     slider.addEventListener('input', updateComparison);
     updateComparison();
   }
-  const options = [...document.querySelectorAll('[data-proposal]')];
-  const updateProposal = () => {
-    const selected = [];
-    for (const option of options) {
-      document.getElementById(option.dataset.proposal).style.display = option.checked ? '' : 'none';
-      if (option.checked) selected.push(option.parentNode.textContent.trim());
-    }
-    document.getElementById('school-proposal-scene').setAttribute('aria-label',
-      'School entrance concept. Selected proposals: ' + (selected.join(', ') || 'none'));
-  };
-  if (options.length) {
-    options.forEach(option => option.addEventListener('change', updateProposal));
-    updateProposal();
-  }
 })();
