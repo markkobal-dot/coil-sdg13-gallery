@@ -27,12 +27,12 @@ const galleryPhotos = [ {
   author: "Photo: Lovro Trošt"
 },
 {
-  src: "assets/images/drought-and-water.png",
+  src: "assets/images/sample-04.svg",
   title: "Drought and water",
-  description: "A broad gravel riverbed beneath forested Alpine slopes. Rivers and mountain habitats can be affected by changing water conditions.",
+  description: "Hotter conditions can increase water stress and intensify drought impacts for some communities and ecosystems.",
   action: "We can use water thoughtfully and learn how our community protects water during dry periods.",
   category: "challenge",
-  author: "Project photo"
+  author: "Concept illustration"
 },
 {
   src: "assets/images/floods-moste-komenda-2023-card.webp",
@@ -88,20 +88,23 @@ const galleryPhotos = [ {
   author: "Photo provided by Lovro Trošt"
 },
 {
-  src: "assets/images/sample-11.svg",
+  src: "assets/images/shade-in-our-neighbourhood.jpg",
   title: "Shade in our neighbourhood",
   description: "Shaded paths, trees and covered seating give us places to escape direct sunlight on hot days.",
   action: "We can choose shaded walking routes and help care for the trees near our school and homes.",
   category: "solutions",
-  author: "Concept illustration"
+  author: "Project photo"
 },
 {
-  src: "assets/images/sample-12.svg",
+  src: "assets/images/saving-energy-at-home.png",
   title: "Saving energy at home",
-  description: "LED lighting and switching off devices when they are not needed are practical ways to reduce electricity use at home.",
-  action: "We can switch off unused lights and devices and choose efficient lighting.",
+  description: "Solar panels on a home roof generate electricity from sunlight.",
+  action: "We can reduce energy use at home and consider renewable electricity where available.",
   category: "solutions",
-  author: "Concept illustration"
+  author: "Project photo"
 }
 ];
+
+
+
 
