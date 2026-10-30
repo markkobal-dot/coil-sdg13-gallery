@@ -230,7 +230,18 @@ chartButton.addEventListener('click', () => {
 // Introduction videos load on demand and stop when leaving the about section.
 for (const slot of document.querySelectorAll('[data-video-id]')) {
   const launch = slot.querySelector('.video-launch');
+  launch.style.backgroundImage = 'url("' + slot.dataset.videoFallback + '")';
+  const thumbnail = launch.querySelector('.video-thumbnail');
+  if (thumbnail) {
+    const usePortraitFallback = () => {
+      thumbnail.src = slot.dataset.videoFallback;
+      thumbnail.classList.add('is-portrait-fallback');
+    };
+    thumbnail.addEventListener('error', usePortraitFallback, { once: true });
+    if (thumbnail.complete && thumbnail.naturalWidth === 0) usePortraitFallback();
+  }
   launch.addEventListener('click', () => {
+    if (slot.querySelector('iframe')) return;
     const frame = document.createElement('iframe');
     frame.src = 'https://www.youtube-nocookie.com/embed/' + slot.dataset.videoId + '?autoplay=1';
     frame.title = slot.dataset.videoTitle;
@@ -559,46 +570,109 @@ document.getElementById('poll-reset').addEventListener('click', () => {
   targets.forEach((target) => observer.observe(target));
 })();
 
-// The story scrolls on desktop; buttons keep the scene clear on smaller screens.
+// Keep chapter changes tied to the text without a continuously running animation.
 (() => {
   const scene = document.querySelector('.climate-scene');
   const steps = [...document.querySelectorAll('.shift-step')];
+  const chapterButtons = [...document.querySelectorAll('[data-story-stage]')];
   const previous = document.getElementById('story-previous');
   const next = document.getElementById('story-next');
   const progress = document.getElementById('story-progress');
   const compact = matchMedia('(max-width: 900px)');
+  const reducedMotion = matchMedia('(prefers-reduced-motion: reduce)');
+  const chapters = [
+    {
+      label: 'Where the smoke begins',
+      energy: 'Fossil fuels',
+      streets: 'Exposed paving',
+      focus: 'Emissions'
+    },
+    {
+      label: 'A warming neighbourhood',
+      energy: 'Fossil fuels',
+      streets: 'Heat retained',
+      focus: 'Heat stress'
+    },
+    {
+      label: 'A neighbourhood ready for heat',
+      energy: 'Renewable power',
+      streets: 'More shade',
+      focus: 'Act & adapt'
+    }
+  ];
   let activeIndex = 0;
-  let observer = null;
+  let scrollScheduled = false;
 
   function activate(index) {
     activeIndex = Math.max(0, Math.min(steps.length - 1, index));
+    const chapter = chapters[activeIndex];
     scene.dataset.state = steps[activeIndex].dataset.sceneState;
-    scene.querySelector('.scene-label').textContent = [
-      'Where the smoke begins',
-      'A warming neighbourhood',
-      'A neighbourhood ready for heat'
-    ][activeIndex];
-    steps.forEach((step, position) => step.classList.toggle('is-active', position === activeIndex));
+    scene.querySelector('.scene-label').textContent = chapter.label;
+    scene.querySelector('.scene-stage').textContent =
+      String(activeIndex + 1).padStart(2, '0') + ' / 03';
+    document.getElementById('story-energy').textContent = chapter.energy;
+    document.getElementById('story-streets').textContent = chapter.streets;
+    document.getElementById('story-focus').textContent = chapter.focus;
+    document.querySelector('.story-progress-fill').style.transform =
+      'scaleX(' + ((activeIndex + 1) / steps.length) + ')';
+    steps.forEach((step, position) => {
+      step.classList.toggle('is-active', position === activeIndex);
+    });
+    chapterButtons.forEach((button, position) => {
+      button.setAttribute('aria-pressed', String(position === activeIndex));
+    });
     previous.disabled = activeIndex === 0;
     next.disabled = activeIndex === steps.length - 1;
     progress.textContent = 'Stage ' + (activeIndex + 1) + ' of ' + steps.length;
   }
 
-  function updateMode() {
-    observer?.disconnect();
-    observer = null;
+  function syncWithScroll() {
+    scrollScheduled = false;
     if (compact.matches || document.body.dataset.view !== 'climate-story') return;
-    if (!('IntersectionObserver' in window)) return;
-    observer = new IntersectionObserver((entries) => {
-      const visible = entries.filter((entry) => entry.isIntersecting);
-      if (visible.length) activate(steps.indexOf(visible[0].target));
-    }, { rootMargin: '-35% 0px -35% 0px', threshold: 0 });
-    steps.forEach((step) => observer.observe(step));
+    const readingLine = window.innerHeight * 0.53;
+    let nearest = 0;
+    let smallestDistance = Infinity;
+    steps.forEach((step, index) => {
+      const bounds = step.getBoundingClientRect();
+      const distance = Math.abs((bounds.top + bounds.bottom) / 2 - readingLine);
+      if (distance < smallestDistance) {
+        smallestDistance = distance;
+        nearest = index;
+      }
+    });
+    if (nearest !== activeIndex) activate(nearest);
   }
+
+  function scheduleScrollSync() {
+    if (compact.matches || document.body.dataset.view !== 'climate-story' || scrollScheduled) return;
+    scrollScheduled = true;
+    requestAnimationFrame(syncWithScroll);
+  }
+
+  chapterButtons.forEach((button, index) => {
+    button.addEventListener('click', () => {
+      if (compact.matches) {
+        activate(index);
+      } else {
+        steps[index].scrollIntoView({
+          block: 'center',
+          behavior: reducedMotion.matches ? 'instant' : 'smooth'
+        });
+        scheduleScrollSync();
+      }
+    });
+  });
   previous.addEventListener('click', () => activate(activeIndex - 1));
   next.addEventListener('click', () => activate(activeIndex + 1));
-  compact.addEventListener('change', updateMode);
-  window.addEventListener('app:view', updateMode);
+  compact.addEventListener('change', scheduleScrollSync);
+  window.addEventListener('resize', scheduleScrollSync, { passive: true });
+  window.addEventListener('scroll', scheduleScrollSync, { passive: true });
+  window.addEventListener('app:view', (event) => {
+    if (event.detail.id === 'climate-story') {
+      // The router restores the scroll position after this event.
+      activate(0);
+    }
+  });
   activate(0);
-  updateMode();
+  scheduleScrollSync();
 })();

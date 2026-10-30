@@ -70,7 +70,8 @@ const galleryPhotos = [ {
   author: "Photo: Lovro Trošt"
 },
 {
-  src: "assets/images/protecting-forests.HEIC",
+  src: "assets/images/protecting-forests-card.webp",
+  fullSrc: "assets/images/protecting-forests.webp",
   title: "Protecting forests",
   description: "A forested landscape photographed as part of our local climate project.",
   action: "We can care for local trees and forests and support their protection and restoration.",

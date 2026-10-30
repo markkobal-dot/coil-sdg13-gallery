@@ -374,137 +374,245 @@
       </section>
       <section class="climate-shift" id="climate-story" aria-labelledby="climate-story-title">
         <div class="shift-heading">
-          <span class="kicker">OUR CLIMATE STORY</span>
-          <h2 id="climate-story-title">
-            From emissions<br><span>to safer summers.</span>
-          </h2>
-          <p>
-            <span class="shift-story-desktop">As you scroll, the scene follows our story: emissions drive warming, and climate action can help create cooler, more resilient neighbourhoods.</span><span class="shift-story-mobile">Choose Next stage to follow our story from the causes of warming to ways we can make hot days safer in our neighbourhoods.</span>
-          </p>
+          <span class="kicker">OUR CLIMATE STORY / THREE CHAPTERS</span>
+          <h2 id="climate-story-title">From emissions<br><span>to safer summers.</span></h2>
+          <p><span class="shift-story-desktop">We follow one neighbourhood from the sources of warming to the choices that can make hot days safer. Scroll to see the same place change.</span><span class="shift-story-mobile">Follow the same neighbourhood through three chapters. Use the chapter tabs or Next stage to explore what changes.</span></p>
         </div>
         <div class="shift-layout">
           <div class="shift-visual">
-            <div class="climate-scene" data-state="problem" aria-hidden="true">
-              <svg viewBox="0 0 760 460" role="presentation">
-                <circle class="scene-sun" cx="620" cy="95" r="42"/>
-                <path class="scene-hill" d="M0 310 Q120 220 260 310 T520 300 T760 290 V460 H0Z"/>
-                <path class="scene-hill scene-hill-back" d="M0 350 Q140 270 290 345 T580 330 T760 340 V460 H0Z"/>
-                <g class="smoke">
-                  <circle cx="328" cy="92" r="34"/>
-                  <circle cx="365" cy="63" r="45"/>
-                  <circle cx="412" cy="78" r="41"/>
-                  <circle cx="446" cy="106" r="33"/>
-                  <circle cx="377" cy="112" r="40"/>
-                </g>
-                <g class="factory">
-                  <path d="M150 370V236h350v134z"/>
-                  <path d="M150 236h350"/>
-                  <rect x="178" y="286" width="34" height="42" rx="3"/>
-                  <rect x="237" y="286" width="34" height="42" rx="3"/>
-                  <rect x="296" y="286" width="34" height="42" rx="3"/>
-                  <rect x="385" y="286" width="34" height="42" rx="3"/>
-                  <rect x="444" y="286" width="34" height="42" rx="3"/>
-                </g>
-                <g class="chimney">
-                  <path d="M303 239V116h53v123z"/>
-                  <path class="chimney-cap" d="M296 115h67v15h-67z"/>
-                </g>
-                <g class="solar-panels">
-                  <path class="solar-base" d="M174 202l291 0 13 32H187z"/>
-                  <path class="solar-grid" d="M180 218h294M222 204l12 31m47-31 12 31m35-31 12 31m35-31 12 31m35-31 12 31"/>
-                </g>
-                <g class="future-tree-trunks">
-                  <path d="M533 365h14v-64h-14zM713 365h14v-78h-14z"/>
-                </g>
-                <g class="future-trees">
-                  <circle cx="540" cy="292" r="34"/>
-                  <circle cx="720" cy="278" r="42"/>
-                  <circle cx="513" cy="310" r="22"/>
-                  <circle cx="750" cy="302" r="23"/>
-                </g>
-                <g class="wind-turbine">
-                  <path class="turbine-tower" d="M77 249l-7 121h24l-7-121z"/>
-                  <rect class="turbine-nacelle" x="68" y="235" width="28" height="14" rx="7"/>
-                  <g class="turbine-rotor" transform="translate(82 241)">
-                    <path d="M-4-5C-12-24-13-45-7-63C2-45 4-23 3-4z"/>
-                    <path transform="rotate(120)" d="M-4-5C-12-24-13-45-7-63C2-45 4-23 3-4z"/>
-                    <path transform="rotate(240)" d="M-4-5C-12-24-13-45-7-63C2-45 4-23 3-4z"/>
-                    <circle class="turbine-hub" r="8"/>
+            <div class="story-frame">
+              <div class="climate-scene story-scene" data-state="problem" aria-hidden="true">
+                <svg xmlns="http://www.w3.org/2000/svg" class="district-illustration" viewBox="0 0 1000 620" role="presentation">
+                  <defs>
+                    <linearGradient id="districtSky" x1="0" y1="0" x2="0" y2="1">
+                      <stop class="district-sky-top" offset="0"/>
+                      <stop class="district-sky-bottom" offset="1"/>
+                    </linearGradient>
+                    <linearGradient id="districtRoad" x1="0" y1="0" x2="1" y2="1">
+                      <stop offset="0" stop-color="#8b9289"/>
+                      <stop offset="1" stop-color="#707e75"/>
+                    </linearGradient>
+                  </defs>
+                  <rect width="1000" height="620" fill="url(#districtSky)"/>
+                  <circle class="district-sun-halo" cx="854" cy="125" r="71"/>
+                  <circle class="district-sun" cx="854" cy="125" r="43"/>
+                  <path d="M0 317 130 232l116 66 135-126 139 109 132-79 148 107 95-55 105 62v155H0Z" fill="#b6c5b7" opacity=".4"/>
+                  <path d="M0 346q130-66 267-22t265 7q197-93 468 17v130H0Z" fill="#a6b9a4" opacity=".65"/>
+                  <g fill="#8da59a" opacity=".24">
+                    <path d="M70 330v-48h30v48m26 0v-67h41v67m535 0v-77h40v77m180 0v-54h31v54m17 0v-83h46v83"/>
                   </g>
-                </g>
-                <path class="scene-ground" d="M0 368 Q160 345 320 366 T620 360 T760 365 V460 H0Z"/>
-                <g class="community-life">
-                  <path class="walkway" d="M390 419Q522 383 760 404V460H350Z"/>
-                  <g class="bench">
-                    <path d="M699 369h40v7h-40zM703 380h32v6h-32zM705 386v12m27-12v12"/>
+                  <g class="district-turbine">
+                    <path d="m170 217-6 150h22l-6-150Z" fill="#eceee3" stroke="#829b90" stroke-width="2"/>
+                    <g transform="translate(175 216)" fill="#f3f4e9" stroke="#7f9b91" stroke-width="1.6">
+                      <path d="M-3-4c-9-27-8-55-1-76 6 24 9 51 8 75Z"/>
+                      <path transform="rotate(120)" d="M-3-4c-9-27-8-55-1-76 6 24 9 51 8 75Z"/>
+                      <path transform="rotate(240)" d="M-3-4c-9-27-8-55-1-76 6 24 9 51 8 75Z"/>
+                      <circle r="7" fill="#c3d1c7"/>
+                    </g>
                   </g>
-                  <g class="person person-one">
-                    <circle class="skin" cx="592" cy="332" r="10"/>
-                    <path class="hair" d="M582 331q1-13 11-13 10 1 11 13-7-5-13-4-4 0-9 4z"/>
-                    <path class="shirt" d="M584 345q8-5 16 0l8 28h-34z"/>
-                    <path class="skin limb" d="M585 349l-13 17m24-16 10 14"/>
-                    <path class="trousers limb" d="M581 371l-2 19m14-19 6 19"/>
+                  <path class="district-land" d="M0 387q195-36 365-2t318-4q184-29 317 25v214H0Z"/>
+                  <path d="m0 511 412-69 588 92v86H0Z" fill="url(#districtRoad)"/>
+                  <path d="m0 495 411-69 589 92" fill="none" stroke="#e4e6d5" stroke-width="13"/>
+                  <path d="m0 561 411-71 589 96" fill="none" stroke="#d6deca" stroke-width="2" stroke-dasharray="23 16"/>
+                  <path class="district-cycle-path" d="m0 599 410-72 590 93" fill="none" stroke="#8daa76" stroke-width="15"/>
+                  <path d="m0 599 410-72 590 93" fill="none" stroke="#e1e9cc" stroke-width="1.5" opacity=".65"/>
+                  <g>
+                    <path d="m80 382 118-13 32 19-118 14Z" fill="#8b9784"/>
+                    <path d="m80 382 32 20v81l-32-17Z" fill="#b9bda4"/>
+                    <path d="M112 402h118v81H112Z" fill="#d8dbc5"/>
+                    <path d="M128 419h34v31h-34m43-31h39v49h-39" fill="#93afa7" stroke="#dce4d4" stroke-width="2"/>
+                    <path d="M121 408h100" stroke="#687e71" stroke-width="3"/>
                   </g>
-                  <g class="person person-two">
-                    <circle class="skin" cx="630" cy="336" r="9"/>
-                    <path class="hair" d="M621 335q0-11 10-12 8 1 9 12-8-4-19 0z"/>
-                    <path class="shirt shirt-two" d="M622 348q8-5 15 0l8 25h-31z"/>
-                    <path class="skin limb" d="M623 352l-11 15m23-15 10 14"/>
-                    <path class="trousers limb" d="M620 371l-2 19m13-19 5 19"/>
+                  <g>
+                    <path d="m735 322 124-16 49 25-124 17Z" fill="#a4ad96"/>
+                    <path d="m735 322 49 26v101l-49-24Z" fill="#c9cbb0"/>
+                    <path d="m784 348 124-17v101l-124 17Z" fill="#e3ddc2"/>
+                    <path d="m803 367 26-4v35l-26 4Zm40-5 26-4v35l-26 4Zm38-6 16-2v55l-16 2Z" fill="#91b4ab"/>
+                    <path d="m794 411 75-10" stroke="#b7b599" stroke-width="3"/>
                   </g>
-                  <g class="dog">
-                    <path class="dog-body" d="M649 366q5-12 20-8 8 2 10 10l-5 7h-23z"/>
-                    <circle class="dog-body" cx="681" cy="362" r="8"/>
-                    <path class="dog-ear" d="M677 356l-2-9 8 6m-25 17-2 11m12-9-1 9m11-10 2 9"/>
-                    <path class="dog-tail" d="M650 363q-9-7-10 1"/>
+                  <g class="district-building">
+                    <path d="m300 290 50 40v140l-50-40Z" fill="#b9af91"/>
+                    <path d="M350 330h350v140H350Z" fill="#ded4b7"/>
+                    <path d="M300 290h350l50 40H350Z" fill="#c8c8af"/>
+                    <path d="M350 330h350" stroke="#a3ab96" stroke-width="4"/>
+                    <path d="M365 348h320v8H365Z" fill="#b9b69c"/>
+                    <path d="M378 373h225v61H378Z" fill="#72988e"/>
+                    <path d="M381 377h219v22H381Z" fill="#a3c1b5" opacity=".65"/>
+                    <path d="M420 373v61m46-61v61m46-61v61m46-61v61" stroke="#d5dfcc" stroke-width="3"/>
+                    <path d="M630 373h41v97h-41Z" fill="#7c998c"/>
+                    <path d="M636 380h29v40h-29Z" fill="#acc7b9"/>
+                    <circle cx="663" cy="433" r="2.5" fill="#dce5d0"/>
+                    <path d="M365 451h250" stroke="#c9bda1" stroke-width="2"/>
+                    <path d="m309 318 27 21m-27 26 27 21m-27 26 27 21" stroke="#9da38c" stroke-width="2"/>
                   </g>
-                  <g class="birds">
-                    <path d="M532 157q8-9 16 0 8-9 16 0m20-17q7-8 14 0 7-8 14 0m-1 32q6-7 12 0 6-7 12 0"/>
+                  <g class="district-stacks">
+                    <path d="m365 199 15 8v99l-15-8Z" fill="#9e8c73"/>
+                    <path d="M380 207h24v99h-24Z" fill="#b5a48a"/>
+                    <path d="m362 193 26-3 19 10-27 7Z" fill="#697769"/>
+                    <path d="m447 170 17 9v125l-17-9Z" fill="#9a8973"/>
+                    <path d="M464 179h25v125h-25Z" fill="#baaa8d"/>
+                    <path d="m443 164 28-3 22 10-29 8Z" fill="#6f7d6d"/>
                   </g>
-                </g>
-              </svg><span class="scene-label">A neighbourhood ready for heat</span>
+                  <g class="district-smoke" fill="#46524f">
+                    <path d="M387 194c-31-12-49-30-38-49-33-13-27-48 3-54-15-28 12-55 38-46 11-35 61-36 77-9 37-13 66 15 55 44 38 9 37 50 6 63-43 19-100 7-121 36Z" opacity=".85"/>
+                    <path d="M475 165c-19-16-19-35-3-49-21-22-4-51 21-48 13-25 47-23 59-2 35-7 53 23 40 45-17 29-75 13-94 46Z" opacity=".6"/>
+                  </g>
+                  <g class="district-solar">
+                    <path d="M333 299h52l12 10h-52Z" fill="#315f6c" stroke="#b6d9d4" stroke-width="1.1"/>
+                    <path d="M350 299l12 10" stroke="#89b8bd" stroke-width=".8"/>
+                    <path d="M368 299l12 10" stroke="#89b8bd" stroke-width=".8"/>
+                    <path d="M396 299h52l12 10h-52Z" fill="#315f6c" stroke="#b6d9d4" stroke-width="1.1"/>
+                    <path d="M413 299l12 10" stroke="#89b8bd" stroke-width=".8"/>
+                    <path d="M431 299l12 10" stroke="#89b8bd" stroke-width=".8"/>
+                    <path d="M459 299h52l12 10h-52Z" fill="#315f6c" stroke="#b6d9d4" stroke-width="1.1"/>
+                    <path d="M476 299l12 10" stroke="#89b8bd" stroke-width=".8"/>
+                    <path d="M494 299l12 10" stroke="#89b8bd" stroke-width=".8"/>
+                    <path d="M522 299h52l12 10h-52Z" fill="#315f6c" stroke="#b6d9d4" stroke-width="1.1"/>
+                    <path d="M539 299l12 10" stroke="#89b8bd" stroke-width=".8"/>
+                    <path d="M557 299l12 10" stroke="#89b8bd" stroke-width=".8"/>
+                    <path d="M585 299h52l12 10h-52Z" fill="#315f6c" stroke="#b6d9d4" stroke-width="1.1"/>
+                    <path d="M602 299l12 10" stroke="#89b8bd" stroke-width=".8"/>
+                    <path d="M620 299l12 10" stroke="#89b8bd" stroke-width=".8"/>
+                    <path d="M349 313h52l12 10h-52Z" fill="#315f6c" stroke="#b6d9d4" stroke-width="1.1"/>
+                    <path d="M366 313l12 10" stroke="#89b8bd" stroke-width=".8"/>
+                    <path d="M384 313l12 10" stroke="#89b8bd" stroke-width=".8"/>
+                    <path d="M412 313h52l12 10h-52Z" fill="#315f6c" stroke="#b6d9d4" stroke-width="1.1"/>
+                    <path d="M429 313l12 10" stroke="#89b8bd" stroke-width=".8"/>
+                    <path d="M447 313l12 10" stroke="#89b8bd" stroke-width=".8"/>
+                    <path d="M475 313h52l12 10h-52Z" fill="#315f6c" stroke="#b6d9d4" stroke-width="1.1"/>
+                    <path d="M492 313l12 10" stroke="#89b8bd" stroke-width=".8"/>
+                    <path d="M510 313l12 10" stroke="#89b8bd" stroke-width=".8"/>
+                    <path d="M538 313h52l12 10h-52Z" fill="#315f6c" stroke="#b6d9d4" stroke-width="1.1"/>
+                    <path d="M555 313l12 10" stroke="#89b8bd" stroke-width=".8"/>
+                    <path d="M573 313l12 10" stroke="#89b8bd" stroke-width=".8"/>
+                    <path d="M601 313h52l12 10h-52Z" fill="#315f6c" stroke="#b6d9d4" stroke-width="1.1"/>
+                    <path d="M618 313l12 10" stroke="#89b8bd" stroke-width=".8"/>
+                    <path d="M636 313l12 10" stroke="#89b8bd" stroke-width=".8"/>
+                  </g>
+                  <g class="district-heat" fill="none" stroke="#bd7955" stroke-width="3" stroke-linecap="round">
+                    <path d="M555 248q-11-18 0-36t0-36m64 70q-11-18 0-36t0-36m64 66q-11-18 0-36t0-36"/>
+                    <path d="M416 566q-9-14 0-28t0-28m134 77q-9-14 0-28t0-28" opacity=".65"/>
+                  </g>
+                  <g class="district-new-green" transform="translate(102 400) scale(0.76)">
+                    <path d="M-5 14h10l3 57H-8Z" fill="#86654a"/>
+                    <path d="M-2 43-20 20M2 37l18-23" fill="none" stroke="#86654a" stroke-width="4" stroke-linecap="round"/>
+                    <path class="district-leaves" d="M-34 6C-49-13-31-34-17-32c-7-30 35-46 49-18 29-10 43 24 25 39 15 24-7 45-29 37C9 48-23 33-24 21-43 26-52 10-34 6Z"/>
+                    <path class="district-leaf-light" d="M-27-5c-9-17 12-30 23-21 5-20 34-19 38 1C15-33-5-8-27-5Z"/>
+                  </g>
+                  <g class="district-new-green" transform="translate(855 390) scale(1.05)">
+                    <path d="M-5 14h10l3 57H-8Z" fill="#86654a"/>
+                    <path d="M-2 43-20 20M2 37l18-23" fill="none" stroke="#86654a" stroke-width="4" stroke-linecap="round"/>
+                    <path class="district-leaves" d="M-34 6C-49-13-31-34-17-32c-7-30 35-46 49-18 29-10 43 24 25 39 15 24-7 45-29 37C9 48-23 33-24 21-43 26-52 10-34 6Z"/>
+                    <path class="district-leaf-light" d="M-27-5c-9-17 12-30 23-21 5-20 34-19 38 1C15-33-5-8-27-5Z"/>
+                  </g>
+                  <g class="district-new-green" transform="translate(947 430) scale(0.75)">
+                    <path d="M-5 14h10l3 57H-8Z" fill="#86654a"/>
+                    <path d="M-2 43-20 20M2 37l18-23" fill="none" stroke="#86654a" stroke-width="4" stroke-linecap="round"/>
+                    <path class="district-leaves" d="M-34 6C-49-13-31-34-17-32c-7-30 35-46 49-18 29-10 43 24 25 39 15 24-7 45-29 37C9 48-23 33-24 21-43 26-52 10-34 6Z"/>
+                    <path class="district-leaf-light" d="M-27-5c-9-17 12-30 23-21 5-20 34-19 38 1C15-33-5-8-27-5Z"/>
+                  </g>
+                  <g class="district-new-green" transform="translate(740 400) scale(0.58)">
+                    <path d="M-5 14h10l3 57H-8Z" fill="#86654a"/>
+                    <path d="M-2 43-20 20M2 37l18-23" fill="none" stroke="#86654a" stroke-width="4" stroke-linecap="round"/>
+                    <path class="district-leaves" d="M-34 6C-49-13-31-34-17-32c-7-30 35-46 49-18 29-10 43 24 25 39 15 24-7 45-29 37C9 48-23 33-24 21-43 26-52 10-34 6Z"/>
+                    <path class="district-leaf-light" d="M-27-5c-9-17 12-30 23-21 5-20 34-19 38 1C15-33-5-8-27-5Z"/>
+                  </g>
+                  <g class="district-baseline-tree" transform="translate(260 385) scale(0.53)">
+                    <path d="M-5 14h10l3 57H-8Z" fill="#86654a"/>
+                    <path d="M-2 43-20 20M2 37l18-23" fill="none" stroke="#86654a" stroke-width="4" stroke-linecap="round"/>
+                    <path class="district-leaves" d="M-34 6C-49-13-31-34-17-32c-7-30 35-46 49-18 29-10 43 24 25 39 15 24-7 45-29 37C9 48-23 33-24 21-43 26-52 10-34 6Z"/>
+                    <path class="district-leaf-light" d="M-27-5c-9-17 12-30 23-21 5-20 34-19 38 1C15-33-5-8-27-5Z"/>
+                  </g>
+                  <g class="district-life">
+                    <g fill="none" stroke="#746b4e" stroke-width="4" stroke-linecap="round">
+                      <path d="m849 480 52 8m-52-17 52 8m-46 11-3 15m42-9-3 15"/>
+                    </g>
+                    <g transform="translate(715 441) scale(1.15)">
+                      <ellipse cx="0" cy="29" rx="10" ry="3" fill="#4b6955" opacity=".18"/>
+                      <circle cy="-9" r="5" fill="#bc896b"/>
+                      <path d="M-5-11q0-9 7-5l4 6Z" fill="#473d35"/>
+                      <path d="M-6 0q6-4 12 0l2 17H-8Z" fill="#c07553"/>
+                      <path d="M-4 17-6 28m9-11 4 11" stroke="#344c4b" stroke-width="3.5" stroke-linecap="round"/>
+                      <path d="M-7 2-11 13m18-11 4 11" stroke="#bc896b" stroke-width="3" stroke-linecap="round"/>
+                    </g>
+                    <g transform="translate(756 447) scale(1.1)">
+                      <ellipse cx="0" cy="29" rx="10" ry="3" fill="#4b6955" opacity=".18"/>
+                      <circle cy="-9" r="5" fill="#bc896b"/>
+                      <path d="M-5-11q0-9 7-5l4 6Z" fill="#473d35"/>
+                      <path d="M-6 0q6-4 12 0l2 17H-8Z" fill="#4a7873"/>
+                      <path d="M-4 17-6 28m9-11 4 11" stroke="#344c4b" stroke-width="3.5" stroke-linecap="round"/>
+                      <path d="M-7 2-11 13m18-11 4 11" stroke="#bc896b" stroke-width="3" stroke-linecap="round"/>
+                    </g>
+                    <g transform="translate(781 460) scale(0.7)">
+                      <ellipse cx="0" cy="29" rx="10" ry="3" fill="#4b6955" opacity=".18"/>
+                      <circle cy="-9" r="5" fill="#bc896b"/>
+                      <path d="M-5-11q0-9 7-5l4 6Z" fill="#473d35"/>
+                      <path d="M-6 0q6-4 12 0l2 17H-8Z" fill="#d2b461"/>
+                      <path d="M-4 17-6 28m9-11 4 11" stroke="#344c4b" stroke-width="3.5" stroke-linecap="round"/>
+                      <path d="M-7 2-11 13m18-11 4 11" stroke="#bc896b" stroke-width="3" stroke-linecap="round"/>
+                    </g>
+                    <g transform="translate(807 488)" fill="#b08c59" stroke="#7f6848" stroke-width="1.5">
+                      <path d="M-10-6q7-9 18-2l5 8H-9Z"/>
+                      <circle cx="14" cy="-8" r="5"/>
+                      <path d="m11-12-1-5 7 4M-9-4l-8-5m9 9v7m12-7 2 7" fill="none" stroke-width="2.5" stroke-linecap="round"/>
+                    </g>
+                    <g transform="translate(178 560)" fill="none" stroke="#405e51" stroke-width="2.5">
+                      <circle cx="-13" cy="0" r="10"/>
+                      <circle cx="16" cy="0" r="10"/>
+                      <path d="m-13 0 9-16L6 0h-19m9-16 20 16-5-23h7m-27 7h10"/>
+                    </g>
+                    <g fill="none" stroke="#688477" stroke-width="2.4" stroke-linecap="round">
+                      <path d="M700 170q8-9 16 0 8-9 16 0m30-23q7-8 14 0 7-8 14 0"/>
+                    </g>
+                  </g>
+                </svg>
+                <span class="scene-stage">01 / 03</span>
+                <span class="scene-label">Where the smoke begins</span>
+              </div>
+              <div class="story-readout" aria-label="Current chapter at a glance">
+                <div><span>ENERGY</span><strong id="story-energy">Fossil fuels</strong></div>
+                <div><span>STREETS</span><strong id="story-streets">Exposed paving</strong></div>
+                <div><span>THE FOCUS</span><strong id="story-focus">Emissions</strong></div>
+              </div>
+              <div class="story-chapters" role="group" aria-label="Choose a story chapter">
+                <button type="button" data-story-stage="0" aria-pressed="true"><span>01</span> Sources</button>
+                <button type="button" data-story-stage="1" aria-pressed="false"><span>02</span> Impacts</button>
+                <button type="button" data-story-stage="2" aria-pressed="false"><span>03</span> Choices</button>
+              </div>
+              <div class="story-chapter-track" aria-hidden="true"><span class="story-progress-fill"></span></div>
             </div>
-            <p class="scene-hint">
-              Scroll through the story to see the scene change.
-            </p>
+            <p class="scene-hint">An illustrated neighbourhood. Scroll to follow the story, or choose a chapter.</p>
           </div>
           <div class="shift-steps">
             <article class="shift-step is-active" data-scene-state="problem">
               <span class="step-index">01 / THE SOURCE</span>
-              <h3>
-                Why the climate is warming
-              </h3>
-              <p>
-                Burning coal, oil and gas releases greenhouse gases that trap heat in the atmosphere. This warming increases the risk of hotter days and heatwaves.
-              </p>
+              <h3>It starts with the energy we use.</h3>
+              <p>Burning coal, oil and gas releases greenhouse gases that trap heat in the atmosphere. Our illustration starts with the emissions behind a warming climate.</p>
+              <span class="story-step-note">THE CAUSE / GREENHOUSE GAS EMISSIONS</span>
             </article>
             <article class="shift-step" data-scene-state="impact">
               <span class="step-index">02 / THE IMPACT</span>
-              <h3>
-                Rising temperatures affect daily life
-              </h3>
-              <p>
-                Heatwaves can put people, nature and infrastructure under pressure. Built-up places can become especially hot when roads and buildings absorb and hold heat.
-              </p>
-              <a class="text-link" href="https://www.ipcc.ch/report/ar6/syr/summary-for-policymakers/" target="_blank" rel="noopener noreferrer">
-              Explore the IPCC findings -&gt;
-              </a>
+              <h3>Heat changes everyday places.</h3>
+              <p>Heatwaves can put people, nature and infrastructure under pressure. Roads and buildings absorb and hold heat, while a lack of shade makes exposed streets less comfortable.</p>
+              <a class="text-link" href="https://www.ipcc.ch/report/ar6/syr/summary-for-policymakers/" target="_blank" rel="noopener noreferrer">Explore the IPCC findings ↗</a>
+              <span class="story-step-note">THE IMPACT / HOTTER DAYS, GREATER PRESSURE</span>
             </article>
             <article class="shift-step" data-scene-state="action">
               <span class="step-index">03 / OUR RESPONSE</span>
-              <h3>
-                We can make hot days safer
-              </h3>
-              <p>
-                Cleaner energy and lower-emission travel help limit future warming. Trees, shade, green spaces and cool public places can help people cope with heat now. Businesses and governments also have an important role to play.
-              </p>
+              <h3>We can change the next chapter.</h3>
+              <p>Cleaner energy and lower-emission travel help limit future warming. Trees, shade and green public places help us cope with heat now. Communities, businesses and governments all have a role to play.</p>
+              <a class="text-link" href="#solutions">Explore what we can do ↗</a>
+              <span class="story-step-note">THE RESPONSE / CUT EMISSIONS &amp; ADAPT</span>
             </article>
             <div class="story-controls" aria-label="Story stage controls">
-              <button id="story-previous" class="story-step-button" type="button" disabled>← Previous</button><span id="story-progress" aria-live="polite">Stage 1 of 3</span><button id="story-next" class="story-step-button" type="button">Next stage →</button>
+              <button id="story-previous" class="story-step-button" type="button" disabled>← Previous</button>
+              <span id="story-progress" aria-live="polite">Stage 1 of 3</span>
+              <button id="story-next" class="story-step-button" type="button">Next stage →</button>
             </div>
           </div>
         </div>
       </section>
+
       <section class="section action-section" id="solutions">
         <div class="section-heading">
           <div>
@@ -692,11 +800,12 @@
             <p>
               I researched the topic, took six photographs, edited the pictures and made my introduction video. Together, we developed the gallery, created the interactive quiz and survey, tested and prepared the project for publication, and made the 2D climate game.
             </p>
-            <div class="video-slot has-video" data-video-id="6Q615JkOv8s" data-video-title="Mark Kobal introduction video">
+            <div class="video-slot has-video" data-video-id="6Q615JkOv8s" data-video-title="Mark Kobal introduction video" data-video-fallback="assets/images/team/mark-kobal.webp">
               <button class="video-launch" type="button" aria-label="Watch Mark Kobal introduction video">
+                <img class="video-thumbnail" src="https://i.ytimg.com/vi/6Q615JkOv8s/hqdefault.jpg" alt="Preview of Mark Kobal's introduction video" width="480" height="360" loading="lazy" decoding="async">
+                <span class="video-thumbnail-shade" aria-hidden="true"></span>
                 <span class="video-play" aria-hidden="true">▶</span>
-                <span><strong>Our introductions</strong><span>Mark Kobal introduction video</span></span>
-                <span class="video-launch-arrow" aria-hidden="true">↗</span>
+                <span class="video-cover-copy"><span class="video-cover-label">MEET THE CREATOR</span><strong>Mark Kobal</strong><span>Watch my introduction</span></span>
               </button>
               <a class="video-external" href="https://www.youtube.com/watch?v=6Q615JkOv8s" target="_blank" rel="noopener noreferrer">Watch on YouTube ↗</a>
             </div>
@@ -709,11 +818,12 @@
             <p>
               I researched the topic, took six photographs, worked on the gallery and made my introduction video. Together, we developed the gallery, created the interactive quiz and survey, tested and prepared the project for publication, and made the 2D climate game.
             </p>
-            <div class="video-slot has-video" data-video-id="cB6afQ3tfx0" data-video-title="Lovro Trošt introduction video">
+            <div class="video-slot has-video" data-video-id="cB6afQ3tfx0" data-video-title="Lovro Trošt introduction video" data-video-fallback="assets/images/team/lovro-trost.webp">
               <button class="video-launch" type="button" aria-label="Watch Lovro Trošt introduction video">
+                <img class="video-thumbnail" src="https://i.ytimg.com/vi/cB6afQ3tfx0/hqdefault.jpg" alt="Preview of Lovro Trošt's introduction video" width="480" height="360" loading="lazy" decoding="async">
+                <span class="video-thumbnail-shade" aria-hidden="true"></span>
                 <span class="video-play" aria-hidden="true">▶</span>
-                <span><strong>Our introductions</strong><span>Lovro Trošt introduction video</span></span>
-                <span class="video-launch-arrow" aria-hidden="true">↗</span>
+                <span class="video-cover-copy"><span class="video-cover-label">MEET THE CREATOR</span><strong>Lovro Trošt</strong><span>Watch my introduction</span></span>
               </button>
               <a class="video-external" href="https://www.youtube.com/watch?v=cB6afQ3tfx0" target="_blank" rel="noopener noreferrer">Watch on YouTube ↗</a>
             </div>

@@ -37,10 +37,12 @@ with clear commit messages. The shared work is maintained in one repository.
 
 ## Photography status
 
-The current collection contains **six supplied photographs credited to Lovro**
-and **six clearly labelled concept illustrations**. Mark's six original
-photographs still need to replace those illustrations before final submission.
-Illustrations are not counted as original photographs.
+The current collection contains **six supplied photographs credited to Lovro**,
+**three additional project photographs** and **three concept illustrations**.
+Confirm the photographer credits for the three project photographs and replace
+the remaining illustrations with original photographs before final submission.
+Each student must contribute at least six original photographs. Illustrations
+are not counted as original photographs.
 
 Edit the matching objects in **gallery-data.js** when adding photographs:
 update the image path, optional full-size image path, title, description,

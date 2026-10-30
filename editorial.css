@@ -2484,3 +2484,520 @@ body[data-view="team"] .journey-section {
     font-size: 54px;
   }
 }
+
+/* --------------------------------------------------------------------------
+   Aligned collection cards, video covers and the neighbourhood story.
+   -------------------------------------------------------------------------- */
+.home-photo-grid {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  align-items: stretch;
+}
+.home-photo,
+.home-photo:nth-child(2) {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  padding-top: 0;
+}
+.home-photo-image {
+  flex-shrink: 0;
+  width: 100%;
+  aspect-ratio: 4 / 5;
+}
+.home-photo-image img {
+  width: 100%;
+  height: 100%;
+  aspect-ratio: auto;
+  object-fit: cover;
+}
+.home-photo > strong {
+  min-height: 2.5em;
+}
+.home-photo .photo-credit {
+  margin-top: auto;
+}
+.video-slot.has-video .video-launch {
+  position: relative;
+  display: block;
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  padding: 0;
+  overflow: hidden;
+  border: 0;
+  border-radius: 3px;
+  background: #142e25;
+  text-align: left;
+}
+.video-thumbnail {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 450ms ease;
+}
+.video-thumbnail.is-portrait-fallback {
+  object-position: center 35%;
+}
+.video-thumbnail-shade {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, #081c1210 15%, #081c1220 45%, #081c12d9 100%);
+}
+.video-launch .video-play {
+  position: absolute;
+  top: 44%;
+  left: 50%;
+  display: grid;
+  place-items: center;
+  width: 58px;
+  height: 58px;
+  padding-left: 3px;
+  transform: translate(-50%, -50%);
+  border: 1px solid #ffffffb0;
+  border-radius: 50%;
+  background: #f7f6f0f0;
+  color: #143c30;
+  font-size: 17px;
+  line-height: 1;
+  transition: background 180ms ease, transform 180ms ease;
+}
+.video-launch .video-cover-copy {
+  position: absolute;
+  left: 22px;
+  right: 22px;
+  bottom: 20px;
+  display: grid;
+  gap: 5px;
+  color: #fff;
+  line-height: 1.4;
+}
+.video-cover-copy .video-cover-label {
+  color: #e0e9d0;
+  font-size: 8px;
+  letter-spacing: .15em;
+}
+.video-cover-copy strong {
+  color: #fff;
+  font: 500 24px/1.2 Manrope, Arial, sans-serif;
+  letter-spacing: -.035em;
+}
+.video-cover-copy > span:last-child {
+  color: #f0f4e9;
+  font-size: 10px;
+}
+.video-launch:hover .video-thumbnail {
+  transform: scale(1.025);
+}
+.video-launch:hover .video-play {
+  transform: translate(-50%, -50%) scale(1.06);
+  background: #fff;
+}
+/* The same district changes, while the geometry remains stable. */
+#climate-story .shift-layout {
+  grid-template-columns: minmax(0, 1.15fr) minmax(0, .85fr);
+  gap: clamp(32px, 5vw, 80px);
+  align-items: start;
+}
+#climate-story .shift-visual {
+  position: sticky;
+  top: 104px;
+  min-width: 0;
+}
+.story-frame {
+  overflow: hidden;
+  border: 1px solid #c5d1bd;
+  border-radius: 5px;
+  background: #f7f8f2;
+}
+.climate-scene.story-scene {
+  --district-sky-top: #cddcd6;
+  --district-sky-bottom: #e9e9d9;
+  --district-land: #c2c9ae;
+  --district-leaves: #7c9272;
+  --district-leaf-light: #9aaa88;
+  --district-sun: #e0ba75;
+  border: 0;
+  border-radius: 0;
+  background: #e2e8dc;
+  box-shadow: none;
+}
+.district-illustration {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+.district-sky-top {
+  stop-color: var(--district-sky-top);
+  transition: stop-color 700ms ease;
+}
+.district-sky-bottom {
+  stop-color: var(--district-sky-bottom);
+  transition: stop-color 700ms ease;
+}
+.district-land {
+  fill: var(--district-land);
+  transition: fill 700ms ease;
+}
+.district-sun {
+  fill: var(--district-sun);
+  transition: fill 700ms ease, transform 700ms ease;
+  transform-box: fill-box;
+  transform-origin: center;
+}
+.district-sun-halo {
+  fill: var(--district-sun);
+  opacity: .19;
+  transition: opacity 700ms ease, fill 700ms ease;
+}
+.district-baseline-tree .district-leaves {
+  fill: var(--district-leaves);
+  transition: fill 700ms ease;
+}
+.district-baseline-tree .district-leaf-light {
+  fill: var(--district-leaf-light);
+  transition: fill 700ms ease;
+}
+.district-new-green .district-leaves {
+  fill: #648660;
+}
+.district-new-green .district-leaf-light {
+  fill: #87a675;
+}
+.district-smoke {
+  opacity: 1;
+  transform: translateY(0);
+  transition: opacity 700ms ease, transform 900ms ease;
+}
+.district-stacks {
+  opacity: 1;
+  transition: opacity 650ms ease, transform 750ms ease;
+}
+.district-solar,
+.district-new-green,
+.district-life,
+.district-turbine {
+  opacity: 0;
+  transition: opacity 800ms ease;
+}
+.district-cycle-path {
+  opacity: 0;
+  transition: opacity 800ms ease;
+}
+.district-heat {
+  opacity: 0;
+  transition: opacity 700ms ease;
+}
+.story-scene[data-state="impact"] {
+  --district-sky-top: #e1c49f;
+  --district-sky-bottom: #eee0c3;
+  --district-land: #c4bd96;
+  --district-leaves: #97956c;
+  --district-leaf-light: #b7ad7e;
+  --district-sun: #d99559;
+}
+.story-scene[data-state="impact"] .district-sun {
+  transform: scale(1.14);
+}
+.story-scene[data-state="impact"] .district-sun-halo {
+  opacity: .34;
+}
+.story-scene[data-state="impact"] .district-heat {
+  opacity: .8;
+}
+.story-scene[data-state="action"] {
+  --district-sky-top: #c6e0dc;
+  --district-sky-bottom: #ecf0dd;
+  --district-land: #b8cda7;
+  --district-leaves: #6b8e61;
+  --district-leaf-light: #94b27a;
+  --district-sun: #e4c57a;
+}
+.story-scene[data-state="action"] .district-smoke {
+  opacity: 0;
+  transform: translate(-6px, -28px);
+}
+.story-scene[data-state="action"] .district-stacks {
+  opacity: 0;
+  transform: translateY(-12px);
+}
+.story-scene[data-state="action"] .district-solar,
+.story-scene[data-state="action"] .district-new-green,
+.story-scene[data-state="action"] .district-life,
+.story-scene[data-state="action"] .district-turbine,
+.story-scene[data-state="action"] .district-cycle-path {
+  opacity: 1;
+}
+.story-scene .scene-label {
+  left: 16px;
+  right: auto;
+  bottom: 15px;
+  padding: 7px 10px;
+  border: 1px solid #d4ddcb;
+  border-radius: 2px;
+  background: #f7f8f2ed;
+  color: #294b38;
+  font-size: 9px;
+  font-weight: 500;
+  letter-spacing: .015em;
+}
+.scene-stage {
+  position: absolute;
+  top: 15px;
+  right: 16px;
+  padding: 7px 10px;
+  border: 1px solid #b7c8b8;
+  background: #f7f8f2ba;
+  color: #34513d;
+  font-size: 9px;
+  letter-spacing: .12em;
+}
+.story-readout {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  border-top: 1px solid #d3dccb;
+}
+.story-readout > div {
+  padding: 17px 18px;
+}
+.story-readout > div + div {
+  border-left: 1px solid #d3dccb;
+}
+.story-readout span {
+  display: block;
+  margin-bottom: 7px;
+  color: #63765c;
+  font-size: 8px;
+  font-weight: 600;
+  letter-spacing: .12em;
+}
+.story-readout strong {
+  display: block;
+  color: #2a4734;
+  font-size: 12px;
+  line-height: 1.5;
+  font-weight: 500;
+}
+.story-chapters {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  border-top: 1px solid #cdd8c3;
+}
+.story-chapters button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  min-height: 52px;
+  padding: 12px 8px;
+  border: 0;
+  border-radius: 0;
+  background: #edf1e5;
+  color: #536a4b;
+  font-size: 11px;
+  transition: background 200ms ease, color 200ms ease;
+}
+.story-chapters button + button {
+  border-left: 1px solid #cdd8c3;
+}
+.story-chapters button > span {
+  font-size: 9px;
+  opacity: .75;
+}
+.story-chapters button:hover {
+  background: #e0e8d5;
+}
+.story-chapters button[aria-pressed="true"] {
+  background: #204b36;
+  color: #f7f8ef;
+}
+.story-chapter-track {
+  height: 2px;
+  background: #d4ddc8;
+  overflow: hidden;
+}
+.story-progress-fill {
+  display: block;
+  width: 100%;
+  height: 100%;
+  background: #c77c50;
+  transform: scaleX(.333333);
+  transform-origin: left;
+  transition: transform 450ms ease;
+}
+#climate-story .shift-step {
+  min-height: 62vh;
+  padding: 48px 0 48px 34px;
+  border-left: 1px solid #bdccb5;
+  border-radius: 0;
+  background: none;
+  opacity: .48;
+  transform: none;
+}
+#climate-story .shift-step.is-active {
+  border-left: 2px solid var(--accent);
+  opacity: 1;
+  transform: none;
+}
+#climate-story .shift-step h3 {
+  margin: 18px 0 14px;
+  font: 500 clamp(28px, 3.1vw, 43px)/1.12 Manrope, Arial, sans-serif;
+  letter-spacing: -.045em;
+}
+#climate-story .shift-step p {
+  margin: 0 0 20px;
+  font-size: 14px;
+  line-height: 1.9;
+}
+.story-step-note {
+  display: block;
+  padding-top: 23px;
+  margin-top: 26px;
+  border-top: 1px solid #c9d5c1;
+  color: #65785d;
+  font-size: 8px;
+  line-height: 1.7;
+  letter-spacing: .1em;
+}
+#climate-story .scene-hint {
+  max-width: 520px;
+  margin: 14px 0 0;
+  color: #5b7053;
+  font-size: 10px;
+}
+@media (max-width: 900px) {
+  #climate-story .shift-layout {
+    grid-template-columns: 1fr;
+    gap: 28px;
+  }
+  #climate-story .shift-visual {
+    position: relative;
+    top: auto;
+    z-index: auto;
+    max-width: 680px;
+  }
+  #climate-story .shift-step {
+    display: none;
+    min-height: 0;
+    padding: 28px;
+    border: 1px solid #cad6c1;
+    border-left: 2px solid var(--accent);
+    border-radius: 3px;
+    background: #f7f8f2;
+    opacity: 1;
+  }
+  #climate-story .shift-step.is-active {
+    display: block;
+  }
+  #climate-story .shift-step h3 {
+    font-size: 32px;
+  }
+  #climate-story .scene-hint {
+    display: none;
+  }
+}
+@media (max-width: 640px) {
+  .home-photo-grid {
+    grid-template-columns: 1fr;
+  }
+  .home-photo-image {
+    aspect-ratio: 4 / 3;
+  }
+  .home-photo > strong {
+    min-height: 0;
+  }
+  .video-launch .video-play {
+    top: 40%;
+    width: 48px;
+    height: 48px;
+    font-size: 14px;
+  }
+  .video-launch .video-cover-copy {
+    left: 16px;
+    right: 16px;
+    bottom: 14px;
+    gap: 3px;
+  }
+  .video-cover-copy .video-cover-label {
+    font-size: 7px;
+  }
+  .video-cover-copy strong {
+    font-size: 20px;
+  }
+  .video-cover-copy > span:last-child {
+    font-size: 9px;
+  }
+  .story-readout > div {
+    padding: 13px 10px;
+  }
+  .story-readout span {
+    margin-bottom: 5px;
+    font-size: 7px;
+    letter-spacing: .06em;
+  }
+  .story-readout strong {
+    font-size: 10px;
+  }
+  .story-chapters button {
+    min-height: 46px;
+    gap: 6px;
+    font-size: 10px;
+  }
+  .story-chapters button > span {
+    font-size: 8px;
+  }
+  .story-scene .scene-label {
+    left: 10px;
+    bottom: 10px;
+    padding: 5px 7px;
+    font-size: 8px;
+  }
+  .scene-stage {
+    top: 10px;
+    right: 10px;
+    padding: 5px 7px;
+    font-size: 8px;
+  }
+  #climate-story .shift-step {
+    padding: 24px;
+  }
+  #climate-story .shift-step h3 {
+    font-size: 29px;
+  }
+  .story-step-note {
+    margin-top: 22px;
+    padding-top: 18px;
+    font-size: 7px;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .story-scene *,
+  .story-chapters button,
+  .story-progress-fill,
+  .video-thumbnail,
+  .video-launch .video-play {
+    transition: none !important;
+  }
+}
+
+.team-grid {
+  align-items: stretch;
+}
+.student {
+  grid-template-rows: auto auto auto 1fr auto;
+}
+.student > p {
+  grid-row: 4;
+}
+.student > .video-slot {
+  grid-row: 5;
+}
+@media (max-width: 360px) {
+  .video-cover-copy .video-cover-label {
+    display: none;
+  }
+  .video-launch .video-play {
+    top: 35%;
+    width: 42px;
+    height: 42px;
+  }
+}
