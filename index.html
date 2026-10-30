@@ -9,7 +9,7 @@
     <meta property="og:description" content="Explore our student-made gallery about climate action.">
     <title>COIL SDG 13 Gallery | Climate Action</title>
     <link rel="stylesheet" href="style.css?v=6fb1ad4a0e">
-    <link rel="stylesheet" href="editorial.css?v=151711cb58">
+    <link rel="stylesheet" href="editorial.css?v=5607274a3f">
   </head>
 
   <body>
@@ -151,6 +151,13 @@
         <div class="filters" role="group" aria-label="Filter gallery images">
           <button class="filter active" data-filter="all" aria-pressed="true">All images</button><button class="filter" data-filter="challenge" aria-pressed="false">The challenge</button><button class="filter" data-filter="solutions" aria-pressed="false">Solutions</button>
         </div>
+          <label class="media-select-label"><span>Photographer</span>
+            <select id="gallery-author">
+              <option value="all">All photographers</option>
+              <option value="lovro">Lovro Trošt</option>
+              <option value="mark">Mark Kobal</option>
+            </select>
+          </label>
           <label class="media-select-label"><span>View</span>
             <select id="gallery-media" aria-label="Filter gallery by media type">
               <option value="all">All media</option>
@@ -161,6 +168,7 @@
         </div>
         <div class="gallery-collection-note"><span id="gallery-count" role="status" aria-live="polite">12 perspectives</span><span>PHOTOGRAPHS &amp; VISUAL STUDIES</span></div>
         <div class="photo-grid" id="photo-grid"></div>
+        <p id="gallery-empty" class="hint" role="status" hidden>No photographs match these filters. Choose another photographer or category.</p>
         <p class="hint gallery-hint">
           Select a photograph to explore the story behind it.
         </p>
@@ -626,7 +634,7 @@
           </p>
         </div>
         <a class="mission-invitation" href="#game">
-          <div><span class="small-tag">AN INTERACTIVE DETOUR / 2D GAME</span><h3>Your neighbourhood.<br>Your next move.</h3><p>Four stops. Everyday choices. Step into Climate Mission and see what your decisions can change.</p><span class="mission-link">Start exploring <span aria-hidden="true">↗</span></span></div>
+          <div><span class="small-tag">AN INTERACTIVE DETOUR / 2D GAME</span><h3>Your neighbourhood.<br>Your next move.</h3><p>Four stops. Everyday choices. Step into Climate Mission and see what your decisions can change.</p><span class="mission-link"><span class="mission-play" aria-hidden="true">▶</span> Explore the neighbourhood <span aria-hidden="true">↗</span></span></div>
           <canvas id="mission-preview" width="960" height="480" role="img" aria-label="Climate Mission game map with four stops: Home, Bike Stop, Hot Square and Community Hall">Preview of the Climate Mission neighbourhood game.</canvas>
         </a>
         <div class="action-grid">
@@ -912,9 +920,9 @@
         <div class="viewer-copy"><span id="lightbox-type" class="kicker"></span><h2 id="lightbox-title"></h2><p id="lightbox-description"></p><p id="lightbox-caption"></p><div class="viewer-controls"><button id="lightbox-previous" type="button" aria-label="Previous photograph">← Previous</button><button id="lightbox-next" type="button" aria-label="Next photograph">Next →</button></div><span class="viewer-key-hint">ARROW KEYS OR SWIPE TO EXPLORE · ESC TO CLOSE</span></div>
       </div>
     </div>
-    <script src="gallery-data.js?v=e6320dcf16">
+    <script src="gallery-data.js?v=3293a118e6">
     </script>
-    <script src="script.js?v=6c3e4f357a">
+    <script src="script.js?v=8b693f6f9f">
     </script>
     <script src="climate-game.js?v=169bcfee9d">
     </script>

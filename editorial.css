@@ -1707,7 +1707,8 @@ main > section {
   color: #c1cdbf;
   font-size: 10px;
 }
-#gallery-media {
+#gallery-media,
+#gallery-author {
   min-height: 39px;
   padding: 8px 34px 8px 12px;
   border: 1px solid #ffffff40;
@@ -2361,7 +2362,8 @@ body[data-view="team"] .journey-section {
     gap: 17px;
     padding-bottom: 18px;
   }
-  #gallery-media {
+  #gallery-media,
+#gallery-author {
     font-size: 11px;
     min-height: 36px;
   }
@@ -3032,5 +3034,67 @@ body[data-view="team"] .journey-section {
   }
   .story-chapters button {
     min-height: 44px;
+  }
+}
+
+/* Shared feedback for pointer, keyboard and touch interaction. */
+.gallery-toolbar {
+  flex-wrap: wrap;
+  gap: 16px 24px;
+}
+.mission-link {
+  display: inline-flex;
+  width: fit-content;
+  min-height: 48px;
+  padding: 12px 18px;
+  border: 1px solid #c9d6a6;
+  border-radius: 999px;
+  gap: 14px;
+}
+.mission-play {
+  font-size: 12px;
+}
+:where(button, select, a[href]) {
+  -webkit-tap-highlight-color: transparent;
+  transition: color 180ms ease, background-color 180ms ease,
+    border-color 180ms ease, box-shadow 180ms ease, transform 180ms ease;
+}
+:is(button, select, a[href]):focus-visible {
+  outline: 3px solid #c6502d;
+  outline-offset: 5px;
+}
+@media (hover: hover) {
+  .mission-invitation:hover .mission-link {
+    background: #e7efab;
+    border-color: #e7efab;
+    color: #183d2d;
+  }
+  .photo-open:hover .image-open {
+    background: #183d2d;
+    color: #fffaf0;
+  }
+}
+:is(.btn, .filter, .text-button):active {
+  transform: translateY(1px);
+}
+@media (max-width: 600px) {
+  .gallery-toolbar .filters {
+    flex-basis: 100%;
+  }
+  .gallery-toolbar .media-select-label {
+    flex: 1 1 140px;
+  }
+  .gallery-toolbar select {
+    width: 100%;
+    min-height: 44px;
+  }
+  .mission-link {
+    gap: 10px;
+    padding: 12px 14px;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  :where(button, select, a[href]) {
+    transition: none;
   }
 }

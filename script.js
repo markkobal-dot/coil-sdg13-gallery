@@ -5,6 +5,7 @@ const galleryGrid = document.getElementById('photo-grid');
 const galleryCards = [];
 let activeCategory = 'all';
 let activeMedia = 'all';
+let activeAuthor = 'all';
 let visiblePhotoIndices = galleryPhotos.map((_, index) => index);
 const mediaType = (photo) => photo.src.endsWith('.svg') ? 'study' : 'photograph';
 
@@ -13,6 +14,7 @@ galleryPhotos.forEach((photo, index) => {
   card.className = 'photo-card';
   card.dataset.category = photo.category;
   card.dataset.media = mediaType(photo);
+  card.dataset.author = photo.photographer;
 
   const button = document.createElement('button');
   button.type = 'button';
@@ -63,10 +65,12 @@ function filterCollection() {
   galleryCards.forEach((card, index) => {
     const matchesCategory = activeCategory === 'all' || card.dataset.category === activeCategory;
     const matchesMedia = activeMedia === 'all' || card.dataset.media === activeMedia;
-    card.hidden = !(matchesCategory && matchesMedia);
+    const matchesAuthor = activeAuthor === 'all' || card.dataset.author === activeAuthor;
+    card.hidden = !(matchesCategory && matchesMedia && matchesAuthor);
     if (!card.hidden) visiblePhotoIndices.push(index);
   });
   const count = visiblePhotoIndices.length;
+  document.getElementById('gallery-empty').hidden = count > 0;
   document.getElementById('gallery-count').textContent =
     count + (count === 1 ? ' perspective' : ' perspectives');
 }
@@ -81,6 +85,11 @@ for (const button of document.querySelectorAll('.filter')) {
     filterCollection();
   });
 }
+document.getElementById('gallery-author').addEventListener('change', (event) => {
+  activeAuthor = event.target.value;
+  filterCollection();
+});
+
 document.getElementById('gallery-media').addEventListener('change', (event) => {
   activeMedia = event.target.value;
   filterCollection();
