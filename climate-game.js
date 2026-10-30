@@ -335,18 +335,33 @@
       window.setTimeout(() => tone(820, 0.23, 0.055), 285);
     }
   }
-  const gameVisibility = new IntersectionObserver((entries) => {
-    gameVisible = entries[0].isIntersecting;
+  function updateFallbackVisibility() {
+    const bounds = canvas.getBoundingClientRect();
+    gameVisible = document.body.dataset.view === 'game' &&
+      bounds.width > 0 && bounds.bottom > 0 && bounds.top < window.innerHeight;
     if (gameVisible && soundEnabled && !document.hidden) startMusic();
     else stopMusic();
-  }, {
-    threshold: 0.12
-  });
-  gameVisibility.observe(canvas);
+  }
+  const gameVisibility = 'IntersectionObserver' in window
+    ? new IntersectionObserver((entries) => {
+      gameVisible = entries[0].isIntersecting;
+      if (gameVisible && soundEnabled && !document.hidden) startMusic();
+      else stopMusic();
+    }, { threshold: 0.12 })
+    : null;
+  if (gameVisibility) {
+    gameVisibility.observe(canvas);
+  } else {
+    window.addEventListener('scroll', updateFallbackVisibility, { passive: true });
+    window.addEventListener('resize', updateFallbackVisibility);
+    updateFallbackVisibility();
+  }
   window.addEventListener('app:view', (event) => {
     if (event.detail.id !== 'game') {
       gameVisible = false;
       stopMusic();
+    } else if (!gameVisibility) {
+      updateFallbackVisibility();
     }
   });
   document.addEventListener('visibilitychange', () => {

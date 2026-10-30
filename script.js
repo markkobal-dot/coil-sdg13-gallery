@@ -362,7 +362,13 @@ try {
     Buildings: 0
   }
 };
-for (const c of choices) if (!Number.isFinite(votes[c]) || votes[c] < 0) votes[c] = 0;
+// Recover from invalid or outdated data without interrupting site navigation.
+if (!votes || typeof votes !== 'object' || Array.isArray(votes)) {
+  votes = { Shade: 0, 'Cool spaces': 0, Buildings: 0 };
+}
+for (const c of choices) {
+  if (!Number.isSafeInteger(votes[c]) || votes[c] < 0) votes[c] = 0;
+}
 function drawVotes() {
   const total = choices.reduce((s, c) => s + votes[c], 0),
   target = document.getElementById('poll-bars');
