@@ -504,6 +504,24 @@ a, button {
   color: var(--green);
   font-weight: 500;
 }
+.slovenia-longtrend .small-tag {
+  color: #50623e;
+}
+.slovenia-longtrend h3 {
+  color: #182c26;
+}
+.slovenia-longtrend p {
+  color: #455348;
+  line-height: 1.8;
+}
+.slovenia-longtrend a {
+  color: #143c30;
+  font-weight: 700;
+  text-underline-offset: 4px;
+}
+.slovenia-longtrend a:hover {
+  color: #8f3823;
+}
 .temperature-chart {
   background: white;
   border-radius: 4px;
