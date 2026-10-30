@@ -27,12 +27,12 @@ const galleryPhotos = [ {
   author: "Photo: Lovro Trošt"
 },
 {
-  src: "assets/images/sample-04.svg",
+  src: "assets/images/drought-and-water.png",
   title: "Drought and water",
-  description: "Hotter conditions can increase water stress and intensify drought impacts for some communities and ecosystems.",
+  description: "A broad gravel riverbed beneath forested Alpine slopes. Rivers and mountain habitats can be affected by changing water conditions.",
   action: "We can use water thoughtfully and learn how our community protects water during dry periods.",
   category: "challenge",
-  author: "Concept illustration"
+  author: "Project photo"
 },
 {
   src: "assets/images/floods-moste-komenda-2023-card.webp",
@@ -52,12 +52,12 @@ const galleryPhotos = [ {
   author: "Concept illustration"
 },
 {
-  src: "assets/images/sample-07.svg",
+  src: "assets/images/fossil-fuels-and-emissions.png",
   title: "Fossil fuels and emissions",
-  description: "Burning coal, oil and gas releases greenhouse gases that drive climate change.",
+  description: "An industrial energy facility beneath a partly cloudy sky. The image prompts questions about energy production and its emissions.",
   action: "We can save energy where possible and support cleaner ways to produce and use it.",
   category: "challenge",
-  author: "Concept illustration"
+  author: "Project photo"
 },
 {
   src: "assets/images/wind-turbines-lovro-card.webp",
@@ -70,12 +70,12 @@ const galleryPhotos = [ {
   author: "Photo: Lovro Trošt"
 },
 {
-  src: "assets/images/sample-09.svg",
+  src: "assets/images/protecting-forests.HEIC",
   title: "Protecting forests",
-  description: "Forests store carbon, support biodiversity and provide benefits for people and nature.",
+  description: "A forested landscape photographed as part of our local climate project.",
   action: "We can care for local trees and forests and support their protection and restoration.",
   category: "solutions",
-  author: "Concept illustration"
+  author: "Project photo"
 },
 {
   src: "assets/images/electric-buses-lovro-card.webp",
@@ -101,4 +101,6 @@ const galleryPhotos = [ {
   action: "We can switch off unused lights and devices and choose efficient lighting.",
   category: "solutions",
   author: "Concept illustration"
-}];
+}
+];
+
