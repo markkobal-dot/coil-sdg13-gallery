@@ -3098,3 +3098,80 @@ body[data-view="team"] .journey-section {
     transition: none;
   }
 }
+
+/* Simple video previews: the original thumbnail and a centred play button. */
+.video-slot.has-video .video-launch,
+.video-slot.has-video .video-launch:hover {
+  background-color: #111;
+}
+.video-launch .video-thumbnail {
+  object-position: center;
+  transform: none;
+  filter: none;
+  opacity: 1;
+}
+.video-launch .video-thumbnail.is-portrait-fallback {
+  object-fit: contain;
+}
+.video-slot .video-launch .video-play {
+  top: 50%;
+  width: 64px;
+  height: 44px;
+  border: 0;
+  border-radius: 12px;
+  background: #e62117;
+  color: #fff;
+  font-size: 20px;
+  box-shadow: 0 2px 12px #0003;
+}
+.video-slot .video-launch:hover .video-play {
+  transform: translate(-50%, -50%);
+  background: #c9160d;
+}
+
+/* A sourced real-world example follows the illustrated story chapters. */
+#climate-story .story-local-connection {
+  padding-left: 16px;
+  border-left: 2px solid #a0b69a;
+  font-size: 13px;
+  line-height: 1.7;
+}
+#climate-story .story-real-photo {
+  width: 100%;
+  max-width: none;
+  margin: 24px 0;
+}
+.story-photo-label {
+  display: block;
+  margin-bottom: 10px;
+  color: var(--accent);
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: .12em;
+}
+#climate-story .story-real-photo .photo-zoom {
+  display: block;
+  width: 100%;
+  aspect-ratio: 3 / 2;
+  padding: 0;
+  overflow: hidden;
+  border: 0;
+  border-radius: 4px;
+}
+#climate-story .story-real-photo img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  max-height: none;
+  object-fit: cover;
+}
+#climate-story .story-real-photo figcaption {
+  padding: 10px 0 0;
+  font-size: 11px;
+  line-height: 1.7;
+  color: var(--muted);
+}
+.story-real-photo figcaption a {
+  color: var(--ink);
+  text-underline-offset: 3px;
+}

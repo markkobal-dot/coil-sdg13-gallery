@@ -1,0 +1,8 @@
+Paris school-street comparison: Rue de la Brèche-aux-Loups, 12th arrondissement.
+Both photographs: Christophe Belin / Ville de Paris.
+Source: https://www.paris.fr/pages/57-nouvelles-rues-aux-ecoles-dans-paris-8197
+Official comparison metadata: https://s3.amazonaws.com/uploads.knightlab.com/juxtapose/86812580-8564-11ee-9ddd-3f41531135b6.json
+Before original: https://cdn.paris.fr/paris/2023/11/17/original-afc031308b7e501536dcb60f589a249e.jpg
+After original: https://cdn.paris.fr/paris/2023/11/17/original-05cb7b3661cdc6de9a148b82c09baa15.jpg
+Downloaded 30 October 2026. Original JPEGs retained; display may crop to 3:2.
+External reference photographs, separate from the students' twelve original gallery photographs.
