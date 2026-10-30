@@ -90,8 +90,8 @@ const galleryPhotos = [ {
 {
   src: "assets/images/shade-in-our-neighbourhood.jpg",
   title: "Shade in our neighbourhood",
-  description: "A narrow neighbourhood street shaded by buildings and laundry lines overhead.",
-  action: "We can look for shaded routes and places to escape direct sun in our neighbourhood.",
+  description: "A broad tree canopy shades a picnic table and grassy neighbourhood space.",
+  action: "We can plant and care for trees that provide shade in shared neighbourhood spaces.",
   category: "solutions",
   author: "Project photo"
 },
