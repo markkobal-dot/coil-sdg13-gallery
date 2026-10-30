@@ -1,96 +1,258 @@
 "use strict";
-// GALLERY: Photos and captions are edited in gallery-data.js.
-const grid = document.getElementById('photo-grid');
-for (const photo of galleryPhotos) {
+
+// Collection: one shared data file supplies the gallery and homepage previews.
+const galleryGrid = document.getElementById('photo-grid');
+const galleryCards = [];
+let activeCategory = 'all';
+let activeMedia = 'all';
+let visiblePhotoIndices = galleryPhotos.map((_, index) => index);
+const mediaType = (photo) => photo.src.endsWith('.svg') ? 'study' : 'photograph';
+
+galleryPhotos.forEach((photo, index) => {
   const card = document.createElement('article');
   card.className = 'photo-card';
   card.dataset.category = photo.category;
-  const btn = document.createElement('button');
-  btn.className = 'photo-open';
-  btn.type = 'button';
-  btn.setAttribute('aria-label', 'Open ' + photo.title);
-  const img = document.createElement('img');
-  img.src = photo.src;
-  img.alt = photo.description;
-  if (photo.objectPosition) img.style.objectPosition = photo.objectPosition;
-  img.loading = 'lazy';
-  img.decoding = 'async';
-  btn.append(img);
-  btn.addEventListener('click', () => openPhoto( {
-    ...photo,
-    src: photo.fullSrc || photo.src,
-    caption: photo.title + (photo.author ? String.fromCharCode(10, 10) + photo.author: "")
-  }));
-  const info = document.createElement('div');
-  info.className = 'info';
-  const author = document.createElement(photo.sourceUrl ? 'a': 'span');
+  card.dataset.media = mediaType(photo);
+
+  const button = document.createElement('button');
+  button.type = 'button';
+  button.className = 'photo-open';
+  button.setAttribute('aria-label', 'Open ' + photo.title);
+
+  const image = document.createElement('img');
+  image.src = photo.src;
+  image.alt = photo.description;
+  image.width = 720;
+  image.height = 540;
+  image.loading = 'lazy';
+  image.decoding = 'async';
+  if (photo.objectPosition) image.style.objectPosition = photo.objectPosition;
+
+  const openMark = document.createElement('span');
+  openMark.className = 'image-open';
+  openMark.textContent = '↗';
+  openMark.setAttribute('aria-hidden', 'true');
+  button.append(image, openMark);
+  button.addEventListener('click', () => openPhoto(index));
+
+  const information = document.createElement('div');
+  information.className = 'info';
+  const number = document.createElement('span');
+  number.className = 'photo-number';
+  number.textContent = String(index + 1).padStart(2, '0');
+  number.setAttribute('aria-hidden', 'true');
+
+  const title = document.createElement('h3');
+  title.textContent = photo.title;
+  const author = document.createElement(photo.sourceUrl ? 'a' : 'span');
   author.className = 'photo-author';
   author.textContent = photo.author;
   if (photo.sourceUrl) {
     author.href = photo.sourceUrl;
     author.target = '_blank';
     author.rel = 'noopener noreferrer';
-    author.setAttribute('aria-label', 'Photo source and licence: ' + photo.author)
   }
-  const heading = document.createElement('h3');
-  heading.textContent = photo.title;
-  info.append(author, heading);
-  card.append(btn, info);
-  grid.append(card)
-}
-for (const filter of document.querySelectorAll('.filter')) filter.addEventListener('click', () => {
-  const choice = filter.dataset.filter;
-  for (const f of document.querySelectorAll('.filter')) {
-    f.classList.toggle('active', f === filter);
-    f.setAttribute('aria-pressed', String(f === filter))
-  }
-  for (const c of document.querySelectorAll('.photo-card')) c.hidden = choice !== 'all' && c.dataset.category !== choice
+  information.append(number, title, author);
+  card.append(button, information);
+  galleryGrid.append(card);
+  galleryCards.push(card);
 });
-const lightbox = document.getElementById('lightbox'), lightboxImage = document.getElementById('lightbox-image'), lightboxCaption = document.getElementById('lightbox-caption');
-let previousFocus = null;
-function openPhoto(photo) {
-  previousFocus = document.activeElement;
-  lightboxImage.src = photo.src;
-  lightboxImage.alt = photo.description || '';
-  lightboxCaption.textContent = photo.caption || photo.title + '\n\n' + (photo.description || '') + (photo.author ? '\n\nPhoto credit: ' + photo.author: '');
-  lightbox.hidden = false;
-  document.body.style.overflow = 'hidden';
-  requestAnimationFrame(() => requestAnimationFrame(() => lightbox.classList.add('is-open')));
-  document.getElementById('lightbox-close').focus()
+
+function filterCollection() {
+  visiblePhotoIndices = [];
+  galleryCards.forEach((card, index) => {
+    const matchesCategory = activeCategory === 'all' || card.dataset.category === activeCategory;
+    const matchesMedia = activeMedia === 'all' || card.dataset.media === activeMedia;
+    card.hidden = !(matchesCategory && matchesMedia);
+    if (!card.hidden) visiblePhotoIndices.push(index);
+  });
+  const count = visiblePhotoIndices.length;
+  document.getElementById('gallery-count').textContent =
+    count + (count === 1 ? ' perspective' : ' perspectives');
 }
-function closePhoto() {
-  lightbox.classList.remove('is-open');
-  document.body.style.overflow = '';
-  if (previousFocus) previousFocus.focus();
-  window.setTimeout(() => {
-    if (!lightbox.classList.contains('is-open')) {
-      lightbox.hidden = true;
-      lightboxImage.removeAttribute('src')
+for (const button of document.querySelectorAll('.filter')) {
+  button.addEventListener('click', () => {
+    activeCategory = button.dataset.filter;
+    for (const filter of document.querySelectorAll('.filter')) {
+      const selected = filter === button;
+      filter.classList.toggle('active', selected);
+      filter.setAttribute('aria-pressed', String(selected));
     }
-  }, 260)
+    filterCollection();
+  });
 }
-document.getElementById('lightbox-close').addEventListener('click', closePhoto);
-lightbox.addEventListener('click', e => {
-  if (e.target === lightbox) closePhoto()
+document.getElementById('gallery-media').addEventListener('change', (event) => {
+  activeMedia = event.target.value;
+  filterCollection();
 });
-document.addEventListener('keydown', e => {
-  if (e.key === 'Escape' && !lightbox.hidden) closePhoto();
-  if (e.key === 'Tab' && !lightbox.hidden) {
-    e.preventDefault();
-    document.getElementById('lightbox-close').focus()
+filterCollection();
+
+// The same accessible viewer opens photographs, field images and the chart.
+const lightbox = document.getElementById('lightbox');
+const viewerImage = document.getElementById('lightbox-image');
+const viewerTitle = document.getElementById('lightbox-title');
+const viewerDescription = document.getElementById('lightbox-description');
+const viewerCaption = document.getElementById('lightbox-caption');
+const viewerCounter = document.getElementById('lightbox-counter');
+const viewerType = document.getElementById('lightbox-type');
+const viewerClose = document.getElementById('lightbox-close');
+const viewerPrevious = document.getElementById('lightbox-previous');
+const viewerNext = document.getElementById('lightbox-next');
+let viewerIndex = null;
+let viewerSequence = [];
+let viewerPreviousFocus = null;
+let viewerCloseTimer = null;
+
+function showViewerItem(photo) {
+  viewerImage.src = photo.fullSrc || photo.src;
+  viewerImage.alt = photo.description || photo.title || '';
+  viewerTitle.textContent = photo.title || 'A closer look';
+  viewerDescription.textContent = photo.description || '';
+  viewerCaption.textContent = photo.author || photo.caption || '';
+  viewerType.textContent = viewerIndex === null ? 'THE EVIDENCE' :
+    mediaType(photo) === 'study' ? 'VISUAL STUDY' : 'FROM OUR COLLECTION';
+  const hasNeighbours = viewerIndex !== null && viewerSequence.length > 1;
+  viewerPrevious.hidden = !hasNeighbours;
+  viewerNext.hidden = !hasNeighbours;
+  viewerCounter.textContent = viewerIndex === null ? 'A CLOSER LOOK' :
+    String(viewerSequence.indexOf(viewerIndex) + 1).padStart(2, '0') +
+    ' / ' + String(viewerSequence.length).padStart(2, '0');
+}
+
+function openPhoto(photoOrIndex) {
+  window.clearTimeout(viewerCloseTimer);
+  viewerPreviousFocus = document.activeElement;
+  if (typeof photoOrIndex === 'number') {
+    viewerIndex = photoOrIndex;
+    viewerSequence = document.body.dataset.view === 'gallery' && visiblePhotoIndices.includes(viewerIndex)
+      ? [...visiblePhotoIndices]
+      : galleryPhotos.map((_, index) => index);
+    showViewerItem(galleryPhotos[viewerIndex]);
+  } else {
+    viewerIndex = null;
+    viewerSequence = [];
+    showViewerItem(photoOrIndex);
+  }
+  lightbox.hidden = false;
+  document.body.classList.add('viewer-open');
+  requestAnimationFrame(() => {
+    lightbox.classList.add('is-open');
+    viewerClose.focus({ preventScroll: true });
+  });
+}
+
+function closePhoto(restoreFocus = true) {
+  if (lightbox.hidden) return;
+  lightbox.classList.remove('is-open');
+  document.body.classList.remove('viewer-open');
+  if (restoreFocus && viewerPreviousFocus?.isConnected) {
+    viewerPreviousFocus.focus({ preventScroll: true });
+  }
+  viewerCloseTimer = window.setTimeout(() => {
+    lightbox.hidden = true;
+    viewerImage.removeAttribute('src');
+  }, 220);
+}
+
+function moveViewer(direction) {
+  if (viewerIndex === null || viewerSequence.length < 2) return;
+  const nextPosition = (viewerSequence.indexOf(viewerIndex) + direction + viewerSequence.length) % viewerSequence.length;
+  viewerIndex = viewerSequence[nextPosition];
+  showViewerItem(galleryPhotos[viewerIndex]);
+}
+viewerClose.addEventListener('click', () => closePhoto());
+viewerPrevious.addEventListener('click', () => moveViewer(-1));
+viewerNext.addEventListener('click', () => moveViewer(1));
+lightbox.addEventListener('click', (event) => {
+  if (event.target === lightbox) closePhoto();
+});
+document.addEventListener('keydown', (event) => {
+  if (lightbox.hidden) return;
+  if (event.key === 'Escape') closePhoto();
+  if (event.key === 'ArrowLeft') {
+    event.preventDefault();
+    moveViewer(-1);
+  }
+  if (event.key === 'ArrowRight') {
+    event.preventDefault();
+    moveViewer(1);
+  }
+  if (event.key === 'Tab') {
+    const controls = [...lightbox.querySelectorAll('button:not([hidden])')];
+    const first = controls[0];
+    const last = controls[controls.length - 1];
+    if (event.shiftKey && document.activeElement === first) {
+      event.preventDefault();
+      last.focus();
+    } else if (!event.shiftKey && document.activeElement === last) {
+      event.preventDefault();
+      first.focus();
+    }
   }
 });
-for (const frame of document.querySelectorAll('.climate-photo')) {
-  const button = frame.querySelector('.photo-zoom'),
-  img = button.querySelector('img'),
-  caption = frame.querySelector('figcaption');
-  button.addEventListener('click', () => openPhoto( {
-    src: img.currentSrc || img.src,
-    description: img.alt,
-    caption: caption.textContent.trim()
-  }))
+let touchOrigin = null;
+viewerImage.addEventListener('touchstart', (event) => {
+  const touch = event.changedTouches[0];
+  touchOrigin = { x: touch.clientX, y: touch.clientY };
+}, { passive: true });
+viewerImage.addEventListener('touchend', (event) => {
+  if (!touchOrigin) return;
+  const touch = event.changedTouches[0];
+  const dx = touch.clientX - touchOrigin.x;
+  const dy = touch.clientY - touchOrigin.y;
+  if (Math.abs(dx) > 65 && Math.abs(dy) < 80) moveViewer(dx > 0 ? -1 : 1);
+  touchOrigin = null;
+}, { passive: true });
+
+for (const button of document.querySelectorAll('[data-open-photo]')) {
+  button.addEventListener('click', () => openPhoto(Number(button.dataset.openPhoto)));
 }
-// QUIZ: Replace these questions with your own SDG topic.
+for (const figure of document.querySelectorAll('.climate-photo')) {
+  const button = figure.querySelector('.photo-zoom');
+  const image = button.querySelector('img');
+  button.addEventListener('click', () => openPhoto({
+    src: image.currentSrc || image.src,
+    title: image.alt,
+    caption: figure.querySelector('figcaption').textContent.trim()
+  }));
+}
+const chartButton = document.querySelector('.chart-open');
+chartButton.addEventListener('click', () => {
+  const image = chartButton.querySelector('img');
+  openPhoto({
+    src: image.currentSrc || image.src,
+    title: 'Europe’s temperature record',
+    description: image.alt,
+    caption: chartButton.closest('figure').querySelector('figcaption').textContent.trim()
+  });
+});
+
+// Introduction videos load on demand and stop when leaving the about section.
+for (const slot of document.querySelectorAll('[data-video-id]')) {
+  const launch = slot.querySelector('.video-launch');
+  launch.addEventListener('click', () => {
+    const frame = document.createElement('iframe');
+    frame.src = 'https://www.youtube-nocookie.com/embed/' + slot.dataset.videoId + '?autoplay=1';
+    frame.title = slot.dataset.videoTitle;
+    frame.allow = 'autoplay; encrypted-media; picture-in-picture';
+    frame.allowFullscreen = true;
+    frame.referrerPolicy = 'strict-origin-when-cross-origin';
+    launch.hidden = true;
+    slot.insertBefore(frame, launch);
+    slot.classList.add('is-playing');
+  });
+}
+window.addEventListener('app:view', (event) => {
+  if (event.detail.id === 'team') return;
+  for (const slot of document.querySelectorAll('.video-slot.is-playing')) {
+    slot.querySelector('iframe')?.remove();
+    slot.querySelector('.video-launch').hidden = false;
+    slot.classList.remove('is-playing');
+  }
+});
+
+// Quiz and browser-local poll.
+(() => {
 const questions = [ {
   q: 'What can help people stay cooler in a neighbourhood during a heatwave?',
   options: ['Remove trees and add more dark paving',
@@ -156,7 +318,7 @@ function choose(index) {
   feedback.textContent = (index === q.answer ? 'Correct! ': 'Not quite. ') + q.explanation;
   document.getElementById('quiz-score').textContent = `Score: ${score}`;
   next.hidden = false;
-  next.textContent = qi === questions.length - 1 ? 'See my results ->': 'Next question ->'
+  next.textContent = qi === questions.length - 1 ? 'See my results →': 'Next question →'
 }
 next.addEventListener('click', () => {
   qi++;
@@ -229,9 +391,10 @@ function drawVotes() {
 document.getElementById('poll-vote').addEventListener('click', () => {
   const selected = document.querySelector('input[name="poll"]:checked');
   if (!selected) {
-    alert('Please select an option first.');
+    document.getElementById('poll-status').textContent = 'Choose an option before submitting your answer.';
     return
   }
+  document.getElementById('poll-status').textContent = '';
   votes[selected.value]++;
   try {
     localStorage.setItem(key, JSON.stringify(votes))
@@ -255,217 +418,181 @@ document.getElementById('poll-reset').addEventListener('click', () => {
   document.getElementById('poll-results').hidden = true;
   document.querySelectorAll('input[name="poll"]').forEach(x => x.checked = false)
 });
-const toggle = document.querySelector('.menu-toggle'), nav = document.getElementById('navlinks');
-const mobileQuery = window.matchMedia('(max-width: 640px)');
-const mobileViewBar = document.getElementById('mobile-view-bar');
-const mobileViewTitle = document.getElementById('mobile-view-title');
-const mobileHomeButton = document.getElementById('mobile-home');
-const mobileViews = new Map([ ['#home',
-{
-  id: 'home',
-  title: 'Home',
-  focus: '#home h1'
-}],
-['#problem',
-{
-  id: 'problem',
-  title: 'Climate & Slovenia',
-  focus: '#problem h2'
-}],
-['#climate-story',
-{
-  id: 'climate-story',
-  title: 'Our Climate Story',
-  focus: '#climate-story h2'
-}],
-['#gallery',
-{
-  id: 'gallery',
-  title: 'Gallery',
-  focus: '#gallery h2'
-}],
-['#game',
-{
-  id: 'game',
-  title: 'Climate Mission',
-  focus: '#game h2'
-}],
-['#solutions',
-{
-  id: 'solutions',
-  title: 'Take Action',
-  focus: '#solutions h2'
-}],
-['#journey',
-{
-  id: 'journey',
-  title: 'Our Journey',
-  focus: '#journey h2'
-}],
-['#team',
-{
-  id: 'team',
-  title: 'Our Team',
-  focus: '#team h2'
-}] ]);
-function closeMobileMenu() {
-  nav.classList.remove('open');
-  toggle.setAttribute('aria-expanded', 'false');
-  toggle.textContent = 'Menu'
-}
-function showMobileView(hash, addHistory = false) {
-  const entry = mobileViews.get(hash) || mobileViews.get('#home');
-  document.body.dataset.mobileView = entry.id;
-  window.dispatchEvent(new CustomEvent('mobileviewchange', {
-    detail: {
-      id: entry.id
-    }
-  }));
-  mobileViewBar.hidden = entry.id === 'home';
-  mobileViewTitle.textContent = entry.title;
-  closeMobileMenu();
-  if (addHistory && window.location.hash !== hash) history.pushState( {
-    mobileView: entry.id
-  }, '', hash);
-  window.scrollTo(0, 0);
-  const heading = document.querySelector(entry.focus);
-  if (heading) {
-    heading.setAttribute('tabindex', '-1');
-    heading.focus( {
-      preventScroll: true
-    })
-  }
-}
-toggle.addEventListener('click', () => {
-  const open = nav.classList.toggle('open');
-  toggle.setAttribute('aria-expanded', String(open));
-  toggle.textContent = open ? 'Close menu': 'Menu'
-});
-document.addEventListener('click', event => {
-  const link = event.target.closest('a[href^="#"]');
-  if (!link) return;
-  const hash = link.getAttribute('href');
-  if (!mobileViews.has(hash)) return;
-  if (!mobileQuery.matches) {
-    if (link.closest('#navlinks')) closeMobileMenu();
-    return
-  }
-  event.preventDefault();
-  showMobileView(hash, true);
-});
-mobileHomeButton.addEventListener('click', () => showMobileView('#home', true));
-window.addEventListener('popstate', () => {
-  if (mobileQuery.matches) showMobileView(window.location.hash || '#home')
-});
-mobileQuery.addEventListener('change', event => {
-  if (event.matches) showMobileView(window.location.hash || '#home');
-  else {
-    delete document.body.dataset.mobileView;
-    mobileViewBar.hidden = true;
-    closeMobileMenu();
-    const target = document.getElementById(window.location.hash.slice(1));
-    if (target) requestAnimationFrame(() => target.scrollIntoView())
-  }
-});
-if (mobileQuery.matches) showMobileView(window.location.hash || '#home');
-// Reveal page sections gently as they enter the viewport.
-(() => {
-  const targets = document.querySelectorAll( '.section-heading, .game-frame, .problem-main, .fact-card, .photo-card, .interactive-card, .tips, .timeline > div, .video-panel, .student, .closing' );
-  if (!targets.length) return;
-  document.documentElement.classList.add('js-enabled');
-  targets.forEach((item) => item.classList.add('reveal'));
-  if (!('IntersectionObserver' in window) || window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
-    targets.forEach((item) => item.classList.add('is-visible'));
-    return;
-  }
-  const observer = new IntersectionObserver((entries, currentObserver) => {
-    entries.forEach((entry) => {
-      if (!entry.isIntersecting) return;
-      entry.target.classList.add('is-visible');
-      currentObserver.unobserve(entry.target);
-    });
-  }, {
-    threshold: 0.12,
-    rootMargin: '0px 0px -36px 0px'
-  });
-  targets.forEach((item) => observer.observe(item));
+
 })();
+
+// Static, deep-linkable destinations work equally on a phone and a computer.
+(() => {
+  const nav = document.getElementById('navlinks');
+  const toggle = document.querySelector('.menu-toggle');
+  const menuLabel = toggle.querySelector('.menu-label');
+  const viewBar = document.getElementById('mobile-view-bar');
+  const viewTitle = document.getElementById('mobile-view-title');
+  const sections = [...document.querySelectorAll('main > section')];
+  const views = {
+    home: { title: 'Overview', sections: ['home'] },
+    gallery: { title: 'The gallery', sections: ['gallery'] },
+    problem: { title: 'The evidence', sections: ['problem', 'slovenia-data'] },
+    'climate-story': { title: 'The climate story', sections: ['climate-story'] },
+    solutions: { title: 'Take action', sections: ['solutions', 'closing'] },
+    game: { title: 'Climate Mission', sections: ['game'] },
+    team: { title: 'About us', sections: ['team', 'journey'] }
+  };
+  const aliases = { 'slovenia-data': 'problem', journey: 'team', closing: 'solutions' };
+  const navDestination = (id) => id === 'game' ? 'solutions' : id;
+  let currentView = null;
+
+  function closeMenu() {
+    nav.classList.remove('open');
+    document.body.classList.remove('menu-open');
+    toggle.setAttribute('aria-expanded', 'false');
+    menuLabel.textContent = 'Menu';
+  }
+
+  function renderView(hash, focus = true) {
+    const requested = hash.replace(/^#/, '') || 'home';
+    const id = aliases[requested] || (views[requested] ? requested : 'home');
+    const view = views[id];
+    closePhoto(false);
+    closeMenu();
+    document.body.dataset.view = id;
+    for (const section of sections) section.hidden = !view.sections.includes(section.id);
+    viewBar.hidden = id === 'home';
+    viewTitle.textContent = view.title;
+    for (const link of nav.querySelectorAll('a')) {
+      const active = link.hash === '#' + navDestination(id);
+      if (active) link.setAttribute('aria-current', 'page');
+      else link.removeAttribute('aria-current');
+    }
+    document.title = view.title + ' — COIL SDG 13 Gallery';
+    window.dispatchEvent(new CustomEvent('app:view', { detail: { id, previous: currentView } }));
+    currentView = id;
+    requestAnimationFrame(() => {
+      if (aliases[requested]) {
+        document.getElementById(requested)?.scrollIntoView({ behavior: 'instant', block: 'start' });
+      } else {
+        window.scrollTo({ top: 0, behavior: 'instant' });
+      }
+      if (focus) {
+        const heading = document.querySelector('#' + view.sections[0] + ' h1, #' + view.sections[0] + ' h2');
+        if (heading) {
+          heading.setAttribute('tabindex', '-1');
+          heading.focus({ preventScroll: true });
+        }
+      }
+      updateProgress();
+    });
+  }
+
+  toggle.addEventListener('click', () => {
+    const opening = !nav.classList.contains('open');
+    nav.classList.toggle('open', opening);
+    document.body.classList.toggle('menu-open', opening);
+    toggle.setAttribute('aria-expanded', String(opening));
+    menuLabel.textContent = opening ? 'Close' : 'Menu';
+  });
+  document.addEventListener('click', (event) => {
+    const link = event.target.closest('a[href^="#"]');
+    if (link) {
+      const hash = link.getAttribute('href');
+      const id = hash.slice(1);
+      if (views[id] || aliases[id]) {
+        event.preventDefault();
+        if (location.hash !== hash) history.pushState(null, '', hash);
+        renderView(hash);
+        return;
+      }
+    }
+    if (nav.classList.contains('open') && !event.target.closest('.nav')) closeMenu();
+  });
+  document.addEventListener('keydown', (event) => {
+    if (event.key === 'Escape' && nav.classList.contains('open')) {
+      closeMenu();
+      toggle.focus();
+    }
+  });
+  window.addEventListener('popstate', () => renderView(location.hash));
+  window.addEventListener('hashchange', () => renderView(location.hash));
+  window.matchMedia('(min-width: 1025px)').addEventListener('change', (event) => {
+    if (event.matches) closeMenu();
+  });
+  if ('scrollRestoration' in history) history.scrollRestoration = 'manual';
+  if (performance.getEntriesByType('navigation')[0]?.type === 'reload') {
+    history.replaceState(null, '', location.pathname + location.search + '#home');
+  }
+
+  let progressScheduled = false;
+  function updateProgress() {
+    const available = document.documentElement.scrollHeight - innerHeight;
+    const amount = available > 0 ? Math.min(1, Math.max(0, scrollY / available)) : 0;
+    document.querySelector('.scroll-progress').style.transform = 'scaleX(' + amount + ')';
+    progressScheduled = false;
+  }
+  window.addEventListener('scroll', () => {
+    if (!progressScheduled) {
+      progressScheduled = true;
+      requestAnimationFrame(updateProgress);
+    }
+  }, { passive: true });
+  renderView(location.hash, false);
+})();
+
+// Gentle, one-time reveals; no scroll animation runs continuously.
+(() => {
+  const targets = document.querySelectorAll('.home-photo, .discovery-grid > a, .photo-card, .interactive-card, .student, .timeline > div');
+  if (!('IntersectionObserver' in window) || matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+  document.documentElement.classList.add('js-enabled');
+  targets.forEach((target) => target.classList.add('reveal'));
+  const observer = new IntersectionObserver((entries) => {
+    for (const entry of entries) {
+      if (!entry.isIntersecting) continue;
+      entry.target.classList.add('is-visible');
+      observer.unobserve(entry.target);
+    }
+  }, { threshold: 0.05 });
+  targets.forEach((target) => observer.observe(target));
+})();
+
+// The story scrolls on desktop; buttons keep the scene clear on smaller screens.
 (() => {
   const scene = document.querySelector('.climate-scene');
-  const steps = [...document.querySelectorAll('.shift-step[data-scene-state]')];
-  if (!scene || !steps.length) return;
+  const steps = [...document.querySelectorAll('.shift-step')];
   const previous = document.getElementById('story-previous');
   const next = document.getElementById('story-next');
   const progress = document.getElementById('story-progress');
-  const mobileQuery = window.matchMedia('(max-width: 640px)');
+  const compact = matchMedia('(max-width: 900px)');
   let activeIndex = 0;
   let observer = null;
-  const activate = (step) => {
-    activeIndex = steps.indexOf(step);
-    scene.dataset.state = step.dataset.sceneState;
-    const sceneLabel = scene.querySelector('.scene-label');
-    if (sceneLabel) {
-      sceneLabel.textContent = [
-        'Where the smoke begins',
-        'A warming neighbourhood',
-        'A neighbourhood ready for heat'
-      ][activeIndex];
-    }
-    steps.forEach((item) => item.classList.toggle('is-active', item === step));
+
+  function activate(index) {
+    activeIndex = Math.max(0, Math.min(steps.length - 1, index));
+    scene.dataset.state = steps[activeIndex].dataset.sceneState;
+    scene.querySelector('.scene-label').textContent = [
+      'Where the smoke begins',
+      'A warming neighbourhood',
+      'A neighbourhood ready for heat'
+    ][activeIndex];
+    steps.forEach((step, position) => step.classList.toggle('is-active', position === activeIndex));
     previous.disabled = activeIndex === 0;
     next.disabled = activeIndex === steps.length - 1;
-    progress.textContent = `Stage ${activeIndex + 1} of ${steps.length}`;
-  };
-  const updateMode = () => {
-    if (observer) {
-      observer.disconnect();
-      observer = null;
-    }
-    if (mobileQuery.matches) {
-      if (document.body.dataset.mobileView === 'climate-story') activate(steps[activeIndex]);
-      return;
-    }
+    progress.textContent = 'Stage ' + (activeIndex + 1) + ' of ' + steps.length;
+  }
+
+  function updateMode() {
+    observer?.disconnect();
+    observer = null;
+    if (compact.matches || document.body.dataset.view !== 'climate-story') return;
     if (!('IntersectionObserver' in window)) return;
     observer = new IntersectionObserver((entries) => {
-      const current = entries.filter((entry) => entry.isIntersecting) .sort((a, b) => Math.abs(a.boundingClientRect.top - window.innerHeight / 2) - Math.abs(b.boundingClientRect.top - window.innerHeight / 2))[0];
-      if (current) activate(current.target);
-    }, {
-      threshold: 0,
-      rootMargin: '-40% 0px -40% 0px'
-    });
+      const visible = entries.filter((entry) => entry.isIntersecting);
+      if (visible.length) activate(steps.indexOf(visible[0].target));
+    }, { rootMargin: '-35% 0px -35% 0px', threshold: 0 });
     steps.forEach((step) => observer.observe(step));
-  };
-  previous.addEventListener('click', () => {
-    if (mobileQuery.matches && activeIndex > 0) activate(steps[activeIndex - 1]);
-  });
-  next.addEventListener('click', () => {
-    if (mobileQuery.matches && activeIndex < steps.length - 1) activate(steps[activeIndex + 1]);
-  });
-  window.addEventListener('mobileviewchange', updateMode);
-  mobileQuery.addEventListener('change', updateMode);
-  activate(steps[0]);
+  }
+  previous.addEventListener('click', () => activate(activeIndex - 1));
+  next.addEventListener('click', () => activate(activeIndex + 1));
+  compact.addEventListener('change', updateMode);
+  window.addEventListener('app:view', updateMode);
+  activate(0);
   updateMode();
 })();
-
-
-// Keep the navigation usable with a keyboard and when tapping outside it.
-document.addEventListener('keydown', (event) => {
-  if (event.key === 'Escape' && nav.classList.contains('open')) {
-    closeMobileMenu();
-    toggle.focus();
-  }
-});
-document.addEventListener('click', (event) => {
-  if (nav.classList.contains('open') && !event.target.closest('.nav')) {
-    closeMobileMenu();
-  }
-});
-window.addEventListener('mobileviewchange', (event) => {
-  for (const link of nav.querySelectorAll('a')) {
-    if (link.hash === '#' + event.detail.id) {
-      link.setAttribute('aria-current', 'location');
-    } else {
-      link.removeAttribute('aria-current');
-    }
-  }
-});

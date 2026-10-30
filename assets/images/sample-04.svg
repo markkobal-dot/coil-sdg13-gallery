@@ -1,17 +1,18 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="900" height="650" viewBox="0 0 900 650">
-  <defs>
-    <linearGradient id="g" x2="1" y2="1">
-      <stop stop-color="#334b56"/>
-      <stop offset="1" stop-color="#b7d3d8"/>
-    </linearGradient>
-  </defs>
-  <rect width="900" height="650" fill="url(#g)"/>
-  <circle cx="690" cy="150" r="230" fill="#b7d3d8" opacity=".25"/>
-  <circle cx="150" cy="550" r="250" fill="#b7d3d8" opacity=".18"/>
-  <rect x="225" y="170" width="450" height="285" rx="18" fill="none" stroke="white" stroke-opacity=".75" stroke-width="13"/>
-  <path d="M310 475H590M450 455V500" stroke="white" stroke-opacity=".75" stroke-width="15" stroke-linecap="round"/>
-  <text x="450" y="300" fill="white" font-family="Arial" font-weight="bold" font-size="58" text-anchor="middle">DROUGHT</text>
-  <text x="450" y="365" fill="white" font-family="Arial" font-size="23" text-anchor="middle">CONCEPT ILLUSTRATION</text>
-  <text x="450" y="595" fill="white" opacity=".75" font-family="Arial" font-size="19" text-anchor="middle">CLIMATE STORY · SDG 13</text>
+<svg xmlns="http://www.w3.org/2000/svg" width="900" height="650" viewBox="0 0 900 650" role="img" aria-labelledby="title">
+  <title id="title">Drought and water — concept illustration</title>
+  <rect width="900" height="650" fill="#e5e4cf"/>
+  <path d="M35 35h830v580H35Z" fill="none" stroke="#67784e" stroke-opacity=".18"/>
+  <text x="60" y="81" fill="#67784e" font-family="Arial,sans-serif" font-size="13" letter-spacing="3">VISUAL STUDY</text>
+  <text x="840" y="81" fill="#67784e" font-family="Arial,sans-serif" font-size="13" letter-spacing="2" text-anchor="end">01 / SDG 13</text>
+  
+      <circle cx="650" cy="175" r="70" fill="#c7b06f" opacity=".65"/>
+      <path d="M0 445Q225 330 450 430T900 410V650H0Z" fill="#c9cba7"/>
+      <path d="M0 520Q210 410 465 505T900 470" fill="none" stroke="#a3ac7e" stroke-width="3"/>
+      <path d="M0 560Q260 465 500 550T900 530" fill="none" stroke="#a3ac7e" stroke-width="3"/>
+      <path d="M449 125C410 192 335 270 335 342a114 114 0 0 0 228 0c0-72-76-150-114-217Z" fill="#f4f3df" stroke="#67784e" stroke-width="5"/>
+      <path d="M337 355q55-30 112 0t111 0" fill="none" stroke="#9cb3a1" stroke-width="4"/>
+      <path d="M337 375q55-30 112 0t111 0" fill="none" stroke="#9cb3a1" stroke-width="4"/>
+      <path d="M166 490l32-42 44 36-17 37m470-75-28 29 30 42" fill="none" stroke="#927b50" stroke-width="4"/>
+    
+  <text x="60" y="588" fill="#67784e" font-family="Arial,sans-serif" font-size="14" letter-spacing="1">CLIMATE ACTION / A LOCAL PERSPECTIVE</text>
 </svg>
-

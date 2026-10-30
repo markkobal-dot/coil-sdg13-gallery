@@ -343,6 +343,12 @@
     threshold: 0.12
   });
   gameVisibility.observe(canvas);
+  window.addEventListener('app:view', (event) => {
+    if (event.detail.id !== 'game') {
+      gameVisible = false;
+      stopMusic();
+    }
+  });
   document.addEventListener('visibilitychange', () => {
     if (document.hidden) stopMusic();
     else if (gameVisible && soundEnabled) startMusic();
