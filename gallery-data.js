@@ -32,7 +32,7 @@ const galleryPhotos = [ {
   description: "Hotter conditions can increase water stress and intensify drought impacts for some communities and ecosystems.",
   action: "We can use water thoughtfully and learn how our community protects water during dry periods.",
   category: "challenge",
-  author: "Concept illustration"
+  author: "Project photo"
 },
 {
   src: "assets/images/floods-moste-komenda-2023-card.webp",
@@ -49,7 +49,7 @@ const galleryPhotos = [ {
   description: "Asphalt roads, car parks and paved areas absorb heat and can make our surroundings hotter on sunny days.",
   action: "We can notice where shade and greenery could make paved areas more comfortable during hot weather.",
   category: "challenge",
-  author: "Concept illustration"
+  author: "Project photo"
 },
 {
   src: "assets/images/fossil-fuels-and-emissions.png",
@@ -87,12 +87,12 @@ const galleryPhotos = [ {
   author: "Photo provided by Lovro Trošt"
 },
 {
-  src: "assets/images/sample-11.svg",
+  src: "assets/images/shade-in-our-neighbourhood.jpg",
   title: "Shade in our neighbourhood",
   description: "Shaded paths, trees and covered seating give us places to escape direct sunlight on hot days.",
   action: "We can choose shaded walking routes and help care for the trees near our school and homes.",
   category: "solutions",
-  author: "Concept illustration"
+  author: "Project photo"
 },
 {
   src: "assets/images/saving-energy-at-home.png",
