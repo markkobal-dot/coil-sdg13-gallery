@@ -797,7 +797,8 @@ a, button {
   font-weight: 500;
   font-size: 26px;
 }
-.tip-grid > div {
+.tip-grid > div,
+.tip-grid > div:nth-child(2) {
   border-top: 1px solid #b4c3ac;
   border-radius: 0;
   background: transparent;
@@ -1645,6 +1646,7 @@ main > section {
   align-items: start;
   padding: 26px 0 60px;
   border-top: 1px solid #b7c2ae;
+  border-bottom: 1px solid #b7c2ae;
   color: var(--ink);
   text-decoration: none;
 }
@@ -1813,13 +1815,13 @@ body[data-view="team"] .journey-section {
   font-size: 13px;
   color: #c9d6c9;
 }
-.mission-invitation > img {
+.mission-invitation > canvas {
   display: block;
   width: 100%;
   height: auto;
   transition: transform 300ms ease;
 }
-.mission-invitation:hover > img {
+.mission-invitation:hover > canvas {
   transform: translateY(-4px);
 }
 .mission-link {
@@ -2377,7 +2379,7 @@ body[data-view="team"] .journey-section {
   .mission-invitation h3 {
     font-size: 36px;
   }
-  .mission-invitation > img {
+  .mission-invitation > canvas {
     max-height: 225px;
   }
   .mission-invitation .small-tag {

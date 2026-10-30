@@ -660,21 +660,21 @@
     ctx.arc(px - 4, py - 8, 1.5, 0, Math.PI * 2);
     ctx.arc(px + 4, py - 8, 1.5, 0, Math.PI * 2);
     ctx.fill();
+    // Reuse the actual map instead of a separate illustration. No idle animation loop.
+    const preview = document.getElementById('mission-preview');
+    const previewContext = preview && preview.getContext('2d');
+    if (previewContext) {
+      previewContext.drawImage(canvas, 0, 0, preview.width, preview.height);
+    }
     if (!started) {
-      ctx.fillStyle = 'rgba(18, 62, 50, 0.68)';
-      ctx.fillRect(0, 0, canvas.width, canvas.height);
-      roundedRect(240, 165, 480, 150, 18, '#fffaf0');
+      roundedRect(190, 428, 580, 36, 10, '#fffaf0');
       ctx.textAlign = 'center';
       ctx.fillStyle = '#19362d';
-      ctx.font = '800 30px Arial';
-      ctx.fillText('CLIMATE MISSION', 480, 220);
-      ctx.fillStyle = '#526b5d';
-      ctx.font = '16px Arial';
-      ctx.fillText('Visit HOME, BIKE STOP, HOT SQUARE and COMMUNITY HALL.', 480, 254);
-      ctx.font = '700 13px Arial';
-      ctx.fillText('Select START MISSION below to begin', 480, 286);
+      ctx.font = '700 15px Arial';
+      ctx.fillText('Select START MISSION below to explore this neighbourhood', 480, 451);
     }
   }
+
   function updateScore() {
     score.textContent = `${correctStations.size} / ${stations.length} correct`;
   }
