@@ -27,12 +27,12 @@ const galleryPhotos = [ {
   author: "Photo: Lovro Trošt"
 },
 {
-  src: "assets/images/sample-04.svg",
+  src: "assets/images/drought-and-water.png",
   title: "Drought and water",
-  description: "Hotter conditions can increase water stress and intensify drought impacts for some communities and ecosystems.",
+  description: "A dry cornfield with parched soil during drought.",
   action: "We can use water thoughtfully and learn how our community protects water during dry periods.",
   category: "challenge",
-  author: "Concept illustration"
+  author: "Project photo"
 },
 {
   src: "assets/images/floods-moste-komenda-2023-card.webp",
@@ -44,12 +44,12 @@ const galleryPhotos = [ {
   author: "Photo: Lovro Trošt"
 },
 {
-  src: "assets/images/sample-06.svg",
+  src: "assets/images/heat-trapping-surfaces.png",
   title: "Heat-trapping surfaces",
-  description: "Asphalt roads, car parks and paved areas absorb heat and can make our surroundings hotter on sunny days.",
-  action: "We can notice where shade and greenery could make paved areas more comfortable during hot weather.",
+  description: "A hazy view over a dense city and its built-up surroundings.",
+  action: "We can add shade and greenery to paved areas to make neighbourhoods more comfortable during hot weather.",
   category: "challenge",
-  author: "Concept illustration"
+  author: "Project photo"
 },
 {
   src: "assets/images/fossil-fuels-and-emissions.png",
