@@ -96,9 +96,9 @@ const galleryPhotos = [ {
 },
 {
   src: "assets/images/sample-12.svg",
-  title: "Our project in progress",
-  description: "We research climate change, organise our photographs and build this gallery together.",
-  action: "We can share what we learn through our photographs, sources and interactive activities.",
-  category: "behind",
+  title: "Saving energy at home",
+  description: "LED lighting and switching off devices when they are not needed are practical ways to reduce electricity use at home.",
+  action: "We can switch off unused lights and devices and choose efficient lighting.",
+  category: "solutions",
   author: "Concept illustration"
 }];
