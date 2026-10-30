@@ -602,6 +602,13 @@ document.getElementById('poll-reset').addEventListener('click', () => {
   ];
   let activeIndex = 0;
   let scrollScheduled = false;
+  let requestedChapter = null;
+  let chapterSettleTimer = null;
+
+  function releaseChapterSelection() {
+    requestedChapter = null;
+    window.clearTimeout(chapterSettleTimer);
+  }
 
   function activate(index) {
     activeIndex = Math.max(0, Math.min(steps.length - 1, index));
@@ -630,6 +637,12 @@ document.getElementById('poll-reset').addEventListener('click', () => {
     scrollScheduled = false;
     if (compact.matches || document.body.dataset.view !== 'climate-story') return;
     const readingLine = window.innerHeight * 0.53;
+    if (requestedChapter !== null) {
+      const target = steps[requestedChapter].getBoundingClientRect();
+      const targetDistance = Math.abs((target.top + target.bottom) / 2 - readingLine);
+      if (targetDistance > Math.max(45, window.innerHeight * 0.1)) return;
+      releaseChapterSelection();
+    }
     let nearest = 0;
     let smallestDistance = Infinity;
     steps.forEach((step, index) => {
@@ -654,6 +667,15 @@ document.getElementById('poll-reset').addEventListener('click', () => {
       if (compact.matches) {
         activate(index);
       } else {
+        releaseChapterSelection();
+        activate(index);
+        if (!reducedMotion.matches) {
+          requestedChapter = index;
+          chapterSettleTimer = window.setTimeout(() => {
+            releaseChapterSelection();
+            scheduleScrollSync();
+          }, 1100);
+        }
         steps[index].scrollIntoView({
           block: 'center',
           behavior: reducedMotion.matches ? 'instant' : 'smooth'
@@ -664,10 +686,26 @@ document.getElementById('poll-reset').addEventListener('click', () => {
   });
   previous.addEventListener('click', () => activate(activeIndex - 1));
   next.addEventListener('click', () => activate(activeIndex + 1));
-  compact.addEventListener('change', scheduleScrollSync);
+  function resumeReading() {
+    if (requestedChapter === null) return;
+    releaseChapterSelection();
+    scheduleScrollSync();
+  }
+  compact.addEventListener('change', () => {
+    releaseChapterSelection();
+    scheduleScrollSync();
+  });
+  window.addEventListener('wheel', resumeReading, { passive: true });
+  window.addEventListener('touchstart', resumeReading, { passive: true });
+  window.addEventListener('keydown', (event) => {
+    if (['ArrowDown', 'ArrowUp', 'PageDown', 'PageUp', 'Home', 'End', ' '].includes(event.key)) {
+      resumeReading();
+    }
+  });
   window.addEventListener('resize', scheduleScrollSync, { passive: true });
   window.addEventListener('scroll', scheduleScrollSync, { passive: true });
   window.addEventListener('app:view', (event) => {
+    releaseChapterSelection();
     if (event.detail.id === 'climate-story') {
       // The router restores the scroll position after this event.
       activate(0);
