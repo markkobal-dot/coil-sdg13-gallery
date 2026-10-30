@@ -403,6 +403,14 @@ if (mobileQuery.matches) showMobileView(window.location.hash || '#home');
   const activate = (step) => {
     activeIndex = steps.indexOf(step);
     scene.dataset.state = step.dataset.sceneState;
+    const sceneLabel = scene.querySelector('.scene-label');
+    if (sceneLabel) {
+      sceneLabel.textContent = [
+        'Where the smoke begins',
+        'A warming neighbourhood',
+        'A neighbourhood ready for heat'
+      ][activeIndex];
+    }
     steps.forEach((item) => item.classList.toggle('is-active', item === step));
     previous.disabled = activeIndex === 0;
     next.disabled = activeIndex === steps.length - 1;
@@ -438,3 +446,26 @@ if (mobileQuery.matches) showMobileView(window.location.hash || '#home');
   activate(steps[0]);
   updateMode();
 })();
+
+
+// Keep the navigation usable with a keyboard and when tapping outside it.
+document.addEventListener('keydown', (event) => {
+  if (event.key === 'Escape' && nav.classList.contains('open')) {
+    closeMobileMenu();
+    toggle.focus();
+  }
+});
+document.addEventListener('click', (event) => {
+  if (nav.classList.contains('open') && !event.target.closest('.nav')) {
+    closeMobileMenu();
+  }
+});
+window.addEventListener('mobileviewchange', (event) => {
+  for (const link of nav.querySelectorAll('a')) {
+    if (link.hash === '#' + event.detail.id) {
+      link.setAttribute('aria-current', 'location');
+    } else {
+      link.removeAttribute('aria-current');
+    }
+  }
+});
