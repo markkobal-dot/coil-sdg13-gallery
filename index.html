@@ -8,6 +8,37 @@
     <meta property="og:title" content="COIL SDG 13 Gallery | Climate Action">
     <meta property="og:description" content="Explore our student-made gallery about climate action.">
     <title>COIL SDG 13 Gallery | Climate Action</title>
+    <script id="initial-route-bootstrap">
+      // Choose the initial section before any page content can be painted.
+      (() => {
+        const routes = {
+          home: ['home'], gallery: ['gallery'],
+          problem: ['problem', 'slovenia-data'],
+          'climate-story': ['climate-story'], cities: ['cities'],
+          solutions: ['solutions', 'closing'], game: ['game'],
+          team: ['team', 'journey']
+        };
+        const aliases = { 'slovenia-data': 'problem', closing: 'solutions', journey: 'team' };
+        const requested = location.hash.slice(1);
+        const view = Object.prototype.hasOwnProperty.call(aliases, requested) ? aliases[requested]
+          : Object.prototype.hasOwnProperty.call(routes, requested) ? requested : 'home';
+        const root = document.documentElement;
+        root.dataset.initialView = view;
+        const style = document.createElement('style');
+        style.textContent = 'html[data-initial-view] main > section' +
+          routes[view].map(id => ':not(#' + id + ')').join('') +
+          '{display:none!important} html[data-restoring-scroll]{scroll-behavior:auto!important}';
+        document.head.append(style);
+        if (performance.getEntriesByType('navigation')[0]?.type === 'reload') {
+          root.setAttribute('data-restoring-scroll', '');
+          window.addEventListener('pageshow', () => {
+            requestAnimationFrame(() => requestAnimationFrame(() => {
+              root.removeAttribute('data-restoring-scroll');
+            }));
+          }, { once: true });
+        }
+      })();
+    </script>
     <link rel="stylesheet" href="style.css?v=6fb1ad4a0e">
     <link rel="stylesheet" href="editorial.css?v=c763d7dd6a">
   </head>
@@ -1025,7 +1056,7 @@
     </div>
     <script src="gallery-data.js?v=580cca3112">
     </script>
-    <script src="script.js?v=35e8fe37f1">
+    <script src="script.js?v=2e37f32b57">
     </script>
     <script src="climate-game.js?v=f7d4e24184">
     </script>

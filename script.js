@@ -1,10 +1,18 @@
 "use strict";
 
+// Let the browser restore scrolling on reload; keep the visible UI consistent.
+const isPageReload = performance.getEntriesByType('navigation')[0]?.type === 'reload';
+const reloadContext = isPageReload && history.state?.coilContext?.hash === location.hash
+  ? history.state.coilContext : null;
+
+
 // Collection: one shared data file supplies the gallery and homepage previews.
 const galleryGrid = document.getElementById('photo-grid');
 const galleryCards = [];
-let activeCategory = 'all';
-let activeAuthor = 'all';
+let activeCategory = ['all', 'challenge', 'solutions'].includes(reloadContext?.category)
+  ? reloadContext.category : 'all';
+let activeAuthor = ['all', 'lovro', 'mark'].includes(reloadContext?.author)
+  ? reloadContext.author : 'all';
 let visiblePhotoIndices = galleryPhotos.map((_, index) => index);
 const mediaType = (photo) => photo.src.endsWith('.svg') ? 'study' : 'photograph';
 
@@ -73,6 +81,9 @@ function filterCollection() {
     count + (count === 1 ? ' photograph' : ' photographs');
 }
 for (const button of document.querySelectorAll('.filter')) {
+  const selected = button.dataset.filter === activeCategory;
+  button.classList.toggle('active', selected);
+  button.setAttribute('aria-pressed', String(selected));
   button.addEventListener('click', () => {
     activeCategory = button.dataset.filter;
     for (const filter of document.querySelectorAll('.filter')) {
@@ -83,6 +94,7 @@ for (const button of document.querySelectorAll('.filter')) {
     filterCollection();
   });
 }
+document.getElementById('gallery-author').value = activeAuthor;
 document.getElementById('gallery-author').addEventListener('change', (event) => {
   activeAuthor = event.target.value;
   filterCollection();
@@ -478,7 +490,7 @@ document.getElementById('poll-reset').addEventListener('click', () => {
     menuLabel.textContent = 'Menu';
   }
 
-  function renderView(hash, focus = true) {
+  function renderView(hash, focus = true, preserveScroll = false) {
     const requested = hash.replace(/^#/, '') || 'home';
     const id = aliases[requested] || (views[requested] ? requested : 'home');
     const view = views[id];
@@ -497,7 +509,9 @@ document.getElementById('poll-reset').addEventListener('click', () => {
     window.dispatchEvent(new CustomEvent('app:view', { detail: { id, previous: currentView } }));
     currentView = id;
     requestAnimationFrame(() => {
-      if (aliases[requested]) {
+      if (preserveScroll) {
+        // Browser scroll restoration runs after the correct sections are visible.
+      } else if (aliases[requested]) {
         document.getElementById(requested)?.scrollIntoView({ behavior: 'instant', block: 'start' });
       } else {
         window.scrollTo({ top: 0, behavior: 'instant' });
@@ -545,10 +559,7 @@ document.getElementById('poll-reset').addEventListener('click', () => {
   window.matchMedia('(min-width: 1025px)').addEventListener('change', (event) => {
     if (event.matches) closeMenu();
   });
-  if ('scrollRestoration' in history) history.scrollRestoration = 'manual';
-  if (performance.getEntriesByType('navigation')[0]?.type === 'reload') {
-    history.replaceState(null, '', location.pathname + location.search + '#home');
-  }
+  if ('scrollRestoration' in history) history.scrollRestoration = 'auto';
 
   let progressScheduled = false;
   function updateProgress() {
@@ -563,7 +574,7 @@ document.getElementById('poll-reset').addEventListener('click', () => {
       requestAnimationFrame(updateProgress);
     }
   }, { passive: true });
-  renderView(location.hash, false);
+  renderView(location.hash, false, isPageReload);
 })();
 
 // Gentle, one-time reveals; no scroll animation runs continuously.
@@ -723,7 +734,7 @@ document.getElementById('poll-reset').addEventListener('click', () => {
       activate(0);
     }
   });
-  activate(0);
+  activate(Number.isInteger(reloadContext?.chapter) ? reloadContext.chapter : 0);
   scheduleScrollSync();
 })();
 
@@ -731,6 +742,9 @@ document.getElementById('poll-reset').addEventListener('click', () => {
 (() => {
   const slider = document.getElementById('paris-comparison');
   if (slider) {
+    if (Number.isFinite(reloadContext?.comparison)) {
+      slider.value = String(Math.max(0, Math.min(100, reloadContext.comparison)));
+    }
     const updateComparison = () => {
       const value = Math.max(0, Math.min(100, Number(slider.value)));
       document.getElementById('paris-before-overlay').style.clipPath = `inset(0 ${100 - value}% 0 0)`;
@@ -745,6 +759,13 @@ document.getElementById('poll-reset').addEventListener('click', () => {
 // City case studies use native buttons; only the incoming case briefly animates.
 (() => {
   const buttons = [...document.querySelectorAll('[data-city]')];
+  if (reloadContext?.city && buttons.some(button => button.dataset.city === reloadContext.city)) {
+    for (const button of buttons) {
+      const selected = button.dataset.city === reloadContext.city;
+      button.setAttribute('aria-pressed', String(selected));
+      document.getElementById('city-' + button.dataset.city).hidden = !selected;
+    }
+  }
   const reducedMotion = matchMedia('(prefers-reduced-motion: reduce)');
   let cityAnimation = null;
 
@@ -775,3 +796,36 @@ document.getElementById('poll-reset').addEventListener('click', () => {
   reducedMotion.addEventListener('change', stopCityAnimation);
   window.addEventListener('app:view', stopCityAnimation);
 })();
+
+// Per-history-entry context: no cookies, account or persistent storage required.
+(() => {
+  const details = [...document.querySelectorAll('details')];
+  for (const saved of reloadContext?.openDetails || []) {
+    const item = details[saved.index];
+    if (item?.querySelector('summary')?.textContent.trim() === saved.label) {
+      item.setAttribute('open', '');
+    }
+  }
+  function rememberContext() {
+    const city = document.querySelector('[data-city][aria-pressed="true"]')?.dataset.city;
+    const chapter = Number(document.querySelector('[data-story-stage][aria-pressed="true"]')?.dataset.storyStage);
+    const openDetails = details.flatMap((item, index) => item.getAttribute('open') !== null
+      ? [{ index, label: item.querySelector('summary')?.textContent.trim() }] : []);
+    try {
+      history.replaceState({ ...history.state,
+        coilContext: {
+          hash: location.hash, city, chapter, openDetails,
+          category: activeCategory, author: activeAuthor,
+          comparison: Number(document.getElementById('paris-comparison')?.value)
+        }
+      }, '', location.pathname + location.search + location.hash);
+    } catch {
+      // Native scroll restoration still works if history writes are unavailable.
+    }
+  }
+  window.addEventListener('pagehide', rememberContext);
+  window.addEventListener('beforeunload', rememberContext);
+})();
+
+// Initial visibility is now owned by the fully initialised router.
+document.documentElement.removeAttribute('data-initial-view');
