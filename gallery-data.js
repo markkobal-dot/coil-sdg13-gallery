@@ -1,6 +1,7 @@
 const galleryPhotos = [ {
   src: "assets/images/thermometer-33c-lovro-2024.webp",
   fullSrc: "assets/images/thermometer-33c-lovro-2024.webp",
+  objectPosition: "center 65%",
   title: "Rising temperatures and urban heat",
   description: "A thermometer shows 33°C in early September. This is a local reading, not an official weather-station measurement.",
   action: "We can map shady routes near us and notice where trees or cool public spaces could help.",
@@ -108,8 +109,8 @@ const galleryPhotos = [ {
 },
 {
   src: "assets/images/saving-energy-at-home.png",
-  title: "Saving energy at home",
-  description: "My photograph shows solar panels on a home roof. They generate electricity from sunlight, one way to reduce reliance on fossil-fuel electricity.",
+  title: "Solar energy at home",
+  description: "My photograph shows solar panels on a house roof. They generate electricity from sunlight, one way to reduce reliance on fossil-fuel electricity.",
   action: "We can reduce energy use at home and consider renewable electricity where available.",
   category: "solutions",
   photographer: "mark",

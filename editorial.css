@@ -3457,3 +3457,163 @@ body[data-view="team"] .journey-section {
 @media (min-width: 1025px) and (max-width: 1350px) { .nav-edition { display: none; } #navlinks { gap: 18px; } }
 @media (max-width: 800px) { .city-case-layout { grid-template-columns: 1fr; gap: 20px; } }
 @media (max-width: 540px) { .city-picker { gap: 6px; } .city-picker button { padding: 12px 8px; font-size: 14px; } .city-picker button span { font-size: 10px; } }
+
+/* Final spacing and reading pass; photograph frames keep their existing ratios. */
+.cities-section .section-heading {
+  margin-bottom: 32px;
+}
+.city-picker {
+  margin: 0 0 32px;
+}
+.city-picker button {
+  min-height: 82px;
+}
+.city-panel-heading {
+  margin: 0 0 24px;
+}
+.city-case-layout {
+  gap: clamp(24px, 4vw, 48px);
+}
+.city-case-layout > div,
+.city-panel {
+  min-width: 0;
+}
+.city-photo figcaption,
+.climate-photo figcaption {
+  padding: 12px 0 0;
+  font-size: 12px;
+  line-height: 1.75;
+  overflow-wrap: anywhere;
+}
+.cities-section .city-photo figcaption,
+.slovenia-data .climate-photo figcaption,
+.city-footnote {
+  color: #4f5c54;
+}
+.city-facts > div {
+  padding: 18px 0;
+}
+.city-facts dt {
+  margin-bottom: 10px;
+  font-size: 11px;
+}
+.city-facts dd {
+  font-size: 15px;
+  line-height: 1.8;
+}
+.city-panel .local-evidence-item p {
+  margin: 10px 0;
+  font-size: 13px;
+  line-height: 1.8;
+}
+.city-panel .local-evidence a,
+.glacier-source,
+.video-external,
+.city-footnote,
+.slovenia-context {
+  font-size: 12px;
+  line-height: 1.75;
+}
+.city-panel .text-link,
+.local-evidence-item a,
+.city-photo figcaption a {
+  text-underline-offset: 4px;
+}
+.city-comparison-table table {
+  font-size: 13px;
+}
+.city-comparison-table th,
+.city-comparison-table td {
+  padding: 16px;
+}
+.photo-card .info .photo-author {
+  display: inline-block;
+  margin-top: 10px;
+  font-size: 11px;
+  line-height: 1.6;
+  letter-spacing: .04em;
+}
+.home-photo .photo-credit {
+  font-size: 12px;
+  line-height: 1.6;
+}
+.cities-section .city-comparison .photo-zoom:hover img {
+  transform: none;
+}
+.city-comparison .comparison-label {
+  line-height: 1.4;
+}
+@media (max-width: 380px) {
+  .city-picker {
+    grid-template-columns: 1fr;
+  }
+  .city-picker button {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 16px;
+    min-height: 60px;
+  }
+  .city-picker button span {
+    max-width: 55%;
+    margin-top: 0;
+    text-align: right;
+  }
+}
+@media (max-width: 800px) {
+  .city-case-layout {
+    gap: 28px;
+  }
+  .city-panel-heading {
+    margin-bottom: 20px;
+  }
+}
+@media (max-width: 640px) {
+  .section-heading,
+  .slovenia-data-heading {
+    gap: 20px;
+    margin-bottom: 32px;
+  }
+  .section-heading > p,
+  .slovenia-data-heading > p,
+  .city-facts dd {
+    font-size: 16px;
+    line-height: 1.75;
+  }
+  .city-picker {
+    gap: 8px;
+    margin-bottom: 28px;
+  }
+  .city-picker button {
+    padding: 14px 10px;
+    font-size: 15px;
+    overflow-wrap: anywhere;
+  }
+  .city-picker button span {
+    font-size: 11px;
+    line-height: 1.5;
+  }
+  .city-photo figcaption,
+  .climate-photo figcaption,
+  .city-panel .local-evidence a,
+  .city-panel .local-evidence-item p,
+  .city-footnote,
+  .glacier-source,
+  .video-external,
+  .slovenia-context {
+    font-size: 13px;
+  }
+  .photo-card .info .photo-author {
+    font-size: 12px;
+  }
+  .city-facts dt {
+    font-size: 12px;
+  }
+  .comparison-control {
+    font-size: 12px;
+    gap: 12px;
+  }
+  .comparison-control input {
+    min-height: 44px;
+  }
+}

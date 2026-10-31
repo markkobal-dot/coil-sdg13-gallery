@@ -45,16 +45,16 @@
       }]
     },
     {
-      prompt: 'Your family needs a new light bulb. Which option uses less electricity for similar light?',
+      prompt: 'Your family needs a new light bulb. Which option uses less electricity for a similar amount of light?',
       options: [ {
         label: 'An efficient LED bulb',
         correct: true,
-        feedback: 'Correct. LEDs use less electricity than older incandescent bulbs for similar light.'
+        feedback: 'Correct. LEDs use less electricity than older incandescent bulbs for a similar amount of light.'
       },
       {
         label: 'An old incandescent bulb',
         correct: false,
-        feedback: 'Older incandescent bulbs use more electricity for similar light. Try another choice.'
+        feedback: 'Older incandescent bulbs use more electricity for a similar amount of light. Try another choice.'
       },
       {
         label: 'Several bulbs where one is enough',
@@ -118,7 +118,7 @@
       {
         label: 'Make several separate car trips',
         correct: false,
-        feedback: 'Combining errands can avoid extra journeys. Try another option.'
+        feedback: 'Making several separate car trips can mean extra journeys. Try another option.'
       }]
     }]
   },
@@ -200,7 +200,7 @@
       {
         label: 'Use older, less efficient bulbs',
         correct: false,
-        feedback: 'Less efficient bulbs use more electricity for similar light. Try another option.'
+        feedback: 'Less efficient bulbs use more electricity for a similar amount of light. Try another option.'
       }]
     },
     {
@@ -641,7 +641,7 @@
           if (near >= 0) message.textContent = `You are near ${stations[near].place}. Press Interact to answer.`;
           else {
             const next = nearestStation();
-            if (next) message.textContent = `Next station: ${next.station.place}, ${next.distance} steps away.`;
+            if (next) message.textContent = `Next station: ${next.station.place}, ${next.distance} ${next.distance === 1 ? 'step' : 'steps'} away.`;
           }
         }
       }
@@ -770,7 +770,7 @@
     const index = stations.findIndex((station, i) => !completed.has(i) && Math.abs(station.x - player.x) + Math.abs(station.y - player.y) <= 1);
     if (index < 0) {
       const next = nearestStation();
-      message.textContent = next ? `Find the ${next.station.place} marker, ${next.distance} steps away.` : 'All stations are complete. Play again to repeat the mission.';
+      message.textContent = next ? `Find the ${next.station.place} marker, ${next.distance} ${next.distance === 1 ? 'step' : 'steps'} away.` : 'All stations are complete. Play again to repeat the mission.';
       return;
     }
     showStationQuestion(index);
@@ -804,7 +804,7 @@
       feedback.className = 'game-feedback is-correct';
       message.textContent = `Correct at ${station.place}. Read the climate impact, then continue.`;
     } else {
-      feedback.textContent = `That answer is locked. ${selectedImpact} A more climate-friendly choice is “${correctOption.label}.” ${correctOption.feedback.replace(/^Correct\.\s*/i, '')}`;
+      feedback.textContent = `That answer is locked. ${selectedImpact} A more climate-friendly choice is “${correctOption.label}”. ${correctOption.feedback.replace(/^Correct\.\s*/i, '')}`;
       feedback.className = 'game-feedback is-wrong';
       message.textContent = `Answer locked at ${station.place}. Read the explanation, then continue to the next stop.`;
     }
@@ -826,7 +826,7 @@
       renderSummary();
     } else {
       const next = nearestStation();
-      message.textContent = `Next up: ${next.station.place}, ${next.distance} steps away. Explore the map.`;
+      message.textContent = `Next up: ${next.station.place}, ${next.distance} ${next.distance === 1 ? 'step' : 'steps'} away. Explore the map.`;
       startButton.textContent = 'Restart mission';
     }
     render();

@@ -70,7 +70,7 @@ function filterCollection() {
   const count = visiblePhotoIndices.length;
   document.getElementById('gallery-empty').hidden = count > 0;
   document.getElementById('gallery-count').textContent =
-    count + (count === 1 ? ' perspective' : ' perspectives');
+    count + (count === 1 ? ' photograph' : ' photographs');
 }
 for (const button of document.querySelectorAll('.filter')) {
   button.addEventListener('click', () => {
@@ -269,7 +269,7 @@ window.addEventListener('app:view', (event) => {
 (() => {
 const questions = [
   {
-    q: 'An exposed bus stop needs relief this summer. Which option most directly provides shade now?',
+    q: 'People at an exposed bus stop need relief from the heat this summer. Which option most directly provides shade now?',
     options: [
       'Plant young trees and wait for their canopies to grow',
       'Install a well-ventilated shade structure and plan suitable tree planting',
@@ -279,7 +279,7 @@ const questions = [
     explanation: 'Built shade can block direct sun immediately. Trees can add shade and other benefits as they grow. Lighter paving can help address surface heating, but does not itself shade a waiting passenger.'
   },
   {
-    q: 'A growing town funds planting and adds solar panels. What would best show whether its wider climate impact is improving?',
+    q: 'A growing town funds tree planting and adds solar panels. What would best show whether its wider climate impact is improving?',
     options: [
       'Track emissions, land cover and tree survival over time alongside the projects',
       'Compare the amount of money spent with another town',
@@ -742,16 +742,36 @@ document.getElementById('poll-reset').addEventListener('click', () => {
   }
 })();
 
-// City case studies use ordinary buttons and show one case at a time.
+// City case studies use native buttons; only the incoming case briefly animates.
 (() => {
   const buttons = [...document.querySelectorAll('[data-city]')];
+  const reducedMotion = matchMedia('(prefers-reduced-motion: reduce)');
+  let cityAnimation = null;
+
+  function stopCityAnimation() {
+    cityAnimation?.cancel();
+    cityAnimation = null;
+  }
+
   for (const button of buttons) {
     button.addEventListener('click', () => {
+      if (button.getAttribute('aria-pressed') === 'true') return;
+      stopCityAnimation();
       for (const option of buttons) {
         const selected = option === button;
         option.setAttribute('aria-pressed', String(selected));
         document.getElementById('city-' + option.dataset.city).hidden = !selected;
       }
+      const panel = document.getElementById('city-' + button.dataset.city);
+      if (!reducedMotion.matches && typeof panel.animate === 'function') {
+        cityAnimation = panel.animate([
+          { opacity: 0, transform: 'translateY(4px)' },
+          { opacity: 1, transform: 'translateY(0)' }
+        ], { duration: 180, easing: 'ease-out' });
+      }
     });
   }
+
+  reducedMotion.addEventListener('change', stopCityAnimation);
+  window.addEventListener('app:view', stopCityAnimation);
 })();
