@@ -102,7 +102,7 @@ nav a:hover,.text-link:hover {
   z-index: 2
 }
 .eyebrow,.kicker,.small-tag {
-  font-size: 11px;
+  font-size: 13px;
   letter-spacing: .18em;
   font-weight: 800
 }
@@ -120,7 +120,7 @@ nav a:hover,.text-link:hover {
   padding: 8px 15px;
   width: max-content;
   max-width: 100%;
-  font-size: 12px;
+  font-size: 13px;
   font-weight: 800
 }
 .sdg-chip span {
@@ -172,7 +172,7 @@ nav a:hover,.text-link:hover {
   color: white
 }
 .hero-hint,.hint {
-  font-size: 12px;
+  font-size: 13px;
   color: #72867d
 }
 .hero-hint {
@@ -264,7 +264,7 @@ nav a:hover,.text-link:hover {
   line-height: 1.2
 }
 .fact-bottom {
-  font-size: 11px;
+  font-size: 13px;
   letter-spacing: .15em;
   font-weight: 800;
   margin-top: 20px
@@ -337,7 +337,7 @@ nav a:hover,.text-link:hover {
   font-size: 13px
 }
 .photo-card .info span {
-  font-size: 10px;
+  font-size: 13px;
   font-weight: 800;
   letter-spacing: .1em;
   color: #6a9976
@@ -356,7 +356,7 @@ nav a:hover,.text-link:hover {
 .quiz-meta {
   display: flex;
   justify-content: space-between;
-  font-size: 12px;
+  font-size: 13px;
   font-weight: 800;
   margin-top: 24px
 }
@@ -429,7 +429,7 @@ nav a:hover,.text-link:hover {
   margin-top: 12px
 }
 .results-note {
-  font-size: 12px;
+  font-size: 13px;
   color: var(--muted)
 }
 .poll-row {
@@ -438,7 +438,7 @@ nav a:hover,.text-link:hover {
 .poll-row-top {
   display: flex;
   justify-content: space-between;
-  font-size: 12px;
+  font-size: 13px;
   font-weight: 700
 }
 .poll-track {
@@ -854,7 +854,7 @@ button:focus-visible,a:focus-visible {
 .un-disclaimer {
   flex-basis: 100%;
   max-width: 560px;
-  font-size: 10px;
+  font-size: 13px;
   line-height: 1.45;
   color: var(--muted);
 }
@@ -919,7 +919,7 @@ footer {
 .game-instructions {
   margin: 0;
   color: var(--muted);
-  font-size: 12px;
+  font-size: 13px;
 }
 .game-choice {
   margin-top: 14px;
@@ -979,7 +979,7 @@ footer {
   border-radius: 8px;
   background: #f5f8f3;
   color: #315943;
-  font-size: 9px;
+  font-size: 13px;
   font-weight: 800;
   touch-action: manipulation;
 }
@@ -1032,7 +1032,7 @@ footer {
   padding: 7px 11px;
   background: #f5f8f3;
   color: #315943;
-  font-size: 11px;
+  font-size: 13px;
   font-weight: 800;
 }
 .game-audio-toggle[aria-pressed="true"] {
@@ -1413,7 +1413,7 @@ footer {
 }
 .source-links span {
   color: #397d63;
-  font-size: 10px;
+  font-size: 13px;
   font-weight: 800;
   letter-spacing: .16em;
 }
@@ -1574,7 +1574,7 @@ footer {
 }
 .temperature-chart figcaption span {
   color: var(--muted);
-  font-size: 12px;
+  font-size: 13px;
 }
 .temperature-bars {
   display: grid;
@@ -1596,7 +1596,7 @@ footer {
 }
 .bar-value {
   color: #264b3d;
-  font-size: 12px;
+  font-size: 13px;
   font-weight: 800;
   font-variant-numeric: tabular-nums;
 }
@@ -1624,11 +1624,11 @@ footer {
 }
 .bar-year {
   color: #4e625b;
-  font-size: 12px;
+  font-size: 13px;
   font-weight: 800;
 }
 .chart-note, .chart-source {
-  font-size: 11px;
+  font-size: 13px;
 }
 .chart-note {
   margin: 14px 0 2px;
@@ -1669,7 +1669,7 @@ footer {
   width: fit-content;
   margin-top: 9px;
   color: #326c56;
-  font-size: 12px;
+  font-size: 13px;
   font-weight: 800;
   text-underline-offset: 3px;
 }
@@ -1682,7 +1682,7 @@ footer {
 .glacier-chart figcaption {
   margin-bottom: 20px;
   color: #536b5e;
-  font-size: 11px;
+  font-size: 13px;
   font-weight: 900;
   letter-spacing: .13em;
 }
@@ -1719,7 +1719,7 @@ footer {
 .glacier-chart > p {
   margin: 18px 0 0;
   color: #687970;
-  font-size: 11px;
+  font-size: 13px;
   line-height: 1.5;
 }
 .flood-card {
@@ -2096,14 +2096,14 @@ footer {
   border-radius: 30px;
   background: #153e35d9;
   color: #fff;
-  font-size: 11px;
+  font-size: 13px;
   font-weight: 800;
   letter-spacing: .05em;
 }
 .scene-hint {
   margin: 10px 4px 0;
   color: #62746c;
-  font-size: 12px;
+  font-size: 13px;
 }
 .shift-step {
   min-height: 48vh;
@@ -2125,7 +2125,7 @@ footer {
 }
 .shift-step .step-index {
   color: #ad5f48;
-  font-size: 10px;
+  font-size: 13px;
   font-weight: 800;
   letter-spacing: .17em;
 }
@@ -2171,7 +2171,7 @@ footer {
   .scene-label {
     left: 9px;
     bottom: 8px;
-    font-size: 9px;
+    font-size: 13px;
   }
   .shift-step {
     padding: 26px 18px;
@@ -2235,7 +2235,7 @@ footer {
     border-radius: 24px;
     background: #fff;
     color: var(--green);
-    font-size: 12px;
+    font-size: 13px;
     font-weight: 800;
   }
   .story-step-button:disabled {
@@ -2244,7 +2244,7 @@ footer {
   }
   #story-progress {
     color: var(--muted);
-    font-size: 11px;
+    font-size: 13px;
     font-weight: 800;
     white-space: nowrap;
   }
@@ -2286,12 +2286,12 @@ footer {
     border-radius: 20px;
     background: #fff;
     color: var(--green);
-    font-size: 12px;
+    font-size: 13px;
     font-weight: 800;
   }
   .mobile-view-bar span {
     color: var(--muted);
-    font-size: 11px;
+    font-size: 13px;
     font-weight: 800;
     letter-spacing: .08em;
     text-transform: uppercase;
@@ -2387,7 +2387,7 @@ footer {
 .climate-photo figcaption {
   padding: 10px 13px;
   color: #64756c;
-  font-size: 11px;
+  font-size: 13px;
   line-height: 1.5;
 }
 .climate-photo figcaption a {
@@ -2476,7 +2476,7 @@ footer {
 .photo-card .info a.photo-author {
   display: inline-block;
   color: #6a9976;
-  font-size: 10px;
+  font-size: 13px;
   font-weight: 800;
   letter-spacing: .1em;
   text-decoration: none;
@@ -2508,7 +2508,7 @@ footer {
 .hero-chart-heading > span {
   display: block;
   color: #b96549;
-  font-size: 10px;
+  font-size: 13px;
   font-weight: 800;
   letter-spacing: .16em;
 }
@@ -2533,7 +2533,7 @@ footer {
 .hero-chart figcaption {
   margin-top: 11px;
   color: #5c6e66;
-  font-size: 9px;
+  font-size: 13px;
   line-height: 1.45;
 }
 .hero-chart figcaption a {
@@ -2571,7 +2571,7 @@ footer {
     font-size: 19px;
   }
   .hero-chart figcaption {
-    font-size: 9px;
+    font-size: 13px;
   }
 }
 /* Homepage hook and local temperature fact */ .hero-inner {
@@ -2607,7 +2607,7 @@ footer {
 }
 .hero-local-stat span {
   color: #e0eae2;
-  font-size: 12px;
+  font-size: 13px;
   line-height: 1.45;
 }
 .hero-local-stat a {

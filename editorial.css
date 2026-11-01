@@ -67,7 +67,7 @@ a, button {
   letter-spacing: -.06em;
 }
 .brand-light {
-  font-size: 10px;
+  font-size: 13px;
   letter-spacing: .08em;
   margin-left: 4px;
 }
@@ -77,7 +77,7 @@ a, button {
 #navlinks a {
   position: relative;
   padding: 8px 0;
-  font-size: 12px;
+  font-size: 13px;
   font-weight: 500;
 }
 #navlinks a::after {
@@ -100,7 +100,7 @@ a, button {
   height: 2px;
 }
 .eyebrow, .kicker, .small-tag {
-  font-size: 10px;
+  font-size: 13px;
   line-height: 1.5;
   letter-spacing: .14em;
   font-weight: 700;
@@ -199,7 +199,7 @@ a, button {
   align-items: center;
   gap: 15px;
   color: var(--ink);
-  font-size: 12px;
+  font-size: 13px;
   font-weight: 600;
   text-decoration: none;
 }
@@ -221,7 +221,7 @@ a, button {
 }
 .hero-local-stat span, .hero-local-stat a {
   color: var(--muted);
-  font-size: 10px;
+  font-size: 13px;
 }
 .hero-visual {
   position: relative;
@@ -252,7 +252,7 @@ a, button {
   justify-content: space-between;
   gap: 16px;
   color: #fff;
-  font-size: 9px;
+  font-size: 13px;
   line-height: 1.5;
   letter-spacing: .12em;
 }
@@ -275,7 +275,7 @@ a, button {
   border-radius: 0;
   background: none;
   color: #fff;
-  font-size: 9px;
+  font-size: 13px;
   letter-spacing: .08em;
   line-height: 1.8;
 }
@@ -294,7 +294,7 @@ a, button {
   padding: 16px var(--gutter);
   border-top: 1px solid var(--line);
   border-bottom: 1px solid var(--line);
-  font-size: 10px;
+  font-size: 13px;
   font-weight: 500;
   letter-spacing: .08em;
 }
@@ -338,7 +338,7 @@ a, button {
 }
 .hero-chart-heading > span {
   color: var(--accent);
-  font-size: 9px;
+  font-size: 13px;
 }
 .hero-chart-heading h2 {
   font-size: 16px;
@@ -349,7 +349,7 @@ a, button {
   border-radius: 0;
 }
 .hero-chart figcaption {
-  font-size: 10px;
+  font-size: 13px;
   color: var(--muted);
 }
 /* Shared editorial rhythm */
@@ -437,7 +437,7 @@ a, button {
   margin-top: 28px;
 }
 .source-links a {
-  font-size: 11px;
+  font-size: 13px;
 }
 /* Interactive climate story */
 .climate-shift {
@@ -462,7 +462,7 @@ a, button {
 }
 .scene-label {
   border-radius: 3px;
-  font-size: 9px;
+  font-size: 13px;
   letter-spacing: .06em;
 }
 .shift-step {
@@ -479,7 +479,7 @@ a, button {
   color: var(--accent);
 }
 .scene-hint {
-  font-size: 11px;
+  font-size: 13px;
   color: var(--muted);
 }
 /* Research and data */
@@ -562,10 +562,10 @@ a, button {
   background: #eef1e8;
 }
 .glacier-chart p {
-  font-size: 11px;
+  font-size: 13px;
 }
 .glacier-source {
-  font-size: 11px;
+  font-size: 13px;
 }
 .climate-photo {
   border-radius: 3px;
@@ -587,7 +587,7 @@ a, button {
   justify-content: space-between;
   cursor: pointer;
   padding: 18px 0;
-  font-size: 12px;
+  font-size: 13px;
   font-weight: 600;
   list-style: none;
 }
@@ -609,7 +609,7 @@ a, button {
   font-size: 13px;
 }
 .slovenia-context {
-  font-size: 11px;
+  font-size: 13px;
   max-width: 700px;
 }
 /* The photographic collection */
@@ -643,7 +643,7 @@ a, button {
   border-radius: 3px;
   padding: 10px 20px;
   color: #d7e1da;
-  font-size: 11px;
+  font-size: 13px;
   font-weight: 500;
 }
 .filter:hover, .filter.active {
@@ -710,7 +710,7 @@ a, button {
 .photo-card .info span,
 .photo-card .info a.photo-author {
   color: #c3d29d;
-  font-size: 9px;
+  font-size: 13px;
   font-weight: 500;
   letter-spacing: .08em;
 }
@@ -738,7 +738,7 @@ a, button {
 }
 .game-audio-toggle {
   border-radius: 3px;
-  font-size: 11px;
+  font-size: 13px;
 }
 #climate-game {
   border-radius: 3px;
@@ -771,7 +771,7 @@ a, button {
 }
 .quiz-meta {
   color: var(--muted);
-  font-size: 11px;
+  font-size: 13px;
 }
 .progress-track, #quiz-bar, .poll-track, .poll-fill {
   border-radius: 1px;
@@ -936,10 +936,10 @@ footer {
   padding: 40px var(--gutter);
   background: var(--cream);
   border-top: 0;
-  font-size: 11px;
+  font-size: 13px;
 }
 footer strong {
-  font-size: 12px;
+  font-size: 13px;
 }
 footer p {
   color: var(--muted);
@@ -1009,7 +1009,7 @@ footer p {
     border-radius: 3px;
     background: transparent;
     color: var(--ink);
-    font-size: 12px;
+    font-size: 13px;
   }
   #navlinks {
     display: grid;
@@ -1124,7 +1124,7 @@ footer p {
     font-size: 13px;
   }
   .brand-light {
-    font-size: 8px;
+    font-size: 13px;
     margin-left: 0;
   }
   .brand-mark {
@@ -1137,7 +1137,7 @@ footer p {
     padding: 42px 24px 32px;
   }
   .hero-inner > .eyebrow {
-    font-size: 8px;
+    font-size: 13px;
     letter-spacing: .1em;
   }
   .hero h1 {
@@ -1154,10 +1154,10 @@ footer p {
   }
   .hero .btn {
     padding: 12px 18px;
-    font-size: 12px;
+    font-size: 13px;
   }
   .hero-secondary {
-    font-size: 11px;
+    font-size: 13px;
     gap: 8px;
   }
   .hero-local-stat {
@@ -1168,7 +1168,7 @@ footer p {
     font-size: 32px;
   }
   .hero-local-stat span, .hero-local-stat a {
-    font-size: 9px;
+    font-size: 13px;
   }
   .hero-visual {
     min-height: 300px;
@@ -1176,12 +1176,12 @@ footer p {
   .hero-photo-top, .hero-visual > figcaption {
     left: 20px;
     right: 20px;
-    font-size: 8px;
+    font-size: 13px;
   }
   .hero .sdg-chip {
     left: 20px;
     bottom: 78px;
-    font-size: 8px;
+    font-size: 13px;
   }
   .hero .sdg-icon {
     width: 54px;
@@ -1191,7 +1191,7 @@ footer p {
     gap: 16px;
     padding: 18px 24px;
     flex-wrap: wrap;
-    font-size: 8px;
+    font-size: 13px;
     min-height: 60px;
   }
   .hero-index > span {
@@ -1210,7 +1210,7 @@ footer p {
     font-size: 14px;
   }
   .hero-chart figcaption {
-    font-size: 9px;
+    font-size: 13px;
   }
   .section, .climate-shift, .slovenia-data {
     padding: 54px 24px;
@@ -1252,7 +1252,7 @@ footer p {
     font-size: 21px;
   }
   .filter {
-    font-size: 10px;
+    font-size: 13px;
     padding: 9px 14px;
   }
   .filters {
@@ -1298,13 +1298,13 @@ footer p {
     gap: 10px;
   }
   .game-topline .small-tag {
-    font-size: 8px;
+    font-size: 13px;
   }
   .game-score {
-    font-size: 11px;
+    font-size: 13px;
   }
   .game-audio-toggle {
-    font-size: 10px;
+    font-size: 13px;
   }
   .game-below {
     align-items: stretch;
@@ -1356,11 +1356,11 @@ footer p {
   }
   .mobile-view-bar {
     padding: 12px 0 2px;
-    font-size: 10px;
+    font-size: 13px;
   }
   .mobile-view-bar button {
     border-radius: 3px;
-    font-size: 11px;
+    font-size: 13px;
   }
 }
 @media (prefers-reduced-motion: reduce) {
@@ -1426,7 +1426,7 @@ main > section {
 .brand .brand-light {
   display: block;
   margin: 0;
-  font-size: 8px;
+  font-size: 13px;
   letter-spacing: .15em;
 }
 .brand-mark {
@@ -1436,7 +1436,7 @@ main > section {
 }
 .nav-edition {
   color: var(--muted);
-  font-size: 8px;
+  font-size: 13px;
   letter-spacing: .1em;
 }
 #navlinks {
@@ -1444,7 +1444,7 @@ main > section {
 }
 #navlinks a {
   color: var(--muted);
-  font-size: 12px;
+  font-size: 13px;
 }
 #navlinks a[aria-current="page"] {
   color: var(--ink);
@@ -1460,7 +1460,7 @@ main > section {
   border-bottom: 1px solid var(--line);
   color: var(--muted);
   background: var(--cream);
-  font-size: 11px;
+  font-size: 13px;
 }
 .view-bar a {
   text-decoration: none;
@@ -1474,7 +1474,7 @@ main > section {
 }
 .view-bar-note {
   margin-left: auto;
-  font-size: 8px;
+  font-size: 13px;
   letter-spacing: .12em;
 }
 .scroll-progress {
@@ -1504,7 +1504,7 @@ main > section {
 }
 .hero-index {
   min-height: 58px;
-  font-size: 8px;
+  font-size: 13px;
 }
 .hero-index > span {
   color: var(--muted);
@@ -1601,7 +1601,7 @@ main > section {
   display: block;
   margin: 22px 0 9px;
   color: var(--accent);
-  font-size: 8px;
+  font-size: 13px;
   font-weight: 600;
   letter-spacing: .12em;
 }
@@ -1614,7 +1614,7 @@ main > section {
 .photo-credit {
   display: block;
   color: var(--muted);
-  font-size: 10px;
+  font-size: 13px;
 }
 .home-perspective {
   padding: 78px var(--gutter);
@@ -1630,7 +1630,7 @@ main > section {
   color: #5c704d;
 }
 .home-perspective > span:last-child {
-  font-size: 10px;
+  font-size: 13px;
   color: var(--muted);
 }
 .discovery-grid {
@@ -1651,7 +1651,7 @@ main > section {
   text-decoration: none;
 }
 .discovery-index {
-  font-size: 9px;
+  font-size: 13px;
   font-weight: 600;
   letter-spacing: .1em;
   color: var(--accent);
@@ -1705,7 +1705,7 @@ main > section {
   align-items: center;
   gap: 12px;
   color: #c1cdbf;
-  font-size: 10px;
+  font-size: 13px;
 }
 #gallery-media,
 #gallery-author {
@@ -1725,7 +1725,7 @@ main > section {
   gap: 20px;
   padding: 19px 0 30px;
   color: #a9bdaf;
-  font-size: 9px;
+  font-size: 13px;
   letter-spacing: .09em;
 }
 .photo-open::after {
@@ -1754,7 +1754,7 @@ main > section {
   grid-column: 2;
   grid-row: 2;
   color: #bdcdaf;
-  font-size: 9px;
+  font-size: 13px;
   font-weight: 400;
   letter-spacing: .035em;
 }
@@ -1804,7 +1804,7 @@ body[data-view="team"] .journey-section {
 }
 .mission-invitation .small-tag {
   color: #ccdb9b;
-  font-size: 9px;
+  font-size: 13px;
 }
 .mission-invitation h3 {
   margin: 22px 0 14px;
@@ -1830,13 +1830,13 @@ body[data-view="team"] .journey-section {
   align-items: center;
   gap: 24px;
   margin-top: 25px;
-  font-size: 12px;
+  font-size: 13px;
   color: #e7efab;
 }
 .poll-status {
   min-height: 0;
   color: #9a3528;
-  font-size: 12px;
+  font-size: 13px;
 }
 .poll-status:empty {
   display: none;
@@ -1868,7 +1868,7 @@ body[data-view="team"] .journey-section {
   height: 40px;
   border: 1px solid #b7c9ac;
   border-radius: 50%;
-  font-size: 12px;
+  font-size: 13px;
   color: var(--green);
 }
 .video-launch > span:nth-child(2) {
@@ -1876,12 +1876,12 @@ body[data-view="team"] .journey-section {
   gap: 5px;
 }
 .video-launch strong {
-  font-size: 12px;
+  font-size: 13px;
   font-weight: 600;
 }
 .video-launch > span > span {
   color: var(--muted);
-  font-size: 10px;
+  font-size: 13px;
 }
 .video-launch-arrow {
   margin-left: auto;
@@ -1895,7 +1895,7 @@ body[data-view="team"] .journey-section {
   display: inline-block;
   margin: 14px 0 0;
   color: var(--muted);
-  font-size: 10px;
+  font-size: 13px;
   text-underline-offset: 4px;
 }
 .video-slot.has-video iframe {
@@ -1927,7 +1927,7 @@ body[data-view="team"] .journey-section {
   border-bottom: 1px solid #ffffff20;
 }
 #lightbox-counter {
-  font-size: 10px;
+  font-size: 13px;
   letter-spacing: .12em;
   color: #bdcbb7;
 }
@@ -1982,7 +1982,7 @@ body[data-view="team"] .journey-section {
 }
 .viewer-copy .kicker {
   color: #c3d493;
-  font-size: 9px;
+  font-size: 13px;
 }
 #lightbox-title {
   margin: 20px 0;
@@ -1998,7 +1998,7 @@ body[data-view="team"] .journey-section {
 #lightbox-caption {
   margin: 25px 0 0;
   color: #bdcba9;
-  font-size: 11px;
+  font-size: 13px;
   line-height: 1.7;
   white-space: pre-line;
 }
@@ -2023,7 +2023,7 @@ body[data-view="team"] .journey-section {
 .viewer-key-hint {
   display: block;
   margin-top: 22px;
-  font-size: 8px;
+  font-size: 13px;
   letter-spacing: .1em;
   color: #9aaf9c;
 }
@@ -2040,14 +2040,14 @@ body[data-view="team"] .journey-section {
 }
 .footer-brand {
   color: var(--ink);
-  font-size: 12px;
+  font-size: 13px;
   font-weight: 700;
   letter-spacing: .02em;
   text-decoration: none;
 }
 .footer-main p {
   color: var(--muted);
-  font-size: 12px;
+  font-size: 13px;
   line-height: 1.8;
 }
 .footer-links {
@@ -2057,16 +2057,16 @@ body[data-view="team"] .journey-section {
 }
 .footer-links a {
   color: var(--ink);
-  font-size: 11px;
+  font-size: 13px;
   text-decoration: none;
 }
 .footer-school strong {
-  font-size: 12px;
+  font-size: 13px;
   font-weight: 600;
 }
 .footer-school a {
   color: var(--green);
-  font-size: 10px;
+  font-size: 13px;
   text-underline-offset: 4px;
 }
 .footer-bottom {
@@ -2077,7 +2077,7 @@ body[data-view="team"] .journey-section {
   border-top: 1px solid var(--line);
   padding-top: 23px;
   color: var(--muted);
-  font-size: 8px;
+  font-size: 13px;
   letter-spacing: .1em;
 }
 .footer-bottom a {
@@ -2167,7 +2167,7 @@ body[data-view="team"] .journey-section {
     border-radius: 3px;
     color: var(--ink);
     background: #f7f8f2;
-    font-size: 11px;
+    font-size: 13px;
   }
   .story-step-button:disabled {
     opacity: .4;
@@ -2175,7 +2175,7 @@ body[data-view="team"] .journey-section {
   }
   #story-progress {
     color: var(--muted);
-    font-size: 10px;
+    font-size: 13px;
   }
   .shift-story-desktop {
     display: none;
@@ -2225,7 +2225,7 @@ body[data-view="team"] .journey-section {
     font-size: 21px;
   }
   .photo-meta {
-    font-size: 7px;
+    font-size: 13px;
     letter-spacing: .06em;
   }
   .discovery-grid {
@@ -2268,7 +2268,7 @@ body[data-view="team"] .journey-section {
     font-size: 14px;
   }
   .brand .brand-light {
-    font-size: 7px;
+    font-size: 13px;
   }
   .brand-mark {
     width: 30px;
@@ -2278,7 +2278,7 @@ body[data-view="team"] .journey-section {
   .view-bar {
     padding: 15px 24px;
     gap: 16px;
-    font-size: 10px;
+    font-size: 13px;
   }
   .hero-inner {
     padding: 42px 24px 32px;
@@ -2291,7 +2291,7 @@ body[data-view="team"] .journey-section {
     grid-template-columns: 1fr 1fr;
     padding: 16px 24px;
     gap: 10px 12px;
-    font-size: 7px;
+    font-size: 13px;
   }
   .hero-index > span {
     display: block;
@@ -2320,7 +2320,7 @@ body[data-view="team"] .journey-section {
   }
   .photo-meta {
     margin-top: 18px;
-    font-size: 8px;
+    font-size: 13px;
     letter-spacing: .1em;
   }
   .home-perspective {
@@ -2330,7 +2330,7 @@ body[data-view="team"] .journey-section {
     font-size: 34px;
   }
   .home-perspective .kicker {
-    font-size: 8px;
+    font-size: 13px;
   }
   .discovery-grid {
     grid-template-columns: 1fr;
@@ -2352,11 +2352,11 @@ body[data-view="team"] .journey-section {
     font-size: 46px;
   }
   .gallery-collection-note {
-    font-size: 8px;
+    font-size: 13px;
     letter-spacing: .05em;
   }
   .gallery-collection-note > span:last-child {
-    font-size: 7px;
+    font-size: 13px;
   }
   .gallery-toolbar {
     gap: 17px;
@@ -2364,7 +2364,7 @@ body[data-view="team"] .journey-section {
   }
   #gallery-media,
 #gallery-author {
-    font-size: 11px;
+    font-size: 13px;
     min-height: 36px;
   }
   .photo-card .info h3 {
@@ -2385,7 +2385,7 @@ body[data-view="team"] .journey-section {
     max-height: 225px;
   }
   .mission-invitation .small-tag {
-    font-size: 8px;
+    font-size: 13px;
   }
   .video-launch {
     padding: 18px 14px;
@@ -2396,10 +2396,10 @@ body[data-view="team"] .journey-section {
     height: 33px;
   }
   .video-launch strong {
-    font-size: 11px;
+    font-size: 13px;
   }
   .video-launch > span > span {
-    font-size: 9px;
+    font-size: 13px;
   }
   .video-launch-arrow {
     display: none;
@@ -2439,7 +2439,7 @@ body[data-view="team"] .journey-section {
   .footer-bottom {
     flex-wrap: wrap;
     gap: 16px;
-    font-size: 7px;
+    font-size: 13px;
   }
   .footer-bottom span:nth-child(2) {
     display: none;
@@ -2480,7 +2480,7 @@ body[data-view="team"] .journey-section {
   .game-touch-controls #game-interact {
     min-width: 0;
     padding-inline: 14px;
-    font-size: 12px;
+    font-size: 13px;
   }
 }
 @media (max-width: 360px) {
@@ -2583,7 +2583,7 @@ body[data-view="team"] .journey-section {
 }
 .video-cover-copy .video-cover-label {
   color: #e0e9d0;
-  font-size: 8px;
+  font-size: 13px;
   letter-spacing: .15em;
 }
 .video-cover-copy strong {
@@ -2593,7 +2593,7 @@ body[data-view="team"] .journey-section {
 }
 .video-cover-copy > span:last-child {
   color: #f0f4e9;
-  font-size: 10px;
+  font-size: 13px;
 }
 .video-launch:hover .video-thumbnail {
   transform: scale(1.025);
@@ -2746,7 +2746,7 @@ body[data-view="team"] .journey-section {
   border-radius: 2px;
   background: #f7f8f2ed;
   color: #294b38;
-  font-size: 9px;
+  font-size: 13px;
   font-weight: 500;
   letter-spacing: .015em;
 }
@@ -2758,7 +2758,7 @@ body[data-view="team"] .journey-section {
   border: 1px solid #b7c8b8;
   background: #f7f8f2ba;
   color: #34513d;
-  font-size: 9px;
+  font-size: 13px;
   letter-spacing: .12em;
 }
 .story-readout {
@@ -2776,14 +2776,14 @@ body[data-view="team"] .journey-section {
   display: block;
   margin-bottom: 7px;
   color: #63765c;
-  font-size: 8px;
+  font-size: 13px;
   font-weight: 600;
   letter-spacing: .12em;
 }
 .story-readout strong {
   display: block;
   color: #2a4734;
-  font-size: 12px;
+  font-size: 13px;
   line-height: 1.5;
   font-weight: 500;
 }
@@ -2803,14 +2803,14 @@ body[data-view="team"] .journey-section {
   border-radius: 0;
   background: #edf1e5;
   color: #536a4b;
-  font-size: 11px;
+  font-size: 13px;
   transition: background 200ms ease, color 200ms ease;
 }
 .story-chapters button + button {
   border-left: 1px solid #cdd8c3;
 }
 .story-chapters button > span {
-  font-size: 9px;
+  font-size: 13px;
   opacity: .75;
 }
 .story-chapters button:hover {
@@ -2864,7 +2864,7 @@ body[data-view="team"] .journey-section {
   margin-top: 26px;
   border-top: 1px solid #c9d5c1;
   color: #65785d;
-  font-size: 8px;
+  font-size: 13px;
   line-height: 1.7;
   letter-spacing: .1em;
 }
@@ -2872,7 +2872,7 @@ body[data-view="team"] .journey-section {
   max-width: 520px;
   margin: 14px 0 0;
   color: #5b7053;
-  font-size: 10px;
+  font-size: 13px;
 }
 @media (max-width: 900px) {
   #climate-story .shift-layout {
@@ -2928,44 +2928,44 @@ body[data-view="team"] .journey-section {
     gap: 3px;
   }
   .video-cover-copy .video-cover-label {
-    font-size: 7px;
+    font-size: 13px;
   }
   .video-cover-copy strong {
     font-size: 20px;
   }
   .video-cover-copy > span:last-child {
-    font-size: 9px;
+    font-size: 13px;
   }
   .story-readout > div {
     padding: 13px 10px;
   }
   .story-readout span {
     margin-bottom: 5px;
-    font-size: 7px;
+    font-size: 13px;
     letter-spacing: .06em;
   }
   .story-readout strong {
-    font-size: 10px;
+    font-size: 13px;
   }
   .story-chapters button {
     min-height: 46px;
     gap: 6px;
-    font-size: 10px;
+    font-size: 13px;
   }
   .story-chapters button > span {
-    font-size: 8px;
+    font-size: 13px;
   }
   .story-scene .scene-label {
     left: 10px;
     bottom: 10px;
     padding: 5px 7px;
-    font-size: 8px;
+    font-size: 13px;
   }
   .scene-stage {
     top: 10px;
     right: 10px;
     padding: 5px 7px;
-    font-size: 8px;
+    font-size: 13px;
   }
   #climate-story .shift-step {
     padding: 24px;
@@ -2976,7 +2976,7 @@ body[data-view="team"] .journey-section {
   .story-step-note {
     margin-top: 22px;
     padding-top: 18px;
-    font-size: 7px;
+    font-size: 13px;
   }
 }
 @media (prefers-reduced-motion: reduce) {
@@ -3052,7 +3052,7 @@ body[data-view="team"] .journey-section {
   gap: 14px;
 }
 .mission-play {
-  font-size: 12px;
+  font-size: 13px;
 }
 :where(button, select, a[href]) {
   -webkit-tap-highlight-color: transparent;
@@ -3145,7 +3145,7 @@ body[data-view="team"] .journey-section {
   display: block;
   margin-bottom: 10px;
   color: var(--accent);
-  font-size: 10px;
+  font-size: 13px;
   font-weight: 600;
   letter-spacing: .12em;
 }
@@ -3167,7 +3167,7 @@ body[data-view="team"] .journey-section {
 }
 #climate-story .story-real-photo figcaption {
   padding: 10px 0 0;
-  font-size: 11px;
+  font-size: 13px;
   line-height: 1.7;
   color: var(--muted);
 }
@@ -3187,12 +3187,12 @@ body[data-view="team"] .journey-section {
 .comparison-label { position: absolute; top: 12px; padding: 5px 9px; background: #183d2de6; color: #fff; border-radius: 3px; font: 600 11px Arial; }
 .comparison-label-before { left: 12px; }
 .comparison-label-after { right: 12px; }
-.comparison-control { display: flex; gap: 14px; align-items: center; margin-top: 12px; font-size: 11px; }
+.comparison-control { display: flex; gap: 14px; align-items: center; margin-top: 12px; font-size: 13px; }
 .comparison-control input { flex: 1; min-width: 0; min-height: 32px; accent-color: #244f3c; cursor: ew-resize; }
 .story-followup { margin: clamp(36px, 6vw, 72px) auto 0; max-width: 1200px; border-top: 1px solid #b7c2ae; }
 .story-local-fact { padding: 26px 0; }
 #climate-story .story-local-fact p { margin: 10px 0; max-width: 720px; font-size: 14px; line-height: 1.7; }
-.story-local-fact a { color: var(--ink); font-size: 12px; text-underline-offset: 4px; }
+.story-local-fact a { color: var(--ink); font-size: 13px; text-underline-offset: 4px; }
 
 /* Two brief local examples share one row and stack on phones. */
 .story-followup {
@@ -3220,7 +3220,7 @@ body[data-view="team"] .journey-section {
   padding: 10px 0;
   list-style: none;
   cursor: pointer;
-  font-size: 12px;
+  font-size: 13px;
   color: var(--ink);
 }
 .local-evidence summary::-webkit-details-marker {
@@ -3248,11 +3248,11 @@ body[data-view="team"] .journey-section {
 }
 .local-evidence-item h4 {
   margin: 0;
-  font-size: 12px;
+  font-size: 13px;
   font-weight: 600;
 }
 #climate-story .local-evidence-item p {
-  font-size: 12px;
+  font-size: 13px;
   line-height: 1.8;
 }
 
@@ -3340,7 +3340,7 @@ body[data-view="team"] .journey-section {
 .city-photo figcaption {
   padding: 12px 0;
   color: var(--muted);
-  font-size: 11px;
+  font-size: 13px;
   line-height: 1.7;
  
 }
@@ -3358,7 +3358,7 @@ body[data-view="team"] .journey-section {
  
 }
 .city-facts dt {
-  font-size: 10px;
+  font-size: 13px;
   text-transform: uppercase;
   letter-spacing: .1em;
   color: var(--accent);
@@ -3372,17 +3372,17 @@ body[data-view="team"] .journey-section {
  
 }
 .city-panel .local-evidence-item p {
-  font-size: 12px;
+  font-size: 13px;
   line-height: 1.8;
  
 }
 .city-panel .local-evidence a {
   color: var(--ink);
-  font-size: 12px;
+  font-size: 13px;
  
 }
 .city-footnote {
-  font-size: 12px;
+  font-size: 13px;
   line-height: 1.7;
   color: var(--muted);
  
@@ -3425,14 +3425,14 @@ body[data-view="team"] .journey-section {
   width: 100%;
   min-width: 640px;
   border-collapse: collapse;
-  font-size: 12px;
+  font-size: 13px;
   line-height: 1.7;
  
 }
 .city-comparison-table caption {
   text-align: left;
   padding: 14px 0;
-  font-size: 12px;
+  font-size: 13px;
  
 }
 .city-comparison-table th, .city-comparison-table td {
@@ -3456,7 +3456,7 @@ body[data-view="team"] .journey-section {
 }
 @media (min-width: 1025px) and (max-width: 1350px) { .nav-edition { display: none; } #navlinks { gap: 18px; } }
 @media (max-width: 800px) { .city-case-layout { grid-template-columns: 1fr; gap: 20px; } }
-@media (max-width: 540px) { .city-picker { gap: 6px; } .city-picker button { padding: 12px 8px; font-size: 14px; } .city-picker button span { font-size: 10px; } }
+@media (max-width: 540px) { .city-picker { gap: 6px; } .city-picker button { padding: 12px 8px; font-size: 14px; } .city-picker button span { font-size: 13px; } }
 
 /* Final spacing and reading pass; photograph frames keep their existing ratios. */
 .cities-section .section-heading {
@@ -3481,7 +3481,7 @@ body[data-view="team"] .journey-section {
 .city-photo figcaption,
 .climate-photo figcaption {
   padding: 12px 0 0;
-  font-size: 12px;
+  font-size: 13px;
   line-height: 1.75;
   overflow-wrap: anywhere;
 }
@@ -3495,7 +3495,7 @@ body[data-view="team"] .journey-section {
 }
 .city-facts dt {
   margin-bottom: 10px;
-  font-size: 11px;
+  font-size: 13px;
 }
 .city-facts dd {
   font-size: 15px;
@@ -3511,7 +3511,7 @@ body[data-view="team"] .journey-section {
 .video-external,
 .city-footnote,
 .slovenia-context {
-  font-size: 12px;
+  font-size: 13px;
   line-height: 1.75;
 }
 .city-panel .text-link,
@@ -3529,12 +3529,12 @@ body[data-view="team"] .journey-section {
 .photo-card .info .photo-author {
   display: inline-block;
   margin-top: 10px;
-  font-size: 11px;
+  font-size: 13px;
   line-height: 1.6;
   letter-spacing: .04em;
 }
 .home-photo .photo-credit {
-  font-size: 12px;
+  font-size: 13px;
   line-height: 1.6;
 }
 .cities-section .city-comparison .photo-zoom:hover img {
@@ -3590,7 +3590,7 @@ body[data-view="team"] .journey-section {
     overflow-wrap: anywhere;
   }
   .city-picker button span {
-    font-size: 11px;
+    font-size: 13px;
     line-height: 1.5;
   }
   .city-photo figcaption,
@@ -3604,16 +3604,34 @@ body[data-view="team"] .journey-section {
     font-size: 13px;
   }
   .photo-card .info .photo-author {
-    font-size: 12px;
+    font-size: 13px;
   }
   .city-facts dt {
-    font-size: 12px;
+    font-size: 13px;
   }
   .comparison-control {
-    font-size: 12px;
+    font-size: 13px;
     gap: 12px;
   }
   .comparison-control input {
     min-height: 44px;
   }
+}
+
+/* Readable labels and controls across desktop and narrow phone screens. */
+@media (min-width: 1025px) {
+  #navlinks a { font-size: 14px; }
+}
+.hero-photo-top, .hero-visual > figcaption, .hero-index,
+.gallery-collection-note, .footer-bottom { flex-wrap: wrap; }
+.hero-local-stat { flex-wrap: wrap; }
+@media (max-width: 640px) {
+  #gallery-author { font-size: 16px; min-height: 44px; max-width: 100%; }
+  .filters { flex-wrap: wrap; }
+  .filters button, .story-step-button, .menu-toggle,
+  .viewer-controls button, #lightbox-close, .city-picker button { min-height: 44px; min-width: 44px; }
+  .hero-photo-top, .hero-visual > figcaption { letter-spacing: .04em; }
+  .hero-index > span { min-width: 0; overflow-wrap: anywhere; }
+  .gallery-collection-note { gap: 12px; }
+  .hero-secondary { min-height: 44px; }
 }
