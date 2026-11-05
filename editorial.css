@@ -9,6 +9,10 @@
   --lime: #e7efab;
   --coral: #bf4b2e;
   --accent: #bf4b2e;
+  --action: var(--coral);
+  --action-hover: #a13d25;
+  --action-on-dark: #f3bd9d;
+  --action-on-dark-hover: #f7d0b9;
   --gutter: clamp(24px, 5vw, 88px);
 }
 html {
@@ -106,7 +110,7 @@ a, button {
   font-weight: 700;
 }
 .kicker {
-  color: var(--accent);
+  color: var(--muted);
 }
 .btn {
   display: inline-flex;
@@ -3634,4 +3638,38 @@ body[data-view="team"] .journey-section {
   .hero-index > span { min-width: 0; overflow-wrap: anywhere; }
   .gallery-collection-note { gap: 12px; }
   .hero-secondary { min-height: 44px; }
+}
+
+/* Coral marks the next main action; cream and green support the content. */
+.btn.btn-primary {
+  color: #fff;
+  background: var(--action);
+  border-color: var(--action);
+}
+.btn.btn-primary:hover {
+  background: var(--action-hover);
+  border-color: var(--action-hover);
+}
+.mission-link {
+  color: var(--green);
+  background: var(--action-on-dark);
+  border-color: var(--action-on-dark);
+  font-weight: 700;
+}
+@media (hover: hover) {
+  .mission-invitation:hover .mission-link {
+    color: var(--green);
+    background: var(--action-on-dark-hover);
+    border-color: var(--action-on-dark-hover);
+  }
+}
+.gallery-section .filter:hover,
+.gallery-section .filter.active {
+  color: var(--green);
+  background: var(--cream);
+  border-color: var(--cream);
+}
+.closing .btn-light {
+  color: var(--green);
+  background: var(--cream);
 }
