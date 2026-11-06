@@ -12,6 +12,18 @@
   }
   function vehicle(tram=false){return `<path d="M-28 -10 10 -30 30 -18 -8 3Z" fill="#ffffff"/><path d="M-28 -10 -8 3 -8 17 -28 4Z" fill="#1d624a"/><path d="M-8 3 30 -18 30 -4 -8 17Z" fill="${tram?'#58a9b0':'#7dbf94'}"/><path d="m-3 4 28-15v7L-3 11Z" fill="#1f4c58"/><path d="m-24-6 12 7v7l-12-7Z" fill="#abd5d7"/><circle cx="-18" cy="10" r="3" fill="#26483f"/><circle cx="17" cy="5" r="3" fill="#26483f"/>${tram?'<path d="m-13-25 13-15 12 7-13 8" stroke="#537a7b" fill="none"/>':''}`;}
   function piece(type,terrain,index=0){
+    if(type==='forest')return `${tree(-15,-4,.6)}${tree(14,-6,.72)}${tree(0,10,.85)}`;
+    if(type==='wetland')return '<path d="m-28 0 28-15 28 15-28 15Z" fill="#99bc85"/><ellipse cy="0" rx="18" ry="8" fill="#76ada6"/><path d="M-20 0v-18m5 16v-14m30 15v-17m6 18v-13" stroke="#5d854c" stroke-width="2"/><path d="M-20-18v-7m35 7v-7" stroke="#aa8c60" stroke-width="4"/>';
+    if(type==='garden')return '<path d="m-28 0 28-15 28 15-28 15Z" fill="#a7bc82"/><path d="m-22-1 22-11 7 4-22 11Zm9 7 22-11 7 4-22 11Z" fill="#a98860" stroke="#cbb081" stroke-width="2"/><path d="m-17-5 4-7m4 4 4-7m8 13 4-7m4 3 4-7" stroke="#57884c" stroke-width="4"/>';
+    if(type==='house')return house(null,index);
+    if(type==='apartment')return '<path d="M-22-7 0 5 0-65-22-77Z" fill="#98b7ac"/><path d="M0 5 25-8V-78L0-65Z" fill="#d3ded0"/><path d="m-22-77 24-13 23 12L0-65Z" fill="#e9e5cf"/><path d="M-17-19v-11m9 16v-11m-9-8v-11m9 16v-11m-9-8v-11m9 16v-11m14 30v-11m10 6v-11m-10-2v-11m10 6v-11m-10-2v-11m10 6v-11" stroke="#4d7981" stroke-width="5"/>';
+    if(type==='road')return '<path d="m-32-1 32-17 32 17L0 16Z" fill="#899f98" stroke="#cdd6bd" stroke-width="3"/><path d="m-22 10 44-23" stroke="#e5e6ce" stroke-width="2" stroke-dasharray="5 4"/>';
+    if(type==='battery')return '<path d="M-25 4-5 15V-27L-25-38Z" fill="#5f8e73"/><path d="M-5 15 22 0v-42L-5-27Z" fill="#a9c7a2"/><path d="m-25-38 27-15 20 11L-5-27Z" fill="#d1ddbd"/><path d="m2-23 11-6v5L2-18m0 4 11-6v5L2-9m0 4 11-6v5L2 0" stroke="#557c65" stroke-width="2"/>';
+    if(type==='heat')return `${house(null,1)}<g transform="translate(9 -35)"><ellipse rx="13" ry="7" fill="#4a7f7d"/><path d="m-7-2 14 4m-7-7v10" stroke="#a5c9bc" stroke-width="3"/></g>`;
+    if(type==='school')return `${house(null,1)}<path d="M-10-47v-25" stroke="#587e6a" stroke-width="2"/><path d="m-10-72 18 4-18 8Z" fill="#d7a66d"/>`;
+    if(type==='clinic')return `${house(null,1)}<path d="M-2-57v17m-8-9h16" stroke="#b9654b" stroke-width="5"/>`;
+    if(type==='recycling')return '<path d="m-27 0 27-15 27 15L0 15Z" fill="#cbd6b9"/><path d="M-23 0v-24l12 6V6Zm15 8v-30l12 6v30Zm15-2v-29l12-7v30Z" fill="#69a281"/><path d="m-23-24 11-6 12 6-11 6Zm15 2 11-6 12 6-11 6Zm15-1 11-6 12 6-11 6Z" fill="#a5c39a"/><path d="m-5-9 5-3m-3 7 5-3" stroke="#e7ecd3" stroke-width="2"/>';
+    if(type==='waterworks')return '<ellipse cy="0" rx="27" ry="12" fill="#a2b8a1"/><path d="M-23-8v-24h46v24" fill="#b4c9b8"/><ellipse cy="-8" rx="23" ry="10" fill="#b4c9b8"/><ellipse cy="-32" rx="23" ry="10" fill="#d5dfc8"/><ellipse cy="-32" rx="17" ry="7" fill="#6eaaa7"/><path d="m-8-43 8-12 8 12a8 8 0 1 1-16 0Z" fill="#78b2ad"/>';
     if(terrain==='building')return house(type,index);
     if(type==='tree')return tree(0,-3,.88);
     if(type==='park')return `<path d="m-27-1 26-13 28 14L0 14Z" fill="#95c981"/><path d="m-26 0 24 12 26-13" stroke="#dbe6b0" stroke-width="4"/>${tree(-15,-4,.62)}${tree(13,0,.78)}<path d="m-4 8 9 4 8-4-9-4Z" fill="#cfab76"/>`;

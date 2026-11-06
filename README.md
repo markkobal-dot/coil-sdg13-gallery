@@ -32,16 +32,35 @@ Trenutno vreme se v brskalniku preverja vsakih 15 minut. Gumb Refresh takoj osve
 
 Preizkusi brez omrežja: `node --test tests/evidence-data.cjs tests/evidence-loading.cjs`.
 
-## Build Your Green City
+## Build Your Green City / New Terra
 
-Igra na `#game` nadomešča prejšnjo igro Climate Mission. Gre za izometrično, potezno mini igro v angleščini: 36 polj, devet nadgradenj in pet kazalnikov. Ne potrebuje strežnika, računa ali zunanjih slik; izvirne stavbe, vozila in zelenje so narisani s SVG.
+Expanded city builder on `#game`: a 20 × 20 island (400 tiles), a procedural 3D city, and 21 building options in Nature, Energy, Travel and Community. The interface and game are in English. The rest of the gallery stays lightweight: the 3D renderer is loaded only when the game is opened.
 
-- `green-city-core.js`: pravila, proračun, dovoljene postavitve, kazalniki in preverjanje shranjene igre.
-- `green-city-art.js`: izometrični prikaz in ponovni prikaz mesta na strani Solutions.
-- `green-city.js` in `green-city.css`: upravljanje, prilagodljiv vmesnik, poročilo, lokalno shranjevanje in glasba.
+### Play and controls
 
-Green Revolution in Low-Carbon City začneta s 1.000 EP. City of the Future ima 1.800 EP, saj samo pet parkov, tri sončne strehe in E-Bus stanejo 1.230 EP. Nadgradnje se postavljajo na ustrezne površine: zelenje na prosta polja, strehe na stavbe in promet na ceste. Ponavljanje ima manjši učinek; sosednje kolesarske steze, senca ob stavbah in povezave med obnovljivo energijo ter električnim prometom prinesejo dodatne točke. To so poenostavljeni učni kazalniki, ne realne emisije ali stroški.
+- Drag to pan, scroll/pinch to zoom, right-drag or use rotation buttons to orbit. The mini-map and Fit island button help navigate. Night view, grid toggle, heat/transit/power/resilience overlays and an expanded play view are available.
+- Inspect, build, upgrade (up to level 3), relocate, remove for 50% salvage, and draw complete road paths. A road path commits atomically; blocked or unaffordable routes spend nothing. Road upgrades remain connected roads. Removing a transport upgrade restores its underlying plain road.
+- Homes and public services need road access connected to the harbour entrance at **R11**. Roads that lose that connection stop serving housing and transit. Protected water cannot be built on.
+- The city starts paused. **Next month** collects income, pays upkeep and grid power costs, and changes population based on connected housing, jobs and wellbeing. Play advances every 12 seconds; 3× advances every 4 seconds. Time and rendering stop while the page/game is hidden; reports and reset dialogs pause the simulation clock.
+- Advance to month 3 or reach 35 sustainability to unlock advanced buildings; Creative mode starts with everything unlocked. Development grants are paid once per city. Undo/Redo also restore finances, grants, policies, events and monthly changes.
+- Heatwaves, heavy rain and energy price spikes cycle every four months. Fund a full or basic council response, or prepare through city design. Taxes, fare-free transit and cleaner-industry standards affect the monthly balance and city indicators.
+- Solar/green roofs retrofit existing buildings. Nature cools nearby homes, connected transit provides coverage, jobs support growth, renewable generation reduces imported-power costs, and coastal rain gardens offer more resilience. Scores, power units and costs are simplified teaching mechanics, not real emissions, prices or climate predictions.
+- On phones, the catalogue and dashboard become drawers over the map. Keyboard: arrows select tiles, Enter applies the tool; I/B/R/U/M/X choose tools; Ctrl Z/Ctrl Y undo/redo; Escape cancels a route/move or exits expanded view. Row/column selectors provide precise placement without relying on 3D picking.
 
-Napredek in zgodovina potez se samodejno shranita v `localStorage` pod `coil-green-city-v1`, samo v trenutnem brskalniku. Undo vrne celotno ceno zadnje poteze. Nova misija ali novo mesto po začetku gradnje zahteva potrditev. Če shranjevanje ni omogočeno, igra deluje do zaprtja strani. Na telefonu so poleg dotika na voljo veliki gumbi za premik izbranega polja in gradnjo. Tipkovnica: Tab do zemljevida, smerne tipke za premik, Enter ali preslednica za gradnjo. Animacije spoštujejo nastavitev zmanjšanega gibanja.
+### Missions and saves
 
-Preizkusi pravil in dosegljivosti vseh misij: `node --test tests/green-city-core.cjs`.
+Green Revolution starts with **2,800 EP**; Low-Carbon City with **3,000 EP**; City of the Future with **4,200 EP**; Creative mode with **14,000 EP**. Monthly income and one-time grants support continued development. Mission goals are shown in the Goals dashboard and checked against the actual city state.
+
+Expanded progress and the last 16 undo states are saved in `localStorage` under `coil-green-city-v2`. The earlier 6 × 6 save under `coil-green-city-v1` is left untouched. Export/Open city save transfers validated JSON files; imported saves start with an empty undo history. City photo exports a PNG from the 3D view. No account or game server is needed. If WebGL 2 is unavailable, a navigable planning grid retains all simulation/building tools. Reduced-motion settings stop decorative animation.
+
+### Source and local development
+
+- `green-city-core.js`: deterministic terrain, placement, connectivity, economics, growth, policies, events, grants, missions and save validation.
+- `green-city-world.js`: procedural 3D models, batched geometry, terrain, water, shadows, traffic, camera, overlays and pointer picking.
+- `green-city-art.js`: original SVG catalogue art and the lightweight Solutions teaser.
+- `green-city.js` / `green-city.css`: interaction, local persistence, responsive interface and opt-in music.
+- `assets/vendor/three/`: pinned **Three.js 0.187.0** plus OrbitControls and BufferGeometryUtils, with the MIT license and source attribution. Imports resolve locally; no runtime CDN is required. See [official installation documentation](https://threejs.org/manual/pages/installation.html).
+
+Serve the repository over local HTTP; ES modules do not work reliably from `file://`. GitHub Pages can serve it without a build step. Tests: `node --test tests/green-city-core.cjs tests/evidence-data.cjs tests/evidence-loading.cjs`.
+
+The tests cover all catalogue types, road connectivity and edges, atomic road paths, upgrades, moving, salvage, location effects, monthly finances, policy tradeoffs, one-time grants, climate responses, corrupted saves, bounded long-running games, and a legal winning plan for each mission. The weather regression checks remain included.
