@@ -1,4 +1,5 @@
 /* City workspace: fullscreen, commands, council briefings and budget controls. */
+import { createResidents } from './green-city-residents.js?v=ba1183d646';
 const C=globalThis.GreenCity;
 const paths={
  inspect:'m5 3 14 8-7 2-3 7Z',build:'M12 4v16M4 12h16',road:'M8 3 5 21M16 3l3 18M12 4v3m0 4v3m0 4v3',
@@ -54,6 +55,7 @@ export function createExperience(api){
  $('review-decision').addEventListener('click',openDecision);$('inbox-button').addEventListener('click',openDecision);$('finance-button').addEventListener('click',openFinance);$('command-button').addEventListener('click',openCommands);
  const policyBox=q('.gc-policies');policyBox.innerHTML=`<summary>City economy</summary><p>Taxes, public fares, utility prices and service funding.</p><button id="gc-budget-from-city" type="button">Manage city budget ${glyph('finance')}</button>`;$('budget-from-city').addEventListener('click',openFinance);
  rootButtons();
+ const residents=createResidents({...api,openFinance},glyph);
  function rootButtons(){
   shell.querySelectorAll('[data-gc-tool]').forEach(button=>{const labels={inspect:'Inspect',build:'Build',road:'Roads',upgrade:'Upgrade',move:'Move',demolish:'Remove'};button.innerHTML=glyph(button.dataset.gcTool)+'<span>'+labels[button.dataset.gcTool]+'</span>';button.setAttribute('aria-label',labels[button.dataset.gcTool]+' tool');});
   $('undo').innerHTML=glyph('undo');$('redo').innerHTML=glyph('redo');
@@ -80,7 +82,7 @@ export function createExperience(api){
   const delta=after.net-before.net;$('fin-net').innerHTML='<strong class="'+(after.net<0?'gc-negative':'')+'">'+signed(after.net)+'<small> EP / month</small></strong><span>'+(delta?signed(delta)+' EP compared with your current budget':'At your current population')+'</span>';
   $('fin-impact').innerHTML=[['Wellbeing',after.wellbeing,before.wellbeing,'/100'],['Jobs',after.jobs,before.jobs,''],['Mobility',after.scores[3],before.scores[3],'/100']].map(([name,value,old,suffix])=>'<div><span>'+name+'</span><strong>'+fmt(value)+'<small>'+suffix+'</small></strong><small class="'+(value-old<0?'gc-negative':'')+'">'+(value===old?'No change':signed(value-old))+'</small></div>').join('');
   const b=after.budget;
-  $('fin-ledger').innerHTML='<h4>Monthly forecast</h4>'+[['Regional grant',b.grant],['Residential taxes',b.residentialRevenue],['Business taxes',b.businessRevenue],['Transit fares',b.fareRevenue],['Utility margin',b.utilities],['Asset & service upkeep',-b.assetUpkeep],['Imported power',-b.gridCost],['Fare-free transport support',-b.transitSupport],['Cleaner industry standards',-b.industryStandards],['Utility subsidy',-b.utilitySubsidy],['Loan payment',-b.loanPayment]].filter(([name,value])=>value||['Regional grant','Residential taxes','Business taxes'].includes(name)).map(([name,value])=>'<div class="gc-ledger-row"><span>'+name+'</span><strong>'+signed(value)+' EP</strong></div>').join('')+'<p class="gc-forecast-note">Forecast at the current city size. Growth and council responses can change next month’s figures.</p>';
+  $('fin-ledger').innerHTML='<h4>Monthly forecast</h4>'+[['Regional grant',b.grant],['Residential taxes',b.residentialRevenue],['Business taxes',b.businessRevenue],['Transit fares',b.fareRevenue],['Regional connections',b.regionalRevenue],['Utility margin',b.utilities],['Asset & service upkeep',-b.assetUpkeep],['Imported power',-b.gridCost],['Fare-free transport support',-b.transitSupport],['Cleaner industry standards',-b.industryStandards],['Utility subsidy',-b.utilitySubsidy],['Loan payment',-b.loanPayment]].filter(([name,value])=>value||['Regional grant','Residential taxes','Business taxes'].includes(name)).map(([name,value])=>'<div class="gc-ledger-row"><span>'+name+'</span><strong>'+signed(value)+' EP</strong></div>').join('')+'<p class="gc-forecast-note">Forecast at the current city size. Growth and council responses can change next month’s figures.</p>';
   const loan=state.loan;$('fin-loan').innerHTML=loan?'<div><span>DEVELOPMENT LOAN</span><strong>'+fmt(loan.balance)+' EP remaining</strong><p>Up to 90 EP is repaid each month. Unpaid amounts stay due.</p></div><button type="button" id="gc-loan-repay" '+(state.cash<loan.balance?'disabled':'')+'>Repay '+fmt(loan.balance)+' EP</button>':'<div><span>GROWTH FINANCING</span><strong>Development loan</strong><p>Receive 1,000 EP. Make 12 payments of 90 EP: 1,080 EP total, including an 80 EP borrowing cost.</p></div><button type="button" id="gc-loan-borrow">Review loan</button>';
   $('loan-borrow')?.addEventListener('click',()=>api.confirmAction('Fund the next step?','Receive 1,000 EP now. The city owes 1,080 EP in total, repaid at up to 90 EP per month. Only one loan can be active.',()=>api.commit(C.borrow(api.getState()))));
   $('loan-repay')?.addEventListener('click',()=>api.confirmAction('Repay the development loan?','Spend '+fmt(api.getState().loan.balance)+' EP to clear the remaining loan. Monthly repayments will stop.',()=>api.commit(C.repayLoan(api.getState()))));
@@ -116,7 +118,7 @@ export function createExperience(api){
  const commandDefs=()=>{
   const tools=[['inspect','Inspect a tile','I'],['build','Build an improvement','B'],['road','Draw a road route','R'],['upgrade','Upgrade a building','U'],['move','Relocate a building','M'],['demolish','Remove an improvement','X']].map(([key,name,shortcut])=>({id:'tool-'+key,name,group:'Tools',icon:key,shortcut,run:()=>{api.setMode(key);if(key==='build')api.openPanel('build');if(key==='inspect')api.openPanel('city');}}));
   const actions=[
-   ['budget','Taxes, prices & city budget','Economy','finance',openFinance],['council','Council decisions & alerts','Council','bell',openDecision],
+   ['budget','Taxes, prices & city budget','Economy','finance',openFinance],['residents','Resident happiness & household needs','Residents','city',residents.open],['council','Council decisions & alerts','Council','bell',openDecision],
    ['fullscreen',shell.classList.contains('gc-expanded')?'Exit fullscreen':'Enter fullscreen','View','expand',()=>setExpanded(!shell.classList.contains('gc-expanded'))],
    ['dashboard','Show city dashboard','Panels','city',()=>api.openPanel('city')],['goals','Mission goals & grants','Panels','flag',()=>api.openPanel('goals')],['help','Open the field guide','Panels','help',()=>api.openPanel('help')],
    ['report','Open the mayor’s report','City','file',api.evaluate],['next','Advance to next month','Time','next',api.step],['play','Play / pause simulation','Time','play',()=> $('play').click()],
@@ -141,9 +143,9 @@ export function createExperience(api){
  document.addEventListener('keydown',e=>{if(document.body.dataset.view!=='game')return;if((e.ctrlKey||e.metaKey)&&e.key.toLowerCase()==='k'){e.preventDefault();openCommands();}if(!api.hasOverlay()&&!/INPUT|SELECT|TEXTAREA/.test(e.target.tagName)&&e.key.toLowerCase()==='f'){e.preventDefault();setExpanded(!shell.classList.contains('gc-expanded'));}});
  applyFocus(false);
  return {
-  render(){renderInbox();renderPanels();if($('finance').open)renderFinance();$('play').innerHTML=glyph($('play').getAttribute('aria-pressed')==='true'?'pause':'play');$('next').innerHTML='<span>Next month</span>'+glyph('next');},
+  render(){renderInbox();renderPanels();residents.render();if($('finance').open)renderFinance();$('play').innerHTML=glyph($('play').getAttribute('aria-pressed')==='true'?'pause':'play');$('next').innerHTML='<span>Next month</span>'+glyph('next');},
   openDecision,openFinance,openCommands,setExpanded,
   toast(){clearTimeout(toastTimer);shell.classList.add('gc-show-toast');toastTimer=setTimeout(()=>shell.classList.remove('gc-show-toast'),6500);},
-  closeOverlays(){for(const name of ['finance','decision','commands'])if($(name).open)$(name).close();}
+  closeOverlays(){residents.close();for(const name of ['finance','decision','commands'])if($(name).open)$(name).close();}
  };
 }

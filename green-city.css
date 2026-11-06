@@ -215,7 +215,7 @@ body.gc-game-expanded{overflow:hidden}
 .gc-advice h4{margin:22px 0 8px;color:#5e714a;font-size:15px}.gc-advice p{margin:8px 0;color:#677658;font-size:12px;line-height:1.8}.gc-advice p.gc-report-note{margin-top:18px;font-size:10px}
 .gc-dialog-actions{display:flex;flex-wrap:wrap;gap:10px;margin-top:24px}
 .gc-plain-button{min-height:42px;padding:10px 16px;border:1px solid #cddfbc;border-radius:3px;background:#f6f7e9;color:#5c704a;font:600 11px 'DM Sans',Arial,sans-serif;cursor:pointer}.gc-confirm{max-width:500px}
-.gc-fallback{position:absolute;inset:0;z-index:1;padding:45px 50px 100px;overflow:auto;background:#a8bc94}.gc-fallback>p{font-size:11px;color:#587747}.gc-fallback>div{display:grid;grid-template-columns:repeat(20,28px);gap:1px;width:max-content}
+.gc-fallback{position:absolute;inset:0;z-index:1;padding:45px 50px 100px;overflow:auto;background:#a8bc94}.gc-fallback>p{font-size:11px;color:#587747}.gc-fallback>div{display:grid;grid-template-columns:repeat(var(--gc-grid-size,28),28px);gap:1px;width:max-content}
 .gc-shell .gc-fallback button{width:28px;height:28px;min-height:28px;padding:0;border:0;border-radius:0;color:#e3eacb;font-size:18px}
 .gc-fallback .gc-grid-water{background:#75a4a5}.gc-fallback .gc-grid-land{background:#b8c69a}.gc-fallback .gc-grid-road{background:#718b7f}.gc-fallback .gc-grid-green{background:#618b5c}.gc-fallback .gc-grid-building{background:#a58c69}.gc-fallback .gc-grid-focus{box-shadow:inset 0 0 0 2px #fff4b4}
 .mission-invitation>#gc-preview{display:block;width:100%;height:auto;transition:transform 250ms ease}.mission-invitation:hover>#gc-preview{transform:translateY(-4px)}

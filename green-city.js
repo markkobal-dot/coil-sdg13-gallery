@@ -1,16 +1,16 @@
-import { createExperience, glyph } from './green-city-experience.js?v=e6351edf41';
+import { createExperience, glyph } from './green-city-experience.js?v=b46c3c58f9';
 let experience=null;
 /* New Terra: city tools, simulation clock, local saves and responsive game UI. */
 const C=globalThis.GreenCity, A=globalThis.GreenCityArt;
 const root=document.querySelector('.green-city-section');
 const $=id=>document.getElementById(id==='game-sound'?id:'gc-'+id);
-const shell=$('shell'), storageKey='coil-green-city-v2';
+const shell=$('shell'), storageKey='coil-green-city-v3';
 const escape=text=>String(text).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const format=n=>Math.round(n).toLocaleString('en-GB');
 let state=C.fresh(),undo=[],redo=[],saved=true,restored=false,saveWarning='',world=null,worldPromise=null,fallback=false;
-let selected='tree',category='Nature',mode='inspect',focus=168,source=null,lineStart=null,tab='city',playing=false,speed=1,timer=null,pending=null;
+let selected='tree',category='Nature',mode='inspect',focus=8*C.size+8,source=null,lineStart=null,tab='city',playing=false,speed=1,timer=null,pending=null;
 try{
-  const raw=localStorage.getItem(storageKey);
+  const raw=localStorage.getItem(storageKey)||localStorage.getItem('coil-green-city-v2');
   if(raw){const data=JSON.parse(raw);state=C.restore(data.state||data);restored=true;for(const item of (data.undo||[]).slice(-16)){try{undo.push(C.restore(item));}catch{}}}
 }catch{saveWarning='The saved expanded city could not be read. A fresh city is ready; the earlier game’s save is untouched.';}
 let analysis=C.analyse(state);
@@ -25,7 +25,7 @@ function renderCatalogue(){
   const entries=Object.entries(C.upgrades).filter(([,item])=>query?(item.name+' '+item.description+' '+item.category).toLowerCase().includes(query):item.category===category);
   $('catalogue').innerHTML=entries.length?entries.map(([type,item])=>{
     const locked=item.unlock&&analysis.tier<item.unlock;
-    return `<button type="button" class="gc-building-card${selected===type?' is-selected':''}${state.cash<item.cost?' gc-unaffordable':''}${locked?' gc-locked':''}" data-upgrade="${type}" aria-pressed="${selected===type}" title="${escape(item.description)}"><span class="gc-building-art">${icon(type)}</span><span class="gc-building-name">${item.name}<small>${locked?'MONTH 3 / 35 POINTS':item.site==='roof'?'ROOFTOP RETROFIT':item.site==='road'?'ROAD UPGRADE':item.road?'ROAD ACCESS':'OPEN LAND'}</small></span><span class="gc-building-facts"><small>${item.upkeep} EP / month</small><strong>${item.cost}<small>EP</small></strong></span></button>`;
+    return `<button type="button" class="gc-building-card${selected===type?' is-selected':''}${state.cash<item.cost?' gc-unaffordable':''}${locked?' gc-locked':''}" data-upgrade="${type}" aria-pressed="${selected===type}" title="${escape(item.description)}"><span class="gc-building-art">${icon(type)}</span><span class="gc-building-name">${item.name}<small>${locked?'MONTH 3 / 35 POINTS':item.site==='roof'?'ROOFTOP RETROFIT':item.site==='road'?'ROAD UPGRADE':item.coast?'COASTAL · '+(item.footprint||[1,1]).join(' × '):item.footprint?item.footprint.join(' × ')+' PLOTS':item.road?'ROAD ACCESS':'OPEN LAND'}</small></span><span class="gc-building-facts"><small>${item.upkeep} EP / month</small><strong>${item.cost}<small>EP</small></strong></span></button>`;
   }).join(''):'<p class="gc-no-results">No buildings match. Try “park”, “energy” or “homes”.</p>';
   if(active)$('catalogue').querySelector(`[data-upgrade="${active}"]`)?.focus({preventScroll:true});
   root.querySelectorAll('[data-gc-category]').forEach(b=>{b.setAttribute('aria-pressed',String(b.dataset.gcCategory===category));const name={Nature:'Nature','Clean energy':'Energy',Transport:'Travel',Community:'Community'}[b.dataset.gcCategory],count=Object.values(C.upgrades).filter(item=>item.category===b.dataset.gcCategory).length;b.innerHTML=name+' <span class="gc-category-count">'+count+'</span>';});
@@ -51,14 +51,14 @@ function renderSelection(){
   const symbols={inspect:'↖',build:'＋',road:'⌁',upgrade:'↥',move:'✥',demolish:'⌫'};
   $('current-icon').innerHTML=mode==='build'?icon(selected):glyph(mode);$('current-tool').textContent=labels[mode];
   $('build').textContent=item.label;$('build').disabled=!!item.error;$('build').title=item.error||'Apply the tool at '+C.label(focus);
-  $('row').value=String(Math.floor(focus/20));$('col').value=String(focus%20);
+  $('row').value=String(Math.floor(focus/C.size));$('col').value=String(focus%C.size);
   root.querySelectorAll('[data-gc-tool]').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.gcTool===mode)));
   world?.setTool(mode,selected,focus,source,lineStart);
   renderInspector();
 }
 function renderInspector(){
   const info=C.tileInfo(state,focus,analysis),cell=info.cell;
-  $('inspector').innerHTML=`<div class="gc-inspector-heading"><span class="gc-overline">SELECTED / ${info.label}</span><h4>${info.name}</h4>${cell?`<span class="gc-level">LEVEL ${cell.level}${cell.roof?' · '+escape(C.upgrades[cell.roof].name):''}</span>`:''}</div><p>${cell?escape(C.types[cell.type].description||'An improvement in your city.'):C.terrain[focus]==='water'?'The waterfront is protected. Plan your city around it.':'A place for your next idea. Choose a building from the catalogue.'}</p>${C.terrain[focus]==='land'?`<div class="gc-tile-facts"><span>${info.linked?'● Connected to main roads':'○ No connected road nearby'}</span><span>Local heat exposure: ${info.heat}/100</span><span>Transit coverage: ${info.transit}/100</span></div>`:''}${cell?`<div class="gc-inspector-actions"><button type="button" data-gc-inspect="upgrade" ${['road','factory','coal'].includes(cell.type)||cell.level>=3?'disabled':''}>Upgrade</button><button type="button" data-gc-inspect="move" ${C.roadTypes.has(cell.type)?'disabled':''}>Move</button><button type="button" data-gc-inspect="demolish">Remove</button>${cell.roof?'<button type="button" data-gc-inspect="roof">Remove roof retrofit</button>':''}</div>`:''}`;
+  $('inspector').innerHTML=`<div class="gc-inspector-heading"><span class="gc-overline">SELECTED / ${info.label}</span><h4>${info.name}</h4>${cell?`<span class="gc-level">LEVEL ${cell.level}${cell.roof?' · '+escape(C.upgrades[cell.roof].name):''}</span>`:''}</div><p>${cell?escape(C.types[cell.type].description||'An improvement in your city.'):C.terrain[focus]==='water'?'The waterfront is protected. Plan your city around it.':'A place for your next idea. Choose a building from the catalogue.'}</p>${C.terrain[focus]==='land'?`<div class="gc-tile-facts"><span>${info.linked?'● Connected to main roads':'○ No connected road nearby'}</span><span>Noise exposure: ${info.noise}/100</span><span>Local heat exposure: ${info.heat}/100</span><span>Transit coverage: ${info.transit}/100</span></div>`:''}${info.local?`<div class="gc-local-residents"><strong>THIS NEIGHBOURHOOD</strong><span>Healthcare ${info.local.health}/100 · Emergency cover ${info.local.safety}/100</span><span>Services ${info.local.services}/100 · Shade ${info.local.shade}/100</span></div>`:''}${cell?`<div class="gc-inspector-actions"><button type="button" data-gc-inspect="upgrade" ${['road','factory','coal'].includes(cell.type)||cell.level>=3?'disabled':''}>Upgrade</button><button type="button" data-gc-inspect="move" ${C.roadTypes.has(cell.type)?'disabled':''}>Move</button><button type="button" data-gc-inspect="demolish">Remove</button>${cell.roof?'<button type="button" data-gc-inspect="roof">Remove roof retrofit</button>':''}</div>`:''}`;
 }
 function renderGoals(){
   const challenge=C.challenges[state.challenge];$('mission-name').textContent=challenge.name;$('mission-detail').textContent=challenge.detail;
@@ -78,9 +78,9 @@ function renderEvent(){
   $('event').innerHTML='<span class="gc-overline">CITY COUNCIL</span><h4>'+event.name+'</h4>'+(state.event.choice?'<strong class="gc-event-answered">✓ Council decision recorded</strong>':'<p>Your council needs a decision. Review the costs and forecast before choosing a response.</p><button type="button" data-gc-review-council>Review decision ↗</button>');
 }
 function minimap(){
-  const canvas=$('minimap'),ctx=canvas.getContext('2d');ctx.fillStyle='#79a6a5';ctx.fillRect(0,0,120,120);
-  state.cells.forEach((cell,i)=>{const x=i%20*6,y=Math.floor(i/20)*6;if(C.terrain[i]==='water')return;ctx.fillStyle=cell?C.roadTypes.has(cell.type)?'#e2ddc2':C.greenTypes.has(cell.type)?'#4e825d':['factory','coal'].includes(cell.type)?'#9d7963':cell.roof==='solar'?'#376a7f':'#e7cfa6':'#a7b98b';ctx.fillRect(x+.25,y+.25,5.5,5.5);});
-  ctx.strokeStyle='#fff1b6';ctx.lineWidth=1.5;ctx.strokeRect(focus%20*6+.5,Math.floor(focus/20)*6+.5,5,5);
+  const canvas=$('minimap'),ctx=canvas.getContext('2d'),step=canvas.width/C.size;ctx.fillStyle='#79a6a5';ctx.fillRect(0,0,canvas.width,canvas.height);
+  state.cells.forEach((cell,i)=>{const x=i%C.size*step,y=Math.floor(i/C.size)*step;if(C.terrain[i]==='water')return;ctx.fillStyle=cell?C.roadTypes.has(cell.type)?'#e2ddc2':C.greenTypes.has(cell.type)?'#4e825d':['factory','coal'].includes(cell.type)?'#9d7963':cell.roof==='solar'?'#376a7f':'#e7cfa6':'#a7b98b';ctx.fillRect(x+.2,y+.2,step-.4,step-.4);});
+  ctx.strokeStyle='#fff1b6';ctx.lineWidth=1.5;ctx.strokeRect(focus%C.size*step+.3,Math.floor(focus/C.size)*step+.3,step-.6,step-.6);
 }
 function render(){
   analysis=C.analyse(state);
@@ -106,7 +106,7 @@ function commit(result){
 function choose(type){selected=type;category=C.upgrades[type].category;mode='build';source=null;lineStart=null;renderCatalogue();renderSelection();if(innerWidth<=1000)setPanel('none');$('onboarding').hidden=true;announce(meta().name+' selected. '+meta().description);}
 function setMode(next){mode=next;source=null;lineStart=null;$('onboarding').hidden=true;renderSelection();announce({inspect:'Select a tile to inspect its building and local conditions.',build:meta().name+' selected. Choose a suitable plot.',road:'Choose the start of your road route, then its end. The full cost is shown before you build.',upgrade:'Select a building to upgrade. Each improvement has up to three levels.',move:'Select the building you want to relocate.',demolish:'Select an improvement to remove. You receive 50% salvage; Undo can reverse the action.'}[mode]);}
 function selectTile(i,apply=true){
-  focus=i;renderSelection();minimap();if(!apply)return;
+  focus=mode==='build'||mode==='road'||(mode==='move'&&source!==null)?i:C.anchorAt(state,i);renderSelection();minimap();if(!apply)return;
   if(mode==='inspect'){if((innerWidth<=1000||shell.classList.contains('gc-expanded'))&&shell.dataset.panel!=='city')setPanel('city');return;}
   if(mode==='build'){commit(C.place(state,selected,i));return;}
   if(mode==='upgrade'){commit(C.upgrade(state,i));return;}
@@ -123,12 +123,12 @@ function selectTile(i,apply=true){
 function undoAction(){if(!undo.length)return;redo.push(state);state=undo.pop();source=null;lineStart=null;save();render();announce('Last city action undone. Budget and city state restored.');}
 function redoAction(){if(!redo.length)return;undo.push(state);state=redo.pop();source=null;lineStart=null;save();render();announce('City action restored.');}
 function step(){if(state.event&&!state.event.choice){playing=false;syncClock();experience?.openDecision();return;}source=null;lineStart=null;if(commit(C.advance(state))&&state.event&&!state.event.choice){playing=false;syncClock();experience?.openDecision();}}
-function hasOverlay(){return ['results','confirm','finance','decision','commands'].some(name=>$(name)?.open);}
+function hasOverlay(){return ['results','confirm','finance','decision','commands','residents'].some(name=>$(name)?.open);}
 function visibleGame(){return document.body.dataset.view==='game'&&!document.hidden;}
 function renderClock(){const running=playing&&visibleGame()&&!hasOverlay();$('play').innerHTML=glyph(playing?'pause':'play');$('play').setAttribute('aria-pressed',String(playing));$('play').setAttribute('aria-label',playing?'Pause the monthly simulation':'Run the monthly simulation');$('speed').textContent=speed+'×';$('city-status').innerHTML='<i></i> CITY SIMULATION '+(running?'RUNNING':'PAUSED');$('city-status').classList.toggle('gc-running',running);}
 function syncClock(){clearInterval(timer);timer=null;if(playing&&visibleGame()&&!hasOverlay())timer=setInterval(step,12000/speed);renderClock();}
 function confirmAction(title,text,action){pending=action;$('confirm-title').textContent=title;$('confirm-message').textContent=text;$('confirm').showModal();syncClock();}
-function reset(challenge){experience?.closeOverlays();playing=false;syncClock();state=C.fresh(challenge);undo=[];redo=[];selected='tree';category='Nature';mode='inspect';focus=168;source=null;lineStart=null;$('search').value='';$('onboarding').hidden=false;save();render();world?.resetView();announce('A new city is ready. '+C.challenges[challenge].goal);}
+function reset(challenge){experience?.closeOverlays();playing=false;syncClock();state=C.fresh(challenge);undo=[];redo=[];selected='tree';category='Nature';mode='inspect';focus=8*C.size+8;source=null;lineStart=null;$('search').value='';$('onboarding').hidden=false;save();render();world?.resetView();announce('A new city is ready. '+C.challenges[challenge].goal);}
 function download(name,blob){const url=URL.createObjectURL(blob),link=document.createElement('a');link.href=url;link.download=name;link.click();setTimeout(()=>URL.revokeObjectURL(url),1000);}
 function evaluate(){
   const a=analysis,goals=C.goals(state,a),completed=goals.filter(g=>g.lower?g.value<=g.target:g.value>=g.target).length;
@@ -143,7 +143,7 @@ function evaluate(){
 }
 async function initWorld(){
   if(world){world.setActive(visibleGame());return;}if(worldPromise||!visibleGame()||fallback)return;
-  worldPromise=import('./green-city-world.js?v=9f1d27545e').then(({CityWorld})=>{
+  worldPromise=import('./green-city-world.js?v=7bb0bde3bb').then(({CityWorld})=>{
     world=new CityWorld($('board'),{onSelect:i=>selectTile(i),onHover:i=>{if(i<0)return;const cell=state.cells[i];$('hover').textContent=C.label(i)+' / '+(cell?C.types[cell.type].name:C.terrain[i]==='water'?'Protected waterfront':'Open land');},onError:announce});
     world.setState(state,analysis);world.setTool(mode,selected,focus,source,lineStart);world.setActive(visibleGame());$('loading').hidden=true;
   }).catch(()=>{fallback=true;$('loading').hidden=true;$('board').hidden=true;$('fallback').hidden=false;renderFallback();announce('3D graphics are unavailable in this browser. The planning grid is ready; all city tools and simulation features still work.');});
@@ -152,8 +152,9 @@ function renderFallback(){
   $('fallback').innerHTML='<p>Planning grid · 3D unavailable in this browser</p><div>'+state.cells.map((cell,i)=>`<button type="button" data-cell="${i}" title="${C.label(i)} · ${cell?C.types[cell.type].name:C.terrain[i]}" aria-label="Tile ${C.label(i)}, ${cell?C.types[cell.type].name:C.terrain[i]}" class="gc-grid-${C.terrain[i]==='water'?'water':cell?C.roadTypes.has(cell.type)?'road':C.greenTypes.has(cell.type)?'green':'building':'land'}${i===focus?' gc-grid-focus':''}">${cell?cell.roof==='solar'?'▧':C.roadTypes.has(cell.type)?'·':C.greenTypes.has(cell.type)?'♧':'▥':''}</button>`).join('')+'</div>';
 }
 // Interface bindings.
+shell.style.setProperty('--gc-grid-size',String(C.size));
 $('metrics').innerHTML=C.metrics.map((name,i)=>`<div class="gc-metric"><div><span>${name}</span><strong id="gc-metric-value-${i}"></strong></div><div id="gc-meter-${i}" class="gc-meter" role="progressbar" aria-label="${name}" aria-valuemin="0" aria-valuemax="100"><span></span></div></div>`).join('');
-$('row').innerHTML=Array.from({length:20},(_,i)=>`<option value="${i}">${String.fromCharCode(65+i)}</option>`).join('');$('col').innerHTML=Array.from({length:20},(_,i)=>`<option value="${i}">${i+1}</option>`).join('');
+$('row').innerHTML=Array.from({length:C.size},(_,i)=>`<option value="${i}">${C.rowLabel(i)}</option>`).join('');$('col').innerHTML=Array.from({length:C.size},(_,i)=>`<option value="${i}">${i+1}</option>`).join('');
 $('catalogue').addEventListener('click',e=>{const button=e.target.closest('[data-upgrade]');if(button)choose(button.dataset.upgrade);});
 $('search').addEventListener('input',renderCatalogue);
 root.querySelectorAll('[data-gc-category]').forEach(b=>b.addEventListener('click',()=>{category=b.dataset.gcCategory;$('search').value='';renderCatalogue();}));
@@ -162,9 +163,9 @@ root.querySelectorAll('[data-gc-panel]').forEach(b=>b.addEventListener('click',(
 root.querySelectorAll('[data-gc-tab]').forEach(b=>b.addEventListener('click',()=>setTab(b.dataset.gcTab)));
 $('open-build').addEventListener('click',()=>{if(innerWidth<=1000||shell.classList.contains('gc-expanded'))setPanel('build');else{$('search').focus();}});
 $('build').addEventListener('click',()=>selectTile(focus));$('undo').addEventListener('click',undoAction);$('redo').addEventListener('click',redoAction);
-$('row').addEventListener('change',()=>selectTile(Number($('row').value)*20+focus%20,false));$('col').addEventListener('change',()=>selectTile(Math.floor(focus/20)*20+Number($('col').value),false));$('focus').addEventListener('click',()=>world?.focusCell(focus));
+$('row').addEventListener('change',()=>selectTile(Number($('row').value)*C.size+focus%C.size,false));$('col').addEventListener('change',()=>selectTile(Math.floor(focus/C.size)*C.size+Number($('col').value),false));$('focus').addEventListener('click',()=>world?.focusCell(focus));
 $('fallback').addEventListener('click',e=>{const button=e.target.closest('[data-cell]');if(button)selectTile(Number(button.dataset.cell));});
-$('board').addEventListener('keydown',e=>{const dirs={ArrowUp:-20,ArrowDown:20,ArrowLeft:-1,ArrowRight:1};if(e.key in dirs){e.preventDefault();const row=Math.floor(focus/20),col=focus%20;const next=e.key==='ArrowUp'?Math.max(0,row-1)*20+col:e.key==='ArrowDown'?Math.min(19,row+1)*20+col:e.key==='ArrowLeft'?row*20+Math.max(0,col-1):row*20+Math.min(19,col+1);selectTile(next,false);announce('Selected '+C.label(focus)+'. '+(actionInfo().error||'Ready to use '+mode+'.'));}else if(e.key==='Enter'||e.key===' '){e.preventDefault();selectTile(focus);}});
+$('board').addEventListener('keydown',e=>{const dirs={ArrowUp:-C.size,ArrowDown:C.size,ArrowLeft:-1,ArrowRight:1};if(e.key in dirs){e.preventDefault();const row=Math.floor(focus/C.size),col=focus%C.size;const next=e.key==='ArrowUp'?Math.max(0,row-1)*C.size+col:e.key==='ArrowDown'?Math.min(C.size-1,row+1)*C.size+col:e.key==='ArrowLeft'?row*C.size+Math.max(0,col-1):row*C.size+Math.min(C.size-1,col+1);selectTile(next,false);announce('Selected '+C.label(focus)+'. '+(actionInfo().error||'Ready to use '+mode+'.'));}else if(e.key==='Enter'||e.key===' '){e.preventDefault();selectTile(focus);}});
 $('inspector').addEventListener('click',e=>{const button=e.target.closest('[data-gc-inspect]');if(!button)return;const action=button.dataset.gcInspect;if(action==='roof')commit(C.demolish(state,focus,true));else{setMode(action);if(action==='move'){source=focus;renderSelection();announce('Choose the new plot. Relocation costs '+C.moveCost(state.cells[source])+' EP.');}else selectTile(focus);}});
 $('event').addEventListener('click',e=>{if(e.target.closest('[data-gc-review-council]'))experience?.openDecision();});
 $('next').addEventListener('click',step);$('play').addEventListener('click',()=>{if(!playing&&state.event&&!state.event.choice){experience?.openDecision();return;}playing=!playing;syncClock();});$('speed').addEventListener('click',()=>{speed=speed===1?3:1;syncClock();});
@@ -179,8 +180,8 @@ $('photo').addEventListener('click',()=>{if(!world){announce('City photos are av
 function setExpanded(value){return experience?.setExpanded(value);}
 $('expand').addEventListener('click',()=>setExpanded(!shell.classList.contains('gc-expanded')));
 root.querySelectorAll('[data-gc-camera]').forEach(button=>button.addEventListener('click',()=>{if(!world)return;const action=button.dataset.gcCamera;if(action==='zoom-in')world.zoomBy(1.25);if(action==='zoom-out')world.zoomBy(.8);if(action==='rotate-left')world.rotateBy(-1);if(action==='rotate-right')world.rotateBy(1);if(action==='reset')world.resetView();if(action==='night'){button.setAttribute('aria-pressed',String(world.toggleNight()));}if(action==='grid')button.setAttribute('aria-pressed',String(world.toggleGrid()));}));
-$('overlay').addEventListener('change',()=>{const value=$('overlay').value;world?.setOverlay(value);$('overlay-legend').hidden=value==='city';$('overlay-name').textContent=$('overlay').selectedOptions[0].textContent;$('overlay-scale').textContent=value==='power'?'Imported grid power → Local clean supply':'Needs attention → Better prepared';});
-$('minimap').addEventListener('click',event=>{const rect=$('minimap').getBoundingClientRect(),col=Math.min(19,Math.floor((event.clientX-rect.left)/rect.width*20)),row=Math.min(19,Math.floor((event.clientY-rect.top)/rect.height*20));selectTile(row*20+col,false);world?.focusCell(focus);});$('minimap').addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();world?.focusCell(focus);}});
+$('overlay').addEventListener('change',()=>{const value=$('overlay').value;world?.setOverlay(value);$('overlay-legend').hidden=value==='city';$('overlay-name').textContent=$('overlay').selectedOptions[0].textContent;$('overlay-scale').textContent=value==='power'?'Imported grid power → Local clean supply':value==='noise'?'Louder places → Quieter streets':'Needs attention → Better prepared';});
+$('minimap').addEventListener('click',event=>{const rect=$('minimap').getBoundingClientRect(),col=Math.min(C.size-1,Math.floor((event.clientX-rect.left)/rect.width*C.size)),row=Math.min(C.size-1,Math.floor((event.clientY-rect.top)/rect.height*C.size));selectTile(row*C.size+col,false);world?.focusCell(focus);});$('minimap').addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();world?.focusCell(focus);}});
 $('dismiss-tutorial').addEventListener('click',()=>{$('onboarding').hidden=true;try{localStorage.setItem('coil-green-city-guide-dismissed','1');}catch{}});
 try{$('onboarding').hidden=restored||localStorage.getItem('coil-green-city-guide-dismissed')==='1';}catch{}
 // Local music remains opt-in and stops when the game or document is hidden.
@@ -194,4 +195,5 @@ document.addEventListener('keydown',e=>{if(!visibleGame()||hasOverlay()||/INPUT|
 // Compact SVG teaser keeps the rest of the website lightweight; 3D loads only in the game.
 const preview=document.getElementById('gc-preview');if(preview){const cells=Array(36).fill(null),terrain=Array.from({length:36},(_,i)=>Math.floor(i/6)===2||i%6===3?'road':[0,1,4,5,6,10,24,25,28,30,34,35].includes(i)?'building':'land');[[2,'park'],[7,'tree'],[8,'wind'],[11,'park'],[26,'park'],[29,'tree'],[1,'solar'],[4,'roof'],[28,'solar'],[13,'bus'],[15,'bike'],[21,'tram']].forEach(([i,type])=>cells[i]=type);preview.innerHTML=A.city(cells,terrain,-1,[],-1,false);}
 experience=createExperience({getState:()=>state,getAnalysis:()=>analysis,commit,announce,setMode,choose,setPanel,openPanel:panel=>{if(shell.dataset.panel!==panel)setPanel(panel);},syncClock,hasOverlay,confirmAction,evaluate,step,undo:undoAction,redo:redoAction,resize:()=>world?.resize()});
+if(restored)save();
 render();announce(saveWarning||(restored?'Welcome back, Mayor. Your expanded city and recent undo history are ready.':'Welcome to New Terra. Explore your island, choose your first improvements, then advance a month.'));syncView();
