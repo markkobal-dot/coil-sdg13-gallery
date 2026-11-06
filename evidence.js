@@ -6,11 +6,11 @@
   const $ = id => document.getElementById('ce-' + id);
   const cities = {
     nova: [45.956, 13.648, 'Europe/Ljubljana'],
-    ljubljana: [46.057, 14.505, 'Europe/Ljubljana'],
-    london: [51.507, -0.128, 'Europe/London'],
+    ajdovscina: [45.887, 13.909, 'Europe/Ljubljana'],
+    paris: [48.857, 2.352, 'Europe/Paris'],
     newyork: [40.713, -74.006, 'America/New_York']
   };
-  let generation = 0, controller, rows = [], dateKey = '', active = false, busy = false;
+  let generation = 0, controller, dateKey = '', active = false, busy = false;
   const memory = new Map();
   const finite = n => typeof n === 'number' && Number.isFinite(n);
   const number = (n, unit = ' °C') => finite(n) ? n.toFixed(1) + unit : 'Unavailable';
@@ -46,80 +46,47 @@
     if([61,63,65,66,67,80,81,82].includes(code)) return 'Rain';
     if([71,73,75,77,85,86].includes(code)) return 'Snow'; if([95,96,99].includes(code)) return 'Thunderstorm'; return 'Conditions unavailable';
   }
-  function aggregate(daily, end) {
-    if(!Array.isArray(daily?.time) || daily.time.length !== daily.temperature_2m_mean?.length) throw new Error('Incomplete archive response');
-    const years = new Map();
-    daily.time.forEach((date,i) => {const y=Number(date.slice(0,4));if(y<1980||y>end)return; if(!years.has(y))years.set(y,new Map());years.get(y).set(date,daily.temperature_2m_mean[i]);});
-    const result=[];
-    for(const [year,days] of years) {
-      const count = (Date.UTC(year+1,0,1)-Date.UTC(year,0,1))/86400000;
-      if(days.size===count && [...days.values()].every(finite))result.push({year,mean:[...days.values()].reduce((a,b)=>a+b,0)/count});
-    }
-    const base=result.filter(r=>r.year>=1991&&r.year<=2020);
-    if(base.length!==30) throw new Error('The full 1991–2020 baseline is unavailable');
-    const baseline=base.reduce((a,b)=>a+b.mean,0)/30;
-    return result.sort((a,b)=>a.year-b.year).map(r=>({...r,anomaly:r.mean-baseline}));
+  const dailyFields = 'temperature_2m_mean,temperature_2m_min,temperature_2m_max,weather_code,wind_speed_10m_max,precipitation_sum';
+  const prettyDate = date => new Intl.DateTimeFormat('en-GB', {day:'numeric',month:'long',year:'numeric',timeZone:'UTC'}).format(new Date(date+'T12:00:00Z'));
+  function dailyValues(data, date) {
+    const d=data.daily, i=d?.time?.indexOf(date) ?? -1;
+    if(i<0) throw new Error('Requested date missing');
+    const humidity=(data.hourly?.time || []).flatMap((t,j)=>t.startsWith(date) && finite(data.hourly.relative_humidity_2m?.[j]) ? [data.hourly.relative_humidity_2m[j]] : []);
+    return {temp:d.temperature_2m_mean?.[i],low:d.temperature_2m_min?.[i],high:d.temperature_2m_max?.[i],condition:d.weather_code?.[i],wind:d.wind_speed_10m_max?.[i],rain:d.precipitation_sum?.[i],humidity:humidity.length?humidity.reduce((a,b)=>a+b,0)/humidity.length:null};
   }
-  function draw() {
-    if(!rows.length)return;
-    const mode=$('mode').value, selected=Number($('year').value), row=rows.find(r=>r.year===selected);
-    $('selected-year').value=String(selected);
-    $('year-detail').textContent=row?`${selected} · Annual mean ${number(row.mean)} · Anomaly ${signed(row.anomaly)} °C relative to 1991–2020.`:`${selected} · Complete annual data unavailable.`;
-    const values=rows.map(r=>r[mode]); const low=Math.floor(Math.min(...values,mode==='anomaly'?0:Infinity))-0.5, high=Math.ceil(Math.max(...values,mode==='anomaly'?0:-Infinity))+0.5;
-    const x=y=>55+(y-rows[0].year)/(rows.at(-1).year-rows[0].year||1)*720, y=v=>225-(v-low)/(high-low)*195;
-    const ns='http://www.w3.org/2000/svg', svg=$('chart');svg.replaceChildren();
-    function add(tag,attrs,text){const e=document.createElementNS(ns,tag);for(const [k,v] of Object.entries(attrs))e.setAttribute(k,v);if(text)e.textContent=text;svg.append(e);return e;}
-    add('title',{id:'ce-chart-title'},`${$('city').selectedOptions[0].text}: ${mode==='mean'?'annual mean temperature':'annual temperature anomaly'}`);
-    add('desc',{id:'ce-chart-desc'},`Complete years ${rows[0].year}–${rows.at(-1).year}. Baseline 1991–2020. Use the year slider or data table for exact values.`);
-    for(let i=0;i<5;i++){const v=low+(high-low)*i/4;add('line',{x1:55,x2:775,y1:y(v),y2:y(v),stroke:'#d9ddd4'});add('text',{x:3,y:y(v)+4},v.toFixed(1)+'°');}
-    if(mode==='anomaly')add('line',{x1:55,x2:775,y1:y(0),y2:y(0),stroke:'#59655e','stroke-dasharray':'4 4'});
-    add('path',{d:rows.map((r,i)=>(i && rows[i-1].year===r.year-1?'L':'M')+x(r.year)+','+y(r[mode])).join(' '),fill:'none',stroke:'#bf4b2e','stroke-width':2.5});
-    rows.forEach(r=>{const c=add('circle',{cx:x(r.year),cy:y(r[mode]),r:r.year===selected?6:3,fill:r.year===selected?'#143c30':'#bf4b2e',class:'ce-chart-point'});const title=document.createElementNS(ns,'title');title.textContent=`${r.year}: ${number(r[mode])}`;c.append(title);c.addEventListener('click',()=>{$('year').value=r.year;draw();});});
-    [rows[0].year,2000,rows.at(-1).year].forEach(year=>add('text',{x:x(year),y:255,'text-anchor':'middle'},String(year)));
+  function renderDay(prefix, values) {
+    ['temp','low','high','humidity','wind','rain'].forEach(key=>$(prefix+'-'+key).textContent=number(values[key],key==='humidity'?' %':key==='wind'?' km/h':key==='rain'?' mm':' °C'));
+    $(prefix+'-condition').textContent=condition(values.condition);
+    $(prefix+'-status').textContent=Object.values(values).every(finite)?'': 'Some measurements are unavailable from the source.';
   }
   async function load(force=false) {
-    const city=$('city').value, date=dayString(localDate(cities[city][2])), earlier=pastDate(date), end=Number(date.slice(0,4))-1;
+    const city=$('city').value, date=dayString(localDate(cities[city][2])), earlier=pastDate(date);
     controller?.abort(); controller=new AbortController(); const signal=controller.signal, token=++generation;busy=true;dateKey=date;
-    rows=[];$('year').disabled=true;$('chart').replaceChildren();$('table').replaceChildren();$('year-detail').textContent='Loading annual data…';$('selected-year').value='—';
-    ['current','humidity','wind','rain','difference'].forEach(id=>$(id).textContent='—');$('updated').textContent='';$('weather').textContent='Loading current weather…';$('comparison').textContent='Loading comparable daily means…';
-    $('weather-status').textContent='Fetching weather…';$('climate-status').textContent='Loading complete historical years…';
-    const weatherJob=(async()=>{
+    ['today','past'].forEach(prefix=>{['temp','low','high','humidity','wind','rain'].forEach(key=>$(prefix+'-'+key).textContent='—');$(prefix+'-condition').textContent='Loading conditions…';$(prefix+'-status').textContent='Loading…';});
+    $('today-date').textContent=prettyDate(date);$('past-date').textContent=prettyDate(earlier);
+    $('current').textContent='—';$('weather').textContent='Loading current weather…';$('now-metrics').textContent='';$('updated').textContent='';$('difference').textContent='—';$('comparison').textContent='Waiting for both days…';$('weather-status').textContent='Fetching weather…';
+    async function getDay(past) {
+      const target=past?earlier:date, prefix=past?'past':'today', key=`coil-day-v2-${city}-${target}-${prefix}`;
       try {
-        const key=`coil-weather-v1-${city}-${date}`;
-        let data=!force&&cacheGet(key,15*60*1000);
-        if(!data){data=await request(url('api.open-meteo.com',city,{current:'temperature_2m,relative_humidity_2m,weather_code,wind_speed_10m,precipitation',daily:'temperature_2m_mean',forecast_days:'1',wind_speed_unit:'kmh'}),signal);cacheSet(key,data);}
-        if(token!==generation)return;
-        const c=data.current;if(!c)throw new Error('Missing current data');
-        $('weather').textContent=condition(c.weather_code);$('current').textContent=number(c.temperature_2m);$('humidity').textContent=number(c.relative_humidity_2m,' %');$('wind').textContent=number(c.wind_speed_10m,' km/h');$('rain').textContent=number(c.precipitation,' mm');
-        $('updated').textContent=`Model valid ${c.time.replace('T',' ')} · ${cities[city][2]}. Refreshes every 15 minutes.`;
-        $('weather-status').textContent='Current weather loaded.';
-        const hkey=`coil-day-era5-v1-${city}-${earlier}`;
-        let history=cacheGet(hkey,365*86400000);
-        if(!history){history=await request(url('archive-api.open-meteo.com',city,{start_date:earlier,end_date:earlier,daily:'temperature_2m_mean',models:'era5'}),signal);cacheSet(hkey,history);}
-        if(token!==generation)return;
-        const today=data.daily?.time?.[0]===date?data.daily.temperature_2m_mean?.[0]:null, past=history.daily?.time?.[0]===earlier?history.daily.temperature_2m_mean?.[0]:null;
-        if(!finite(today)||!finite(past))throw new Error('Daily comparison unavailable');
-        $('difference').textContent=signed(today-past)+' °C';$('comparison').textContent=`${date}: ${number(today)} (forecast daily mean). ${earlier}: ${number(past)} (ERA5 daily mean). Difference: today minus ten years earlier.`;
-        $('weather-status').textContent='Weather and daily comparison loaded.';
-      }catch(e){if(token===generation){$('weather-status').textContent='Weather or comparison unavailable. Please retry; the service may be busy or unreachable.';$('comparison').textContent='Comparison unavailable until both daily means can be retrieved.';}}
-    })();
-    const climateJob=(async()=>{
-      try {
-        const key=`coil-annual-era5-v1-${city}-${end}`;
-        let result=cacheGet(key,30*86400000);
-        if(!result){const data=await request(url('archive-api.open-meteo.com',city,{start_date:'1980-01-01',end_date:`${end}-12-31`,daily:'temperature_2m_mean',models:'era5'}),signal);result=aggregate(data.daily,end);cacheSet(key,result);}
-        if(token!==generation)return;
-        rows=result;if(!rows.length)throw new Error('No complete years');
-        $('year').min=rows[0].year;$('year').max=rows.at(-1).year;$('year').value=rows.at(-1).year;$('year').disabled=false;
-        $('climate-status').textContent=`${rows.length} complete years · ${rows[0].year}–${rows.at(-1).year} · ERA5 reanalysis. ${rows.length < end-1979?'Missing or incomplete years omitted.':''}`;
-        rows.forEach(r=>{const tr=document.createElement('tr');[r.year,r.mean.toFixed(2),signed(r.anomaly)].forEach(v=>{const td=document.createElement('td');td.textContent=v;tr.append(td);});$('table').append(tr);});draw();
-      }catch(e){if(token===generation)$('climate-status').textContent='Historical data unavailable. No temperatures have been estimated. Please retry.';}
-    })();
-    await Promise.allSettled([weatherJob,climateJob]);if(token===generation)busy=false;
+        let data=(!force||past)&&cacheGet(key,past?365*86400000:15*60*1000);
+        if(!data){data=await request(url(past?'archive-api.open-meteo.com':'api.open-meteo.com',city,{daily:dailyFields,hourly:'relative_humidity_2m',wind_speed_unit:'kmh',...(past?{start_date:target,end_date:target,models:'era5'}:{forecast_days:'1',current:'temperature_2m,relative_humidity_2m,weather_code,wind_speed_10m,precipitation'})}),signal);cacheSet(key,data);}
+        if(token!==generation)return null;
+        const values=dailyValues(data,target);renderDay(prefix,values);
+        if(!past){const c=data.current;if(c){$('current').textContent=number(c.temperature_2m);$('weather').textContent=condition(c.weather_code);$('now-metrics').textContent=`Humidity ${number(c.relative_humidity_2m,' %')} · Wind ${number(c.wind_speed_10m,' km/h')} · Precipitation ${number(c.precipitation,' mm')}`;$('updated').textContent=`Model valid ${c.time?.replace('T',' ') || 'time unavailable'} · ${cities[city][2]}. Updates every 15 minutes.`;}else $('weather').textContent='Current reading unavailable';}
+        return values;
+      } catch(e) {if(token===generation){$(prefix+'-condition').textContent='Weather unavailable';$(prefix+'-status').textContent='Could not load this day. Please retry.';if(!past)$('weather').textContent='Current weather unavailable';}return null;}
+    }
+    const [today,past]=await Promise.all([getDay(false),getDay(true)]);
+    if(token!==generation)return;
+    busy=false;
+    if(finite(today?.temp)&&finite(past?.temp)){
+      const diff=today.temp-past.temp;$('difference').textContent=signed(diff)+' °C';$('comparison').textContent=diff===0?'The same daily average temperature on both days.':`Today’s forecast daily average is ${Math.abs(diff).toFixed(2)} °C ${diff>0?'warmer':'cooler'} than on ${prettyDate(earlier)}.`;
+      $('weather-status').textContent='Both days loaded.';
+    }else{$('comparison').textContent='The temperature difference needs both daily averages.';$('weather-status').textContent='Some data is unavailable. Please retry.';}
   }
   // Loading starts only when this existing routed section becomes visible.
   new IntersectionObserver(entries=>{if(entries.some(e=>e.isIntersecting)&&!active){active=true;load();}},{rootMargin:'100px'}).observe(root);
-  $('city').addEventListener('change',()=>{active=true;load();});$('retry').addEventListener('click',()=>load(true));$('mode').addEventListener('change',draw);$('year').addEventListener('input',draw);
+  $('city').addEventListener('change',()=>{active=true;load();});$('retry').addEventListener('click',()=>load(true));
   function tick(){if(!active)return;const date=dayString(localDate(cities[$('city').value][2]));if(date!==dateKey||!busy)load();}
   setInterval(()=>{if(active&&dayString(localDate(cities[$('city').value][2]))!==dateKey)load();},30000);
   setInterval(tick,15*60*1000);
