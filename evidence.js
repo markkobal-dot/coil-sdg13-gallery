@@ -84,8 +84,16 @@
       $('weather-status').textContent='Both days loaded.';
     }else{$('comparison').textContent='The temperature difference needs both daily averages.';$('weather-status').textContent='Some data is unavailable. Please retry.';}
   }
-  // Loading starts only when this existing routed section becomes visible.
-  new IntersectionObserver(entries=>{if(entries.some(e=>e.isIntersecting)&&!active){active=true;load();}},{rootMargin:'100px'}).observe(root);
+  // The router can reveal this panel below the fold. Start on route entry,
+  // rather than depending on the whole (very tall) panel intersecting the viewport.
+  function activate() {
+    if (!active && document.body.dataset.view === 'problem') {
+      active = true;
+      load();
+    }
+  }
+  window.addEventListener('app:view', activate);
+  activate();
   $('city').addEventListener('change',()=>{active=true;load();});$('retry').addEventListener('click',()=>load(true));
   function tick(){if(!active)return;const date=dayString(localDate(cities[$('city').value][2]));if(date!==dateKey||!busy)load();}
   setInterval(()=>{if(active&&dayString(localDate(cities[$('city').value][2]))!==dateKey)load();},30000);

@@ -272,7 +272,8 @@
   let audioContext = null;
   let musicTimer = null;
   let musicIndex = 0;
-  let gameVisible = true;
+  let gameVisible = document.body.dataset.view === 'game';
+  const activeTones = new Set();
   const melody = [392,
   440,
   523.25,
@@ -292,14 +293,20 @@
     gain.gain.exponentialRampToValueAtTime(0.0001, startAt + duration);
     oscillator.connect(gain);
     gain.connect(audioContext.destination);
+    activeTones.add(oscillator);
+    oscillator.onended = () => {
+      activeTones.delete(oscillator);
+      oscillator.disconnect();
+      gain.disconnect();
+    };
     oscillator.start(startAt);
     oscillator.stop(startAt + duration + 0.025);
   }
   function tone(frequency, duration = 0.11, volume = 0.045) {
-    if (!soundEnabled || !audioContext) return;
+    if (!soundEnabled || !audioContext || !gameVisible || document.hidden) return;
     if (audioContext.state !== 'running') {
       audioContext.resume().then(() => {
-        if (soundEnabled) scheduleTone(frequency, duration, volume);
+        if (soundEnabled && gameVisible && !document.hidden) scheduleTone(frequency, duration, volume);
       }).catch (() => {
       });
       return;
@@ -307,7 +314,7 @@
     scheduleTone(frequency, duration, volume);
   }
   function startMusic() {
-    if (musicTimer || !gameVisible || document.hidden) return;
+    if (musicTimer || !soundEnabled || !audioContext || !gameVisible || document.hidden) return;
     musicIndex = 0;
     const playNote = () => {
       if (!soundEnabled || !audioContext || audioContext.state !== 'running') return;
@@ -321,6 +328,10 @@
   function stopMusic() {
     if (musicTimer) window.clearInterval(musicTimer);
     musicTimer = null;
+    for (const oscillator of activeTones) {
+      try { oscillator.stop(); } catch { /* Already ended. */ }
+    }
+    activeTones.clear();
   }
   function playCue(kind) {
     if (kind === 'move') tone(260, 0.045, 0.018);
@@ -335,39 +346,26 @@
       window.setTimeout(() => tone(820, 0.23, 0.055), 285);
     }
   }
-  function updateFallbackVisibility() {
-    const bounds = canvas.getBoundingClientRect();
-    gameVisible = document.body.dataset.view === 'game' &&
-      bounds.width > 0 && bounds.bottom > 0 && bounds.top < window.innerHeight;
-    if (gameVisible && soundEnabled && !document.hidden) startMusic();
-    else stopMusic();
-  }
-  const gameVisibility = 'IntersectionObserver' in window
-    ? new IntersectionObserver((entries) => {
-      gameVisible = entries[0].isIntersecting;
-      if (gameVisible && soundEnabled && !document.hidden) startMusic();
-      else stopMusic();
-    }, { threshold: 0.12 })
-    : null;
-  if (gameVisibility) {
-    gameVisibility.observe(canvas);
-  } else {
-    window.addEventListener('scroll', updateFallbackVisibility, { passive: true });
-    window.addEventListener('resize', updateFallbackVisibility);
-    updateFallbackVisibility();
-  }
-  window.addEventListener('app:view', (event) => {
-    if (event.detail.id !== 'game') {
-      gameVisible = false;
+  function syncMusic() {
+    gameVisible = document.body.dataset.view === 'game';
+    if (!gameVisible || document.hidden || !soundEnabled) {
       stopMusic();
-    } else if (!gameVisibility) {
-      updateFallbackVisibility();
+      return;
     }
-  });
-  document.addEventListener('visibilitychange', () => {
-    if (document.hidden) stopMusic();
-    else if (gameVisible && soundEnabled) startMusic();
-  });
+    // Mobile browsers can suspend Web Audio while the tab is in the background.
+    if (audioContext && audioContext.state !== 'running') {
+      audioContext.resume().then(() => {
+        if (soundEnabled && gameVisible && !document.hidden) startMusic();
+      }).catch(() => {
+        soundEnabled = false;
+        soundButton.textContent = 'Resume game sound';
+        soundButton.setAttribute('aria-pressed', 'false');
+      });
+    } else startMusic();
+  }
+  // Sound belongs to the game view, including when the canvas is below the fold.
+  window.addEventListener('app:view', syncMusic);
+  document.addEventListener('visibilitychange', syncMusic);
   soundButton.addEventListener('click', () => {
     if (soundEnabled) {
       soundEnabled = false;
@@ -382,15 +380,23 @@
       message.textContent = 'This browser does not support game audio.';
       return;
     }
-    audioContext = audioContext || new AudioContextClass();
+    try {
+      audioContext = audioContext || new AudioContextClass();
+    } catch {
+      message.textContent = 'Game audio is unavailable. Please try another browser.';
+      return;
+    }
+    soundEnabled = true;
     audioContext.resume().then(() => {
-      soundEnabled = true;
+      if (!soundEnabled) return;
       soundButton.textContent = 'Game sound: on (turn off)';
       soundButton.setAttribute('aria-pressed', 'true');
-      startMusic();
+      syncMusic();
       playCue('success');
     }).catch (() => {
       soundEnabled = false;
+      soundButton.textContent = 'Retry game sound';
+      soundButton.setAttribute('aria-pressed', 'false');
       message.textContent = 'Audio did not start. Check whether this browser tab is muted, then try again.';
     });
   });

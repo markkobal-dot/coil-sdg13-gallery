@@ -3,7 +3,7 @@ const {test}=require('node:test');
 const assert=require('node:assert/strict');
 const vm=require('node:vm');
 const fs=require('node:fs');
-const context={document:{getElementById:()=>({addEventListener(){}}),addEventListener(){}},IntersectionObserver:class{observe(){}},setInterval(){},Intl,Date,Map,AbortController};
+const context={window:{addEventListener(){}},document:{body:{dataset:{}},getElementById:()=>({addEventListener(){}}),addEventListener(){}},IntersectionObserver:class{observe(){}},setInterval(){},Intl,Date,Map,AbortController};
 vm.createContext(context);
 vm.runInContext(fs.readFileSync(require('node:path').join(__dirname,'../evidence.js'),'utf8').replace(/\}\)\(\);\s*$/, 'globalThis.helpers = {pastDate, localDate, dayString, dailyValues};})();'),context);
 const {pastDate,aggregate}=context.helpers;
