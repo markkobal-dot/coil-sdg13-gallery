@@ -1,0 +1,136 @@
+/* Wind, warmth and a little movement, in the journal's existing palette. */
+.climate-atmosphere {
+  position: fixed;
+  inset: 84px 0 0;
+  z-index: 10;
+  overflow: hidden;
+  pointer-events: none;
+  color: #3d7752;
+  contain: strict;
+}
+.climate-leaf {
+  position: absolute;
+  top: -60px;
+  left: var(--leaf-x);
+  width: var(--leaf-size);
+  opacity: 0;
+  animation: climate-flight var(--leaf-duration) var(--leaf-delay) linear infinite;
+}
+.climate-leaf svg {
+  display: block;
+  width: 100%;
+  height: auto;
+  animation: climate-sway 7s var(--leaf-delay) ease-in-out infinite alternate;
+}
+@keyframes climate-flight {
+  0% { opacity: 0; transform: translate3d(-2vw, -10vh, 0) rotate(var(--leaf-turn)); }
+  12%, 82% { opacity: .32; }
+  100% { opacity: 0; transform: translate3d(2vw, 110vh, 0) rotate(calc(var(--leaf-turn) + 130deg)); }
+}
+@keyframes climate-sway {
+  from { transform: translateX(-10px) rotate(-24deg); }
+  to { transform: translateX(12px) rotate(24deg); }
+}
+body[data-view="gallery"] .climate-atmosphere {
+  color: #c8d7a5;
+  --leaf-vein: #143c30;
+}
+.climate-heat {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  overflow: hidden;
+  pointer-events: none;
+  color: #ffdab7;
+  background: radial-gradient(ellipse at 85% 6%, #f6c0933b, transparent 56%);
+}
+.climate-heat svg {
+  position: absolute;
+  inset: 15% 0 -15%;
+  width: 100%;
+  height: 100%;
+  opacity: .28;
+  animation: climate-warmth 11s ease-in-out infinite alternate;
+}
+@keyframes climate-warmth {
+  from { transform: translate3d(-1%, 4%, 0) skewX(-3deg); opacity: .12; }
+  to { transform: translate3d(1%, -7%, 0) skewX(3deg); opacity: .34; }
+}
+.hero-visual .hero-photo-top,
+.hero-visual > figcaption,
+.hero-visual .sdg-chip { z-index: 2; }
+html[data-motion="on"] .hero-landscape {
+  animation: climate-landscape 24s ease-in-out infinite alternate;
+  transform-origin: 52% 55%;
+}
+@keyframes climate-landscape {
+  from { transform: scale(1); }
+  to { transform: scale(1.045); }
+}
+html[data-motion="on"] main > section {
+  animation: climate-destination 520ms cubic-bezier(.16, 1, .3, 1) both;
+}
+@keyframes climate-destination {
+  from { opacity: .2; transform: translateY(16px); }
+  to { opacity: 1; transform: none; }
+}
+.effects-toggle {
+  position: fixed;
+  right: 18px;
+  bottom: 18px;
+  z-index: 25;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 44px;
+  padding: 9px 13px;
+  border: 1px solid #aebcb1;
+  border-radius: 24px;
+  background: #f7f6f0f5;
+  box-shadow: 0 4px 16px #143c3014;
+  color: #143c30;
+  font: 500 13px/1.4 'DM Sans', Arial, sans-serif;
+  cursor: pointer;
+}
+.effects-toggle svg { width: 15px; height: 21px; }
+.effects-toggle[aria-pressed="true"] { border-color: #70977b; }
+.effects-toggle:focus-visible { outline: 3px solid #bf4b2e; outline-offset: 4px; }
+.effects-toggle:disabled { cursor: default; }
+html[data-motion="off"] .climate-atmosphere,
+html[data-motion="off"] .climate-heat,
+body[data-view="game"] .climate-atmosphere,
+body[data-view="game"] .effects-toggle,
+body.viewer-open .climate-atmosphere,
+body.viewer-open .effects-toggle,
+body.menu-open .climate-atmosphere,
+body.menu-open .effects-toggle { display: none; }
+html[data-motion="off"] main > section,
+html[data-motion="off"] .hero-inner > *,
+html[data-motion="off"] .hero-landscape { animation: none; }
+html.js-enabled[data-motion="off"] .reveal {
+  opacity: 1;
+  transform: none;
+  transition: none;
+}
+body.effects-paused .climate-leaf,
+body.effects-paused .climate-leaf svg,
+body.effects-paused .climate-heat svg,
+body.effects-paused .hero-landscape { animation-play-state: paused; }
+@media (hover: hover) and (pointer: fine) {
+  html[data-motion="on"] .btn-primary:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 7px 20px #bf4b2e28;
+  }
+}
+@media (max-width: 640px) {
+  .climate-atmosphere { inset-block-start: 72px; }
+  .climate-leaf:nth-child(n+7) { display: none; }
+  .climate-leaf { width: 19px; }
+  .effects-toggle { right: 12px; bottom: max(12px, env(safe-area-inset-bottom)); }
+  html[data-motion="on"] main > section { animation-duration: 380ms; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .climate-atmosphere, .climate-heat { display: none; }
+  html[data-motion] main > section,
+  html[data-motion] .hero-landscape { animation: none; }
+}
