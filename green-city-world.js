@@ -83,7 +83,7 @@ export class CityWorld {
   }
   building(g,cell,i) {
     const type=cell.type,factor=1+(cell.level-1)*.35,seed=hash(i),color=palette[Math.floor(seed*palette.length)];
-    let height=(type==='apartment'?1.7+seed*.55:type==='house'?.58+seed*.22:type==='factory'?.72:.62)*factor;
+    let height=(type==='apartment'?1.7+seed*.55:type==='office'?1.35:type==='house'?.58+seed*.22:type==='factory'?.72:.62)*factor;
     const w=type==='house'?.59:.76,d=type==='house'?.62:.74;
     this.box(g,'#e8e4d5',0,.045,0,.9,.09,.9);
     this.box(g,type==='factory'?'#b58369':color,0,height/2+.08,0,w,height,d);
@@ -140,6 +140,36 @@ export class CityWorld {
         this.box(g,'#b9d0b1',x,height+.22,0,.025,.025,.21);
       }
     }
+    if(type==='geothermal'){
+      for(const x of[-.23,.23]){
+        this.cylinder(g,'#a7c5b6',x,height+.35,-.04,.14,.45);
+        this.cylinder(g,'#638f83',x,height+.58,-.04,.15,.035);
+        this.box(g,'#cba575',x,height+.27,.24,.055,.12,.35);
+      }
+      this.box(g,'#cba575',0,height+.28,.38,.5,.055,.055);
+    }
+    if(type==='market'){
+      this.box(g,'#c99c68',0,.42,.47,.91,.06,.3);
+      for(let n=0;n<6;n++)this.box(g,n%2?'#efe7cf':'#76a082',-.375+n*.15,.457,.47,.14,.018,.3);
+      for(const x of[-.41,.41])this.box(g,'#82765a',x,.24,.56,.025,.4,.025);
+      for(const x of[-.23,.04,.27]){
+        this.box(g,'#b39569',x,.13,.45,.19,.16,.16);
+        for(const z of[.41,.48])this.leaf(g,x<0?'#d99b62':'#8da85e',x,.24,z,.065,.05,.04);
+      }
+    }
+    if(type==='library'){
+      this.box(g,'#527e80',0,.34,.381,.58,.35,.018);
+      for(const x of[-.23,-.08,.08,.23])this.box(g,'#e9e5d2',x,.34,.397,.018,.38,.018);
+      this.box(g,'#d7cbb0',0,.07,.45,.65,.07,.18);
+      this.box(g,'#d7cbb0',0,.035,.53,.75,.04,.18);
+      this.box(g,'#557d66',0,height+.2,0,.36,.035,.3);
+      for(const x of[-.09,.09]){const book=this.box(g,'#ece8ce',x,height+.235,0,.17,.025,.24);book.rotation.z=x<0?-.12:.12;}
+    }
+    if(type==='office'){
+      for(const x of[-.25,0,.25])this.box(g,'#517a81',x,height/2+.09,.379,.17,height*.8,.018,{metalness:.25,roughness:.3});
+      for(let y=.4;y<height;y+=.35)this.box(g,'#d9e1d4',0,y,.397,.8,.035,.03);
+      if(!cell.roof){this.box(g,'#86a278',.12,height+.17,.1,.4,.07,.35);this.leaf(g,'#5f8e62',.16,height+.31,.12,.14,.15,.14);}
+    }
   }
   vehicle(g,color='#d4c497',bus=false) {
     const length=bus?.72:.4,width=bus?.28:.23;
@@ -172,6 +202,25 @@ export class CityWorld {
         if(type==='tram')for(const z of[-.1,.1])this.box(g,'#a8beb8',0,.04,z,1,.016,.02,{metalness:.7});
       }
       if(type==='ev')for(const x of[-.25,.25]){this.box(g,'#e1e0cb',x,.2,.34,.1,.34,.09);this.box(g,'#357f68',x,.28,.392,.06,.11,.014);this.box(g,'#4f6152',x+.07,.14,.34,.018,.18,.02);}
+      if(type==='metro'){
+        this.box(g,'#d2cfb7',0,.05,.16,.8,.07,.6);
+        this.box(g,'#284e51',0,.092,.1,.58,.02,.42);
+        for(let n=0;n<5;n++)this.box(g,'#94a89d',0,.11+n*.018,-.05+n*.075,.5,.025,.035);
+        for(const x of[-.34,.34])this.box(g,'#5c8e81',x,.34,.12,.035,.55,.52);
+        this.box(g,'#84a79a',0,.62,.12,.75,.055,.58);
+        this.box(g,'#467f85',.32,.88,.24,.18,.3,.035);
+        this.box(g,'#eceddb',.32,.9,.264,.11,.025,.012);
+      }
+      if(type==='bikeshare'){
+        this.box(g,'#c6c9ae',0,.06,.3,.9,.065,.32);
+        for(const x of[-.3,-.1,.1,.3]){
+          this.box(g,'#648e7f',x,.2,.4,.025,.28,.035);
+          for(const z of[.08,.3]){const wheel=this.cylinder(g,'#3e5b53',x,.16,z,.075,.025);wheel.rotation.z=Math.PI/2;}
+          this.box(g,'#78aaa0',x,.23,.2,.025,.035,.25);
+          this.box(g,'#78aaa0',x,.28,.19,.025,.14,.025);
+          this.box(g,'#e2d8b7',x,.36,.1,.11,.025,.025);
+        }
+      }
       if(i%8===0){this.cylinder(g,'#6b8174',-.42,.32,-.42,.013,.59);this.box(g,'#e9d6a0',-.42,.63,-.4,.13,.035,.07,{emissive:'#ffdd99',emissiveIntensity:.2});}
       return g;
     }
@@ -193,6 +242,32 @@ export class CityWorld {
         this.cylinder(g,'#7bacaa',0,.08,0,.32,.022,{roughness:.2});
         for(let n=0;n<6;n++){const a=n/6*Math.PI*2;this.box(g,'#597b50',Math.cos(a)*.3,.2,Math.sin(a)*.3,.02,.24,.02);this.leaf(g,'#ac9564',Math.cos(a)*.3,.32,Math.sin(a)*.3,.035,.06,.035);}
       }
+      if(type==='orchard'){
+        for(const[x,z]of[[-.24,-.24],[.24,-.24],[-.24,.24],[.24,.24]]){
+          this.tree(g,x,z,.65*scale,i+x*13+z*7);
+          for(const[dx,dz]of[[-.08,.09],[.1,.06]])this.leaf(g,'#d9a15b',x+dx,.54*scale,z+dz,.045,.045,.045);
+        }
+        this.box(g,'#baa272',0,.08,0,.09,.025,.9);
+      }
+      if(type==='playground'){
+        this.box(g,'#d7bc8b',0,.08,0,.72,.035,.65);
+        for(const x of[-.24,.07])for(const z of[-.2,.13])this.box(g,'#9c7856',x,.35,z,.025,.5,.025);
+        this.box(g,'#c5a273',-.08,.43,-.03,.42,.055,.43);
+        this.box(g,'#ca9562',-.08,.65,-.03,.46,.09,.46);
+        const slide=this.box(g,'#73a4ac',.24,.28,.02,.23,.035,.56);slide.rotation.x=.65;
+        this.tree(g,-.34,.3,.46,i);
+      }
+      if(type==='plaza'){
+        this.box(g,'#d6cbb0',0,.083,0,.87,.035,.87);
+        this.cylinder(g,'#a8b6a1',0,.13,0,.22,.1);
+        this.cylinder(g,'#78aaa7',0,.187,0,.19,.018,{roughness:.2});
+        this.cylinder(g,'#bad5c3',0,.29,0,.018,.2);
+        for(const x of[-.34,.34]){
+          this.box(g,'#7d9e70',x,.115,0,.14,.07,.65);
+          for(const z of[-.2,.2])this.leaf(g,'#64885b',x,.2,z,.08,.09,.08);
+        }
+        this.box(g,'#aa8b61',0,.19,.31,.37,.045,.1);
+      }
       if(type==='park'||type==='tree')for(let j=0;j<3;j++)this.leaf(g,['#e2b871','#d8a491','#a7b987'][j],-.3+j*.2,.12,.34,.055,.04,.055);
       return g;
     }
@@ -202,6 +277,15 @@ export class CityWorld {
       const rotor=new THREE.Group();rotor.position.set(0,2.7*scale,.17);rotor.userData.animated=true;
       for(let n=0;n<3;n++){const arm=new THREE.Group();arm.rotation.z=n*Math.PI*2/3;this.box(arm,'#f2f1df',0,.43,0,.07,.83,.025);rotor.add(arm);}
       this.cylinder(rotor,'#4f827a',0,0,0,.06,.06);g.add(rotor);return g;
+    }
+    if(type==='solarfarm'){
+      this.box(g,'#bec4a4',0,.035,0,.94,.06,.94);
+      for(const x of[-.29,0,.29])for(const z of[-.27,.07,.35]){
+        this.box(g,'#809588',x,.14,z,.025,.22,.025);
+        const panel=this.box(g,'#285b71',x,.27,z,.26,.025,.25,{metalness:.4,roughness:.25});panel.rotation.x=-.3;
+        this.box(g,'#82b4bd',x,.29,z,.008,.006,.23);
+      }
+      return g;
     }
     if(type==='coal'){
       this.box(g,'#b0aa8e',0,.25,0,.8,.5,.7);for(const x of[-.22,.22]){this.cylinder(g,'#c1bca8',x,.95,0,.17,1.4);this.cylinder(g,'#827f6e',x,1.67,0,.14,.05);}this.smokePoints.push(new THREE.Vector3(i%20-9.5,1.85,Math.floor(i/20)-9.5));return g;
@@ -245,7 +329,7 @@ export class CityWorld {
       if(!cell)return;const model=this.model(cell,i,state.cells);model.position.set(i%20-9.5,landY,Math.floor(i/20)-9.5);root.add(model);
       // Separate pick volumes preserve a building's tile after static geometry is batched.
       // Clicking a tall roof must select that building, rather than the ground behind it.
-      const h=cell.type==='apartment'?(1.8+hash(i)*.55)*(1+(cell.level-1)*.35)+.3:cell.type==='wind'?3.1*(1+(cell.level-1)*.18):C.roadTypes.has(cell.type)?.4:C.greenTypes.has(cell.type)?1.15:cell.type==='coal'?1.9:cell.type==='factory'?1.8:1.2*(1+(cell.level-1)*.35);
+      const h=cell.type==='apartment'?(1.8+hash(i)*.55)*(1+(cell.level-1)*.35)+.3:cell.type==='office'?1.35*(1+(cell.level-1)*.35)+.5:cell.type==='geothermal'?1.3*(1+(cell.level-1)*.35)+.3:cell.type==='wind'?3.1*(1+(cell.level-1)*.18):cell.type==='metro'?.95:C.roadTypes.has(cell.type)?.4:C.greenTypes.has(cell.type)?1.15:cell.type==='coal'?1.9:cell.type==='factory'?1.8:1.2*(1+(cell.level-1)*.35);
       const pick=new THREE.Mesh(boxGeo(),this.mat('#ffffff'));pick.position.set(i%20-9.5,landY+h/2,Math.floor(i/20)-9.5);pick.scale.set(cell.type==='wind'?.4:.8,h,.8);pick.userData.cell=i;pick.updateMatrixWorld(true);this.pickTargets.push(pick);
     });
     root.updateMatrixWorld(true);

@@ -36,15 +36,25 @@
     school: { name: 'Learning centre', category: 'Community', cost: 260, upkeep: 5, site: 'land', icon: 'school', road: true, effect: 'Education · +20 jobs', description: 'A community learning centre. Nearby homes benefit most, and the centre adds clean local jobs.' },
     clinic: { name: 'Community clinic', category: 'Community', cost: 220, upkeep: 5, site: 'land', icon: 'clinic', road: true, effect: 'Health · +18 jobs', description: 'Improve access to care and wellbeing for nearby residents. Requires a connected road.' },
     recycling: { name: 'Circular hub', category: 'Community', cost: 200, upkeep: 3, site: 'land', icon: 'recycling', road: true, effect: 'Less waste · +24 jobs', description: 'Recover useful materials and provide clean jobs. Helps replace employment from the old industrial district.' },
-    waterworks: { name: 'Water recycling', category: 'Community', cost: 250, upkeep: 4, site: 'land', icon: 'waterworks', road: true, effect: 'Water security · +18 jobs', description: 'A water reuse facility improves climate resilience and gives residents a more reliable water supply.' }
+    waterworks: { name: 'Water recycling', category: 'Community', cost: 250, upkeep: 4, site: 'land', icon: 'waterworks', road: true, effect: 'Water security · +18 jobs', description: 'A water reuse facility improves climate resilience and gives residents a more reliable water supply.' },
+    orchard: { name: 'Urban orchard', category: 'Nature', cost: 140, upkeep: 2, site: 'land', icon: 'orchard', jobs: 8, natureShade: 24, greenScore: 4.5, effect: 'Local food · +8 jobs · shade', description: 'Grow fruit close to home. An orchard provides more local jobs than woodland, with a smaller canopy and a monthly maintenance cost.' },
+    playground: { name: 'Adventure playground', category: 'Nature', cost: 160, upkeep: 3, site: 'land', icon: 'playground', jobs: 3, natureShade: 12, greenScore: 3, amenity: 26, radius: 4, effect: 'Nearby wellbeing · family space', description: 'Create a place for families to play. Strongest within four tiles of homes; offers less cooling than a wooded park.' },
+    plaza: { name: 'Sponge plaza', category: 'Nature', cost: 190, upkeep: 3, site: 'land', icon: 'plaza', jobs: 4, natureShade: 10, greenScore: 2.5, amenity: 15, radius: 4, resilience: 6, effect: 'Flood resilience · public space', description: 'A permeable public square with rain beds. Improves flood resilience and nearby wellbeing while keeping space for community life.' },
+    solarfarm: { name: 'Solar farm', category: 'Clean energy', cost: 320, upkeep: 5, site: 'land', icon: 'solarfarm', power: 44, jobs: 8, effect: '+44 clean power · +8 jobs', description: 'Generate clean electricity on an open plot. Higher output than a solar roof, but uses land that could provide housing or green space.' },
+    geothermal: { name: 'Geothermal plant', category: 'Clean energy', cost: 420, upkeep: 7, site: 'land', icon: 'geothermal', road: true, unlock: 2, power: 60, jobs: 16, resilience: 3, effect: '+60 clean power · +16 jobs', description: 'Reliable low-carbon generation with a high opening cost and upkeep. Requires a connected road; unlocks in month 3 or at 35 sustainability.' },
+    metro: { name: 'Metro station', category: 'Transport', cost: 420, upkeep: 9, site: 'road', icon: 'metro', unlock: 2, transportStrength: 90, transportRadius: 8, effect: 'Wide transit coverage · fares', description: 'An underground transit entrance with the widest coverage. Needs a connected road and costs more to maintain than a bus or tram stop.' },
+    bikeshare: { name: 'Bike-share station', category: 'Transport', cost: 110, upkeep: 2, site: 'road', icon: 'bikeshare', transportStrength: 35, transportRadius: 4, effect: 'Short local trips · active travel', description: 'Give nearby residents a practical cycling option. Works best close to homes and complements a connected protected-bike network.' },
+    market: { name: 'Local food market', category: 'Community', cost: 210, upkeep: 4, site: 'land', icon: 'market', road: true, jobs: 30, amenity: 18, radius: 5, effect: '+30 jobs · neighbourhood life', description: 'Support local traders and everyday shopping. Provides jobs and a modest wellbeing benefit to nearby homes; requires road access.' },
+    library: { name: 'Public library', category: 'Community', cost: 240, upkeep: 5, site: 'land', icon: 'library', road: true, jobs: 22, amenity: 40, radius: 5, effect: 'Strong local services · +22 jobs', description: 'Invest in learning, public space and access to information. Strong wellbeing support within five tiles; requires a connected road.' },
+    office: { name: 'Clean-tech offices', category: 'Community', cost: 380, upkeep: 7, site: 'land', icon: 'office', road: true, unlock: 2, jobs: 64, powerDemand: 6, effect: '+64 jobs · uses 6 power units', description: 'Replace polluting industrial jobs with clean businesses. Provides substantial employment but needs road access, power and ongoing maintenance.' }
   };
   const types = { ...upgrades,
     factory: { name: 'Old industry', cost: 260, upkeep: 5, road: true, description: 'An older industrial workplace. It provides 48 jobs but pollutes nearby neighbourhoods. Replace its jobs before removing it.' },
     coal: { name: 'Fossil energy plant', cost: 350, upkeep: 7, road: true, description: 'The city’s legacy power station. It provides 24 jobs but worsens air quality. Imported grid power remains available after removal.' }
   };
-  const roadTypes = new Set(['road', 'bike', 'bus', 'tram', 'ev']);
-  const buildingTypes = new Set(['house', 'apartment', 'school', 'clinic', 'recycling', 'waterworks', 'heat', 'battery', 'factory']);
-  const greenTypes = new Set(['tree', 'park', 'forest', 'garden', 'wetland']);
+  const roadTypes = new Set(['road', 'bike', 'bus', 'tram', 'ev', 'metro', 'bikeshare']);
+  const buildingTypes = new Set(['house', 'apartment', 'school', 'clinic', 'recycling', 'waterworks', 'heat', 'battery', 'factory', 'geothermal', 'market', 'library', 'office']);
+  const greenTypes = new Set(['tree', 'park', 'forest', 'garden', 'wetland', 'orchard', 'playground', 'plaza']);
   const challenges = {
     revolution: { name: 'Green Revolution', budget: 2800, detail: 'Bring sustainability to 70, wellbeing to 60, and grow to 350 residents.', goal: 'Build a balanced, liveable neighbourhood.' },
     carbon: { name: 'Low-Carbon City', budget: 3000, detail: 'Reach 75 clean energy, 65 mobility and a pollution index of 20 or lower, with 300 residents.', goal: 'Replace fossil dependence with a cleaner city.' },
@@ -90,7 +100,7 @@
   function analyse(state) {
     const p=policies(state.policies),funding=p.serviceBudget/100;
     const roads = connectedRoads(state.cells), counts = {}, homes = [], greens = [], transit = [], power = [], services = [];
-    let upkeep = 0, cleanPower = 0, capacity = 0, jobs = 0, forests = 0, wetlands = 0, roofs = 0, batteries = 0, heating = 0, waste = 0, water = 0, industry = 0, fossil = 0, bikes = 0, bikeLinks = 0;
+    let upkeep = 0, cleanPower = 0, capacity = 0, jobs = 0, forests = 0, wetlands = 0, roofs = 0, batteries = 0, heating = 0, waste = 0, water = 0, industry = 0, fossil = 0, bikes = 0, bikeLinks = 0, extraResilience = 0, extraDemand = 0;
     state.cells.forEach((cell, i) => {
       if (!cell) return;
       const { type, level } = cell, factor = multiplier(cell), meta = types[type];
@@ -104,7 +114,14 @@
         if (linked) capacity += people;
         if (type === 'apartment' && linked) jobs += 18 * factor;
       }
-      if (greenTypes.has(type)) { greens.push({ i, type, factor }); jobs += (type === 'garden' ? 4 : 2) * factor; }
+      if (greenTypes.has(type)) { greens.push({ i, type, factor }); jobs += (meta.jobs ?? (type === 'garden' ? 4 : 2)) * factor; }
+      if (!meta.road || linked) {
+        if (meta.power) { cleanPower += meta.power * factor; power.push(i); }
+        if (meta.jobs && !greenTypes.has(type)) jobs += meta.jobs * factor;
+        extraResilience += (meta.resilience || 0) * factor;
+        extraDemand += (meta.powerDemand || 0) * factor;
+        if (meta.amenity) services.push({ i, type, factor, strength:meta.amenity, radius:meta.radius });
+      }
       if (type === 'forest') forests += factor;
       if (type === 'wetland') wetlands += factor * (terrain.some((t,j)=>t==='water' && distance(i,j)<=2) ? 1.6 : 1);
       if (cell.roof === 'roof') roofs += factor;
@@ -117,15 +134,16 @@
       if (type === 'recycling' && linked) { waste += factor; jobs += 24 * factor; }
       if (type === 'waterworks' && linked) { water += factor; jobs += 18 * factor; }
       if (['school','clinic'].includes(type) && linked) { services.push({ i, type, factor }); jobs += (type === 'school' ? 20 : 18) * factor; }
-      if (['bus','tram','ev'].includes(type) && roads.has(i)) transit.push({ i, type, factor });
+      if (['bus','tram','ev','metro','bikeshare'].includes(type) && roads.has(i)) transit.push({ i, type, factor });
+      if (type === 'bikeshare' && roads.has(i)) bikes += 1.5 * factor;
       if (type === 'bike' && roads.has(i)) { bikes += factor; bikeLinks += neighbours(i).filter(j => j > i && state.cells[j]?.type === 'bike' && roads.has(j)).length; }
     });
     const residents = Math.max(1, homes.reduce((s,h)=>s+h.capacity,0));
     let shadeCoverage = 0, mobilityCoverage = 0, serviceCoverage = 0;
     homes.forEach(home => {
-      const nature = greens.reduce((s,g)=>s+Math.max(0,1-distance(home.i,g.i)/4)*({tree:16,park:29,forest:27,wetland:20,garden:18}[g.type])*g.factor,0);
-      const travel = home.linked ? transit.reduce((s,t)=>s+Math.max(0,1-distance(home.i,t.i)/(t.type==='tram'?7:6))*(t.type==='ev'?15:t.type==='tram'?75:58)*t.factor,0) : 0;
-      const amenities = services.reduce((s,a)=>s+Math.max(0,1-distance(home.i,a.i)/6)*30*a.factor,0);
+      const nature = greens.reduce((s,g)=>s+Math.max(0,1-distance(home.i,g.i)/4)*(types[g.type].natureShade ?? {tree:16,park:29,forest:27,wetland:20,garden:18}[g.type])*g.factor,0);
+      const travel = home.linked ? transit.reduce((s,t)=>s+Math.max(0,1-distance(home.i,t.i)/(types[t.type].transportRadius || (t.type==='tram'?7:6)))*(types[t.type].transportStrength || (t.type==='ev'?15:t.type==='tram'?75:58))*t.factor,0) : 0;
+      const amenities = services.reduce((s,a)=>s+Math.max(0,1-distance(home.i,a.i)/(a.radius||6))*(a.strength||30)*a.factor,0);
       shadeCoverage += clamp(nature) * home.capacity / residents;
       mobilityCoverage += clamp(travel) * home.capacity / residents;
       serviceCoverage += clamp(amenities) * home.capacity / residents;
@@ -135,14 +153,14 @@
     shadeCoverage=clamp(shadeCoverage*(.8+.2*funding));
     mobilityCoverage=clamp(mobilityCoverage*(.8+.2*funding));
     const fareDemand=clamp(1-Math.max(0,p.transitFare-2)*.1,.65,1);
-    const hasTransit=transit.some(t=>t.type!=='ev');
+    const hasTransit=transit.some(t=>['bus','tram','metro'].includes(t.type));
     const ridership=hasTransit?Math.round(state.population*mobilityCoverage/100*.45*fareDemand):0;
-    const demand = Math.max(16, Math.round((state.population * .105 + industry * 9 + 8 + services.length * 2) * Math.max(.6,1-heating*.08-roofs*.006)*(1-Math.max(0,p.utilityTariff-1)*.035)));
+    const demand = Math.max(16, Math.round((state.population * .105 + industry * 9 + 8 + services.length * 2 + extraDemand) * Math.max(.6,1-heating*.08-roofs*.006)*(1-Math.max(0,p.utilityTariff-1)*.035)));
     const energy = clamp(Math.round(cleanPower * (1 + Math.min(.2,batteries*.08)) / demand * 100));
-    const greenness = clamp(Math.round(greens.reduce((s,g)=>s+({tree:2.8,park:5.8,forest:7,wetland:5,garden:4}[g.type])*Math.pow(g.factor,.65),0) + shadeCoverage*.42 + roofs*3.5));
+    const greenness = clamp(Math.round(greens.reduce((s,g)=>s+(types[g.type].greenScore ?? {tree:2.8,park:5.8,forest:7,wetland:5,garden:4}[g.type])*Math.pow(g.factor,.65),0) + shadeCoverage*.42 + roofs*3.5));
     const mobility = clamp(Math.round(12 + mobilityCoverage*.68*fareDemand + Math.min(28,bikes*3.2+bikeLinks*1.8) + (hasTransit?Math.max(0,2-p.transitFare)*6:0)));
     const air = clamp(Math.round(47 - industry*7 - fossil*13 + energy*.22 + greenness*.29 + mobility*.12 + Math.min(10,waste*4) + (p.cleanIndustry?10:0)));
-    const resilience = clamp(Math.round((15 + greenness*.3 + shadeCoverage*.22 + wetlands*7 + roofs*3 + batteries*6 + water*11 + heating*3)*(.85+.15*funding)));
+    const resilience = clamp(Math.round((15 + greenness*.3 + shadeCoverage*.22 + wetlands*7 + roofs*3 + batteries*6 + water*11 + heating*3 + extraResilience)*(.85+.15*funding)));
     const scores = [air, energy, greenness, mobility, resilience];
     const pollution = 100-air, overall=Math.round(scores.reduce((a,b)=>a+b,0)/5);
     const employment = clamp(Math.round(jobs / Math.max(1,state.population*.42)*100));
@@ -158,7 +176,7 @@
     const gridCost = Math.round(Math.max(0,demand-cleanPower)*.8*(state.event?.type==='energy'?1.8-.8*protection:1));
     const loanPayment=state.loan?Math.min(state.loan.payment,state.loan.balance):0;
     const expenses = assetUpkeep+transitSupport+industryStandards+gridCost+Math.max(0,-utilityMargin)+loanPayment, net=income-expenses;
-    const completed = state.challenge==='revolution' ? overall>=70&&wellbeing>=60&&state.population>=350 : state.challenge==='carbon' ? pollution<=20&&energy>=75&&mobility>=65&&state.population>=300 : state.challenge==='future' ? state.population>=650&&overall>=75&&(counts.park||0)>=5&&(counts.solar||0)>=3&&(counts.bus||0)+(counts.tram||0)>=2 : false;
+    const completed = state.challenge==='revolution' ? overall>=70&&wellbeing>=60&&state.population>=350 : state.challenge==='carbon' ? pollution<=20&&energy>=75&&mobility>=65&&state.population>=300 : state.challenge==='future' ? state.population>=650&&overall>=75&&(counts.park||0)>=5&&(counts.solar||0)>=3&&(counts.bus||0)+(counts.tram||0)+(counts.metro||0)>=2 : false;
     return { scores, overall, pollution, wellbeing, capacity:Math.round(capacity), jobs:Math.round(jobs), employment, roads, counts, income, expenses, net, cleanPower:Math.round(cleanPower), demand, shadeCoverage:Math.round(shadeCoverage), mobilityCoverage:Math.round(mobilityCoverage), serviceCoverage:Math.round(serviceCoverage),ridership,policy:p,budget:{grant:140,residentialRevenue,businessRevenue,fareRevenue,utilities:Math.max(0,utilityMargin),assetUpkeep,transitSupport,industryStandards,gridCost,utilitySubsidy:Math.max(0,-utilityMargin),loanPayment}, completed, upgrades:state.cells.filter(c=>c&&c.paid>0).length, tier:state.challenge==='sandbox'||state.month>=3||overall>=35?2:1 };
   }
   const remaining = state => state.cash;
@@ -297,14 +315,14 @@
   function goals(state,a=analyse(state)){
     if(state.challenge==='revolution')return [{name:'Sustainability',value:a.overall,target:70},{name:'Resident wellbeing',value:a.wellbeing,target:60},{name:'Population',value:state.population,target:350}];
     if(state.challenge==='carbon')return [{name:'Pollution index',value:a.pollution,target:20,lower:true},{name:'Renewable energy',value:a.scores[1],target:75},{name:'Sustainable transport',value:a.scores[3],target:65},{name:'Population',value:state.population,target:300}];
-    if(state.challenge==='future')return [{name:'Population',value:state.population,target:650},{name:'Sustainability',value:a.overall,target:75},{name:'Neighbourhood parks',value:a.counts.park||0,target:5},{name:'Solar roofs',value:a.counts.solar||0,target:3},{name:'Transit stops',value:(a.counts.bus||0)+(a.counts.tram||0),target:2}];
+    if(state.challenge==='future')return [{name:'Population',value:state.population,target:650},{name:'Sustainability',value:a.overall,target:75},{name:'Neighbourhood parks',value:a.counts.park||0,target:5},{name:'Solar roofs',value:a.counts.solar||0,target:3},{name:'Transit stops',value:(a.counts.bus||0)+(a.counts.tram||0)+(a.counts.metro||0),target:2}];
     return [{name:'City size',value:state.population,target:1000},{name:'Sustainability',value:a.overall,target:100}];
   }
   function tileInfo(state,i,a=analyse(state)){
     const cell=state.cells[i];if(!validCell(i))return null;
     const linked=roadTypes.has(cell?.type)?a.roads.has(i):neighbours(i).some(j=>a.roads.has(j));
     const nature=state.cells.reduce((sum,c,j)=>sum+(c&&greenTypes.has(c.type)?Math.max(0,1-distance(i,j)/4)*14*multiplier(c):0),0);
-    const transit=state.cells.reduce((sum,c,j)=>sum+(c&&['bus','tram'].includes(c.type)&&a.roads.has(j)?Math.max(0,1-distance(i,j)/6)*55*multiplier(c):0),0);
+    const transit=state.cells.reduce((sum,c,j)=>sum+(c&&['bus','tram','metro','bikeshare'].includes(c.type)&&a.roads.has(j)?Math.max(0,1-distance(i,j)/(types[c.type].transportRadius||6))*(types[c.type].transportStrength||55)*multiplier(c):0),0);
     const industrial=state.cells.reduce((sum,c,j)=>sum+(c&&['factory','coal'].includes(c.type)?Math.max(0,1-distance(i,j)/5)*25:0),0);
     return {label:label(i),name:cell?types[cell.type].name:terrain[i]==='water'?'Protected waterfront':'Available land',cell,linked,heat:clamp(Math.round(78-nature-(cell?.roof==='roof'?20:0)+industrial)),power:a.scores[1],transit:clamp(Math.round(transit)),resilience:clamp(Math.round(a.scores[4]+nature*.3+(terrain[i]==='water'?15:0))),refund:Math.floor((cell?.paid||0)*.5)};
   }

@@ -6,9 +6,9 @@ function applied(state,result){assert.equal(result.error,'');return C.grant(resu
 function build(state,type,i){return applied(state,C.place(state,type,i));}
 const plan=[...[87,127,167,187,227,228,171,194].map(i=>['park',i]),...[84,86,89,124].map(i=>['solar',i]),['wind',96],['wind',256],...[105,110,205,210].map(i=>['bus',i]),['wetland',223],['wetland',263],['school',132],['clinic',192],['waterworks',291],['recycling',293],['roof',126],['roof',129],['roof',184],...[106,107,108,109].map(i=>['bike',i]),['battery',257]];
 
-test('400-tile world has protected water, 21 tools, connected streets and a viable opening budget',()=>{
+test('400-tile world has protected water, 31 tools, connected streets and a viable opening budget',()=>{
  const state=C.fresh(),a=C.analyse(state);
- assert.equal(C.size,20);assert.equal(C.terrain.length,400);assert.equal(Object.keys(C.upgrades).length,21);
+ assert.equal(C.size,20);assert.equal(C.terrain.length,400);assert.equal(Object.keys(C.upgrades).length,31);
  assert.ok(C.terrain.includes('water'));assert.ok(a.roads.size>70);assert.equal(a.capacity,680);
  assert.equal(state.population,220);assert.equal(a.scores[2],0);assert.ok(a.pollution>70);assert.ok(a.net>0);
  assert.ok(C.neighbours(19).every(i=>i!==20));assert.equal(C.label(399),'T20');
@@ -216,4 +216,47 @@ test('previous expanded saves migrate legacy taxes and fare-free policy without 
  assert.equal(restored.policies.residentialTax,8);assert.equal(restored.policies.businessTax,8);
  assert.equal(restored.policies.transitFare,0);assert.equal(restored.policies.utilityTariff,1);assert.equal(restored.policies.serviceBudget,100);
  assert.equal(restored.loan,null);assert.deepEqual(restored.cells,old.cells);assert.equal(restored.cash,old.cash);
+});
+
+test('new power plants and clean workplaces stop operating when their road disconnects',()=>{
+ const fresh=C.fresh('sandbox'),base=C.analyse(fresh);
+ const solar=build(fresh,'solarfarm',47),geothermal=build(fresh,'geothermal',87),office=build(fresh,'office',87);
+ assert.equal(C.analyse(solar).cleanPower-base.cleanPower,44);
+ assert.equal(C.analyse(geothermal).cleanPower-base.cleanPower,60);
+ assert.equal(C.analyse(office).jobs-base.jobs,64);assert.equal(C.analyse(office).demand-base.demand,6);
+ const disconnected=C.demolish(geothermal,350).state;
+ assert.equal(C.analyse(disconnected).cleanPower,0);assert.ok(C.analyse(disconnected).expenses>0,'maintenance still costs money');
+ const upgraded=C.upgrade(solar,47).state;assert.equal(C.analyse(upgraded).cleanPower,66);
+});
+
+test('new nature and community services reward placement near homes',()=>{
+ const fresh=C.fresh('sandbox'),base=C.analyse(fresh);
+ const orchard=C.analyse(build(fresh,'orchard',87)),plaza=C.analyse(build(fresh,'plaza',87));
+ assert.equal(orchard.jobs-base.jobs,8);assert.ok(orchard.shadeCoverage>base.shadeCoverage);
+ assert.ok(plaza.scores[4]>base.scores[4]);
+ const near=C.analyse(build(fresh,'playground',87)),far=C.analyse(build(fresh,'playground',337));assert.ok(near.serviceCoverage>far.serviceCoverage);
+ const library=C.analyse(build(fresh,'library',87)),market=C.analyse(build(fresh,'market',87));
+ assert.ok(library.serviceCoverage>market.serviceCoverage);assert.ok(market.jobs>library.jobs);
+ assert.ok(C.canPlace(fresh,'library',147),'public buildings require a connected road');
+});
+
+test('metro adds wide paid transit while bike sharing supports active travel without charging fares',()=>{
+ const fresh=C.fresh('sandbox'),base=C.analyse(fresh),metro=build(fresh,'metro',105),bike=build(fresh,'bikeshare',105);
+ assert.ok(C.analyse(metro).mobilityCoverage>C.analyse(build(fresh,'bus',105)).mobilityCoverage);
+ assert.ok(C.analyse(metro).budget.fareRevenue>0);assert.equal(C.analyse(bike).budget.fareRevenue,0);
+ assert.ok(C.analyse(bike).scores[3]>base.scores[3]);assert.ok(C.tileInfo(metro,84).transit>0);
+ assert.equal(C.goals({...metro,challenge:'future'}).find(g=>g.name==='Transit stops').value,1);
+ assert.equal(C.demolish(metro,105).state.cells[105].type,'road');
+ const broken=C.demolish(metro,350).state;assert.equal(C.analyse(broken).scores[3],12);assert.equal(C.analyse(broken).budget.fareRevenue,0);
+});
+
+test('new catalogue items survive upgrades, relocation and save round trips',()=>{
+ const added=['orchard','playground','plaza','solarfarm','geothermal','metro','bikeshare','market','library','office'];
+ for(const type of added){
+  const item=C.upgrades[type],i=item.site==='road'?105:87;
+  let city=build(C.fresh('sandbox'),type,i);city=applied(city,C.upgrade(city,i));
+  if(item.site!=='road'){city=applied(city,C.relocate(city,i,127));assert.equal(city.cells[127].level,2);}
+  const a=C.analyse(city);assert.ok([...a.scores,a.wellbeing,a.net,a.jobs,a.demand].every(Number.isFinite),type);
+  assert.deepEqual(C.restore(JSON.parse(JSON.stringify(city))),city);
+ }
 });

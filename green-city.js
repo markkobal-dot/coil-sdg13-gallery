@@ -16,7 +16,7 @@ try{
 let analysis=C.analyse(state);
 function announce(text){$('message').textContent=text;experience?.toast();}
 function save(){try{localStorage.setItem(storageKey,JSON.stringify({state,undo:undo.slice(-16)}));saved=true;}catch{saved=false;}}
-function icon(type){return `<svg viewBox="-38 -92 76 114" aria-hidden="true" focusable="false">${A.piece(type,C.upgrades[type]?.site==='roof'?'building':C.upgrades[type]?.site==='road'?'road':'land',1)}</svg>`;}
+function icon(type){return A.thumbnail(type);}
 function setPanel(panel){shell.dataset.panel=shell.dataset.panel===panel&&panel!=='none'?'none':panel;root.querySelectorAll('.gc-mobile-panels [data-gc-panel], .gc-panel-toggles [data-gc-panel]').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.gcPanel===shell.dataset.panel)));if(['city','goals','help'].includes(panel))setTab(panel);}
 function setTab(value){tab=value;for(const name of ['city','goals','help']){$('tab-'+name).hidden=name!==tab;root.querySelector(`[data-gc-tab="${name}"]`).setAttribute('aria-pressed',String(name===tab));}}
 function meta(){return C.upgrades[selected];}
@@ -25,10 +25,10 @@ function renderCatalogue(){
   const entries=Object.entries(C.upgrades).filter(([,item])=>query?(item.name+' '+item.description+' '+item.category).toLowerCase().includes(query):item.category===category);
   $('catalogue').innerHTML=entries.length?entries.map(([type,item])=>{
     const locked=item.unlock&&analysis.tier<item.unlock;
-    return `<button type="button" class="gc-building-card${selected===type?' is-selected':''}${state.cash<item.cost?' gc-unaffordable':''}${locked?' gc-locked':''}" data-upgrade="${type}" aria-pressed="${selected===type}" title="${escape(item.description)}"><span class="gc-building-art">${icon(type)}</span><span class="gc-building-name">${item.name}<small>${locked?'MONTH 3 / 35 POINTS':item.site==='roof'?'ROOFTOP RETROFIT':item.site==='road'?'ROAD UPGRADE':item.road?'NEEDS ROAD ACCESS':'OPEN LAND'}</small></span><strong>${item.cost}<small>EP</small></strong></button>`;
+    return `<button type="button" class="gc-building-card${selected===type?' is-selected':''}${state.cash<item.cost?' gc-unaffordable':''}${locked?' gc-locked':''}" data-upgrade="${type}" aria-pressed="${selected===type}" title="${escape(item.description)}"><span class="gc-building-art">${icon(type)}</span><span class="gc-building-name">${item.name}<small>${locked?'MONTH 3 / 35 POINTS':item.site==='roof'?'ROOFTOP RETROFIT':item.site==='road'?'ROAD UPGRADE':item.road?'ROAD ACCESS':'OPEN LAND'}</small></span><span class="gc-building-facts"><small>${item.upkeep} EP / month</small><strong>${item.cost}<small>EP</small></strong></span></button>`;
   }).join(''):'<p class="gc-no-results">No buildings match. Try “park”, “energy” or “homes”.</p>';
   if(active)$('catalogue').querySelector(`[data-upgrade="${active}"]`)?.focus({preventScroll:true});
-  root.querySelectorAll('[data-gc-category]').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.gcCategory===category)));
+  root.querySelectorAll('[data-gc-category]').forEach(b=>{b.setAttribute('aria-pressed',String(b.dataset.gcCategory===category));const name={Nature:'Nature','Clean energy':'Energy',Transport:'Travel',Community:'Community'}[b.dataset.gcCategory],count=Object.values(C.upgrades).filter(item=>item.category===b.dataset.gcCategory).length;b.innerHTML=name+' <span class="gc-category-count">'+count+'</span>';});
   $('selected-name').textContent=meta().name;$('selected-description').textContent=meta().description;
   $('selected-effects').innerHTML=`<span>${escape(meta().effect)}</span><span>${meta().upkeep} EP upkeep / month</span>`;
   $('tier').textContent=analysis.tier===2?'CITY LEVEL 2 / ALL TOOLS UNLOCKED':'CITY LEVEL 1 / STARTING OUT';$('tier').nextElementSibling.hidden=analysis.tier===2;
@@ -103,7 +103,7 @@ function commit(result){
   announce(result.notice+(awarded.rewards.length?' Development grant +'+format(awarded.rewards.reduce((sum,g)=>sum+g.reward,0))+' EP!':''));
   return true;
 }
-function choose(type){selected=type;category=C.upgrades[type].category;mode='build';source=null;lineStart=null;renderCatalogue();renderSelection();if(innerWidth<=1000)shell.dataset.panel='none';$('onboarding').hidden=true;announce(meta().name+' selected. '+meta().description);}
+function choose(type){selected=type;category=C.upgrades[type].category;mode='build';source=null;lineStart=null;renderCatalogue();renderSelection();if(innerWidth<=1000)setPanel('none');$('onboarding').hidden=true;announce(meta().name+' selected. '+meta().description);}
 function setMode(next){mode=next;source=null;lineStart=null;$('onboarding').hidden=true;renderSelection();announce({inspect:'Select a tile to inspect its building and local conditions.',build:meta().name+' selected. Choose a suitable plot.',road:'Choose the start of your road route, then its end. The full cost is shown before you build.',upgrade:'Select a building to upgrade. Each improvement has up to three levels.',move:'Select the building you want to relocate.',demolish:'Select an improvement to remove. You receive 50% salvage; Undo can reverse the action.'}[mode]);}
 function selectTile(i,apply=true){
   focus=i;renderSelection();minimap();if(!apply)return;
@@ -143,7 +143,7 @@ function evaluate(){
 }
 async function initWorld(){
   if(world){world.setActive(visibleGame());return;}if(worldPromise||!visibleGame()||fallback)return;
-  worldPromise=import('./green-city-world.js?v=6ed4c61023').then(({CityWorld})=>{
+  worldPromise=import('./green-city-world.js?v=9f1d27545e').then(({CityWorld})=>{
     world=new CityWorld($('board'),{onSelect:i=>selectTile(i),onHover:i=>{if(i<0)return;const cell=state.cells[i];$('hover').textContent=C.label(i)+' / '+(cell?C.types[cell.type].name:C.terrain[i]==='water'?'Protected waterfront':'Open land');},onError:announce});
     world.setState(state,analysis);world.setTool(mode,selected,focus,source,lineStart);world.setActive(visibleGame());$('loading').hidden=true;
   }).catch(()=>{fallback=true;$('loading').hidden=true;$('board').hidden=true;$('fallback').hidden=false;renderFallback();announce('3D graphics are unavailable in this browser. The planning grid is ready; all city tools and simulation features still work.');});

@@ -34,7 +34,7 @@ Preizkusi brez omrežja: `node --test tests/evidence-data.cjs tests/evidence-loa
 
 ## Build Your Green City / New Terra
 
-Expanded city builder on `#game`: a 20 × 20 island (400 tiles), a procedural 3D city, and 21 building options in Nature, Energy, Travel and Community. The interface and game are in English. The rest of the gallery stays lightweight: the 3D renderer is loaded only when the game is opened.
+Expanded city builder on `#game`: a 20 × 20 island (400 tiles), a procedural 3D city, and 31 building options in Nature, Energy, Travel and Community. The interface and game are in English. The rest of the gallery stays lightweight: the 3D renderer is loaded only when the game is opened.
 
 ### Play and controls
 
@@ -76,3 +76,9 @@ Open the budget through the treasury, budget icon or command palette. Residentia
 A development loan provides 1,000 EP and requires 1,080 EP in total, repaid at up to 90 EP per month. Only one loan may be active. It can be repaid early; unpaid amounts remain outstanding if the treasury cannot cover a payment. This is entirely game currency.
 
 Existing expanded saves migrate old low/balanced/high tax and fare-free settings to explicit rates without losing the map, treasury or history. New rates and loan balances are validated on import. `green-city-experience.js` owns the workspace dialogs and command palette; `green-city-ui.css` contains the corresponding interface styles.
+
+### Expanded building catalogue
+
+The toolkit now has 31 build options: nine Nature, six Energy, seven Travel and nine Community. Illustrated cards show the purchase price and monthly upkeep separately; category counts and search help browse the expanded collection. The ten additions have original SVG catalogue art and procedural 3D models: urban orchard, adventure playground, sponge plaza, solar farm, geothermal plant, metro station, bike-share station, local food market, public library and clean-tech offices.
+
+New items use the existing placement, upgrade, move, salvage, budget and save systems. Orchards provide food jobs and cooling; playgrounds and libraries reward proximity to homes; plazas add resilience. Solar farms use a land plot for 44 clean power units, while road-connected geothermal plants produce 60 at higher upkeep. Metros provide wider fare-paying transit coverage and count toward the future-city mission; bike-sharing supports active travel without adding fare revenue. Markets and clean-tech offices provide employment, with offices adding power demand. These are simplified educational game effects. Existing cities keep their map and finances.

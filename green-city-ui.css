@@ -396,3 +396,24 @@
 @media(max-width:700px){.gc-window-controls #gc-finance-button{display:none}}
 .gc-finance-dialog>.gc-modal-heading{position:sticky;top:0;z-index:4;background:#fbfcf7f2;backdrop-filter:blur(20px)}
 .gc-decision-actions-heading{position:sticky;top:0;z-index:3;background:#fbfcf7f2;backdrop-filter:blur(14px)}
+/* Catalogue illustrations need their own scale, independent of toolbar icons. */
+.gc-build-panel{container-type:inline-size}
+.gc-expanded .gc-build-panel{width:370px;max-width:calc(100% - 36px)}
+.gc-catalogue{grid-template-columns:1fr;gap:10px}
+.gc-shell .gc-building-card{display:flex;flex-direction:column;align-items:stretch;gap:0;padding:10px;min-height:0;overflow:hidden;border-radius:14px;transition:border-color 140ms,background 140ms,box-shadow 140ms}
+.gc-building-art{display:flex;align-items:center;justify-content:center;height:104px;border-radius:9px;background:radial-gradient(ellipse at 50% 75%,#e1ebd6 0,transparent 72%),#f3f6ed;margin-bottom:11px}
+.gc-shell .gc-building-card .gc-building-art>svg{display:block;flex-shrink:0;width:112px;height:104px;max-width:100%;overflow:visible}
+.gc-shell .gc-building-card .gc-building-name{align-self:stretch;padding:0;min-height:45px;font-size:13px;font-weight:600;line-height:1.4;color:#354c3d;overflow-wrap:normal}
+.gc-shell .gc-building-card .gc-building-name small{display:block;margin:5px 0 0;padding:0;font-size:8px;font-weight:500;letter-spacing:.035em;color:#68765e;line-height:1.4}
+.gc-building-facts{display:flex;align-items:end;justify-content:space-between;gap:6px;margin-top:11px;padding-top:9px;border-top:1px solid #e0e7d8}
+.gc-building-facts>small{font-size:9px;color:#66755e;line-height:1.4}
+.gc-building-facts>strong{font-size:18px;color:#426537;line-height:1;white-space:nowrap;letter-spacing:-.04em}
+.gc-building-facts>strong>small{margin-left:3px;font-size:8px;font-weight:500;letter-spacing:0}
+.gc-category-count{display:inline-grid;place-items:center;min-width:17px;height:17px;padding:0 4px;margin-left:3px;border-radius:5px;background:#e6eddc;color:#607451;font-size:9px}
+.gc-categories>button{display:flex;align-items:center;justify-content:center;gap:2px}
+.gc-categories>button[aria-pressed=true] .gc-category-count{background:#ccddba;color:#3c6130}
+@container(min-width:240px){.gc-catalogue{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:1000px){.gc-expanded .gc-build-panel{max-width:385px}}
+@media(max-width:700px){.gc-expanded .gc-build-panel{width:auto;max-width:none}.gc-expanded[data-panel=build] .gc-build-panel{bottom:12px;z-index:16}.gc-build-panel .gc-panel-title .gc-overline{display:none}.gc-build-panel .gc-panel-title h3{font-size:20px;margin-top:0}.gc-building-art{height:108px}.gc-shell .gc-building-card .gc-building-art>svg{height:108px}.gc-categories{grid-template-columns:repeat(2,minmax(0,1fr))}.gc-categories>button{font-size:11px;min-height:37px}}
+@media(max-width:360px){.gc-shell .gc-building-card{padding:9px}.gc-shell .gc-building-card .gc-building-name{font-size:12px}.gc-building-facts>strong{font-size:17px}.gc-building-facts>small{font-size:8px}.gc-category-count{margin-left:1px}}
+@media(prefers-reduced-motion:reduce){.gc-shell .gc-building-card{transition:none}}
