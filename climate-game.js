@@ -270,18 +270,13 @@
   const summaryRestart = document.getElementById('game-summary-restart');
   let soundEnabled = false;
   let audioContext = null;
-  let musicTimer = null;
-  let musicIndex = 0;
+  // A local media file works independently of Web Audio (used only for cues).
+  const music = new Audio(new URL('assets/audio/climate-mission.wav', document.baseURI).href);
+  music.loop = true;
+  music.preload = 'none';
+  music.volume = 0.55;
   let gameVisible = document.body.dataset.view === 'game';
   const activeTones = new Set();
-  const melody = [392,
-  440,
-  523.25,
-  440,
-  349.23,
-  392,
-  440,
-  392];
   function scheduleTone(frequency, duration, volume) {
     const oscillator = audioContext.createOscillator();
     const gain = audioContext.createGain();
@@ -313,21 +308,27 @@
     }
     scheduleTone(frequency, duration, volume);
   }
+  function audioFailure() {
+    soundEnabled = false;
+    stopMusic();
+    soundButton.textContent = 'Retry game music';
+    soundButton.setAttribute('aria-pressed', 'false');
+    message.textContent = 'Music could not play. Check your device volume or silent mode, then tap Retry game music.';
+  }
+  music.addEventListener('error', audioFailure);
   function startMusic() {
-    if (musicTimer || !soundEnabled || !audioContext || !gameVisible || document.hidden) return;
-    musicIndex = 0;
-    const playNote = () => {
-      if (!soundEnabled || !audioContext || audioContext.state !== 'running') return;
-      scheduleTone(melody[musicIndex], 0.38, 0.085);
-      scheduleTone(melody[musicIndex] / 2, 0.38, 0.028);
-      musicIndex = (musicIndex + 1) % melody.length;
-    };
-    playNote();
-    musicTimer = window.setInterval(playNote, 420);
+    if (!soundEnabled || !gameVisible || document.hidden) return;
+    // play() is called directly from the tap, before any async Web Audio work.
+    music.play().then(() => {
+      if (!soundEnabled || !gameVisible || document.hidden) { music.pause(); return; }
+      soundButton.textContent = 'Game music: on (turn off)';
+      soundButton.setAttribute('aria-pressed', 'true');
+    }).catch(error => {
+      if (soundEnabled && gameVisible && !document.hidden && error.name !== 'AbortError') audioFailure();
+    });
   }
   function stopMusic() {
-    if (musicTimer) window.clearInterval(musicTimer);
-    musicTimer = null;
+    music.pause();
     for (const oscillator of activeTones) {
       try { oscillator.stop(); } catch { /* Already ended. */ }
     }
@@ -352,54 +353,35 @@
       stopMusic();
       return;
     }
-    // Mobile browsers can suspend Web Audio while the tab is in the background.
+    startMusic();
     if (audioContext && audioContext.state !== 'running') {
-      audioContext.resume().then(() => {
-        if (soundEnabled && gameVisible && !document.hidden) startMusic();
-      }).catch(() => {
-        soundEnabled = false;
-        soundButton.textContent = 'Resume game sound';
-        soundButton.setAttribute('aria-pressed', 'false');
-      });
-    } else startMusic();
+      audioContext.resume().catch(() => { /* Music does not require Web Audio. */ });
+    }
   }
-  // Sound belongs to the game view, including when the canvas is below the fold.
   window.addEventListener('app:view', syncMusic);
   document.addEventListener('visibilitychange', syncMusic);
   soundButton.addEventListener('click', () => {
     if (soundEnabled) {
       soundEnabled = false;
       stopMusic();
-      soundButton.textContent = 'Turn game sound on';
+      soundButton.textContent = 'Turn game music on';
       soundButton.setAttribute('aria-pressed', 'false');
-      return;
-    }
-    const AudioContextClass = window.AudioContext || window.webkitAudioContext;
-    if (!AudioContextClass) {
-      soundButton.textContent = 'Game audio unavailable';
-      message.textContent = 'This browser does not support game audio.';
-      return;
-    }
-    try {
-      audioContext = audioContext || new AudioContextClass();
-    } catch {
-      message.textContent = 'Game audio is unavailable. Please try another browser.';
       return;
     }
     soundEnabled = true;
-    audioContext.resume().then(() => {
-      if (!soundEnabled) return;
-      soundButton.textContent = 'Game sound: on (turn off)';
-      soundButton.setAttribute('aria-pressed', 'true');
-      syncMusic();
-      playCue('success');
-    }).catch (() => {
-      soundEnabled = false;
-      soundButton.textContent = 'Retry game sound';
-      soundButton.setAttribute('aria-pressed', 'false');
-      message.textContent = 'Audio did not start. Check whether this browser tab is muted, then try again.';
-    });
+    gameVisible = document.body.dataset.view === 'game';
+    soundButton.textContent = 'Starting music…';
+    if (music.error) music.load();
+    startMusic();
+    const AudioContextClass = window.AudioContext || window.webkitAudioContext;
+    if (AudioContextClass) {
+      try {
+        audioContext = audioContext || new AudioContextClass();
+        audioContext.resume().catch(() => { /* Optional sound effects. */ });
+      } catch { /* Keep music available when Web Audio is unsupported. */ }
+    }
   });
+
   function roundedRect(x, y, w, h, r, fill) {
     ctx.fillStyle = fill;
     ctx.beginPath();
