@@ -1,0 +1,46 @@
+name: Refresh weather snapshot
+on:
+  schedule:
+    - cron: '17 */6 * * *'
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - 'scripts/update-weather.cjs'
+      - 'weather-data.js'
+      - '.github/workflows/weather-snapshot.yml'
+permissions:
+  contents: write
+  pages: write
+concurrency:
+  group: weather-snapshot
+  cancel-in-progress: false
+jobs:
+  refresh:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Fetch forecasts and historical records
+        id: weather
+        continue-on-error: true
+        run: node scripts/update-weather.cjs
+      - name: Save available fresh data and rebuild GitHub Pages
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          git add assets/data/weather-snapshot.js
+          if ! git diff --cached --quiet; then
+            git config user.name 'github-actions[bot]'
+            git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+            git commit -m 'Refresh saved weather data'
+            git pull --rebase origin main
+            git push origin HEAD:main
+          fi
+          gh api --method POST "repos/$GITHUB_REPOSITORY/pages/builds"
+      - name: Report missing first-visit data
+        if: steps.weather.outcome == 'failure'
+        run: exit 1
