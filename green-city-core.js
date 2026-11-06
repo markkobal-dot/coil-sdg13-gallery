@@ -5,6 +5,16 @@
   const metrics = ['Air quality', 'Renewable energy', 'Green spaces', 'Sustainable transport', 'Climate resilience'];
   const owns = (object, key) => Object.prototype.hasOwnProperty.call(object, key);
   const clamp = (value, low = 0, high = 100) => Math.max(low, Math.min(high, value));
+  const policyDefaults = { tax:'balanced', freeTransit:false, cleanIndustry:false, residentialTax:10, businessTax:10, transitFare:2, utilityTariff:1, serviceBudget:100 };
+  const policyRanges = { residentialTax:[6,18,1], businessTax:[5,18,1], transitFare:[0,5,.5], utilityTariff:[0,4,.5], serviceBudget:[70,140,5] };
+  function policies(raw = {}) {
+    const rate={low:8,balanced:10,high:14}[raw.tax] || 10;
+    const p={tax:raw.tax||'balanced',cleanIndustry:raw.cleanIndustry??false,residentialTax:raw.residentialTax??rate,businessTax:raw.businessTax??rate,transitFare:raw.transitFare??(raw.freeTransit?0:2),utilityTariff:raw.utilityTariff??1,serviceBudget:raw.serviceBudget??100};
+    p.freeTransit=p.transitFare===0;
+    if(!['low','balanced','high'].includes(p.tax)||typeof p.cleanIndustry!=='boolean'||(raw.freeTransit!==undefined&&typeof raw.freeTransit!=='boolean'))throw new Error('Invalid city policies');
+    for(const [key,[min,max,step]]of Object.entries(policyRanges))if(!Number.isFinite(p[key])||p[key]<min||p[key]>max||Math.abs(p[key]/step-Math.round(p[key]/step))>1e-7)throw new Error('Invalid '+key);
+    return p;
+  }
   const upgrades = {
     tree: { name: 'Street trees', category: 'Nature', cost: 50, upkeep: 1, site: 'land', icon: 'tree', effect: 'Shade · cleaner air', description: 'Plant a pocket of shade. Trees within three tiles of homes improve liveability and reduce local heat.' },
     park: { name: 'Neighbourhood park', category: 'Nature', cost: 120, upkeep: 3, site: 'land', icon: 'park', effect: 'Green space · wellbeing', description: 'A public green space with paths and seating. Place near homes to improve wellbeing and heat resilience.' },
@@ -67,7 +77,7 @@
   function fresh(challenge = 'revolution') {
     if (!owns(challenges, challenge)) challenge = 'revolution';
     return { version: 2, challenge, cells: starter(), cash: challenges[challenge].budget, population: 220, month: 1,
-      policies: { tax: 'balanced', freeTransit: false, cleanIndustry: false }, grants: [], event: null, history: [], log: ['The council has approved your opening grant. Welcome to New Terra.'] };
+      policies: policies(), loan:null, grants: [], event: null, history: [], log: ['The council has approved your opening grant. Welcome to New Terra.'] };
   }
   function connectedRoads(cells) {
     // The harbour entrance is the fixed connection to the regional road network.
@@ -78,6 +88,7 @@
   }
   const multiplier = cell => 1 + (cell.level - 1) * .5;
   function analyse(state) {
+    const p=policies(state.policies),funding=p.serviceBudget/100;
     const roads = connectedRoads(state.cells), counts = {}, homes = [], greens = [], transit = [], power = [], services = [];
     let upkeep = 0, cleanPower = 0, capacity = 0, jobs = 0, forests = 0, wetlands = 0, roofs = 0, batteries = 0, heating = 0, waste = 0, water = 0, industry = 0, fossil = 0, bikes = 0, bikeLinks = 0;
     state.cells.forEach((cell, i) => {
@@ -119,25 +130,36 @@
       mobilityCoverage += clamp(travel) * home.capacity / residents;
       serviceCoverage += clamp(amenities) * home.capacity / residents;
     });
-    const demand = Math.max(16, Math.round((state.population * .105 + industry * 9 + 8 + services.length * 2) * Math.max(.6,1-heating*.08-roofs*.006)));
+    jobs*=clamp(1-(p.businessTax-10)*.025,.8,1.125);
+    serviceCoverage=clamp(serviceCoverage*funding);
+    shadeCoverage=clamp(shadeCoverage*(.8+.2*funding));
+    mobilityCoverage=clamp(mobilityCoverage*(.8+.2*funding));
+    const fareDemand=clamp(1-Math.max(0,p.transitFare-2)*.1,.65,1);
+    const hasTransit=transit.some(t=>t.type!=='ev');
+    const ridership=hasTransit?Math.round(state.population*mobilityCoverage/100*.45*fareDemand):0;
+    const demand = Math.max(16, Math.round((state.population * .105 + industry * 9 + 8 + services.length * 2) * Math.max(.6,1-heating*.08-roofs*.006)*(1-Math.max(0,p.utilityTariff-1)*.035)));
     const energy = clamp(Math.round(cleanPower * (1 + Math.min(.2,batteries*.08)) / demand * 100));
     const greenness = clamp(Math.round(greens.reduce((s,g)=>s+({tree:2.8,park:5.8,forest:7,wetland:5,garden:4}[g.type])*Math.pow(g.factor,.65),0) + shadeCoverage*.42 + roofs*3.5));
-    const mobility = clamp(Math.round(12 + mobilityCoverage*.68 + Math.min(28,bikes*3.2+bikeLinks*1.8) + (state.policies.freeTransit&&transit.some(t=>t.type!=='ev')?12:0)));
-    const air = clamp(Math.round(47 - industry*7 - fossil*13 + energy*.22 + greenness*.29 + mobility*.12 + Math.min(10,waste*4) + (state.policies.cleanIndustry?10:0)));
-    const resilience = clamp(Math.round(15 + greenness*.3 + shadeCoverage*.22 + wetlands*7 + roofs*3 + batteries*6 + water*11 + heating*3));
+    const mobility = clamp(Math.round(12 + mobilityCoverage*.68*fareDemand + Math.min(28,bikes*3.2+bikeLinks*1.8) + (hasTransit?Math.max(0,2-p.transitFare)*6:0)));
+    const air = clamp(Math.round(47 - industry*7 - fossil*13 + energy*.22 + greenness*.29 + mobility*.12 + Math.min(10,waste*4) + (p.cleanIndustry?10:0)));
+    const resilience = clamp(Math.round((15 + greenness*.3 + shadeCoverage*.22 + wetlands*7 + roofs*3 + batteries*6 + water*11 + heating*3)*(.85+.15*funding)));
     const scores = [air, energy, greenness, mobility, resilience];
     const pollution = 100-air, overall=Math.round(scores.reduce((a,b)=>a+b,0)/5);
     const employment = clamp(Math.round(jobs / Math.max(1,state.population*.42)*100));
-    const eventBase = state.event ? ({heat:resilience<55?12:4,rain:resilience<50?10:3,energy:energy<70?9:2}[state.event.type]||0) : 0;
-    const fullResponse = state.event && state.event.choice === events[state.event.type].options[0].id;
-    const eventPenalty = Math.round(eventBase * (fullResponse ? 0 : state.event?.choice ? .5 : 1));
-    const wellbeing = clamp(Math.round(27 + air*.2 + shadeCoverage*.18 + serviceCoverage*.38 + employment*.12 + mobility*.12 - (state.policies.tax==='high'?12:state.policies.tax==='low'?-5:0) + (state.policies.freeTransit?4:0) - eventPenalty));
-    const policyCost = (state.policies.freeTransit?45:0)+(state.policies.cleanIndustry?35:0);
-    const income = Math.round(140 + state.population*.38*({low:.75,balanced:1,high:1.35}[state.policies.tax]) + jobs*.18);
-    const gridCost = Math.round(Math.max(0,demand-cleanPower)*.8*(state.event?.type==='energy'?(fullResponse?1:state.event.choice?1.25:1.8):1));
-    const expenses = Math.round(upkeep + policyCost + gridCost), net=income-expenses;
+    const eventBase = state.event ? ({heat:resilience<55?12:4,rain:resilience<50?10:3,energy:energy<70?9:2,housing:state.population>capacity*.85?12:6,waste:waste<2?10:4}[state.event.type]||0) : 0;
+    const response=state.event?.choice?events[state.event.type].options.find(o=>o.id===state.event.choice):null;
+    const protection=response?.protection??0;
+    const eventPenalty = Math.round(eventBase * (1-protection));
+    const wellbeing = clamp(Math.round(27 + air*.2 + shadeCoverage*.18 + serviceCoverage*.38 + employment*.12 + mobility*.12 - (p.residentialTax-10)*2.5 - Math.max(0,p.utilityTariff-1)*4 - Math.max(0,p.transitFare-2)*2 + (hasTransit&&p.freeTransit?4:0) + (p.serviceBudget-100)*.06 - eventPenalty));
+    const residentialRevenue=Math.round(state.population*.038*p.residentialTax),businessRevenue=Math.round(jobs*.018*p.businessTax);
+    const fareRevenue=Math.round(ridership*p.transitFare*.4),utilityMargin=Math.round((p.utilityTariff-1)*demand*.35);
+    const assetUpkeep=Math.round(upkeep*funding),transitSupport=p.freeTransit&&hasTransit?45:0,industryStandards=p.cleanIndustry?35:0;
+    const income = 140+residentialRevenue+businessRevenue+fareRevenue+Math.max(0,utilityMargin);
+    const gridCost = Math.round(Math.max(0,demand-cleanPower)*.8*(state.event?.type==='energy'?1.8-.8*protection:1));
+    const loanPayment=state.loan?Math.min(state.loan.payment,state.loan.balance):0;
+    const expenses = assetUpkeep+transitSupport+industryStandards+gridCost+Math.max(0,-utilityMargin)+loanPayment, net=income-expenses;
     const completed = state.challenge==='revolution' ? overall>=70&&wellbeing>=60&&state.population>=350 : state.challenge==='carbon' ? pollution<=20&&energy>=75&&mobility>=65&&state.population>=300 : state.challenge==='future' ? state.population>=650&&overall>=75&&(counts.park||0)>=5&&(counts.solar||0)>=3&&(counts.bus||0)+(counts.tram||0)>=2 : false;
-    return { scores, overall, pollution, wellbeing, capacity:Math.round(capacity), jobs:Math.round(jobs), employment, roads, counts, income, expenses, net, cleanPower:Math.round(cleanPower), demand, shadeCoverage:Math.round(shadeCoverage), mobilityCoverage:Math.round(mobilityCoverage), serviceCoverage:Math.round(serviceCoverage), completed, upgrades:state.cells.filter(c=>c&&c.paid>0).length, tier:state.challenge==='sandbox'||state.month>=3||overall>=35?2:1 };
+    return { scores, overall, pollution, wellbeing, capacity:Math.round(capacity), jobs:Math.round(jobs), employment, roads, counts, income, expenses, net, cleanPower:Math.round(cleanPower), demand, shadeCoverage:Math.round(shadeCoverage), mobilityCoverage:Math.round(mobilityCoverage), serviceCoverage:Math.round(serviceCoverage),ridership,policy:p,budget:{grant:140,residentialRevenue,businessRevenue,fareRevenue,utilities:Math.max(0,utilityMargin),assetUpkeep,transitSupport,industryStandards,gridCost,utilitySubsidy:Math.max(0,-utilityMargin),loanPayment}, completed, upgrades:state.cells.filter(c=>c&&c.paid>0).length, tier:state.challenge==='sandbox'||state.month>=3||overall>=35?2:1 };
   }
   const remaining = state => state.cash;
   const board = state => state.cells;
@@ -228,26 +250,46 @@
     return {state:{...state,cash:state.cash+earned.reduce((s,g)=>s+g.reward,0),grants:[...state.grants,...earned.map(g=>g.id)]},rewards:earned};
   }
   const events={
-    heat:{name:'Heatwave forecast',description:'A hot spell is putting pressure on residents. Green space, cool roofs and healthy services help your city cope.',options:[{id:'shelters',name:'Open cooling shelters',cost:120,detail:'Protect residents this month'},{id:'volunteers',name:'Organise neighbourhood checks',cost:60,detail:'Smaller response, lower cost'}]},
-    rain:{name:'Heavy rain warning',description:'Intense rainfall is approaching the waterfront. Rain gardens and water recycling improve preparedness.',options:[{id:'drains',name:'Prepare drainage teams',cost:130,detail:'Full response for this event'},{id:'alerts',name:'Send community alerts',cost:50,detail:'Basic protection'}]},
-    energy:{name:'Grid energy price spike',description:'Imported fossil electricity is more expensive this month. Local renewables and battery storage reduce your exposure.',options:[{id:'reserve',name:'Support vulnerable households',cost:100,detail:'Full response for this event'},{id:'save',name:'Run an energy-saving campaign',cost:40,detail:'Basic support'}]}
+    heat:{name:'Heatwave forecast',eyebrow:'Climate readiness',icon:'sun',description:'A hot spell is putting pressure on residents. Shade, cool roofs and reliable services reduce the impact. Choose how your council will support people this month.',options:[{id:'shelters',name:'Open cooling shelters',cost:120,protection:1,detail:'Fully cover the remaining wellbeing impact this month.'},{id:'volunteers',name:'Neighbourhood checks',cost:60,protection:.5,detail:'Reduce the wellbeing impact by half at a lower cost.'},{id:'none',name:'Rely on existing preparations',cost:0,protection:0,detail:'Keep your budget; the city takes the remaining impact.'}]},
+    rain:{name:'Heavy rain warning',eyebrow:'Waterfront resilience',icon:'rain',description:'Heavy rainfall is approaching the waterfront. Rain gardens and water recycling have already reduced your exposure. Decide how much additional support to fund.',options:[{id:'drains',name:'Mobilise drainage teams',cost:130,protection:1,detail:'Fully protect wellbeing from the remaining event impact.'},{id:'alerts',name:'Community alerts',cost:50,protection:.5,detail:'Halve the remaining impact with a basic response.'},{id:'none',name:'Use existing defences',cost:0,protection:0,detail:'Spend nothing now; rely on your current resilience.'}]},
+    energy:{name:'Grid energy price spike',eyebrow:'Energy security',icon:'energy',description:'Imported grid electricity is temporarily more expensive. Your renewable generation reduces exposure. Choose how to protect households and the monthly budget.',options:[{id:'reserve',name:'Household support package',cost:100,protection:1,detail:'Remove the event surcharge and wellbeing penalty.'},{id:'save',name:'Energy-saving campaign',cost:40,protection:.5,detail:'Reduce the surcharge and halve the wellbeing penalty.'},{id:'none',name:'Let current tariffs stand',cost:0,protection:0,detail:'Keep funds available; higher grid costs remain this month.'}]},
+    housing:{name:'Housing pressure',eyebrow:'Quality of life',icon:'home',description:'Residents are worried about housing affordability. More connected homes and thoughtful tax rates help over time. Decide on support for the current month.',options:[{id:'housing-support',name:'Targeted housing support',cost:180,protection:1,detail:'Fully cover this month’s wellbeing impact.'},{id:'housing-advice',name:'Housing advice service',cost:70,protection:.5,detail:'Halve the immediate impact while you plan new homes.'},{id:'none',name:'Keep the current plan',cost:0,protection:0,detail:'No immediate spending; residents absorb the impact.'}]},
+    waste:{name:'Waste collection pressure',eyebrow:'Essential services',icon:'recycling',description:'The growing city is putting pressure on waste collection. Circular hubs reduce exposure; service funding determines everyday capacity. Choose a short-term response.',options:[{id:'extra-collections',name:'Extra collection teams',cost:140,protection:1,detail:'Fully protect wellbeing for this month.'},{id:'waste-campaign',name:'Neighbourhood sorting drive',cost:50,protection:.5,detail:'Halve the impact with a smaller programme.'},{id:'none',name:'Use existing capacity',cost:0,protection:0,detail:'No added expense; your city takes the remaining impact.'}]}
   };
   function respond(state,id){
     const e=state.event&&events[state.event.type];if(!e||state.event.choice)return rejected(state,'There is no unanswered city event.');
     const option=e.options.find(o=>o.id===id);if(!option)return rejected(state,'Choose one of the council responses.');
-    if(state.cash<option.cost)return rejected(state,'Not enough Eco Points. You can still advance the month without a funded response.');
-    return ok({...state,cash:state.cash-option.cost,event:{...state.event,choice:id}},option.name+' approved · −'+option.cost+' EP.');
+    if(state.cash<option.cost)return rejected(state,'Not enough Eco Points. Choose a lower-cost or no-cost response.');
+    return ok({...state,cash:state.cash-option.cost,event:{...state.event,choice:id}},'Council decision recorded: '+option.name+(option.cost?' · −'+option.cost+' EP.':' · no additional cost.'));
   }
-  function setPolicy(state,key,value){
-    if(!owns(state.policies,key)||(key==='tax'?!['low','balanced','high'].includes(value):typeof value!=='boolean'))return rejected(state,'Unknown city policy.');
-    return ok({...state,policies:{...state.policies,[key]:value}},'City policy updated. Its monthly cost and effect are shown in your budget.');
+  function setPolicies(state,patch){
+    if(!patch||typeof patch!=='object'||Object.keys(patch).some(k=>!owns(policyDefaults,k)))return rejected(state,'Unknown city policy.');
+    const next={...policies(state.policies),...patch};
+    if(owns(patch,'tax')){const rate={low:8,balanced:10,high:14}[patch.tax];if(!owns(patch,'residentialTax'))next.residentialTax=rate;if(!owns(patch,'businessTax'))next.businessTax=rate;}
+    if(owns(patch,'freeTransit')&&!owns(patch,'transitFare'))next.transitFare=patch.freeTransit?0:2;
+    if(owns(patch,'transitFare'))next.freeTransit=patch.transitFare===0;
+    try{return ok({...state,policies:policies(next)},'City budget updated. The new taxes, prices and service funding apply to your next monthly balance.');}catch{return rejected(state,'Choose rates and prices within the displayed limits.');}
+  }
+  function setPolicy(state,key,value){return setPolicies(state,{[key]:value});}
+  function borrow(state){
+    if(state.loan)return rejected(state,'Repay the existing development loan before taking another.');
+    return ok({...state,cash:state.cash+1000,loan:{balance:1080,payment:90}},'Development loan approved: +1,000 EP. Twelve payments of 90 EP; total cost 1,080 EP.');
+  }
+  function repayLoan(state){
+    if(!state.loan)return rejected(state,'There is no outstanding development loan.');
+    if(state.cash<state.loan.balance)return rejected(state,'Not enough Eco Points to repay the remaining loan.');
+    return ok({...state,cash:state.cash-state.loan.balance,loan:null},'The remaining development loan has been repaid.');
   }
   function advance(state){
     const a=analyse(state),growth=a.wellbeing<30?-Math.ceil(state.population*.035):Math.round((25+state.population*.075)*(a.wellbeing/80)*Math.max(.15,a.employment/100));
     const population=Math.max(0,Math.min(a.capacity,state.population+growth));
     const month=state.month+1;
-    const event=month%4===0?{type:['heat','rain','energy'][Math.floor(month/4-1)%3],choice:null}:null;
-    let next={...state,population,month,cash:Math.max(0,state.cash+a.net),event,history:[...state.history,{month:state.month,score:a.overall,population:state.population}].slice(-24)};
+    const eventTypes=Object.keys(events);
+    const event=month%4===0?{type:eventTypes[Math.floor(month/4-1)%eventTypes.length],choice:null}:null;
+    const available=state.cash+a.income-(a.expenses-a.budget.loanPayment);
+    const paid=Math.min(a.budget.loanPayment,Math.max(0,available));
+    const loan=state.loan&&state.loan.balance>paid?{...state.loan,balance:state.loan.balance-paid}:null;
+    let next={...state,population,month,cash:Math.max(0,available-paid),loan,event,history:[...state.history,{month:state.month,score:a.overall,population:state.population}].slice(-24)};
     const awarded=grant(next);next=awarded.state;
     const notice='Month '+month+' · '+(a.net>=0?'+':'')+a.net+' EP operating balance · '+(population-state.population>=0?'+':'')+(population-state.population)+' residents.'+(awarded.rewards.length?' Grants: +'+awarded.rewards.reduce((s,g)=>s+g.reward,0)+' EP.':'')+(event?' Council alert: '+events[event.type].name+'.':'');
     return ok(next,notice);
@@ -278,13 +320,16 @@
     });
     const p=raw.policies;
     if(!p||!['low','balanced','high'].includes(p.tax)||typeof p.freeTransit!=='boolean'||typeof p.cleanIndustry!=='boolean')throw new Error('Invalid policies');
+    const restoredPolicies=policies(p);
+    let loan=null;
+    if(raw.loan!==undefined&&raw.loan!==null){if(!raw.loan||typeof raw.loan!=='object'||!integer(raw.loan.balance,1,1080)||raw.loan.payment!==90)throw new Error('Invalid development loan');loan={balance:raw.loan.balance,payment:90};}
     if(!Array.isArray(raw.grants)||new Set(raw.grants).size!==raw.grants.length||raw.grants.some(id=>!grantDefs.some(g=>g.id===id)))throw new Error('Invalid grants');
     let event=null;
     if(raw.event){const e=events[raw.event.type];if(!e||(raw.event.choice!==null&&!e.options.some(o=>o.id===raw.event.choice)))throw new Error('Invalid event');event={type:raw.event.type,choice:raw.event.choice};}
     const history=(Array.isArray(raw.history)?raw.history:[]).slice(-24).map(h=>{if(!h||!integer(h.month,1,raw.month)||!integer(h.score,0,100)||!integer(h.population,0,100000))throw new Error('Invalid city history');return {month:h.month,score:h.score,population:h.population};});
     const log=(Array.isArray(raw.log)?raw.log:[]).filter(s=>typeof s==='string'&&s.length<=400).slice(0,16);
-    return {version:2,challenge:raw.challenge,cells,cash:raw.cash,population:raw.population,month:raw.month,policies:{tax:p.tax,freeTransit:p.freeTransit,cleanIndustry:p.cleanIndustry},grants:[...raw.grants],event,history,log};
+    return {version:2,challenge:raw.challenge,cells,cash:raw.cash,population:raw.population,month:raw.month,policies:restoredPolicies,loan,grants:[...raw.grants],event,history,log};
   }
-  const api={size,terrain,metrics,upgrades,types,challenges,roadTypes,buildingTypes,greenTypes,fresh,board,remaining,score,analyse,neighbours,distance,label,canPlace,place,upgrade,upgradeCost,demolish,relocate,moveCost,line,buildLine,grantDefs,grant,events,respond,setPolicy,advance,goals,tileInfo,restore};
+  const api={size,terrain,metrics,upgrades,types,challenges,roadTypes,buildingTypes,greenTypes,fresh,board,remaining,score,analyse,neighbours,distance,label,canPlace,place,upgrade,upgradeCost,demolish,relocate,moveCost,line,buildLine,grantDefs,grant,events,respond,policies,policyRanges,setPolicies,setPolicy,borrow,repayLoan,advance,goals,tileInfo,restore};
   if(typeof module==='object'&&module.exports)module.exports=api;else host.GreenCity=api;
 })(globalThis);

@@ -64,3 +64,15 @@ Expanded progress and the last 16 undo states are saved in `localStorage` under 
 Serve the repository over local HTTP; ES modules do not work reliably from `file://`. GitHub Pages can serve it without a build step. Tests: `node --test tests/green-city-core.cjs tests/evidence-data.cjs tests/evidence-loading.cjs`.
 
 The tests cover all catalogue types, road connectivity and edges, atomic road paths, upgrades, moving, salvage, location effects, monthly finances, policy tradeoffs, one-time grants, climate responses, corrupted saves, bounded long-running games, and a legal winning plan for each mission. The weather regression checks remain included.
+
+### Fullscreen workspace, council inbox and city finance
+
+The corner fullscreen button (or F) requests native browser fullscreen. If an embedded browser blocks it, the same interface uses an edge-to-edge focus view. Escape and the exit control restore the normal layout. Dialogs are mounted inside the fullscreen element. The interface uses system typography, consistent SVG controls, frosted floating panels and a tool dock. Ctrl/Cmd K opens a searchable command palette for all building options, tools, camera commands, saves, reports and time controls. Browser behavior follows the [Fullscreen API](https://developer.mozilla.org/en-US/docs/Web/API/Fullscreen_API).
+
+Council decisions now pause automatic time and open a large briefing. Deferring leaves an inbox badge and notification; Next month or Play brings the unresolved decision back instead of advancing past it. Five situations (heat, rain, energy, housing and waste) each offer full, basic and explicit no-cost responses. Response costs and wellbeing/monthly-budget effects are shown before committing. A deferred decision is retained in the city save.
+
+Open the budget through the treasury, budget icon or command palette. Residential tax (6–18%), business tax (5–18%), public transport fares (0–5 EP), utility prices (0–4 EP), service funding (70–140%) and cleaner-industry standards have a live, uncommitted forecast. Apply commits them as one undoable action. Higher taxes/prices affect wellbeing, jobs, ridership or consumption; service funding changes upkeep and service outcomes. Income and expense categories are listed separately. Construction purchase prices remain visible in the catalogue.
+
+A development loan provides 1,000 EP and requires 1,080 EP in total, repaid at up to 90 EP per month. Only one loan may be active. It can be repaid early; unpaid amounts remain outstanding if the treasury cannot cover a payment. This is entirely game currency.
+
+Existing expanded saves migrate old low/balanced/high tax and fare-free settings to explicit rates without losing the map, treasury or history. New rates and loan balances are validated on import. `green-city-experience.js` owns the workspace dialogs and command palette; `green-city-ui.css` contains the corresponding interface styles.

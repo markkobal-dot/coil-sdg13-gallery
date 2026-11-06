@@ -141,3 +141,79 @@ test('varied long-running cities keep money, population and every indicator with
   assert.deepEqual(C.restore(JSON.parse(JSON.stringify(state))),state);
  }
 });
+
+test('separate taxes affect revenue, household wellbeing and local employment',()=>{
+ const base=C.fresh(),a=C.analyse(base);
+ const residential=C.setPolicies(base,{residentialTax:16}).state,business=C.setPolicies(base,{businessTax:17}).state;
+ assert.ok(C.analyse(residential).budget.residentialRevenue>a.budget.residentialRevenue);
+ assert.ok(C.analyse(residential).wellbeing<a.wellbeing);
+ assert.ok(C.analyse(business).jobs<a.jobs);
+ assert.ok(C.analyse(business).budget.businessRevenue>a.budget.businessRevenue);
+ assert.equal(base.policies.residentialTax,10,'policy previews and changes never mutate the source city');
+});
+
+test('fare and utility prices have income, demand and wellbeing tradeoffs',()=>{
+ let city=build(C.fresh('sandbox'),'bus',105);city=build(city,'tram',110);
+ const low=C.analyse(C.setPolicies(city,{transitFare:0,utilityTariff:.5}).state);
+ const high=C.analyse(C.setPolicies(city,{transitFare:5,utilityTariff:4}).state);
+ assert.equal(low.budget.fareRevenue,0);assert.equal(low.budget.transitSupport,45);
+ assert.ok(high.budget.fareRevenue>0);assert.ok(high.budget.utilities>0);
+ assert.ok(low.ridership>high.ridership);assert.ok(low.wellbeing>high.wellbeing);
+ assert.ok(high.demand<low.demand);assert.ok(low.budget.utilitySubsidy>0);
+});
+
+test('service funding changes upkeep and service outcomes, and forecasts balance exactly',()=>{
+ let city=build(C.fresh('sandbox'),'school',87);city=build(city,'park',127);
+ const lower=C.analyse(C.setPolicies(city,{serviceBudget:70}).state),higher=C.analyse(C.setPolicies(city,{serviceBudget:140}).state);
+ assert.ok(higher.budget.assetUpkeep>lower.budget.assetUpkeep);
+ assert.ok(higher.serviceCoverage>lower.serviceCoverage);assert.ok(higher.wellbeing>lower.wellbeing);
+ const a=C.analyse(city),b=a.budget;
+ assert.equal(a.income,b.grant+b.residentialRevenue+b.businessRevenue+b.fareRevenue+b.utilities);
+ assert.equal(a.expenses,b.assetUpkeep+b.transitSupport+b.industryStandards+b.gridCost+b.utilitySubsidy+b.loanPayment);
+ assert.equal(a.net,a.income-a.expenses);
+});
+
+test('invalid rates and prices are rejected without changing the city',()=>{
+ const city=C.fresh();for(const patch of [{residentialTax:19},{businessTax:0},{transitFare:-1},{utilityTariff:NaN},{serviceBudget:200},{transitFare:1.25},{unknown:3},{cleanIndustry:'yes'},{freeTransit:'yes'}]){
+  const result=C.setPolicies(city,patch);assert.ok(result.error,JSON.stringify(patch));assert.equal(result.state,city);
+ }
+ const raw=structuredClone(city);raw.policies.utilityTariff=999;assert.throws(()=>C.restore(raw));
+});
+
+test('development loans cannot stack and repay exactly once per funded month',()=>{
+ const start=C.fresh('sandbox'),borrowed=C.borrow(start);assert.equal(borrowed.state.cash,start.cash+1000);
+ assert.equal(C.borrow(borrowed.state).state,borrowed.state);
+ let city=borrowed.state,paid=0;
+ for(let n=0;n<12;n++){const before=C.analyse(city);paid+=before.budget.loanPayment;city=C.advance(city).state;}
+ assert.equal(paid,1080);assert.equal(city.loan,null);assert.equal(C.analyse(city).budget.loanPayment,0);
+ const early=C.repayLoan(borrowed.state);assert.equal(early.state.loan,null);assert.equal(early.state.cash,borrowed.state.cash-1080);
+ assert.ok(C.repayLoan({...borrowed.state,cash:0}).error);
+ assert.deepEqual(C.restore(JSON.parse(JSON.stringify(borrowed.state))),borrowed.state);
+});
+
+test('unpaid loan amounts remain outstanding when treasury cannot cover a payment',()=>{
+ let city=C.borrow(C.fresh()).state;city={...city,cash:0,population:0,policies:{...city.policies,freeTransit:true,transitFare:0,cleanIndustry:true,serviceBudget:140}};
+ // Add a lawful high-upkeep city to make a shortfall without altering loan terms.
+ city.cells=city.cells.map((c,i)=>C.terrain[i]==='land'?{type:'clinic',level:3,roof:'solar',paid:0}:null);city.grants=C.grantDefs.map(g=>g.id);
+ const before=city.loan.balance,next=C.advance(city).state;
+ assert.ok(next.loan);assert.equal(next.loan.balance,before);assert.equal(next.cash,0);
+});
+
+test('five council situations offer explicit free responses without disguising their impact',()=>{
+ assert.equal(Object.keys(C.events).length,5);
+ for(const type of Object.keys(C.events)){
+  const city={...C.fresh(),event:{type,choice:null}},before=C.analyse(city),skipped=C.respond(city,'none');
+  assert.equal(skipped.error,'');assert.equal(skipped.state.cash,city.cash);assert.equal(skipped.state.event.choice,'none');
+  assert.equal(C.analyse(skipped.state).wellbeing,before.wellbeing);
+  assert.ok(C.respond(skipped.state,C.events[type].options[0].id).error);
+  assert.deepEqual(C.restore(JSON.parse(JSON.stringify(skipped.state))),skipped.state);
+ }
+});
+
+test('previous expanded saves migrate legacy taxes and fare-free policy without losing the city',()=>{
+ const old={...C.fresh(),policies:{tax:'low',freeTransit:true,cleanIndustry:false}};delete old.loan;
+ const restored=C.restore(JSON.parse(JSON.stringify(old)));
+ assert.equal(restored.policies.residentialTax,8);assert.equal(restored.policies.businessTax,8);
+ assert.equal(restored.policies.transitFare,0);assert.equal(restored.policies.utilityTariff,1);assert.equal(restored.policies.serviceBudget,100);
+ assert.equal(restored.loan,null);assert.deepEqual(restored.cells,old.cells);assert.equal(restored.cash,old.cash);
+});

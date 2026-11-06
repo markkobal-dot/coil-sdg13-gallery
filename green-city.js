@@ -1,3 +1,5 @@
+import { createExperience, glyph } from './green-city-experience.js?v=e6351edf41';
+let experience=null;
 /* New Terra: city tools, simulation clock, local saves and responsive game UI. */
 const C=globalThis.GreenCity, A=globalThis.GreenCityArt;
 const root=document.querySelector('.green-city-section');
@@ -12,10 +14,10 @@ try{
   if(raw){const data=JSON.parse(raw);state=C.restore(data.state||data);restored=true;for(const item of (data.undo||[]).slice(-16)){try{undo.push(C.restore(item));}catch{}}}
 }catch{saveWarning='The saved expanded city could not be read. A fresh city is ready; the earlier game’s save is untouched.';}
 let analysis=C.analyse(state);
-function announce(text){$('message').textContent=text;}
+function announce(text){$('message').textContent=text;experience?.toast();}
 function save(){try{localStorage.setItem(storageKey,JSON.stringify({state,undo:undo.slice(-16)}));saved=true;}catch{saved=false;}}
 function icon(type){return `<svg viewBox="-38 -92 76 114" aria-hidden="true" focusable="false">${A.piece(type,C.upgrades[type]?.site==='roof'?'building':C.upgrades[type]?.site==='road'?'road':'land',1)}</svg>`;}
-function setPanel(panel){shell.dataset.panel=shell.dataset.panel===panel&&panel!=='none'?'none':panel;root.querySelectorAll('.gc-mobile-panels [data-gc-panel]').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.gcPanel===shell.dataset.panel)));if(['city','goals','help'].includes(panel))setTab(panel);}
+function setPanel(panel){shell.dataset.panel=shell.dataset.panel===panel&&panel!=='none'?'none':panel;root.querySelectorAll('.gc-mobile-panels [data-gc-panel], .gc-panel-toggles [data-gc-panel]').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.gcPanel===shell.dataset.panel)));if(['city','goals','help'].includes(panel))setTab(panel);}
 function setTab(value){tab=value;for(const name of ['city','goals','help']){$('tab-'+name).hidden=name!==tab;root.querySelector(`[data-gc-tab="${name}"]`).setAttribute('aria-pressed',String(name===tab));}}
 function meta(){return C.upgrades[selected];}
 function renderCatalogue(){
@@ -47,7 +49,7 @@ function actionInfo(){
 function renderSelection(){
   const item=actionInfo(),labels={inspect:'Inspect city',build:meta().name,road:lineStart===null?'Road path · pick start':'Road path · pick end',upgrade:'Upgrade to next level',move:source===null?'Relocate a building':'Choose its new plot',demolish:'Remove & salvage'};
   const symbols={inspect:'↖',build:'＋',road:'⌁',upgrade:'↥',move:'✥',demolish:'⌫'};
-  $('current-icon').innerHTML=mode==='build'?icon(selected):symbols[mode];$('current-tool').textContent=labels[mode];
+  $('current-icon').innerHTML=mode==='build'?icon(selected):glyph(mode);$('current-tool').textContent=labels[mode];
   $('build').textContent=item.label;$('build').disabled=!!item.error;$('build').title=item.error||'Apply the tool at '+C.label(focus);
   $('row').value=String(Math.floor(focus/20));$('col').value=String(focus%20);
   root.querySelectorAll('[data-gc-tool]').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.gcTool===mode)));
@@ -72,10 +74,8 @@ function renderGoals(){
   $('milestone').textContent=next?next.detail+' → +'+format(next.reward)+' EP':'All development grants earned. Keep shaping your city.';
 }
 function renderEvent(){
-  const event=state.event&&C.events[state.event.type];
-  $('event').hidden=!event;
-  if(!event)return;
-  $('event').innerHTML=`<span class="gc-overline">CITY COUNCIL / ${state.event.choice?'RESPONSE FUNDED':'ACTION REQUESTED'}</span><h4>${event.name}</h4><p>${event.description}</p>${state.event.choice?'<strong class="gc-event-answered">✓ Your response is in place this month.</strong>':event.options.map(option=>`<button type="button" data-gc-response="${option.id}"><span>${option.name}<small>${option.detail}</small></span><strong>${option.cost} EP</strong></button>`).join('')}`;
+  const event=state.event&&C.events[state.event.type];$('event').hidden=!event;if(!event)return;
+  $('event').innerHTML='<span class="gc-overline">CITY COUNCIL</span><h4>'+event.name+'</h4>'+(state.event.choice?'<strong class="gc-event-answered">✓ Council decision recorded</strong>':'<p>Your council needs a decision. Review the costs and forecast before choosing a response.</p><button type="button" data-gc-review-council>Review decision ↗</button>');
 }
 function minimap(){
   const canvas=$('minimap'),ctx=canvas.getContext('2d');ctx.fillStyle='#79a6a5';ctx.fillRect(0,0,120,120);
@@ -91,11 +91,11 @@ function render(){
   $('overall').innerHTML=analysis.overall+'<small>/100</small>';$('rating').textContent=analysis.overall>=75?'A greener future':analysis.overall>=45?'A city in transition':analysis.overall>=25?'Change is taking root':'A new beginning';
   C.metrics.forEach((_,i)=>{$('metric-value-'+i).textContent=analysis.scores[i]+'/100';$('meter-'+i).setAttribute('aria-valuenow',analysis.scores[i]);$('meter-'+i).firstElementChild.style.width=analysis.scores[i]+'%';});
   $('wellbeing').textContent=analysis.wellbeing+'/100';$('employment').textContent=analysis.employment+'%';$('power').textContent=analysis.cleanPower+' / '+analysis.demand+' units';$('income').textContent=format(analysis.income)+' EP';$('expenses').textContent=format(analysis.expenses)+' EP';
-  $('tax').value=state.policies.tax;$('free-transit').checked=state.policies.freeTransit;$('clean-industry').checked=state.policies.cleanIndustry;
+
   const history=[...state.history.map(h=>h.score),analysis.overall],points=history.map((s,i)=>(i/(Math.max(1,history.length-1))*220).toFixed(1)+','+(33-s*.3).toFixed(1)).join(' ');
   $('sparkline').innerHTML=`<path d="M0 35 ${history.map((s,i)=>'L'+(i/Math.max(1,history.length-1)*220).toFixed(1)+' '+(33-s*.3).toFixed(1)).join(' ')} L220 35Z" fill="#accf8c1c"/><polyline points="${points}" fill="none" stroke="#b7ce98" stroke-width="1.6"/>`;
   $('save-status').textContent=saved?'Saved automatically on this device':'Saving unavailable. Export a city save before closing.';
-  renderCatalogue();renderSelection();renderGoals();renderEvent();minimap();world?.setState(state,analysis);if(fallback)renderFallback();renderClock();
+  renderCatalogue();renderSelection();renderGoals();renderEvent();minimap();world?.setState(state,analysis);if(fallback)renderFallback();renderClock();experience?.render();
 }
 function commit(result){
   if(result.error){announce(result.error);return false;}
@@ -107,7 +107,7 @@ function choose(type){selected=type;category=C.upgrades[type].category;mode='bui
 function setMode(next){mode=next;source=null;lineStart=null;$('onboarding').hidden=true;renderSelection();announce({inspect:'Select a tile to inspect its building and local conditions.',build:meta().name+' selected. Choose a suitable plot.',road:'Choose the start of your road route, then its end. The full cost is shown before you build.',upgrade:'Select a building to upgrade. Each improvement has up to three levels.',move:'Select the building you want to relocate.',demolish:'Select an improvement to remove. You receive 50% salvage; Undo can reverse the action.'}[mode]);}
 function selectTile(i,apply=true){
   focus=i;renderSelection();minimap();if(!apply)return;
-  if(mode==='inspect'){if(innerWidth<=1000&&shell.dataset.panel!=='city')setPanel('city');return;}
+  if(mode==='inspect'){if((innerWidth<=1000||shell.classList.contains('gc-expanded'))&&shell.dataset.panel!=='city')setPanel('city');return;}
   if(mode==='build'){commit(C.place(state,selected,i));return;}
   if(mode==='upgrade'){commit(C.upgrade(state,i));return;}
   if(mode==='demolish'){commit(C.demolish(state,i));return;}
@@ -122,12 +122,13 @@ function selectTile(i,apply=true){
 }
 function undoAction(){if(!undo.length)return;redo.push(state);state=undo.pop();source=null;lineStart=null;save();render();announce('Last city action undone. Budget and city state restored.');}
 function redoAction(){if(!redo.length)return;undo.push(state);state=redo.pop();source=null;lineStart=null;save();render();announce('City action restored.');}
-function step(){source=null;lineStart=null;commit(C.advance(state));}
+function step(){if(state.event&&!state.event.choice){playing=false;syncClock();experience?.openDecision();return;}source=null;lineStart=null;if(commit(C.advance(state))&&state.event&&!state.event.choice){playing=false;syncClock();experience?.openDecision();}}
+function hasOverlay(){return ['results','confirm','finance','decision','commands'].some(name=>$(name)?.open);}
 function visibleGame(){return document.body.dataset.view==='game'&&!document.hidden;}
-function renderClock(){const running=playing&&visibleGame()&&!$('results').open&&!$('confirm').open;$('play').textContent=playing?'Ⅱ':'▶';$('play').setAttribute('aria-pressed',String(playing));$('play').setAttribute('aria-label',playing?'Pause the monthly simulation':'Run the monthly simulation');$('speed').textContent=speed+'×';$('city-status').innerHTML='<i></i> CITY SIMULATION '+(running?'RUNNING':'PAUSED');$('city-status').classList.toggle('gc-running',running);}
-function syncClock(){clearInterval(timer);timer=null;if(playing&&visibleGame()&&!$('results').open&&!$('confirm').open)timer=setInterval(step,12000/speed);renderClock();}
+function renderClock(){const running=playing&&visibleGame()&&!hasOverlay();$('play').innerHTML=glyph(playing?'pause':'play');$('play').setAttribute('aria-pressed',String(playing));$('play').setAttribute('aria-label',playing?'Pause the monthly simulation':'Run the monthly simulation');$('speed').textContent=speed+'×';$('city-status').innerHTML='<i></i> CITY SIMULATION '+(running?'RUNNING':'PAUSED');$('city-status').classList.toggle('gc-running',running);}
+function syncClock(){clearInterval(timer);timer=null;if(playing&&visibleGame()&&!hasOverlay())timer=setInterval(step,12000/speed);renderClock();}
 function confirmAction(title,text,action){pending=action;$('confirm-title').textContent=title;$('confirm-message').textContent=text;$('confirm').showModal();syncClock();}
-function reset(challenge){playing=false;syncClock();state=C.fresh(challenge);undo=[];redo=[];selected='tree';category='Nature';mode='inspect';focus=168;source=null;lineStart=null;$('search').value='';$('onboarding').hidden=false;save();render();world?.resetView();announce('A new city is ready. '+C.challenges[challenge].goal);}
+function reset(challenge){experience?.closeOverlays();playing=false;syncClock();state=C.fresh(challenge);undo=[];redo=[];selected='tree';category='Nature';mode='inspect';focus=168;source=null;lineStart=null;$('search').value='';$('onboarding').hidden=false;save();render();world?.resetView();announce('A new city is ready. '+C.challenges[challenge].goal);}
 function download(name,blob){const url=URL.createObjectURL(blob),link=document.createElement('a');link.href=url;link.download=name;link.click();setTimeout(()=>URL.revokeObjectURL(url),1000);}
 function evaluate(){
   const a=analysis,goals=C.goals(state,a),completed=goals.filter(g=>g.lower?g.value<=g.target:g.value>=g.target).length;
@@ -156,18 +157,17 @@ $('row').innerHTML=Array.from({length:20},(_,i)=>`<option value="${i}">${String.
 $('catalogue').addEventListener('click',e=>{const button=e.target.closest('[data-upgrade]');if(button)choose(button.dataset.upgrade);});
 $('search').addEventListener('input',renderCatalogue);
 root.querySelectorAll('[data-gc-category]').forEach(b=>b.addEventListener('click',()=>{category=b.dataset.gcCategory;$('search').value='';renderCatalogue();}));
-root.querySelectorAll('[data-gc-tool]').forEach(b=>b.addEventListener('click',()=>{setMode(b.dataset.gcTool);if(b.dataset.gcTool==='build'&&innerWidth<=1000)setPanel('build');}));
+root.querySelectorAll('[data-gc-tool]').forEach(b=>b.addEventListener('click',()=>{setMode(b.dataset.gcTool);if(b.dataset.gcTool==='build'&&(innerWidth<=1000||shell.classList.contains('gc-expanded')))setPanel('build');}));
 root.querySelectorAll('[data-gc-panel]').forEach(b=>b.addEventListener('click',()=>setPanel(b.dataset.gcPanel)));
 root.querySelectorAll('[data-gc-tab]').forEach(b=>b.addEventListener('click',()=>setTab(b.dataset.gcTab)));
-$('open-build').addEventListener('click',()=>{if(innerWidth<=1000)setPanel('build');else{$('search').focus();}});
+$('open-build').addEventListener('click',()=>{if(innerWidth<=1000||shell.classList.contains('gc-expanded'))setPanel('build');else{$('search').focus();}});
 $('build').addEventListener('click',()=>selectTile(focus));$('undo').addEventListener('click',undoAction);$('redo').addEventListener('click',redoAction);
 $('row').addEventListener('change',()=>selectTile(Number($('row').value)*20+focus%20,false));$('col').addEventListener('change',()=>selectTile(Math.floor(focus/20)*20+Number($('col').value),false));$('focus').addEventListener('click',()=>world?.focusCell(focus));
 $('fallback').addEventListener('click',e=>{const button=e.target.closest('[data-cell]');if(button)selectTile(Number(button.dataset.cell));});
 $('board').addEventListener('keydown',e=>{const dirs={ArrowUp:-20,ArrowDown:20,ArrowLeft:-1,ArrowRight:1};if(e.key in dirs){e.preventDefault();const row=Math.floor(focus/20),col=focus%20;const next=e.key==='ArrowUp'?Math.max(0,row-1)*20+col:e.key==='ArrowDown'?Math.min(19,row+1)*20+col:e.key==='ArrowLeft'?row*20+Math.max(0,col-1):row*20+Math.min(19,col+1);selectTile(next,false);announce('Selected '+C.label(focus)+'. '+(actionInfo().error||'Ready to use '+mode+'.'));}else if(e.key==='Enter'||e.key===' '){e.preventDefault();selectTile(focus);}});
 $('inspector').addEventListener('click',e=>{const button=e.target.closest('[data-gc-inspect]');if(!button)return;const action=button.dataset.gcInspect;if(action==='roof')commit(C.demolish(state,focus,true));else{setMode(action);if(action==='move'){source=focus;renderSelection();announce('Choose the new plot. Relocation costs '+C.moveCost(state.cells[source])+' EP.');}else selectTile(focus);}});
-$('event').addEventListener('click',e=>{const button=e.target.closest('[data-gc-response]');if(button)commit(C.respond(state,button.dataset.gcResponse));});
-$('tax').addEventListener('change',()=>commit(C.setPolicy(state,'tax',$('tax').value)));$('free-transit').addEventListener('change',()=>commit(C.setPolicy(state,'freeTransit',$('free-transit').checked)));$('clean-industry').addEventListener('change',()=>commit(C.setPolicy(state,'cleanIndustry',$('clean-industry').checked)));
-$('next').addEventListener('click',step);$('play').addEventListener('click',()=>{playing=!playing;syncClock();});$('speed').addEventListener('click',()=>{speed=speed===1?3:1;syncClock();});
+$('event').addEventListener('click',e=>{if(e.target.closest('[data-gc-review-council]'))experience?.openDecision();});
+$('next').addEventListener('click',step);$('play').addEventListener('click',()=>{if(!playing&&state.event&&!state.event.choice){experience?.openDecision();return;}playing=!playing;syncClock();});$('speed').addEventListener('click',()=>{speed=speed===1?3:1;syncClock();});
 $('reset').addEventListener('click',()=>confirmAction('Start a new city?','This replaces the expanded city saved on this device. Export a save first if you want to keep this city.',()=>reset(state.challenge)));
 $('challenge').addEventListener('change',()=>{const next=$('challenge').value;$('challenge').value=state.challenge;confirmAction('Start '+C.challenges[next].name+'?','Your current city will be replaced. Its earlier 6 × 6 save is kept separately. Export the expanded city first to keep it.',()=>reset(next));});
 $('confirm-start').addEventListener('click',()=>{const action=pending;pending=null;$('confirm').close();action?.();});$('confirm-cancel').addEventListener('click',()=>{$('confirm').close();pending=null;});$('confirm').addEventListener('cancel',()=>pending=null);
@@ -176,7 +176,7 @@ $('evaluate').addEventListener('click',evaluate);$('continue').addEventListener(
 $('export').addEventListener('click',()=>download('new-terra-month-'+state.month+'.json',new Blob([JSON.stringify({game:'New Terra',state},null,2)],{type:'application/json'})));
 $('import').addEventListener('click',()=>$('import-file').click());$('import-file').addEventListener('change',async()=>{const file=$('import-file').files[0];if(!file)return;try{if(file.size>2000000)throw new Error('File too large');const raw=JSON.parse(await file.text()),city=C.restore(raw.state||raw);confirmAction('Open this city save?','This replaces the expanded city on this device. Your current city can be exported before you open another.',()=>{playing=false;state=city;undo=[];redo=[];mode='inspect';source=null;lineStart=null;syncClock();save();render();announce('City save opened successfully.');});}catch{announce('That file is not a valid expanded city save. Your current city is unchanged.');}$('import-file').value='';});
 $('photo').addEventListener('click',()=>{if(!world){announce('City photos are available once the 3D view is ready.');return;}const link=document.createElement('a');link.download='new-terra-month-'+state.month+'.png';link.href=world.photo();link.click();});
-function setExpanded(value){shell.classList.toggle('gc-expanded',value);document.body.classList.toggle('gc-game-expanded',value);$('expand').setAttribute('aria-pressed',String(value));$('expand').setAttribute('aria-label',value?'Restore game size':'Expand game');world?.resize();}
+function setExpanded(value){return experience?.setExpanded(value);}
 $('expand').addEventListener('click',()=>setExpanded(!shell.classList.contains('gc-expanded')));
 root.querySelectorAll('[data-gc-camera]').forEach(button=>button.addEventListener('click',()=>{if(!world)return;const action=button.dataset.gcCamera;if(action==='zoom-in')world.zoomBy(1.25);if(action==='zoom-out')world.zoomBy(.8);if(action==='rotate-left')world.rotateBy(-1);if(action==='rotate-right')world.rotateBy(1);if(action==='reset')world.resetView();if(action==='night'){button.setAttribute('aria-pressed',String(world.toggleNight()));}if(action==='grid')button.setAttribute('aria-pressed',String(world.toggleGrid()));}));
 $('overlay').addEventListener('change',()=>{const value=$('overlay').value;world?.setOverlay(value);$('overlay-legend').hidden=value==='city';$('overlay-name').textContent=$('overlay').selectedOptions[0].textContent;$('overlay-scale').textContent=value==='power'?'Imported grid power → Local clean supply':'Needs attention → Better prepared';});
@@ -188,9 +188,10 @@ const music=new Audio('assets/audio/climate-mission.wav');music.id='gc-music';mu
 let musicEnabled=false,musicToken=0;
 function syncMusic(){const token=++musicToken;if(!musicEnabled||!visibleGame()){music.pause();return;}music.play().catch(()=>{if(token!==musicToken)return;musicEnabled=false;$('game-sound').textContent='Music off';$('game-sound').setAttribute('aria-pressed','false');announce('Music is unavailable in this browser. You can continue building.');});}
 $('game-sound').addEventListener('click',()=>{musicEnabled=!musicEnabled;$('game-sound').textContent=musicEnabled?'Music on':'Music off';$('game-sound').setAttribute('aria-pressed',String(musicEnabled));syncMusic();});
-function syncView(){if(document.body.dataset.view!=='game'){if($('results').open)$('results').close();if($('confirm').open)$('confirm').close();if(shell.classList.contains('gc-expanded'))setExpanded(false);}world?.setActive(visibleGame());syncClock();syncMusic();if(visibleGame())initWorld();}
+function syncView(){if(document.body.dataset.view!=='game'){experience?.closeOverlays();if($('results').open)$('results').close();if($('confirm').open)$('confirm').close();if(shell.classList.contains('gc-expanded'))setExpanded(false);}world?.setActive(visibleGame());syncClock();syncMusic();if(visibleGame())initWorld();}
 window.addEventListener('app:view',syncView);document.addEventListener('visibilitychange',syncView);window.addEventListener('pagehide',()=>{music.pause();clearInterval(timer);world?.setActive(false);});
-document.addEventListener('keydown',e=>{if(!visibleGame()||$('results').open||$('confirm').open||/INPUT|SELECT|TEXTAREA/.test(e.target.tagName))return;if(e.key==='Escape'){source=null;lineStart=null;shell.dataset.panel='none';if(shell.classList.contains('gc-expanded'))setExpanded(false);renderSelection();return;}if(e.ctrlKey||e.metaKey){if(e.key.toLowerCase()==='z'){e.preventDefault();e.shiftKey?redoAction():undoAction();}if(e.key.toLowerCase()==='y'){e.preventDefault();redoAction();}return;}const tools={i:'inspect',b:'build',r:'road',u:'upgrade',m:'move',x:'demolish'};if(tools[e.key.toLowerCase()]){e.preventDefault();setMode(tools[e.key.toLowerCase()]);}});
+document.addEventListener('keydown',e=>{if(!visibleGame()||hasOverlay()||/INPUT|SELECT|TEXTAREA/.test(e.target.tagName))return;if(e.key==='Escape'){source=null;lineStart=null;shell.dataset.panel='none';if(shell.classList.contains('gc-expanded'))setExpanded(false);renderSelection();return;}if(e.ctrlKey||e.metaKey){if(e.key.toLowerCase()==='z'){e.preventDefault();e.shiftKey?redoAction():undoAction();}if(e.key.toLowerCase()==='y'){e.preventDefault();redoAction();}return;}const tools={i:'inspect',b:'build',r:'road',u:'upgrade',m:'move',x:'demolish'};if(tools[e.key.toLowerCase()]){e.preventDefault();setMode(tools[e.key.toLowerCase()]);}});
 // Compact SVG teaser keeps the rest of the website lightweight; 3D loads only in the game.
 const preview=document.getElementById('gc-preview');if(preview){const cells=Array(36).fill(null),terrain=Array.from({length:36},(_,i)=>Math.floor(i/6)===2||i%6===3?'road':[0,1,4,5,6,10,24,25,28,30,34,35].includes(i)?'building':'land');[[2,'park'],[7,'tree'],[8,'wind'],[11,'park'],[26,'park'],[29,'tree'],[1,'solar'],[4,'roof'],[28,'solar'],[13,'bus'],[15,'bike'],[21,'tram']].forEach(([i,type])=>cells[i]=type);preview.innerHTML=A.city(cells,terrain,-1,[],-1,false);}
+experience=createExperience({getState:()=>state,getAnalysis:()=>analysis,commit,announce,setMode,choose,setPanel,openPanel:panel=>{if(shell.dataset.panel!==panel)setPanel(panel);},syncClock,hasOverlay,confirmAction,evaluate,step,undo:undoAction,redo:redoAction,resize:()=>world?.resize()});
 render();announce(saveWarning||(restored?'Welcome back, Mayor. Your expanded city and recent undo history are ready.':'Welcome to New Terra. Explore your island, choose your first improvements, then advance a month.'));syncView();
