@@ -476,7 +476,7 @@ document.getElementById('poll-reset').addEventListener('click', () => {
     'climate-story': { title: 'The climate story', sections: ['climate-story'] },
     cities: { title: 'Cities in transition', sections: ['cities'] },
     solutions: { title: 'Take action', sections: ['solutions', 'closing'] },
-    game: { title: 'Climate Mission', sections: ['game'] },
+    game: { title: 'Build Your Green City', sections: ['game'] },
     team: { title: 'About us', sections: ['team', 'journey'] }
   };
   const aliases = { 'slovenia-data': 'problem', journey: 'team', closing: 'solutions' };

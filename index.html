@@ -42,6 +42,7 @@
     <link rel="stylesheet" href="style.css?v=d12cee861a">
     <link rel="stylesheet" href="editorial.css?v=f6e7b8b49a">
     <link rel="stylesheet" href="evidence.css?v=ef89f667b6">
+    <link rel="stylesheet" href="green-city.css?v=4bf8eb10ca">
     <link rel="stylesheet" href="motion.css?v=89a45ffb6c">
   </head>
 
@@ -165,7 +166,7 @@
         <div class="discovery-grid" aria-label="Explore the project">
           <a href="#problem"><span class="discovery-index">01 / UNDERSTAND</span><h3>Behind the numbers.</h3><p>Follow the evidence from a warming Slovenia to changing Alpine landscapes.</p><span class="discovery-arrow" aria-hidden="true">↗</span></a>
           <a href="#climate-story"><span class="discovery-index">02 / FOLLOW</span><h3>A neighbourhood in transition.</h3><p>Explore the causes of warming and the choices that shape our surroundings.</p><span class="discovery-arrow" aria-hidden="true">↗</span></a>
-          <a href="#solutions"><span class="discovery-index">03 / PARTICIPATE</span><h3>What would you change?</h3><p>Try our quiz, share your perspective or step into Climate Mission.</p><span class="discovery-arrow" aria-hidden="true">↗</span></a>
+          <a href="#solutions"><span class="discovery-index">03 / PARTICIPATE</span><h3>What would you change?</h3><p>Try our quiz, share your perspective or build your own green city.</p><span class="discovery-arrow" aria-hidden="true">↗</span></a>
         </div>
       </section>
 
@@ -786,8 +787,8 @@
           </p>
         </div>
         <a class="mission-invitation" href="#game">
-          <div><span class="small-tag">AN INTERACTIVE DETOUR / 2D GAME</span><h3>Your neighbourhood.<br>Your next move.</h3><p>Four stops. Everyday choices. Step into Climate Mission and see what your decisions can change.</p><span class="mission-link"><span class="mission-play" aria-hidden="true">▶</span> Explore the neighbourhood <span aria-hidden="true">↗</span></span></div>
-          <canvas id="mission-preview" width="960" height="480" role="img" aria-label="Climate Mission game map with four stops: Home, Bike Stop, Hot Square and Community Hall">Preview of the Climate Mission neighbourhood game.</canvas>
+          <div><span class="small-tag">BUILD YOUR GREEN CITY / INTERACTIVE GAME</span><h3>A better city.<br>Built by you.</h3><p>Become the mayor. Add parks, clean energy and better transport. Can you turn 1,000 Eco Points into a greener future?</p><span class="mission-link"><span class="mission-play" aria-hidden="true">▶</span> Build your green city <span aria-hidden="true">↗</span></span></div>
+          <svg id="gc-preview" viewBox="0 0 680 450" role="img" aria-label="An isometric green city with parks, solar roofs, a wind turbine and electric transport" xmlns="http://www.w3.org/2000/svg"></svg>
         </a>
         <div class="action-grid">
           <article class="interactive-card">
@@ -881,63 +882,40 @@
         </div>
       </section>
 
-      <section class="section game-section" id="game">
-        <div class="section-heading">
-          <div>
-            <span class="kicker">CLIMATE MISSION / EXPLORE &amp; LEARN</span>
-            <h2>
-              Climate <span class="accent">Mission.</span>
-            </h2>
-          </div>
-          <p>
-            We created this neighbourhood mission around familiar places. Can you help reduce emissions, add shade and make hot days safer for the community?
-          </p>
-        </div>
-        <div class="game-frame">
-          <div class="game-topline">
-            <span class="small-tag">2D NEIGHBOURHOOD GAME</span><span id="game-score" class="game-score">0 / 4 correct</span><button id="game-sound" class="game-audio-toggle" type="button" aria-pressed="false">Game music: off · tap to play</button>
-          </div>
-          <canvas id="climate-game" width="960" height="480" tabindex="0" aria-label="Climate Mission game. Use arrow keys or WASD to move and Space or Enter to interact."></canvas>
-          <div class="game-below">
-            <div>
-              <p id="game-message" class="game-message" aria-live="polite">
-                Press Start mission, then explore the neighbourhood.
-              </p>
-              <p class="game-instructions">
-                Move to a marked location, then press Space or select Interact. Use the arrow keys or WASD on a computer, or the direction buttons on a phone.
-              </p>
+      <section class="section game-section green-city-section" id="game" aria-labelledby="gc-title">
+        <div class="section-heading gc-heading"><div><span class="kicker">THE MAYOR'S DESK / AN SDG 13 CITY BUILDER</span><h2 id="gc-title">Build your<br><span class="accent">green city.</span></h2></div><p>Design the city of tomorrow. Fight climate change today.<br>Become the mayor: turn a paved neighbourhood into a greener, cleaner place to live.</p></div>
+        <div class="gc-shell">
+          <header class="gc-toolbar">
+            <label class="gc-challenge-label">YOUR MISSION<select id="gc-challenge"><option value="revolution">01 · Green Revolution</option><option value="carbon">02 · Low-Carbon City</option><option value="future">03 · City of the Future</option></select></label>
+            <div class="gc-budget"><span>ECO POINTS REMAINING</span><strong id="gc-budget">1,000 <small>EP</small></strong></div>
+            <div class="gc-toolbar-actions"><button id="gc-undo" type="button" disabled>↶ Undo</button><button id="gc-reset" type="button">New city</button><button id="game-sound" type="button" aria-pressed="false">Music off</button></div>
+          </header>
+          <div class="gc-layout">
+            <aside class="gc-tools" aria-label="Build menu">
+              <div class="gc-panel-heading"><span class="gc-overline">01 / MAKE A CHOICE</span><h3>Small changes. <br>City-wide impact.</h3></div>
+              <div class="gc-categories" role="group" aria-label="Upgrade category"><button type="button" data-gc-category="Nature" aria-pressed="true">Nature</button><button type="button" data-gc-category="Clean energy" aria-pressed="false">Energy</button><button type="button" data-gc-category="Transport" aria-pressed="false">Transport</button></div>
+              <div id="gc-catalogue" class="gc-catalogue"></div>
+              <div class="gc-tool-note"><span class="gc-overline">THE PLAN</span><h4 id="gc-selected-name">Choose an upgrade</h4><p id="gc-selected-description">Choose a card, then click a highlighted tile to build. Try different categories to balance your city.</p><small class="gc-impact-label">Base impact · repeated upgrades earn less</small><div id="gc-selected-effects" class="gc-effect-chips"></div></div>
+            </aside>
+            <div class="gc-city-panel">
+              <div class="gc-map-heading"><div><span class="gc-overline">02 / SHAPE YOUR NEIGHBOURHOOD</span><h3>Your city, your next move.</h3></div><span id="gc-built-count">0 upgrades</span></div>
+              <div class="gc-map-wrap"><div class="gc-map-hud"><span><small>Eco Points</small><strong id="gc-map-budget">1,000 EP</strong></span><span><small>Sustainability</small><strong id="gc-map-score">10/100</strong></span></div><svg id="gc-board" viewBox="0 0 680 450" role="group" aria-label="City map, 6 rows by 6 columns. Choose an upgrade and a tile. Arrow keys move between tiles; Enter builds." xmlns="http://www.w3.org/2000/svg"></svg><span class="gc-map-north" aria-hidden="true">N ↑</span></div>
+              <div class="gc-map-legend"><span><i class="gc-key-building"></i> Building roof</span><span><i class="gc-key-land"></i> Open plot</span><span><i class="gc-key-road"></i> Road</span></div>
+              <div class="gc-build-strip"><div><span class="gc-overline">SELECTED TILE</span><strong id="gc-tile-label">A1 · Building roof</strong></div><div class="gc-position-controls" role="group" aria-label="Move selected tile"><button type="button" data-gc-move="up" aria-label="Select tile in previous row">↑</button><button type="button" data-gc-move="left" aria-label="Select tile in previous column">←</button><button type="button" data-gc-move="down" aria-label="Select tile in next row">↓</button><button type="button" data-gc-move="right" aria-label="Select tile in next column">→</button></div><button id="gc-build" class="btn btn-dark btn-primary" type="button" disabled>Build here</button></div>
+              <p id="gc-message" class="gc-message" role="status" aria-live="polite">Welcome, Mayor. Choose your first upgrade.</p>
+              <details class="gc-howto"><summary>How to play &amp; how scoring works</summary><ol><li>Choose Nature, Energy or Transport, then select an upgrade.</li><li>Highlighted tiles show where it fits. Click one to build, or use the tile arrows and Build here. On a keyboard, use the map's arrow keys and Enter.</li><li>Watch your budget and five city indicators. Undo refunds the last purchase. Repeating one upgrade gives diminishing returns.</li><li>Place greenery beside buildings, connect bike lanes, and put renewable power beside electric transport for placement bonuses.</li><li>Complete your mission, then evaluate your city. You can keep building after seeing your report.</li></ol><p>EP are game points. Costs, pollution and sustainability scores are simplified teaching mechanics, not real costs, emissions or measured climate predictions. Your city is saved only in this browser.</p></details>
             </div>
-            <button id="game-start" class="btn btn-dark btn-primary" type="button">Start mission</button>
-          </div>
-          <div id="game-choice" class="game-choice" hidden>
-            <h3 id="game-prompt">
-            </h3>
-            <div id="game-options" class="game-options"></div>
-            <p id="game-feedback" class="game-feedback" aria-live="polite">
-            </p>
-            <button id="game-continue" class="btn btn-dark btn-primary" type="button" hidden>Continue</button>
-          </div>
-          <section id="game-summary" class="game-summary" hidden aria-labelledby="game-summary-title">
-            <span class="small-tag">MISSION REVIEW</span>
-            <h3 id="game-summary-title">
-              Your results and climate impact
-            </h3>
-            <p id="game-summary-score" class="game-summary-score">
-            </p>
-            <p class="game-summary-intro">
-              Here are the climate impacts behind your choices.
-            </p>
-            <ol id="game-summary-list" class="game-summary-list">
-            </ol>
-            <button id="game-summary-restart" class="btn btn-dark btn-primary" type="button">Play again</button>
-          </section>
-          <div class="game-touch-controls" aria-label="Touch movement controls">
-            <div class="game-pad">
-              <button type="button" data-move="up" aria-label="Move up">UP</button><button type="button" data-move="left" aria-label="Move left">LEFT</button><button type="button" data-move="down" aria-label="Move down">DOWN</button><button type="button" data-move="right" aria-label="Move right">RIGHT</button>
-            </div>
-            <button id="game-interact" class="btn btn-dark btn-primary" type="button">Interact</button>
+            <aside class="gc-status" aria-label="Your city status">
+              <span class="gc-overline">03 / SEE THE DIFFERENCE</span><div class="gc-overall"><div><span>OVERALL SUSTAINABILITY</span><strong id="gc-overall">10<small>/100</small></strong></div><span id="gc-rating">A new beginning</span></div>
+              <div id="gc-metrics" class="gc-metrics"></div>
+              <p class="gc-pollution">Pollution index <strong id="gc-pollution">82 / 100</strong><span>Lower is better.</span></p>
+              <div class="gc-mission"><span class="gc-overline">YOUR CHALLENGE</span><h4 id="gc-mission-name">Green Revolution</h4><p id="gc-mission-detail"></p><ul id="gc-mission-progress"></ul><strong id="gc-mission-status">Mission in progress</strong></div>
+              <button id="gc-evaluate" class="btn btn-dark btn-primary" type="button">Evaluate my city ↗</button><p id="gc-save-status" class="gc-save-status">Progress saves automatically on this device.</p>
+            </aside>
           </div>
         </div>
+        <dialog id="gc-results" class="gc-dialog" aria-labelledby="gc-results-title"><div class="gc-report"><span class="gc-overline">YOUR CITY / MAYOR'S REPORT</span><h3 id="gc-results-title" tabindex="-1" autofocus>Your city report</h3><div id="gc-result-score" class="gc-result-score"></div><p id="gc-result-message"></p><div id="gc-achievements" class="gc-achievements"></div><div id="gc-advice" class="gc-advice"></div><div class="gc-dialog-actions"><button id="gc-continue" class="btn btn-dark btn-primary" type="button">Keep building</button><button id="gc-results-close" class="gc-plain-button" type="button">Close report</button></div></div></dialog>
+        <dialog id="gc-confirm" class="gc-dialog gc-confirm" aria-labelledby="gc-confirm-title"><div class="gc-report"><span class="gc-overline">A FRESH START</span><h3 id="gc-confirm-title">Start a new city?</h3><p>This will replace the city saved on this device, including its undo history. You can cancel to keep building.</p><div class="gc-dialog-actions"><button id="gc-confirm-start" class="btn btn-dark btn-primary" type="button">Start new city</button><button id="gc-confirm-cancel" class="gc-plain-button" type="button" autofocus>Keep my city</button></div></div></dialog>
       </section>
       <section class="section team-section" id="team">
         <div class="section-heading">
@@ -958,7 +936,7 @@
               Mark Kobal
             </h3>
             <p>
-              I researched the topic, took six photographs, edited the pictures and made my introduction video. Together, we developed the gallery, created the interactive quiz and survey, tested and prepared the project for publication, and made the 2D climate game.
+              I researched the topic, took six photographs, edited the pictures and made my introduction video. Together, we developed the gallery, created the interactive quiz and survey, tested and prepared the project for publication, and made the city-building game.
             </p>
             <div class="video-slot has-video" data-video-id="6Q615JkOv8s" data-video-title="Mark Kobal’s introduction video" data-video-fallback="assets/images/team/mark-kobal.webp">
               <button class="video-launch" type="button" aria-label="Watch Mark Kobal’s introduction video">
@@ -974,7 +952,7 @@
               Lovro Trošt
             </h3>
             <p>
-              I researched the topic, took six photographs, worked on the gallery and made my introduction video. Together, we developed the gallery, created the interactive quiz and survey, tested and prepared the project for publication, and made the 2D climate game.
+              I researched the topic, took six photographs, worked on the gallery and made my introduction video. Together, we developed the gallery, created the interactive quiz and survey, tested and prepared the project for publication, and made the city-building game.
             </p>
             <div class="video-slot has-video" data-video-id="cB6afQ3tfx0" data-video-title="Lovro Trošt’s introduction video" data-video-fallback="assets/images/team/lovro-trost.webp">
               <button class="video-launch" type="button" aria-label="Watch Lovro Trošt’s introduction video">
@@ -1070,13 +1048,14 @@
     </div>
     <script src="gallery-data.js?v=580cca3112">
     </script>
-    <script src="script.js?v=2e37f32b57">
+    <script src="script.js?v=5ff79cb755">
     </script>
     <script src="weather-data.js?v=2322cbfeff" defer></script>
     <script src="assets/data/weather-snapshot.js" defer></script>
     <script src="evidence.js?v=6aea94b196" defer></script>
-    <script src="climate-game.js?v=711e12cb34">
-    </script>
+    <script src="green-city-core.js?v=1d38f458d0"></script>
+    <script src="green-city-art.js?v=c160e1aca5"></script>
+    <script src="green-city.js?v=67bb6fe83c"></script>
     <script src="motion.js?v=2fdb95190e" defer></script>
   </body>
 </html>

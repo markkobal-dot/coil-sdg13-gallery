@@ -8,7 +8,7 @@ Objavljena stran: https://markkobal-dot.github.io/coil-sdg13-gallery/#cilj
 
 - **Student A:** Topic research, photography (6 photos), Picture editing, intro video
 - **Student B:** Topic research, photography (6 photos), Gallery, intro video.
-- **Together:** interactive quiz and survey, gallery development, testing and publication, 2D climate game.
+- **Together:** interactive quiz and survey, gallery development, testing and publication, Build Your Green City.
 
 ## Struktura
 
@@ -31,3 +31,17 @@ GitHub Actions (`Refresh weather snapshot`) ob prvem pushu tega popravka in nato
 Trenutno vreme se v brskalniku preverja vsakih 15 minut. Gumb Refresh takoj osveži napoved, pri čemer že znani zgodovinski zapis za isti datum ponovno uporabi. Pri nedosegljivem viru stran pokaže čas shranjenih podatkov. Ob prvem obisku po izteku vseh shranjenih podatkov je za nove meritve še vedno potreben dosegljiv API.
 
 Preizkusi brez omrežja: `node --test tests/evidence-data.cjs tests/evidence-loading.cjs`.
+
+## Build Your Green City
+
+Igra na `#game` nadomešča prejšnjo igro Climate Mission. Gre za izometrično, potezno mini igro v angleščini: 36 polj, devet nadgradenj in pet kazalnikov. Ne potrebuje strežnika, računa ali zunanjih slik; izvirne stavbe, vozila in zelenje so narisani s SVG.
+
+- `green-city-core.js`: pravila, proračun, dovoljene postavitve, kazalniki in preverjanje shranjene igre.
+- `green-city-art.js`: izometrični prikaz in ponovni prikaz mesta na strani Solutions.
+- `green-city.js` in `green-city.css`: upravljanje, prilagodljiv vmesnik, poročilo, lokalno shranjevanje in glasba.
+
+Green Revolution in Low-Carbon City začneta s 1.000 EP. City of the Future ima 1.800 EP, saj samo pet parkov, tri sončne strehe in E-Bus stanejo 1.230 EP. Nadgradnje se postavljajo na ustrezne površine: zelenje na prosta polja, strehe na stavbe in promet na ceste. Ponavljanje ima manjši učinek; sosednje kolesarske steze, senca ob stavbah in povezave med obnovljivo energijo ter električnim prometom prinesejo dodatne točke. To so poenostavljeni učni kazalniki, ne realne emisije ali stroški.
+
+Napredek in zgodovina potez se samodejno shranita v `localStorage` pod `coil-green-city-v1`, samo v trenutnem brskalniku. Undo vrne celotno ceno zadnje poteze. Nova misija ali novo mesto po začetku gradnje zahteva potrditev. Če shranjevanje ni omogočeno, igra deluje do zaprtja strani. Na telefonu so poleg dotika na voljo veliki gumbi za premik izbranega polja in gradnjo. Tipkovnica: Tab do zemljevida, smerne tipke za premik, Enter ali preslednica za gradnjo. Animacije spoštujejo nastavitev zmanjšanega gibanja.
+
+Preizkusi pravil in dosegljivosti vseh misij: `node --test tests/green-city-core.cjs`.
