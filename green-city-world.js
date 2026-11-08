@@ -369,7 +369,7 @@ export class CityWorld {
   }
   clear(group){for(const child of [...group.children]){group.remove(child);if(child.isMesh)child.geometry.dispose();}}
   setState(state,analysis){
-    if(this.state?.cells===state.cells){const changeCars=Math.floor(this.state.population/45)!==Math.floor(state.population/45);this.state=state;this.analysis=analysis;if(changeCars){for(const car of this.cars)this.dynamicGroup.remove(car.g);this.makeCars();}this.updateOverlay();this.updateSelection();this.dirty=true;this.schedule();return;}
+    if(this.state?.cells===state.cells){const changeCars=Math.floor(this.state.population/45)!==Math.floor(state.population/45);this.state=state;this.analysis=analysis;if(changeCars){for(const car of this.cars)this.dynamicGroup.remove(car.g);this.makeCars();}this.syncTransit();this.updateOverlay();this.updateSelection();this.dirty=true;this.schedule();return;}
     this.state=state;this.analysis=analysis;this.clear(this.staticGroup);this.dynamicGroup.clear();this.rotors=[];this.animatedWindCount=0;this.smokePoints=[];this.pickTargets=[];
     const root=new THREE.Group();
     state.cells.forEach((cell,i)=>{
@@ -382,19 +382,45 @@ export class CityWorld {
     root.updateMatrixWorld(true);
     const rotors=[];root.traverse(node=>{if(node.userData.animated)rotors.push(node);});
     for(const rotor of rotors){const world=new THREE.Vector3();rotor.getWorldPosition(world);rotor.removeFromParent();rotor.position.copy(world);this.dynamicGroup.add(rotor);this.rotors.push(rotor);}
-    this.batch(root,this.staticGroup);this.makeCars();this.makeSmoke();this.updateOverlay();this.updateSelection();this.dirty=true;this.schedule();
+    this.batch(root,this.staticGroup);this.makeCars();this.syncTransit();this.makeSmoke();this.updateOverlay();this.updateSelection();this.dirty=true;this.schedule();
   }
   makeCars(){
     this.cars=[];const roads=[...this.analysis.roads];if(roads.length<2)return;
     const count=Math.min(16,Math.max(5,Math.floor(this.state.population/45)));
     for(let n=0;n<count;n++){
-      const g=new THREE.Group(),isBus=n===0&&((this.analysis.counts.bus||0)+(this.analysis.counts.tram||0)>0);
+      const g=new THREE.Group(),isBus=n===0&&((this.analysis.counts.bus||0)+(this.analysis.counts.tram||0)>0)&&!this.analysis.transport.routes.some(r=>r.active);
       this.vehicle(g,isBus?'#b5dcc6':['#e7d6b4','#afc6b9','#c7ab85','#b8c9d2'][n%4],isBus);
       let from=roads[Math.floor(hash(n+7)*roads.length)],candidates=C.neighbours(from).filter(j=>this.analysis.roads.has(j));if(!candidates.length)continue;
       const to=candidates[Math.floor(hash(n+9)*candidates.length)];g.traverse(m=>{if(m.isMesh)m.castShadow=true;});this.dynamicGroup.add(g);
       const t=hash(n);g.position.set(THREE.MathUtils.lerp(from%mapSize,to%mapSize,t)-center,landY+.03,THREE.MathUtils.lerp(Math.floor(from/mapSize),Math.floor(to/mapSize),t)-center);g.rotation.y=Math.atan2(to%mapSize-from%mapSize,Math.floor(to/mapSize)-Math.floor(from/mapSize));
       this.cars.push({g,from,to,previous:-1,t,speed:isBus?.35:.5+hash(n+3)*.3,seed:n});
     }
+  }
+  syncTransit(){
+    const lines=this.analysis.transport.routes.filter(r=>r.active);
+    const signature=JSON.stringify(lines.map(r=>[r.id,r.type,r.colour,r.path]));
+    if(signature===this.transitSignature)return;this.transitSignature=signature;
+    if(!this.transitLines){this.transitLines=new THREE.Group();this.transitVehiclesGroup=new THREE.Group();this.scene.add(this.transitLines,this.transitVehiclesGroup);}
+    this.clear(this.transitLines);this.transitVehiclesGroup.clear();this.routeVehicles=[];
+    for(const route of lines){
+      const ribbons=new THREE.Group();
+      for(let n=1;n<route.path.length;n++){
+        const a=route.path[n-1],b=route.path[n],x=((a%mapSize)+(b%mapSize))/2-center,z=(Math.floor(a/mapSize)+Math.floor(b/mapSize))/2-center;
+        this.box(ribbons,route.colour,x,landY+.085,z,a%mapSize===b%mapSize?.07:1.05,.008,a%mapSize===b%mapSize?1.05:.07);
+      }
+      ribbons.updateMatrixWorld(true);this.batch(ribbons,this.transitLines);
+      if(this.routeVehicles.length>=8)continue;
+      const g=new THREE.Group();this.vehicle(g,route.colour,true);
+      if(route.type==='tram'){const rear=new THREE.Group();this.vehicle(rear,route.colour,true);rear.position.z=-.65;g.add(rear);this.box(g,'#5f7464',0,.47,-.15,.08,.16,.08);}
+      this.transitVehiclesGroup.add(g);
+      const path=[...route.path,...route.path.slice(1,-1).reverse()],vehicle={g,path,progress:hash(route.id)*path.length,type:route.type};
+      this.routeVehicles.push(vehicle);this.positionTransit(vehicle);
+    }
+  }
+  positionTransit(vehicle){
+    const segment=Math.floor(vehicle.progress)%vehicle.path.length,t=vehicle.progress%1,a=vehicle.path[segment],b=vehicle.path[(segment+1)%vehicle.path.length];
+    vehicle.g.position.set(THREE.MathUtils.lerp(a%mapSize,b%mapSize,t)-center,landY+.03,THREE.MathUtils.lerp(Math.floor(a/mapSize),Math.floor(b/mapSize),t)-center);
+    vehicle.g.rotation.y=Math.atan2(b%mapSize-a%mapSize,Math.floor(b/mapSize)-Math.floor(a/mapSize));
   }
   makeSmoke(){
     if(this.smoke){this.scene.remove(this.smoke);this.smoke.geometry.dispose();this.smoke.material.dispose();this.smoke=null;}
@@ -435,7 +461,7 @@ export class CityWorld {
   updateOverlay(){
     if(!this.state)return;this.overlayMesh.visible=this.overlay!=='city';if(!this.overlayMesh.visible)return;
     const colors=new THREE.Color();
-    this.overlayMesh.userData.cells.forEach((i,n)=>{const info=C.tileInfo(this.state,i,this.analysis);const value=this.overlay==='heat'?100-info.heat:this.overlay==='transit'?info.transit:this.overlay==='water'?info.resilience:this.overlay==='noise'?100-info.noise:info.power;colors.setHSL(.025+value/100*.3,.5,.51);this.overlayMesh.setColorAt(n,colors);});
+    this.overlayMesh.userData.cells.forEach((i,n)=>{const info=C.tileInfo(this.state,i,this.analysis);const value=this.overlay==='heat'?100-info.heat:this.overlay==='transit'?info.transit:this.overlay==='water'?info.resilience:this.overlay==='noise'?100-info.noise:this.overlay==='traffic'?100-info.congestion:info.power;colors.setHSL(.025+value/100*.3,.5,.51);this.overlayMesh.setColorAt(n,colors);});
     this.overlayMesh.instanceColor.needsUpdate=true;
   }
   setOverlay(value){this.overlay=value;this.updateOverlay();this.dirty=true;this.schedule();}
@@ -472,10 +498,11 @@ export class CityWorld {
       this.time+=dt;this.waterMaterial.uniforms.uTime.value=this.time;
       this.rotors.forEach(r=>r.rotation.z-=dt*.75);
       for(const car of this.cars){
-        car.t+=dt*car.speed;if(car.t>=1){car.previous=car.from;car.from=car.to;const choices=C.neighbours(car.from).filter(j=>this.analysis.roads.has(j)&&j!==car.previous);car.to=choices.length?choices[Math.floor(hash(car.seed+Math.floor(this.time)*13)*choices.length)]:car.previous;car.t=0;}
+        car.t+=dt*car.speed*Math.max(.22,1-this.analysis.transport.roadLoads[car.from]/150);if(car.t>=1){car.previous=car.from;car.from=car.to;const choices=C.neighbours(car.from).filter(j=>this.analysis.roads.has(j)&&j!==car.previous);car.to=choices.length?choices[Math.floor(hash(car.seed+Math.floor(this.time)*13)*choices.length)]:car.previous;car.t=0;}
         const x=THREE.MathUtils.lerp(car.from%mapSize,car.to%mapSize,car.t)-center,z=THREE.MathUtils.lerp(Math.floor(car.from/mapSize),Math.floor(car.to/mapSize),car.t)-center;
         car.g.position.set(x,landY+.03,z);car.g.rotation.y=Math.atan2(car.to%mapSize-car.from%mapSize,Math.floor(car.to/mapSize)-Math.floor(car.from/mapSize));
       }
+      for(const vehicle of this.routeVehicles||[]){vehicle.progress=(vehicle.progress+dt*(vehicle.type==='tram'?.85:.65)*(1-this.analysis.transport.congestion*.004))%vehicle.path.length;this.positionTransit(vehicle);}
       this.clouds.forEach((cloud,n)=>cloud.position.x=cloud.userData.origin+Math.sin(this.time*.012+n)*1.5);
       if(this.smoke){const dummy=new THREE.Object3D();this.smokePoints.forEach((origin,k)=>{for(let n=0;n<6;n++){const t=(this.time*.3+n/6)%1;dummy.position.copy(origin).add(new THREE.Vector3(t*.5,.1+t*1.6,Math.sin(t*4+k)*.09));dummy.scale.setScalar(.6+t*1.5);dummy.updateMatrix();this.smoke.setMatrixAt(k*6+n,dummy.matrix);}});this.smoke.instanceMatrix.needsUpdate=true;}
     }

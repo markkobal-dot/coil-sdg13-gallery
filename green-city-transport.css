@@ -1,0 +1,86 @@
+/* New Terra transport office. */
+.gc-transport-dialog{width:min(1160px,calc(100% - 40px));max-height:93dvh}
+.gc-transport-dialog>.gc-modal-heading{position:sticky;top:0;z-index:5;background:#fbfcf7f5;backdrop-filter:blur(18px)}
+.gc-transport-summary{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px;padding:24px 30px 0}
+.gc-transport-summary>div{padding:17px 19px;border:1px solid #dfe7d5;border-radius:13px;background:#f0f5e8;min-width:0}
+.gc-transport-summary span,.gc-transport-summary small{display:block;color:#6d7e63;font-size:11px;line-height:1.6}
+.gc-transport-summary strong{display:block;font-size:34px;line-height:1.3;letter-spacing:-.055em;font-weight:550;color:#4c6c40;margin:5px 0}
+.gc-transport-layout{display:grid;grid-template-columns:minmax(0,1.15fr) minmax(0,1fr);gap:27px;padding:27px 30px 30px}
+.gc-network-side,.gc-lines-side{min-width:0}
+.gc-network-heading,.gc-lines-heading{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:16px}
+.gc-network-heading h4,.gc-lines-heading h4{font-size:18px;letter-spacing:-.025em;color:#45613c;font-weight:550;margin:7px 0 0}
+.gc-network-heading .gc-overline,.gc-lines-heading .gc-overline{font-size:8px}
+#gc-network-mode{font-size:8px;color:#77896d;letter-spacing:.07em;white-space:nowrap}
+.gc-network-map{background:#243f35;border:1px solid #304c40;border-radius:16px;overflow:hidden;aspect-ratio:1;box-shadow:inset 0 0 60px #142d2666}
+.gc-network-map svg{display:block;width:100%;height:100%}
+.gc-network-map [data-gc-map-stop]{cursor:pointer;outline:none}
+.gc-network-map [data-gc-map-stop]:focus-visible circle{stroke:#fff;stroke-width:.25}
+.gc-network-map [data-gc-map-stop]:hover circle{stroke:#fff;stroke-width:.2}
+.gc-network-legend{display:flex;gap:14px;flex-wrap:wrap;margin:14px 0 9px;font-size:9px;color:#6c7d60}
+.gc-network-legend>span{display:flex;align-items:center;gap:5px}
+.gc-network-legend i{width:7px;height:7px;border-radius:2px;background:#7d9f87}
+.gc-network-legend>span:nth-child(2) i{background:#c4ad71}
+.gc-network-legend>span:nth-child(3) i{background:#ce8a6f}
+.gc-network-legend>span:last-child{margin-left:auto}
+.gc-network-instructions{font-size:11px;line-height:1.7;color:#728168;margin:11px 0 21px}
+.gc-network-priorities{display:grid;grid-template-columns:1fr 1fr;gap:18px;border-top:1px solid #e0e7d8;padding-top:16px}
+.gc-network-priorities h4{font-size:12px;font-weight:600;color:#506c44;margin:0 0 10px}
+.gc-network-priorities p{font-size:11px;line-height:1.7;color:#7d8972}
+.gc-network-priorities button{display:grid;grid-template-columns:1fr auto;gap:3px 7px;width:100%;text-align:left;padding:10px 0;border:0;border-bottom:1px solid #e7ecde;background:transparent;color:#59734a;border-radius:0}
+.gc-network-priorities button>strong{font-size:12px;font-weight:600}
+.gc-network-priorities button>span{grid-row:2;font-size:10px;line-height:1.6;color:#7c8871}
+.gc-network-priorities button>b{grid-column:2;grid-row:1/3;font-size:17px;font-weight:400;align-self:center}
+#gc-new-line{min-height:36px;padding:9px 12px;font-size:11px;white-space:nowrap}
+.gc-lines-empty{font-size:12px;line-height:1.7;color:#74836b;border:1px dashed #cedbc0;border-radius:12px;padding:18px;margin:0 0 15px}
+.gc-line-card{display:flex;gap:11px;align-items:center;padding:13px 11px;margin-bottom:9px;border:1px solid #dfe7d4;border-radius:12px;background:#f6f9f0}
+.gc-line-card>i{width:5px;align-self:stretch;border-radius:5px;flex-shrink:0}
+.gc-line-card>button{display:block;min-width:0;flex:1;text-align:left;padding:0;border:0;border-radius:0;background:none;color:#49633e}
+.gc-line-card strong,.gc-line-card span,.gc-line-card small{display:block;line-height:1.6;overflow-wrap:anywhere}
+.gc-line-card strong{font-size:13px;font-weight:600}
+.gc-line-card span{font-size:10px;color:#718466;margin-top:2px}
+.gc-line-card small{font-size:10px;color:#819075;margin-top:4px}
+.gc-line-card>div{display:flex;flex-direction:column;gap:6px}
+.gc-line-card>div>button{padding:5px;width:29px;height:28px;border:1px solid #dce5d1;border-radius:7px;background:#eff5e6;color:#648153}
+.gc-shell .gc-line-card>div>button svg{width:14px;height:14px}
+.gc-line-empty{padding:31px 22px;text-align:center;background:#f0f5e7;border:1px solid #e0e8d4;border-radius:14px;margin-top:17px}
+.gc-line-empty>span{display:grid;place-items:center;width:48px;height:48px;margin:0 auto 16px;border-radius:13px;background:#e2ecd4;color:#75975e}
+.gc-shell .gc-line-empty>span svg{width:26px;height:26px}
+.gc-line-empty h4{font-size:19px;letter-spacing:-.035em;font-weight:550;margin:0 0 12px;color:#577145}
+.gc-line-empty p{font-size:12px;color:#78886d;line-height:1.8;margin:0 0 17px}
+.gc-line-empty button{font-size:11px;min-height:38px;color:#607b4f;padding:8px 14px;border:1px solid #cfddbf;border-radius:8px;background:#e8f0dc}
+.gc-route-form{margin-top:17px;border:1px solid #d6e2c8;border-radius:14px;background:#f1f6e8;padding:19px}
+.gc-route-editor-title{display:flex;justify-content:space-between;align-items:center;margin-bottom:14px}
+.gc-route-editor-title>.gc-icon-button{width:26px;height:26px;padding:5px}
+.gc-route-editor-title .gc-overline{font-size:9px}
+.gc-route-field{display:block;min-width:0;font-size:11px;color:#647b54;line-height:1.6}
+.gc-route-field input,.gc-route-field select{display:block;width:100%;min-width:0;min-height:40px;border:1px solid #cfdbbf;border-radius:8px;background:#fcfdf8;color:#4b6740;font-family:inherit;font-size:12px;padding:8px 10px;margin-top:6px}
+.gc-route-form-row{display:grid;grid-template-columns:1fr 1fr;gap:11px;margin-top:15px}
+.gc-route-stop-heading{margin:23px 0 12px}
+.gc-route-stop-heading strong{display:block;font-size:12px;font-weight:600;color:#546f46}
+.gc-route-stop-heading>span{display:block;font-size:10px;color:#849177;margin-top:5px;line-height:1.7}
+.gc-route-stops{display:grid;gap:9px}
+.gc-route-stops>div{display:grid;grid-template-columns:24px minmax(0,1fr) 25px;gap:9px;align-items:center}
+.gc-route-stops b{display:grid;place-items:center;width:24px;height:24px;background:var(--route-colour);color:white;border-radius:50%;font-size:10px;font-weight:500}
+.gc-route-stops select{margin:0;font-size:11px}
+.gc-route-stops>div>button{border:0;background:transparent;color:#7c8c6d;font-size:19px;padding:5px;min-height:35px}
+.gc-add-line-stop{padding:10px 0;border:0;border-radius:0;background:none;color:#66874f;text-align:left;font-size:11px;min-height:39px}
+.gc-route-build-note{font-size:10px;line-height:1.7;color:#849176;margin:5px 0 17px}
+.gc-line-forecast{border:1px solid #dce6ce;background:#e8f0dc;border-radius:11px;padding:15px}
+.gc-line-forecast>.gc-overline{font-size:8px;color:#70875c}
+.gc-line-forecast>div{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin:12px 0}
+.gc-line-forecast strong{display:block;font-size:24px;font-weight:550;letter-spacing:-.035em;color:#526f42}
+.gc-line-forecast strong>small{display:block;font-size:9px;font-weight:400;letter-spacing:0;margin-top:4px;color:#7a8c68}
+.gc-line-forecast p{font-size:10px;line-height:1.8;color:#728262;margin:8px 0 0}
+.gc-line-error{font-size:11px;line-height:1.7;color:#957347;margin:14px 0;min-height:19px}
+.gc-route-actions{display:flex;justify-content:end;gap:10px}
+.gc-route-actions>button{font-size:11px;padding:10px 13px;min-height:39px}
+.gc-transport-footer{padding:20px 30px;border-top:1px solid #e1e8d7;background:#f1f5e9;font-size:11px;line-height:1.8;color:#7a876f}
+.gc-transport-card{display:block;width:100%;padding:15px;border:1px solid #d6e1c8;border-radius:12px;background:#eef4e5;text-align:left;color:#526e43;margin:17px 0}
+.gc-transport-card>span{display:block;font-size:9px;line-height:1.6;letter-spacing:.04em;color:#7c8c6e}
+.gc-transport-card>strong{display:block;font-size:25px;letter-spacing:-.04em;font-weight:550;margin:9px 0}
+.gc-transport-card>strong>small{font-size:11px;letter-spacing:0;font-weight:400}
+.gc-transport-card>b{display:block;font-size:10px;font-weight:550;margin-top:11px}
+.gc-visually-hidden{position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%);white-space:nowrap}
+@media(max-width:900px){.gc-transport-layout{gap:20px;padding:22px}.gc-transport-summary{gap:10px;padding:22px 22px 0}.gc-transport-summary>div{padding:13px}.gc-network-priorities{grid-template-columns:1fr}.gc-route-form{padding:15px}.gc-network-heading{display:block}#gc-network-mode{display:block;margin-top:10px}.gc-line-card{gap:8px;padding:11px 9px}.gc-transport-summary small{font-size:10px}}
+@media(max-width:700px){.gc-transport-dialog{width:calc(100% - 20px);border-radius:17px}.gc-transport-dialog .gc-modal-heading{padding:22px;gap:10px}.gc-transport-dialog .gc-modal-heading h3{font-size:27px}.gc-transport-dialog .gc-modal-heading p{font-size:12px;line-height:1.7}.gc-transport-summary{gap:8px;padding:18px 19px 0}.gc-transport-summary>div{padding:12px 9px;border-radius:10px}.gc-transport-summary span{font-size:9px}.gc-transport-summary strong{font-size:27px}.gc-transport-summary small{font-size:9px;line-height:1.7}.gc-transport-layout{display:flex;flex-direction:column;gap:25px;padding:23px 19px}.gc-lines-side{order:-1}.gc-network-map{max-height:430px}.gc-route-field input,.gc-route-field select{min-height:44px;font-size:16px}.gc-route-stops select{font-size:13px}.gc-route-stops>div>button{min-height:44px}.gc-route-form-row{grid-template-columns:1fr 1fr;gap:9px}.gc-route-form-row select{font-size:13px}.gc-route-form{padding:17px}.gc-line-forecast p,.gc-route-build-note{font-size:11px}.gc-line-error{font-size:12px}.gc-route-actions>button{font-size:12px;min-height:44px}.gc-line-card>div{flex-direction:row}.gc-line-card>div>button{width:33px;height:38px}.gc-line-card strong{font-size:14px}.gc-line-card span,.gc-line-card small{font-size:11px}.gc-network-priorities{grid-template-columns:1fr 1fr;gap:14px}.gc-network-priorities button{min-height:49px}.gc-network-instructions,.gc-transport-footer{font-size:11px}.gc-transport-footer{padding:19px 22px}.gc-transport-card>span{font-size:10px}.gc-transport-card>b{font-size:11px}}
+@media(max-width:359px){.gc-transport-summary{padding-inline:14px;gap:6px}.gc-transport-summary strong{font-size:24px}.gc-transport-summary small{font-size:8px}.gc-transport-layout{padding-inline:15px}.gc-route-form{padding:14px}.gc-route-form-row{grid-template-columns:1fr}.gc-line-card>div{flex-direction:column}.gc-network-priorities{grid-template-columns:1fr}}

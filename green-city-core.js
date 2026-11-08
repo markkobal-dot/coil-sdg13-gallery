@@ -101,7 +101,7 @@
   function fresh(challenge = 'revolution') {
     if (!owns(challenges, challenge)) challenge = 'revolution';
     return { version: 3, challenge, cells: starter(), cash: challenges[challenge].budget, population: 220, month: 1,
-      policies: policies(), loan:null, grants: [], event: null, history: [], log: ['The council has approved your opening grant. Welcome to New Terra.'] };
+      policies: policies(), routes:[], loan:null, grants: [], event: null, history: [], log: ['The council has approved your opening grant. Welcome to New Terra.'] };
   }
   function connectedRoads(cells) {
     // The harbour entrance is the fixed connection to the regional road network.
@@ -111,6 +111,99 @@
     return connected;
   }
   const multiplier = cell => 1 + (cell.level - 1) * .5;
+  const routeColours=['#bf704b','#4f8b80','#637eb0','#9b789f'];
+  function roadPath(roads,from,to){
+    if(!roads.has(from)||!roads.has(to))return [];
+    const queue=[from],parent=new Map([[from,-1]]);
+    for(let head=0;head<queue.length&&!parent.has(to);head++)for(const j of neighbours(queue[head]))if(roads.has(j)&&!parent.has(j)){parent.set(j,queue[head]);queue.push(j);}
+    if(!parent.has(to))return [];
+    const path=[];for(let i=to;i!==-1;i=parent.get(i))path.push(i);return path.reverse();
+  }
+  function routeInfo(state,route,roads=connectedRoads(state.cells)){
+    const path=[];let issue='';
+    if(route.stops.some(i=>state.cells[i]?.type!==route.type))issue='A stop was removed or changed. Rebuild it or edit this line.';
+    else if(route.stops.some(i=>!roads.has(i)))issue='A stop has lost its connection to the regional gateway.';
+    else for(let n=1;n<route.stops.length;n++){
+      const leg=roadPath(roads,route.stops[n-1],route.stops[n]);
+      if(!leg.length){issue='The road connection between stops is broken.';break;}
+      path.push(...(n===1?leg:leg.slice(1)));
+    }
+    const active=route.enabled&&!issue,length=Math.max(0,path.length-1),funding=policies(state.policies).serviceBudget/100;
+    return {...route,path,active,issue,status:!route.enabled?'Paused':issue?'Suspended':'Operating',length,
+      capacity:active?Math.round((route.type==='tram'?360:180)*funding):0,
+      upkeep:active?Math.round(((route.type==='tram'?18:12)+length*(route.type==='tram'?.4:.25))*funding):0};
+  }
+  function validRoute(route){
+    return route&&['bus','tram'].includes(route.type)&&typeof route.name==='string'&&route.name.trim().length>0&&route.name.length<=32&&routeColours.includes(route.colour)&&typeof route.enabled==='boolean'&&Array.isArray(route.stops)&&route.stops.length>=2&&route.stops.length<=6&&new Set(route.stops).size===route.stops.length&&route.stops.every(i=>validCell(i)&&terrain[i]==='land');
+  }
+  function setRoute(state,definition,id=null){
+    const routes=state.routes||[];
+    if(!validRoute(definition))return rejected(state,'Name the line and choose 2–6 different stops of the same transport type.');
+    if(id!==null&&!routes.some(r=>r.id===id))return rejected(state,'This line no longer exists.');
+    if(id===null&&routes.length>=12)return rejected(state,'Your transport office can manage up to 12 lines.');
+    const info=routeInfo(state,definition);if(info.issue)return rejected(state,info.issue);
+    const same=(a,b)=>a.every((i,n)=>i===b[n]);
+    if(routes.some(r=>r.id!==id&&r.type===definition.type&&r.stops.length===definition.stops.length&&(same(r.stops,definition.stops)||same(r.stops,[...definition.stops].reverse()))))return rejected(state,'A line already serves this sequence of stops. Edit that line instead.');
+    const route={id:id??Array.from({length:12},(_,n)=>n+1).find(n=>!routes.some(r=>r.id===n)),name:definition.name.trim(),type:definition.type,colour:definition.colour,enabled:definition.enabled,stops:[...definition.stops]};
+    return ok({...state,routes:id===null?[...routes,route]:routes.map(r=>r.id===id?route:r)},route.name+' '+(id===null?'created':'updated')+' · '+info.upkeep+' EP / month.');
+  }
+  function removeRoute(state,id){
+    const route=(state.routes||[]).find(r=>r.id===id);if(!route)return rejected(state,'This line no longer exists.');
+    return ok({...state,routes:state.routes.filter(r=>r.id!==id)},route.name+' removed. Its stops remain available.');
+  }
+  function setRouteEnabled(state,id,enabled){
+    const route=(state.routes||[]).find(r=>r.id===id);if(!route||typeof enabled!=='boolean')return rejected(state,'Choose an existing line.');
+    return ok({...state,routes:state.routes.map(r=>r.id===id?{...r,enabled}:r)},route.name+(enabled?' resumed.':' paused.'));
+  }
+  function transportAnalysis(state,roads,homeProfiles,homes,residents,transit,bikes,bikeLinks){
+    const p=policies(state.policies),fareDemand=clamp(1-Math.max(0,p.transitFare-2)*.1,.65,1),funding=.8+.2*p.serviceBudget/100;
+    const routes=(state.routes||[]).map(r=>({...routeInfo(state,r,roads),passengerDemand:0,riders:0}));
+    const workplaces=[];
+    state.cells.forEach((cell,i)=>{
+      if(!cell||cell.anchor!==undefined)return;
+      const jobs=types[cell.type].jobs??({apartment:18,factory:48,coal:24,heat:12,school:20,clinic:18,recycling:24,waterworks:18}[cell.type]||0);
+      if(jobs&&linkedPlot(footprint(cell.type,i,cell.rotation),roads))workplaces.push(i);
+    });
+    const allocations=[],active=routes.filter(r=>r.active);
+    homes.forEach((home,n)=>{
+      const profile=homeProfiles[n],people=state.population*home.capacity/residents;
+      const localShare=home.linked&&transit.some(t=>['bus','tram','metro','ferry'].includes(t.type))?clamp(profile.mobility*funding)/100*.45*fareDemand:0;
+      const offers=home.linked?active.map(route=>{
+        const distances=route.stops.map(i=>distance(home.i,i)),nearest=Math.min(...distances),start=distances.indexOf(nearest);
+        const reach=Math.max(0,1-nearest/5);
+        const destination=route.stops.some((stop,index)=>index!==start&&workplaces.some(work=>distance(work,stop)<=5));
+        return {route,quality:destination?reach:0};
+      }).filter(o=>o.quality>0):[];
+      const quality=offers.length?Math.max(...offers.map(o=>o.quality)):0,total=offers.reduce((sum,o)=>sum+o.quality,0);
+      const potential=people*Math.max(0,.65-localShare)*.55*quality*fareDemand;
+      const shares=offers.map(o=>{const demand=potential*o.quality/total;o.route.passengerDemand+=demand;return {route:o.route,demand};});
+      allocations.push({home,profile,people,localShare,shares});
+    });
+    routes.forEach(route=>{route.riders=Math.min(route.capacity,Math.round(route.passengerDemand));route.servedRatio=route.passengerDemand?route.riders/route.passengerDemand:0;route.passengerDemand=Math.round(route.passengerDemand);});
+    // One nearest-workplace search serves all homes. Traffic follows actual connected streets.
+    const parents=Array(size*size).fill(-2),queue=[];
+    for(const work of workplaces)for(const i of neighbours(work))if(roads.has(i)&&parents[i]===-2){parents[i]=-1;queue.push(i);}
+    if(!queue.length&&roads.has(17*size+10)){parents[17*size+10]=-1;queue.push(17*size+10);}
+    const steps=Array(size*size).fill(Infinity);queue.forEach(i=>steps[i]=0);
+    for(let head=0;head<queue.length;head++)for(const j of neighbours(queue[head]))if(roads.has(j)&&parents[j]===-2){parents[j]=queue[head];steps[j]=steps[queue[head]]+1;queue.push(j);}
+    const roadLoads=Array(size*size).fill(0);let carTrips=0,routeRiders=0,unconnected=0;
+    allocations.forEach(({home,profile,people,localShare,shares})=>{
+      const extra=shares.reduce((sum,o)=>sum+o.demand*o.route.servedRatio,0);
+      routeRiders+=extra;
+      const activeShare=Math.min(.3,.05+(bikes+Math.min(bikeLinks,10))*.006);
+      const trips=Math.max(0,people*.42*(1-localShare-activeShare)-extra*.42);
+      const access=neighbours(home.i).filter(i=>roads.has(i)&&parents[i]!==-2).sort((a,b)=>steps[a]-steps[b]||a-b)[0];
+      if(access===undefined){unconnected+=people;profile.commute=100;return;}
+      const path=[];for(let i=access;i>=0;i=parents[i]){roadLoads[i]+=trips;path.push(i);}
+      carTrips+=trips;profile.commutePath=path;profile.routeRiders=Math.round(extra);
+    });
+    const roadCapacity=i=>18+(state.cells[i]?.type==='bike'?4:0),pressure=i=>clamp((roadLoads[i]/roadCapacity(i)-1)*70);
+    const totalLoad=roadLoads.reduce((sum,v)=>sum+v,0),congestion=totalLoad?Math.round(roadLoads.reduce((sum,v,i)=>sum+v*pressure(i),0)/totalLoad):0;
+    homeProfiles.forEach(home=>{if(home.commutePath)home.commute=home.commutePath.length?Math.round(home.commutePath.reduce((sum,i)=>sum+pressure(i),0)/home.commutePath.length):0;});
+    const bottlenecks=[...roads].filter(i=>roadLoads[i]>roadCapacity(i)).sort((a,b)=>roadLoads[b]/roadCapacity(b)-roadLoads[a]/roadCapacity(a)).slice(0,5).map(i=>({i,load:Math.round(roadLoads[i]),capacity:roadCapacity(i),pressure:Math.round(pressure(i))}));
+    const gaps=allocations.filter(h=>h.home.linked&&h.profile.mobility<35&&!h.shares.length).sort((a,b)=>b.people-a.people).slice(0,4).map(h=>({i:h.home.i,people:Math.round(h.people),coverage:h.profile.mobility}));
+    return {routes,roadLoads,congestion,carTrips:Math.round(carTrips),routeRiders:Math.round(routeRiders),upkeep:routes.reduce((sum,r)=>sum+r.upkeep,0),unconnected:Math.round(unconnected),bottlenecks,gaps};
+  }
   function analyse(state) {
     const p=policies(state.policies),funding=p.serviceBudget/100;
     const roads = connectedRoads(state.cells), counts = {}, homes = [], greens = [], transit = [], power = [], services = [], noiseSources=[],industrySources=[],connections=[];
@@ -178,11 +271,12 @@
     mobilityCoverage=clamp(mobilityCoverage*(.8+.2*funding));
     const fareDemand=clamp(1-Math.max(0,p.transitFare-2)*.1,.65,1);
     const hasTransit=transit.some(t=>['bus','tram','metro','ferry'].includes(t.type));
-    const ridership=hasTransit?Math.round(state.population*mobilityCoverage/100*.45*fareDemand):0;
+    const transport=transportAnalysis(state,roads,homeProfiles,homes,residents,transit,bikes,bikeLinks);
+    const ridership=hasTransit?Math.round(state.population*mobilityCoverage/100*.45*fareDemand)+transport.routeRiders:0;
     const demand = Math.max(16, Math.round((state.population * .105 + industry * 9 + 8 + services.length * 2 + extraDemand) * Math.max(.6,1-heating*.08-roofs*.006)*(1-Math.max(0,p.utilityTariff-1)*.035)));
     const energy = clamp(Math.round(cleanPower * (1 + Math.min(.2,batteries*.08)) / demand * 100));
     const greenness = clamp(Math.round(greens.reduce((s,g)=>s+(types[g.type].greenScore ?? {tree:2.8,park:5.8,forest:7,wetland:5,garden:4}[g.type])*Math.pow(g.factor,.65),0) + shadeCoverage*.42 + roofs*3.5));
-    const mobility = clamp(Math.round(12 + mobilityCoverage*.68*fareDemand + Math.min(28,bikes*3.2+bikeLinks*1.8) + (hasTransit?Math.max(0,2-p.transitFare)*6:0)));
+    const mobility = clamp(Math.round(12 + mobilityCoverage*.68*fareDemand + Math.min(28,bikes*3.2+bikeLinks*1.8) + (hasTransit?Math.max(0,2-p.transitFare)*6:0) + Math.min(16,transport.routeRiders/Math.max(1,state.population)*80) - Math.max(0,transport.congestion-35)*.12));
     const air = clamp(Math.round(47 - industry*7 - fossil*13 - extraEmissions + energy*.22 + greenness*.29 + mobility*.12 + Math.min(10,waste*4) + (p.cleanIndustry?10:0)));
     const resilience = clamp(Math.round((15 + greenness*.3 + shadeCoverage*.22 + wetlands*7 + roofs*3 + batteries*6 + water*11 + heating*3 + extraResilience)*(.85+.15*funding)));
     const scores = [air, energy, greenness, mobility, resilience];
@@ -192,7 +286,7 @@
     const response=state.event?.choice?events[state.event.type].options.find(o=>o.id===state.event.choice):null;
     const protection=response?.protection??0;
     const eventPenalty = Math.round(eventBase * (1-protection));
-    const baseWellbeing = clamp(Math.round(27 + air*.2 + shadeCoverage*.18 + serviceCoverage*.38 + employment*.12 + mobility*.12 - (p.residentialTax-10)*2.5 - Math.max(0,p.utilityTariff-1)*4 - Math.max(0,p.transitFare-2)*2 + (hasTransit&&p.freeTransit?4:0) + (p.serviceBudget-100)*.06 - eventPenalty - noiseExposure*.15));
+    const baseWellbeing = clamp(Math.round(27 + air*.2 + shadeCoverage*.18 + serviceCoverage*.38 + employment*.12 + mobility*.12 - (p.residentialTax-10)*2.5 - Math.max(0,p.utilityTariff-1)*4 - Math.max(0,p.transitFare-2)*2 + (hasTransit&&p.freeTransit?4:0) + (p.serviceBudget-100)*.06 - eventPenalty - noiseExposure*.15 - Math.max(0,transport.congestion-35)*.12));
     const life=residentLife({state,p,capacity,employment,air,greenness,mobility,serviceCoverage,healthCoverage:clamp(healthCoverage*funding),safetyCoverage:clamp(safetyCoverage*funding),noiseExposure,baseWellbeing});
     const wellbeing=life.happiness;
     const growth=wellbeing<30?-Math.ceil(state.population*.035):Math.round((25+state.population*.075)*(wellbeing/80)*Math.max(.15,employment/100));
@@ -216,9 +310,9 @@
     const income = 140+residentialRevenue+businessRevenue+fareRevenue+Math.max(0,utilityMargin)+regionalRevenue;
     const gridCost = Math.round(Math.max(0,demand-cleanPower)*.8*(state.event?.type==='energy'?1.8-.8*protection:1));
     const loanPayment=state.loan?Math.min(state.loan.payment,state.loan.balance):0;
-    const expenses = assetUpkeep+transitSupport+industryStandards+gridCost+Math.max(0,-utilityMargin)+loanPayment, net=income-expenses;
+    const expenses = assetUpkeep+transitSupport+industryStandards+gridCost+Math.max(0,-utilityMargin)+loanPayment+transport.upkeep, net=income-expenses;
     const completed = state.challenge==='revolution' ? overall>=70&&wellbeing>=60&&state.population>=350 : state.challenge==='carbon' ? pollution<=20&&energy>=75&&mobility>=65&&state.population>=300 : state.challenge==='future' ? state.population>=650&&overall>=75&&(counts.park||0)>=5&&(counts.solar||0)>=3&&(counts.bus||0)+(counts.tram||0)+(counts.metro||0)>=2 : false;
-    return { scores, overall, pollution, wellbeing, happiness:wellbeing,nextPopulation,life,homeProfiles,connections,localSources:{nature:greens,transit,noise:noiseSources,industry:industrySources},noiseExposure:Math.round(noiseExposure),capacity:Math.round(capacity), jobs:Math.round(jobs), employment, roads, counts, income, expenses, net, cleanPower:Math.round(cleanPower), demand, shadeCoverage:Math.round(shadeCoverage), mobilityCoverage:Math.round(mobilityCoverage), serviceCoverage:Math.round(serviceCoverage),ridership,policy:p,budget:{grant:140,residentialRevenue,businessRevenue,fareRevenue,utilities:Math.max(0,utilityMargin),regionalRevenue,assetUpkeep,transitSupport,industryStandards,gridCost,utilitySubsidy:Math.max(0,-utilityMargin),loanPayment}, completed, upgrades:state.cells.filter(c=>c&&c.paid>0).length, tier:state.challenge==='sandbox'||state.month>=3||overall>=35?2:1 };
+    return { scores, overall, pollution, wellbeing, happiness:wellbeing,nextPopulation,life,homeProfiles,connections,transport,localSources:{nature:greens,transit,noise:noiseSources,industry:industrySources},noiseExposure:Math.round(noiseExposure),capacity:Math.round(capacity), jobs:Math.round(jobs), employment, roads, counts, income, expenses, net, cleanPower:Math.round(cleanPower), demand, shadeCoverage:Math.round(shadeCoverage), mobilityCoverage:Math.round(mobilityCoverage), serviceCoverage:Math.round(serviceCoverage),ridership,policy:p,budget:{grant:140,residentialRevenue,businessRevenue,fareRevenue,utilities:Math.max(0,utilityMargin),regionalRevenue,routeUpkeep:transport.upkeep,assetUpkeep,transitSupport,industryStandards,gridCost,utilitySubsidy:Math.max(0,-utilityMargin),loanPayment}, completed, upgrades:state.cells.filter(c=>c&&c.paid>0).length, tier:state.challenge==='sandbox'||state.month>=3||overall>=35?2:1 };
   }
   function residentLife(a){
     const {state,p,capacity,employment,air,greenness,mobility,serviceCoverage,healthCoverage,safetyCoverage,noiseExposure,baseWellbeing}=a;
@@ -403,7 +497,7 @@
     const industrial=a.localSources.industry.reduce((sum,n)=>sum+Math.max(0,1-distance(i,n.i)/5)*25,0);
     const local=a.homeProfiles.find(h=>h.i===i);
     const noise=local?.noise??clamp(Math.round(a.localSources.noise.reduce((sum,n)=>sum+Math.max(0,1-Math.min(...n.plots.map(j=>distance(i,j)))/6)*n.strength*n.factor,0)));
-    return {label:label(i),name:cell?types[cell.type].name:terrain[i]==='water'?'Protected waterfront':'Available land',cell,linked,local,noise,heat:clamp(Math.round(78-nature-(cell?.roof==='roof'?20:0)+industrial)),power:a.scores[1],transit:clamp(Math.round(transit)),resilience:clamp(Math.round(a.scores[4]+nature*.3+(terrain[i]==='water'?15:0))),refund:Math.floor((cell?.paid||0)*.5)};
+    return {label:label(i),name:cell?types[cell.type].name:terrain[i]==='water'?'Protected waterfront':'Available land',cell,linked,local,noise,traffic:Math.round(a.transport.roadLoads[i]),congestion:clamp(Math.round((a.transport.roadLoads[i]/(cell?.type==='bike'?22:18)-1)*70)),heat:clamp(Math.round(78-nature-(cell?.roof==='roof'?20:0)+industrial)),power:a.scores[1],transit:clamp(Math.round(transit)),resilience:clamp(Math.round(a.scores[4]+nature*.3+(terrain[i]==='water'?15:0))),refund:Math.floor((cell?.paid||0)*.5)};
   }
   function restore(raw){
     if(!raw||![2,3].includes(raw.version)||!owns(challenges,raw.challenge)||!Array.isArray(raw.cells)||raw.cells.length!==(raw.version===2?400:size*size))throw new Error('Invalid saved city');
@@ -430,9 +524,11 @@
     let event=null;
     if(raw.event){const e=events[raw.event.type];if(!e||(raw.event.choice!==null&&!e.options.some(o=>o.id===raw.event.choice)))throw new Error('Invalid event');event={type:raw.event.type,choice:raw.event.choice};}
     const history=(Array.isArray(raw.history)?raw.history:[]).slice(-24).map(h=>{if(!h||!integer(h.month,1,raw.month)||!integer(h.score,0,100)||!integer(h.population,0,maxPopulation)||(h.happiness!==undefined&&!integer(h.happiness,0,100)))throw new Error('Invalid city history');return {month:h.month,score:h.score,population:h.population,...(h.happiness===undefined?{}:{happiness:h.happiness})};});
+    let routes=[];
+    if(raw.routes!==undefined){if(!Array.isArray(raw.routes)||raw.routes.length>12||new Set(raw.routes.map(r=>r?.id)).size!==raw.routes.length)throw new Error('Invalid transport lines');routes=raw.routes.map(r=>{if(!validRoute(r)||!integer(r.id,1,12))throw new Error('Invalid transport line');return {id:r.id,name:r.name.trim(),type:r.type,colour:r.colour,enabled:r.enabled,stops:[...r.stops]};});}
     const log=(Array.isArray(raw.log)?raw.log:[]).filter(s=>typeof s==='string'&&s.length<=400).slice(0,16);
-    return {version:3,challenge:raw.challenge,cells,cash:raw.cash,population:raw.population,month:raw.month,policies:restoredPolicies,loan,grants:[...raw.grants],event,history,log};
+    return {version:3,challenge:raw.challenge,cells,cash:raw.cash,population:raw.population,month:raw.month,policies:restoredPolicies,routes,loan,grants:[...raw.grants],event,history,log};
   }
-  const api={size,terrain,metrics,upgrades,types,challenges,roadTypes,buildingTypes,greenTypes,fresh,board,remaining,score,analyse,neighbours,distance,rowLabel,label,rotatable,dimensions,footprint,anchorAt,coastal,canPlace,place,upgrade,upgradeCost,demolish,relocate,moveCost,line,buildLine,grantDefs,grant,events,respond,policies,policyRanges,setPolicies,setPolicy,borrow,repayLoan,advance,goals,tileInfo,restore};
+  const api={size,terrain,metrics,upgrades,types,challenges,routeColours,roadPath,routeInfo,setRoute,removeRoute,setRouteEnabled,roadTypes,buildingTypes,greenTypes,fresh,board,remaining,score,analyse,neighbours,distance,rowLabel,label,rotatable,dimensions,footprint,anchorAt,coastal,canPlace,place,upgrade,upgradeCost,demolish,relocate,moveCost,line,buildLine,grantDefs,grant,events,respond,policies,policyRanges,setPolicies,setPolicy,borrow,repayLoan,advance,goals,tileInfo,restore};
   if(typeof module==='object'&&module.exports)module.exports=api;else host.GreenCity=api;
 })(globalThis);
