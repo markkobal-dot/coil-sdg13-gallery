@@ -43,8 +43,9 @@
     <link rel="stylesheet" href="editorial.css?v=f6e7b8b49a">
     <link rel="stylesheet" href="evidence.css?v=ef89f667b6">
     <link rel="stylesheet" href="green-city.css?v=9e43faded8">
-    <link rel="stylesheet" href="green-city-ui.css?v=913ff5fc9a">
+    <link rel="stylesheet" href="green-city-ui.css?v=0ec0103cbe">
     <link rel="stylesheet" href="motion.css?v=89a45ffb6c">
+    <link rel="stylesheet" href="home-experience.css?v=63710de0a0">
   </head>
 
   <body>
@@ -78,31 +79,28 @@
 
     <main id="main" tabindex="-1">
       <section class="hero" id="home">
-        <div class="hero-top">
-          <div class="hero-inner">
-            <span class="eyebrow"><span class="status-dot" aria-hidden="true"></span> OUR CLIMATE JOURNAL / SLOVENIA</span>
-            <h1>Slovenia<br>is warming<span class="hero-period">.</span></h1>
-            <p class="lead">A changing climate, seen from where we live. We are Mark and Lovro — exploring rising temperatures through local stories, photographs and ideas for a better future.</p>
-            <div class="hero-actions">
-              <a class="btn btn-light btn-primary" href="#gallery">Explore our gallery <span aria-hidden="true">↗</span></a>
-              <a class="hero-secondary" href="#climate-story">Follow the story <span aria-hidden="true">↓</span></a>
-            </div>
-            <div class="hero-local-stat">
-              <strong>~2.7°C</strong>
-              <span>Rise in Slovenia’s annual mean temperature since 1970.<br><a href="https://meteo.arso.gov.si/met/sl/climate/current/climate_year/" target="_blank" rel="noopener noreferrer">Source: ARSO ↗</a></span>
-            </div>
+        <div class="home-opening" data-scene="home">
+          <div class="home-backdrop" aria-hidden="true">
+            <img class="home-scene is-active" data-home-image="home" src="assets/images/triglav-hike-lovro.webp" alt="" width="1569" height="1045" fetchpriority="high" decoding="async">
+            <img class="home-scene" data-home-image="signs" src="assets/images/dry-forest-lovro-2026.webp" alt="" width="720" height="960" decoding="async">
+            <img class="home-scene" data-home-image="choices" src="assets/images/saving-energy-at-home.png" alt="" width="930" height="619" decoding="async">
           </div>
-          <figure class="hero-visual">
-            <img class="hero-landscape" src="assets/images/triglav-hike-lovro.webp" alt="Rocky Alpine landscape photographed by Lovro Trošt during a summer hike." width="1569" height="1045" fetchpriority="high" decoding="async">
-            <div class="hero-image-shade" aria-hidden="true"></div>
-            <div class="hero-photo-top"><span>OUR HOME. OUR PERSPECTIVE.</span><span>46° N / SLOVENIA</span></div>
-            <div class="sdg-chip">
-              <img class="sdg-icon" src="https://www.un.org/sustainabledevelopment/wp-content/uploads/2015/05/E_SDG_Icons-13.jpg" alt="SDG 13: Climate Action" width="56" height="56">
-              <span>SMALL OBSERVATIONS.<br><strong>A BIGGER CONVERSATION.</strong></span>
+          <div class="home-opening-top"><span><i aria-hidden="true"></i> A CLIMATE JOURNAL / SLOVENIA</span><span>46° N · OUR LOCAL PERSPECTIVE</span></div>
+          <div class="home-opening-content">
+            <div class="home-statement"><h1>This is<br><span>home<span class="home-full-stop">.</span></span></h1><p>Let’s keep it that way.</p></div>
+            <div class="home-opening-note"><span class="home-note-index" aria-hidden="true">01 / LOOK AROUND</span><h2 id="home-scene-heading">The places we love.<br>The future we share.</h2><p id="home-scene-copy">We are Mark and Lovro. Twelve photographs, one changing climate, and a story that starts where we live.</p><div class="home-opening-actions"><a class="btn" href="#gallery">Explore our gallery <span aria-hidden="true">↗</span></a><a href="#game">Build a greener city <span aria-hidden="true">↗</span></a></div></div>
+          </div>
+          <div class="home-opening-bottom">
+            <div class="home-scenes" role="group" aria-label="Explore our photographic perspectives" hidden>
+              <button type="button" data-home-scene="home" aria-pressed="true"><span>01</span> What we love <i aria-hidden="true">↗</i></button>
+              <button type="button" data-home-scene="signs" aria-pressed="false"><span>02</span> What we notice <i aria-hidden="true">↗</i></button>
+              <button type="button" data-home-scene="choices" aria-pressed="false"><span>03</span> What we can change <i aria-hidden="true">↗</i></button>
             </div>
-            <figcaption><span>THE ALPINE LANDSCAPE</span><span>Photo: Lovro Trošt ↗</span></figcaption>
-          </figure>
+            <p class="home-photo-caption" id="home-photo-caption">Alpine landscape<br><span>Photograph by Lovro Trošt</span></p>
+          </div>
+          <p class="sr-only" id="home-scene-announcement" role="status" aria-live="polite"></p>
         </div>
+        <div class="home-temperature-note"><a href="#problem"><strong>~2.7°C</strong><span>Slovenia is warming.<small>Rise in annual mean temperature since 1970.</small></span><span class="home-temperature-link">Follow the evidence ↗</span></a><a class="home-temperature-source" href="https://meteo.arso.gov.si/met/sl/climate/current/climate_year/" target="_blank" rel="noopener noreferrer">Source: ARSO ↗</a></div>
         <div class="hero-index">
           <span>AN EXPLORATION OF SDG 13</span>
           <span>RISING TEMPERATURES</span>
@@ -905,7 +903,7 @@
             <div class="gc-map-panel">
               <div class="gc-map-toolbar"><div class="gc-tool-switcher" role="group" aria-label="City tools"><button type="button" data-gc-tool="inspect" aria-pressed="true" title="Inspect (I)">↖ <span>Inspect</span></button><button type="button" data-gc-tool="build" aria-pressed="false" title="Build (B)">＋ <span>Build</span></button><button type="button" data-gc-tool="road" aria-pressed="false" title="Road path (R)">⌁ <span>Road path</span></button><button type="button" data-gc-tool="upgrade" aria-pressed="false" title="Upgrade (U)">↥ <span>Upgrade</span></button><button type="button" data-gc-tool="move" aria-pressed="false" title="Move (M)">✥ <span>Move</span></button><button type="button" data-gc-tool="demolish" aria-pressed="false" title="Demolish (X)">⌫ <span>Remove</span></button></div><div class="gc-history-buttons"><button id="gc-undo" type="button" aria-label="Undo last city action" title="Undo (Ctrl+Z)" disabled>↶</button><button id="gc-redo" type="button" aria-label="Redo last city action" title="Redo (Ctrl+Y)" disabled>↷</button></div></div>
               <div class="gc-world-wrap" id="gc-world-wrap">
-                <canvas id="gc-board" tabindex="0" role="application" aria-label="Interactive 3D city. Drag to pan, scroll or pinch to zoom, right-drag to orbit. Arrow keys select tiles, Enter applies the selected tool. Escape cancels a route or move."></canvas>
+                <canvas id="gc-board" tabindex="0" role="application" aria-label="Interactive 3D city. Drag to pan, scroll or pinch to zoom, right-drag to orbit. Arrow keys select tiles, Enter applies the selected tool. Q and E rotate large buildings. Escape cancels a route or move."></canvas>
                 <div class="gc-world-loading" id="gc-loading"><span></span><strong>Preparing your island…</strong><small>Local 3D assets · no account needed</small></div>
                 <div id="gc-fallback" class="gc-fallback" hidden></div>
                 <div class="gc-world-top"><span class="gc-location-tag"><i></i> NEW TERRA <small>28 × 28</small></span><label class="gc-overlay-control"><span class="sr-only">Map overlay</span><select id="gc-overlay"><option value="city">City view</option><option value="heat">Heat exposure</option><option value="power">Clean energy</option><option value="transit">Transit coverage</option><option value="water">Climate resilience</option><option value="noise">Neighbourhood noise</option></select></label></div>
@@ -914,7 +912,8 @@
                 <div class="gc-world-bottom"><div class="gc-minimap-wrap"><canvas id="gc-minimap" width="168" height="168" tabindex="0" role="button" aria-label="Island mini-map. Click a location to centre the camera. Press Enter to centre the selected tile."></canvas><span>ISLAND OVERVIEW</span></div><div class="gc-world-caption"><strong id="gc-hover">Explore your island.</strong><span>Drag to pan · Scroll to zoom · Right-drag to orbit</span></div></div>
                 <div class="gc-onboarding" id="gc-onboarding"><button id="gc-dismiss-tutorial" type="button" aria-label="Dismiss welcome guide">×</button><span class="gc-overline">WELCOME, MAYOR.</span><h4>A better city starts with a plan.</h4><p>Choose a building, then a plot. Advance a month to earn income and welcome residents. Balance all five indicators.</p><span>01 / PLAN &nbsp; 02 / BUILD &nbsp; 03 / GROW</span></div>
               </div>
-              <div class="gc-contextbar"><button id="gc-open-build" class="gc-current-tool" type="button"><span id="gc-current-icon" aria-hidden="true">↖</span><span><small>ACTIVE TOOL</small><strong id="gc-current-tool">Inspect city</strong></span><span class="gc-change-tool">Change ↗</span></button><div class="gc-tile-select"><label>ROW<select id="gc-row" aria-label="Selected tile row"></select></label><label>COL<select id="gc-col" aria-label="Selected tile column"></select></label><button id="gc-focus" type="button" aria-label="Centre camera on selected tile">◎</button></div><button id="gc-build" class="gc-action-button" type="button">Inspect tile</button></div>
+              <div id="gc-placement" class="gc-placement-hint" hidden><span aria-hidden="true"></span><div><strong id="gc-placement-title"></strong><p id="gc-placement-detail"></p></div></div>
+              <div class="gc-contextbar"><button id="gc-open-build" class="gc-current-tool" type="button"><span id="gc-current-icon" aria-hidden="true">↖</span><span><small>ACTIVE TOOL</small><strong id="gc-current-tool">Inspect city</strong></span><span class="gc-change-tool">Change ↗</span></button><button id="gc-rotate" class="gc-rotate-building" type="button" title="Rotate building clockwise (E). Q rotates counterclockwise." aria-label="Rotate building clockwise" hidden>↻ 0°</button><div class="gc-tile-select"><label>ROW<select id="gc-row" aria-label="Selected tile row"></select></label><label>COL<select id="gc-col" aria-label="Selected tile column"></select></label><button id="gc-focus" type="button" aria-label="Centre camera on selected tile">◎</button></div><button id="gc-build" class="gc-action-button" type="button">Inspect tile</button></div>
               <p id="gc-message" class="gc-message" role="status" aria-live="polite">Welcome, Mayor. The city is paused while you plan.</p>
               <nav class="gc-mobile-panels" aria-label="Game panels"><button type="button" data-gc-panel="build" aria-pressed="false">＋ Build</button><button type="button" data-gc-panel="city" aria-pressed="false">▥ City</button><button type="button" data-gc-panel="goals" aria-pressed="false">⚑ Goals</button><button type="button" data-gc-panel="help" aria-pressed="false">? Guide</button></nav>
             </div>
@@ -1066,9 +1065,10 @@
     <script src="weather-data.js?v=2322cbfeff" defer></script>
     <script src="assets/data/weather-snapshot.js" defer></script>
     <script src="evidence.js?v=6aea94b196" defer></script>
-    <script src="green-city-core.js?v=a5888b965f"></script>
+    <script src="green-city-core.js?v=cbaa71acb2"></script>
     <script src="green-city-art.js?v=3889596789"></script>
-    <script type="module" src="green-city.js?v=c37f24bb45"></script>
+    <script type="module" src="green-city.js?v=21221ef867"></script>
+    <script src="home-experience.js?v=71fd154cea" defer></script>
     <script src="motion.js?v=2fdb95190e" defer></script>
   </body>
 </html>

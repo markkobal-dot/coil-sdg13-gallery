@@ -476,5 +476,26 @@
 .gc-resident-footer{padding:17px 32px;border-top:1px solid #e3ead9;background:#f1f6e8;color:#74826a;font-size:11px;line-height:1.7}
 .gc-local-residents{display:grid;gap:6px;margin:14px 0;padding:12px;border:1px solid #dce6d1;border-radius:10px;background:#edf4e5;font-size:11px;color:#627b54}
 .gc-local-residents>strong{font-size:10px;letter-spacing:.05em;color:#4d6b47}
+.gc-placement-hint{display:flex;align-items:center;gap:11px;padding:12px 16px;background:#edf3e4;border-top:1px solid #d8e3ca;color:#425e3c;flex-shrink:0;pointer-events:none}
+.gc-placement-hint[hidden]{display:none}
+.gc-placement-hint>span{width:7px;height:7px;border-radius:50%;background:#6e975b;flex-shrink:0;box-shadow:0 0 0 4px #6e975b18}
+.gc-placement-hint strong{display:block;font-size:11px;font-weight:600;line-height:1.4}
+.gc-placement-hint p{font-size:10px;line-height:1.6;margin:3px 0 0;color:#65765a}
+.gc-placement-hint[data-valid="false"]{background:#f7efe4;color:#805c38;border-color:#e9d9c2}
+.gc-placement-hint[data-valid="false"]>span{background:#b38658;box-shadow:0 0 0 4px #b3865818}
+.gc-placement-hint[data-valid="false"] p{color:#8e7051}
+.gc-shell .gc-rotate-building{min-height:37px;padding:8px 10px;border:1px solid #d1dfc5;border-radius:9px;background:#e6efdb;color:#4d6c44;font-size:11px;white-space:nowrap}
+.gc-shell .gc-rotate-building[hidden]{display:none}
+.gc-contextbar:has(.gc-rotate-building:not([hidden])){grid-template-columns:minmax(0,1fr) auto auto auto}
+.gc-expanded .gc-placement-hint{position:absolute;top:155px;bottom:auto;left:50%;transform:translateX(-50%);z-index:4;width:min(475px,calc(100% - 190px));border:1px solid #d8e3ca;border-radius:13px;background:#f4f8ecef;backdrop-filter:blur(16px);box-shadow:0 8px 30px #2a453017}
+.gc-connection-forecast{padding-top:16px;margin-top:16px;border-top:1px solid #dce6d1}
+.gc-connection-forecast h4{font-size:13px;margin:0 0 11px;color:#4c6745}
+.gc-connection-forecast>div{margin-bottom:13px}
+.gc-connection-forecast strong,.gc-connection-forecast small{display:block;font-size:11px;line-height:1.6;color:#526d49}
+.gc-connection-forecast small{font-size:10px;color:#728268}
+.gc-connection-meter{height:4px;background:#dce7d1;margin:6px 0;border-radius:4px;overflow:hidden}
+.gc-connection-meter>i{display:block;height:100%;background:#87a96e}
+.gc-connection-forecast>p{font-size:10px;color:#728268;line-height:1.7}
+@media(max-width:700px){.gc-contextbar:has(.gc-rotate-building:not([hidden])){grid-template-columns:minmax(0,1fr) auto}.gc-contextbar:has(.gc-rotate-building:not([hidden])) .gc-current-tool{grid-column:1}.gc-contextbar:has(.gc-rotate-building:not([hidden])) .gc-rotate-building{grid-column:2;grid-row:1}.gc-contextbar:has(.gc-rotate-building:not([hidden]))>.gc-action-button{grid-column:2;padding-inline:10px;font-size:10px}.gc-shell .gc-rotate-building{min-height:40px}.gc-placement-hint{padding:10px 13px}.gc-placement-hint p{font-size:10px}.gc-expanded .gc-placement-hint{top:180px;bottom:auto;left:12px;transform:none;width:calc(100% - 70px);max-width:450px;padding:10px 13px}.gc-connection-forecast strong{font-size:12px}.gc-connection-forecast small,.gc-connection-forecast>p{font-size:11px}}
 @media(max-width:1000px){.gc-resident-layout{grid-template-columns:245px minmax(0,1fr);gap:22px;padding:23px}.gc-resident-summary{padding:18px}#gc-resident-priorities{grid-template-columns:1fr}.gc-resident-priority{padding:16px}.gc-resident-priority blockquote{margin-top:8px}.gc-resident-priority p{margin-bottom:10px}}
 @media(max-width:700px){.gc-residents-dialog{width:calc(100% - 20px);border-radius:18px}.gc-resident-layout{display:block;padding:20px}.gc-resident-summary{margin-bottom:25px;padding:20px}.gc-resident-face{float:right;font-size:48px;margin:0}.gc-happiness-value{font-size:62px}.gc-resident-summary-stats{margin:20px 0}.gc-resident-section-title>span{display:none}.gc-resident-section-title h4{font-size:18px}.gc-resident-need{padding:17px 0}.gc-resident-need strong{font-size:14px}.gc-resident-need>div>span{font-size:11px;line-height:1.6}.gc-resident-priority blockquote{font-size:15px}.gc-resident-priority p{font-size:12px}.gc-resident-priority .gc-overline{font-size:9px}.gc-resident-priority button{font-size:12px;min-height:42px}.gc-resident-footer{padding:17px 22px;font-size:11px}.gc-residents-trigger>span{font-size:7px}}

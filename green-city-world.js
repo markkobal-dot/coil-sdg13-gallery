@@ -373,7 +373,7 @@ export class CityWorld {
     this.state=state;this.analysis=analysis;this.clear(this.staticGroup);this.dynamicGroup.clear();this.rotors=[];this.animatedWindCount=0;this.smokePoints=[];this.pickTargets=[];
     const root=new THREE.Group();
     state.cells.forEach((cell,i)=>{
-      if(!cell||cell.anchor!==undefined)return;const [w,d]=C.types[cell.type].footprint||[1,1],model=this.model(cell,i,state.cells);model.position.set(i%mapSize-center+(w-1)/2,landY,Math.floor(i/mapSize)-center+(d-1)/2);root.add(model);
+      if(!cell||cell.anchor!==undefined)return;const [w,d]=C.dimensions(cell.type,cell.rotation),model=this.model(cell,i,state.cells);model.rotation.y=-(cell.rotation||0)*Math.PI/2;model.position.set(i%mapSize-center+(w-1)/2,landY,Math.floor(i/mapSize)-center+(d-1)/2);root.add(model);
       // Separate pick volumes preserve a building's tile after static geometry is batched.
       // Clicking a tall roof must select that building, rather than the ground behind it.
       const h=cell.type==='apartment'?(1.8+hash(i)*.55)*(1+(cell.level-1)*.35)+.3:cell.type==='office'?1.35*(1+(cell.level-1)*.35)+.5:cell.type==='geothermal'?1.3*(1+(cell.level-1)*.35)+.3:cell.type==='wind'?3.1*(1+(cell.level-1)*.18):cell.type==='cargoport'?1.7:cell.type==='stadium'?1.4:cell.type==='airport'?1.35:cell.type==='metro'?.95:C.roadTypes.has(cell.type)?.4:C.greenTypes.has(cell.type)?1.15:cell.type==='coal'?1.9:cell.type==='factory'?1.8:1.2*(1+(cell.level-1)*.35);
@@ -401,31 +401,32 @@ export class CityWorld {
     if(!this.analysis||this.reduced.matches||!this.smokePoints.length||this.analysis.pollution<45)return;
     this.smoke=new THREE.InstancedMesh(new THREE.SphereGeometry(.13,6,4),new THREE.MeshBasicMaterial({color:'#b7b5a5',transparent:true,opacity:.25,depthWrite:false}),this.smokePoints.length*6);this.scene.add(this.smoke);
   }
-  setTool(mode,type,focus,source=null,lineStart=null){this.mode=mode;this.type=type;this.focus=focus;this.source=source;this.lineStart=lineStart;this.hover=null;this.updateSelection();this.dirty=true;this.schedule();}
+  setTool(mode,type,focus,source=null,lineStart=null,rotation=0){this.rotation=rotation;this.mode=mode;this.type=type;this.focus=focus;this.source=source;this.lineStart=lineStart;this.hover=null;this.updateSelection();this.dirty=true;this.schedule();}
   allowed(i){
     if(!this.state)return false;
-    if(this.mode==='build')return !C.canPlace(this.state,this.type,i,this.analysis);
+    if(this.mode==='build')return !C.canPlace(this.state,this.type,i,this.analysis,this.rotation);
     if(this.mode==='demolish'||this.mode==='upgrade')return !!this.state.cells[i];
-    if(this.mode==='move')return this.source===null?!!this.state.cells[i]:(C.terrain[i]==='land'&&!this.state.cells[i]);
+    if(this.mode==='move')return this.source===null?!!this.state.cells[i]:!C.relocate(this.state,this.source,i,this.rotation).error;
     if(this.mode==='road')return C.terrain[i]==='land'&&(!this.state.cells[i]||C.roadTypes.has(this.state.cells[i].type));
     return true;
   }
   updateSelection(){
-    if(this.focus>=0){const i=C.anchorAt(this.state,this.focus),[w,h]=C.types[this.state.cells[i]?.type]?.footprint||[1,1];this.selection.visible=true;this.selection.scale.set(w,1,h);this.selection.position.set(i%mapSize-center+(w-1)/2,.185,Math.floor(i/mapSize)-center+(h-1)/2);}else this.selection.visible=false;
+    if(this.focus>=0){const i=C.anchorAt(this.state,this.focus),[w,h]=C.dimensions(this.state.cells[i]?.type,this.state.cells[i]?.rotation);this.selection.visible=true;this.selection.scale.set(w,1,h);this.selection.position.set(i%mapSize-center+(w-1)/2,.185,Math.floor(i/mapSize)-center+(h-1)/2);}else this.selection.visible=false;
     this.updateHover(this.hover??this.focus);
   }
   updateHover(i){
     if(i===null||i<0||i>=mapSize*mapSize){this.cursor.visible=false;if(this.ghost)this.ghost.visible=false;return;}
     if(this.mode==='inspect')i=C.anchorAt(this.state,i);
     const moving=this.mode==='move'&&this.source!==null,previewType=this.mode==='build'?this.type:moving?this.state.cells[this.source]?.type:this.state.cells[C.anchorAt(this.state,i)]?.type;
-    const [w,h]=C.types[previewType]?.footprint||[1,1];
+    const rotation=this.mode==='build'||moving?this.rotation:this.state.cells[C.anchorAt(this.state,i)]?.rotation||0;
+    const [w,h]=C.dimensions(previewType,rotation);
     this.hover=i;this.cursor.visible=true;this.cursor.scale.set(w,1,h);this.cursor.position.set(i%mapSize-center+(w-1)/2,.195,Math.floor(i/mapSize)-center+(h-1)/2);
     const allowed=this.allowed(i);this.cursor.material.color.set(this.mode==='inspect'?'#fff1b6':allowed?'#ddf2ad':'#e98e71');
     if(this.ghost){this.scene.remove(this.ghost);this.ghost.traverse(m=>{if(m.isMesh&&m.material.userData.ghost)m.material.dispose();});this.ghost=null;}
     if((this.mode==='build'||moving)&&allowed&&previewType!=='solar'&&previewType!=='roof'){
       const smokeBackup=this.smokePoints;
       this.smokePoints=[];this.ghost=this.model(moving?this.state.cells[this.source]:{type:previewType,level:1,roof:null,paid:0},i,this.state.cells);this.smokePoints=smokeBackup;
-      this.ghost.position.set(i%mapSize-center+(w-1)/2,landY,Math.floor(i/mapSize)-center+(h-1)/2);
+      this.ghost.rotation.y=-rotation*Math.PI/2;this.ghost.position.set(i%mapSize-center+(w-1)/2,landY,Math.floor(i/mapSize)-center+(h-1)/2);
       this.ghost.traverse(obj=>{if(obj.isMesh){obj.material=obj.material.clone();obj.material.transparent=true;obj.material.opacity=.42;obj.material.depthWrite=false;obj.material.userData.ghost=true;}});this.scene.add(this.ghost);
     }
     if(this.mode==='road'&&this.lineStart!==null){const points=C.line(this.lineStart,i).map(j=>new THREE.Vector3(j%mapSize-center,.22,Math.floor(j/mapSize)-center));this.route.geometry.dispose();this.route.geometry=new THREE.BufferGeometry().setFromPoints(points);this.route.visible=true;}else this.route.visible=false;
@@ -446,14 +447,14 @@ export class CityWorld {
   toggleNight(){this.night=!this.night;this.waterMaterial.uniforms.uNight.value=this.night?1:0;this.scene.background.set(this.night?'#172d38':'#d4e4dd');this.scene.fog.color.copy(this.scene.background);this.ambient.intensity=this.night?.65:1.55;this.sun.intensity=this.night?.45:2.7;this.sun.color.set(this.night?'#b6d5e1':'#fff1cf');for(const mat of this.materials.values())if(mat.emissive?.getHex())mat.emissiveIntensity=this.night?1.8:.08;this.labels.classList.toggle('gc-night-labels',this.night);this.dirty=true;this.schedule();return this.night;}
   toggleGrid(){this.grid.visible=!this.grid.visible;this.dirty=true;this.schedule();return this.grid.visible;}
   photo(){this.renderer.render(this.scene,this.camera);return this.canvas.toDataURL('image/png');}
-  pick(event){const rect=this.canvas.getBoundingClientRect();this.pointer.set((event.clientX-rect.left)/rect.width*2-1,-(event.clientY-rect.top)/rect.height*2+1);this.ray.setFromCamera(this.pointer,this.camera);const hit=this.ray.intersectObjects(this.pickTargets,false)[0];if(hit)return hit.object.userData.cell;if(!this.ray.ray.intersectPlane(this.plane,this.intersection))return -1;const c=Math.floor(this.intersection.x+mapSize/2),r=Math.floor(this.intersection.z+mapSize/2);return r>=0&&r<mapSize&&c>=0&&c<mapSize?r*mapSize+c:-1;}
+  pick(event){const rect=this.canvas.getBoundingClientRect();this.pointer.set((event.clientX-rect.left)/rect.width*2-1,-(event.clientY-rect.top)/rect.height*2+1);this.ray.setFromCamera(this.pointer,this.camera);const hit=this.ray.intersectObjects(this.pickTargets,false)[0];if(hit&&!(this.mode==='build'||this.mode==='road'||(this.mode==='move'&&this.source!==null)))return hit.object.userData.cell;if(!this.ray.ray.intersectPlane(this.plane,this.intersection))return -1;const c=Math.floor(this.intersection.x+mapSize/2),r=Math.floor(this.intersection.z+mapSize/2);return r>=0&&r<mapSize&&c>=0&&c<mapSize?r*mapSize+c:-1;}
   bindInput(){
     const pointers=new Set();let start=null,multi=false;
     this.canvas.addEventListener('pointerdown',e=>{pointers.add(e.pointerId);if(pointers.size>1)multi=true;if(e.button===0)start={x:e.clientX,y:e.clientY};});
     this.canvas.addEventListener('pointermove',e=>{if(pointers.size)return;const i=this.pick(e);if(i!==this.hover){this.updateHover(i);this.onHover?.(i);this.schedule();}});
     const end=e=>{pointers.delete(e.pointerId);const click=!multi&&start&&e.button===0&&Math.hypot(e.clientX-start.x,e.clientY-start.y)<7;if(!pointers.size){start=null;multi=false;}if(click){const i=this.pick(e);if(i>=0)this.onSelect?.(i);}};
     this.canvas.addEventListener('pointerup',end);this.canvas.addEventListener('pointercancel',e=>{pointers.delete(e.pointerId);start=null;if(!pointers.size)multi=false;});
-    this.canvas.addEventListener('pointerleave',()=>{if(!pointers.size){this.hover=null;this.cursor.visible=false;if(this.ghost)this.ghost.visible=false;this.dirty=true;this.schedule();}});
+    this.canvas.addEventListener('pointerleave',()=>{if(!pointers.size){this.hover=null;this.cursor.visible=false;if(this.ghost)this.ghost.visible=false;this.onHover?.(-1);this.dirty=true;this.schedule();}});
     this.canvas.addEventListener('contextmenu',e=>e.preventDefault());
   }
   updateLabels(){

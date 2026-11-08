@@ -287,7 +287,7 @@ test('resident happiness has seven needs and three household groups, and governs
 test('large infrastructure reserves its footprint atomically and is charged, counted and salvaged once',()=>{
  const fresh=C.fresh('sandbox'),i=cell(6,12),result=C.place(fresh,'airport',i);assert.equal(result.error,'');
  let city=result.state,plots=C.footprint('airport',i);assert.equal(plots.length,6);assert.equal(city.cash,fresh.cash-1400);
- assert.equal(C.analyse(city).counts.airport,1);assert.equal(C.analyse(city).budget.regionalRevenue,140);
+ assert.equal(C.analyse(city).counts.airport,1);assert.ok(C.analyse(city).budget.regionalRevenue>0&&C.analyse(city).budget.regionalRevenue<140);
  assert.equal(C.analyse(city).jobs-C.analyse(fresh).jobs,90);
  assert.ok(plots.slice(1).every(j=>city.cells[j].anchor===i));
  assert.equal(C.place(city,'park',plots[1]).state,city);assert.equal(C.buildLine(city,plots[1],plots.at(-1)).state,city);
@@ -317,7 +317,7 @@ test('ports require coastal land and connected access; ferries contribute actual
   const i=C.terrain.findIndex((_,j)=>!C.canPlace(fresh,type,j));assert.ok(i>=0,type);
   const city=C.place(fresh,type,i).state,a=C.analyse(city);assert.equal(a.counts[type],1);
   if(type==='ferry'){assert.ok(a.mobilityCoverage>0);assert.ok(a.budget.fareRevenue>0);assert.ok(C.tileInfo(city,cell(4,4)).transit>0);}
-  else assert.equal(a.budget.regionalRevenue,C.upgrades[type].revenue);
+  else assert.ok(a.budget.regionalRevenue>0&&a.budget.regionalRevenue<C.upgrades[type].revenue);
   const disconnected=C.demolish(city,cell(17,10)).state;assert.equal(C.analyse(disconnected).budget.regionalRevenue,0);assert.equal(C.analyse(disconnected).budget.fareRevenue,0);
   assert.deepEqual(C.restore(JSON.parse(JSON.stringify(city))),city);
  }
@@ -337,4 +337,50 @@ test('healthcare and emergency coverage reward connected services near residents
  assert.ok(hospital.homeProfiles.reduce((s,h)=>s+h.health,0)>0);assert.ok(fire.homeProfiles.reduce((s,h)=>s+h.safety,0)>0);
  assert.ok(hospital.happiness>base.happiness);assert.ok(fire.happiness>base.happiness);
  const disconnected=C.demolish(C.place(city,'hospital',cell(4,7)).state,cell(17,10)).state;assert.equal(C.analyse(disconnected).homeProfiles.reduce((s,h)=>s+h.health,0),0);
+});
+
+test('rotating a large building preserves footprints through upgrade, overlapping moves, saves and salvage',()=>{
+ const fresh=C.fresh('sandbox'),i=cell(6,12);
+ assert.deepEqual(C.dimensions('airport',1),[2,3]);
+ let result=C.place(fresh,'airport',i,1);assert.equal(result.error,'');let city=result.state;
+ const plots=C.footprint('airport',i,1);assert.ok(plots.includes(cell(8,13)));assert.ok(!plots.includes(cell(6,14)));
+ assert.equal(city.cells[i].rotation,1);assert.equal(city.cells[cell(8,13)].anchor,i);
+ city=applied(city,C.upgrade(city,cell(8,13)));assert.equal(city.cells[i].level,2);
+ assert.deepEqual(C.restore(JSON.parse(JSON.stringify(city))),city);
+ result=C.relocate(city,cell(8,13),i,0);assert.equal(result.error,'');city=result.state;
+ assert.equal(city.cells[cell(8,13)],null);assert.equal(city.cells[cell(6,14)].anchor,i);
+ assert.deepEqual(C.restore(JSON.parse(JSON.stringify(city))),city);
+ result=C.relocate(city,i,cell(6,16),3);assert.equal(result.error,'');city=result.state;
+ assert.equal(city.cells[cell(6,16)].rotation,3);assert.ok(C.footprint('airport',i).every(j=>!city.cells[j]));
+ const target=C.footprint('airport',cell(6,16),3),removed=C.demolish(city,target.at(-1)).state;
+ assert.equal(removed.cash,city.cash+Math.floor(city.cells[cell(6,16)].paid*.5));assert.ok(target.every(j=>!removed.cells[j]));
+ assert.ok(C.canPlace(fresh,'airport',i,undefined,4));assert.equal(C.place(fresh,'tree',i,1).state,fresh);
+ assert.ok(C.canPlace(fresh,'airport',cell(26,12),undefined,1));
+ const forged=structuredClone(C.place(fresh,'airport',i,1).state);forged.cells[i].rotation=0;assert.throws(()=>C.restore(forged));
+ const invalid=structuredClone(C.place(fresh,'airport',i,1).state);invalid.cells[i].rotation=4;assert.throws(()=>C.restore(invalid));
+});
+
+test('regional connections share demand and a growing city increases income without exceeding capacity',()=>{
+ let city=C.fresh('sandbox');
+ for(let n=0;n<2;n++){const i=C.terrain.findIndex((_,j)=>!C.canPlace(city,'cargoport',j));assert.ok(i>=0);city=applied(city,C.place(city,'cargoport',i));}
+ const small=C.analyse(city),grown=C.analyse({...city,population:3000});
+ assert.equal(small.connections.length,2);assert.ok(small.connections.every(c=>c.utilisation<1&&c.revenue<c.upkeep));
+ assert.ok(grown.budget.regionalRevenue>small.budget.regionalRevenue);assert.ok(grown.budget.regionalRevenue<=200);
+ const one=C.demolish(city,small.connections[1].i).state;
+ assert.ok(Math.abs(C.analyse(one).budget.regionalRevenue-small.budget.regionalRevenue)<=1,'extra harbours split existing demand');
+ const disconnected=C.analyse(C.demolish(city,cell(17,10)).state);
+ assert.ok(disconnected.connections.every(c=>!c.linked&&c.revenue===0&&c.upkeep>0));
+ const empty=C.fresh('sandbox');empty.population=0;empty.cells=empty.cells.map(c=>C.roadTypes.has(c?.type)?c:null);
+ const airportState=C.place(empty,'airport',cell(6,12)).state,airport=C.analyse(airportState);assert.equal(airport.budget.regionalRevenue,0,'an airport cannot generate demand from its own jobs');
+ assert.equal(C.analyse(C.setPolicies(airportState,{businessTax:5}).state).budget.regionalRevenue,0,'tax incentives cannot turn a connection’s own jobs into new demand');
+ const full=C.analyse({...city,population:10000});assert.ok(full.connections.every(c=>c.utilisation===1));assert.equal(full.budget.regionalRevenue,200);
+});
+
+test('all four orientations of ports, ferries and large buildings restore their exact occupied plots',()=>{
+ for(const type of Object.keys(C.upgrades).filter(C.rotatable))for(let rotation=0;rotation<4;rotation++){
+  const fresh=C.fresh('sandbox'),i=C.terrain.findIndex((_,j)=>!C.canPlace(fresh,type,j,undefined,rotation));
+  assert.ok(i>=0,type+' '+rotation);const city=C.place(fresh,type,i,rotation).state;
+  assert.deepEqual(C.restore(JSON.parse(JSON.stringify(city))),city,type+' '+rotation);
+  const removed=C.demolish(city,i).state;assert.ok(C.footprint(type,i,rotation).every(j=>!removed.cells[j]));
+ }
 });
