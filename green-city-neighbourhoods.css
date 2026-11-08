@@ -1,0 +1,89 @@
+/* Local feedback is shared by the 3D map, inspector and resident report. */
+.gc-neighbourhood-pins{position:absolute;inset:0;z-index:2;pointer-events:none;overflow:hidden}
+.gc-neighbourhood-pins[hidden]{display:none}
+.gc-shell .gc-neighbourhood-pin{position:absolute;display:grid;place-items:center;width:44px;height:44px;min-width:44px;min-height:44px;padding:5px;transform:translate(-50%,-100%);border:0;border-radius:50%;background:transparent;pointer-events:auto;color:#9a6b3f;cursor:pointer;box-shadow:none}
+.gc-neighbourhood-pin>span{display:grid;place-items:center;width:29px;height:29px;border:1px solid #ead7b5;border-radius:50% 50% 50% 5px;background:#fbf3dfed;box-shadow:0 3px 12px #23432d30;backdrop-filter:blur(10px);transition:transform 140ms}
+.gc-shell .gc-neighbourhood-pin svg{width:16px;height:16px}
+.gc-neighbourhood-pin.is-urgent{color:#a35b44}
+.gc-neighbourhood-pin.is-urgent>span{background:#fbe9dcec;border-color:#deb6a1}
+.gc-neighbourhood-pin.is-supported{color:#547347}
+.gc-neighbourhood-pin.is-supported>span{background:#edf5dcec;border-color:#c8d9ac}
+.gc-neighbourhood-pin.is-selected>span{outline:2px solid #e5edb8;outline-offset:3px}
+.gc-neighbourhood-pin:hover>span{transform:translateY(-3px)}
+.gc-neighbourhood-pin:focus-visible{outline:2px solid #fff3ce;outline-offset:0}
+.gc-resident-tabs{display:flex;gap:7px;padding:13px 32px;border-bottom:1px solid #e1e8d7;background:#f3f7ed}
+.gc-resident-tabs>button{min-height:40px;padding:9px 18px;border:1px solid transparent;border-radius:10px;background:transparent;color:#73836a;font-size:12px;font-weight:500}
+.gc-resident-tabs>button[aria-pressed=true]{background:#fcfdf8;border-color:#dce6cf;color:#42623e;box-shadow:0 2px 8px #2e4e2910}
+#gc-resident-overview[hidden],#gc-neighbourhood-view[hidden]{display:none}
+.gc-neighbourhood-trigger{display:flex;justify-content:space-between;flex-wrap:wrap;gap:6px;width:100%;padding:12px 13px;margin:-6px 0 16px;border:1px solid #dce6d0;border-radius:10px;background:#f3f7ed;text-align:left;color:#6b7f5d;font-size:10px;line-height:1.6}
+.gc-neighbourhood-trigger>b{font-weight:550;color:#547346}
+.gc-neighbourhood-intro{display:flex;align-items:center;justify-content:space-between;gap:25px;padding:25px 32px 0}
+.gc-neighbourhood-intro h4{font-size:23px;letter-spacing:-.035em;font-weight:550;color:#45663f;margin:9px 0 10px}
+.gc-neighbourhood-intro p{color:#7b8970;font-size:12px;line-height:1.7;margin:0}
+.gc-neighbourhood-intro>span{max-width:170px;padding:12px 16px;border:1px solid #dce6cf;border-radius:11px;background:#f0f5e8;color:#718664;font-size:11px;line-height:1.7}
+.gc-neighbourhood-intro .gc-overline{font-size:9px}
+.gc-neighbourhood-layout{display:grid;grid-template-columns:260px minmax(0,1fr);gap:25px;padding:26px 32px 30px}
+.gc-neighbourhood-browser{min-width:0}
+.gc-neighbourhood-browser>label{display:block;font-size:11px;color:#6b805b;margin-bottom:13px;line-height:1.7}
+.gc-neighbourhood-browser select{display:block;width:100%;min-height:41px;margin-top:6px;border:1px solid #d4dfc7;border-radius:9px;padding:9px 10px;background:#f8fbf2;color:#557148;font:inherit;font-size:11px}
+.gc-local-list{display:grid;gap:7px;max-height:580px;overflow:auto;padding-right:4px;scrollbar-width:thin;scrollbar-color:#bdcbb0 transparent}
+.gc-local-list>button{display:flex;align-items:center;gap:10px;width:100%;min-height:68px;padding:11px 10px;border:1px solid #dfe7d5;border-radius:11px;background:#f6f9f0;color:#58724b;text-align:left}
+.gc-local-list>button[aria-pressed=true]{background:#e9f2dd;border-color:#b4caa0;box-shadow:inset 0 0 0 1px #b4caa055}
+.gc-local-list>button>span:nth-child(2){min-width:0;flex:1}
+.gc-local-list strong{display:block;font-size:13px;line-height:1.6;font-weight:600}
+.gc-local-list strong>small{font-size:9px;font-weight:400;color:#7a8a6b;margin-left:4px}
+.gc-local-list>button>span>span{display:block;margin-top:3px;font-size:10px;line-height:1.6;color:#7a8b6a}
+.gc-local-list>button>b{font-size:16px;font-weight:400}
+.gc-local-symbol{display:grid;place-items:center;flex-shrink:0;width:33px;height:33px;border-radius:10px;background:#f3ecda;color:#a17d4d}
+.gc-local-symbol.is-urgent{background:#f3e4d9;color:#a36d51}
+.gc-local-symbol.is-supported{background:#e7efd9;color:#6d9156}
+.gc-shell .gc-local-symbol svg{width:18px;height:18px}
+#gc-local-list-note{font-size:10px;line-height:1.7;color:#86937c}
+.gc-local-detail{min-width:0;border:1px solid #dbe5cd;border-radius:16px;background:#f3f7ec;padding:23px}
+.gc-local-heading{display:flex;align-items:start;justify-content:space-between;gap:15px}
+.gc-local-heading .gc-overline{font-size:9px;color:#91a07f}
+.gc-local-heading h4{font-size:29px;line-height:1.3;font-weight:550;letter-spacing:-.045em;color:#46663e;margin:8px 0}
+.gc-local-heading p{font-size:11px;line-height:1.7;color:#7c8b6f;margin:0}
+.gc-local-heading>button{padding:10px 12px;min-height:38px;border:1px solid #d0dfbe;border-radius:9px;background:#e9f1df;color:#5c7a49;font-size:10px;white-space:nowrap}
+.gc-local-connection{font-size:11px;color:#6e865a;line-height:1.8;padding:15px 0;border-bottom:1px solid #dce6d0;margin-bottom:17px}
+.gc-local-connection>span{display:block;font-size:10px;color:#7f8f71;margin-top:3px}
+.gc-local-connection.is-disconnected{color:#a2764a}
+.gc-local-metrics{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
+.gc-local-metrics>div{min-width:0;padding:12px;border:1px solid #e0e8d6;border-radius:11px;background:#fbfcf6}
+.gc-local-metrics>div>span{display:flex;align-items:center;gap:5px;min-height:25px;color:#7d8d70;font-size:9px;line-height:1.5}
+.gc-shell .gc-local-metrics svg{width:13px;height:13px;flex-shrink:0}
+.gc-local-metrics strong{display:block;font-size:26px;font-weight:550;letter-spacing:-.04em;color:#526f43;margin:6px 0 9px}
+.gc-local-metrics strong>small{font-size:10px;font-weight:400;color:#8b987e;letter-spacing:0;margin-left:3px}
+.gc-local-metrics i{display:block;height:3px;background:#e5ecdd;border-radius:3px;overflow:hidden}
+.gc-local-metrics i>span{display:block;height:100%;background:#91ad78;border-radius:inherit}
+.gc-local-priorities-heading{display:flex;align-items:center;justify-content:space-between;gap:12px;margin:25px 0 14px}
+.gc-local-priorities-heading h4{font-size:16px;font-weight:550;color:#526f43;margin:0}
+.gc-local-priorities-heading>span{font-size:8px;letter-spacing:.05em;color:#95a087}
+.gc-local-need{display:flex;align-items:start;gap:13px;padding:18px 0;border-top:1px solid #dfe7d4}
+.gc-local-need>div{min-width:0;flex:1}
+.gc-local-need h5{margin:1px 0 9px;font-size:14px;font-weight:600;color:#587449;line-height:1.5}
+.gc-local-need p{font-size:11px;color:#7d8b6f;line-height:1.8;margin:0 0 12px}
+.gc-local-need button{display:flex;align-items:center;justify-content:space-between;gap:18px;min-height:39px;padding:10px 13px;border:1px solid #cfdcbd;border-radius:9px;background:#e6efda;color:#5b7a46;font-size:11px;line-height:1.5;text-align:left}
+.gc-local-plan-facts{display:grid;gap:4px;margin:11px 0 13px;font-size:10px;color:#839174;line-height:1.7}
+.gc-local-forecast{padding:11px 13px;border:1px solid #d8e4c8;border-radius:9px;background:#eaf2de;font-size:11px;color:#6e865b;margin:12px 0}
+.gc-local-forecast>strong{color:#527141;font-size:16px;margin-left:5px}
+.gc-local-forecast small{font-size:9px;font-weight:400}
+.gc-local-forecast>span{display:block;font-size:10px;color:#829472;margin-top:5px;line-height:1.6}
+.gc-local-other,.gc-local-explainer,.gc-local-empty,.gc-local-success{font-size:11px;color:#7e8e6e;line-height:1.8;margin:15px 0 0}
+.gc-local-explainer{padding-top:16px;border-top:1px solid #dde6d0;font-size:10px}
+.gc-local-residents>button{min-height:36px;padding:8px 10px;text-align:left;font-size:10px;color:#5c7b48;border:1px solid #cdddc0;border-radius:8px;background:#e7f0dc;margin-top:6px}
+@media(max-width:1000px){.gc-neighbourhood-layout{grid-template-columns:215px minmax(0,1fr);gap:19px;padding:23px}.gc-neighbourhood-intro{padding:23px 23px 0}.gc-local-detail{padding:19px}.gc-local-heading{display:block}.gc-local-heading>button{margin-top:13px}.gc-local-metrics{gap:7px}.gc-local-metrics>div{padding:11px 9px}.gc-local-priorities-heading>span{display:none}}
+@media(max-width:700px){
+ .gc-residents-dialog{max-width:calc(100% - 20px)}
+ .gc-residents-dialog>.gc-modal-heading{padding:22px;gap:12px}.gc-residents-dialog>.gc-modal-heading h3{font-size:27px}.gc-residents-dialog>.gc-modal-heading p{font-size:12px;line-height:1.7}.gc-residents-dialog>.gc-modal-heading>button{width:44px;height:44px;min-width:44px}
+ .gc-resident-tabs{padding:10px 19px;gap:5px}.gc-resident-tabs>button{flex:1;min-height:44px;font-size:12px;padding:10px 9px}
+ .gc-neighbourhood-trigger{min-height:44px;font-size:11px}
+ .gc-neighbourhood-intro{display:block;padding:16px 19px 0}.gc-neighbourhood-intro>div{display:none}.gc-neighbourhood-intro>span{display:block;max-width:none;font-size:11px;margin:0;padding:11px 13px}
+ .gc-neighbourhood-layout{display:block;padding:17px 19px}.gc-neighbourhood-browser{margin-bottom:18px}.gc-neighbourhood-browser>label{font-size:12px}.gc-neighbourhood-browser select{font-size:16px;min-height:44px;padding:10px}
+ .gc-neighbourhood-browser>label:has(#gc-local-filter),.gc-local-list,#gc-local-list-note{display:none}
+ .gc-local-detail{padding:19px 16px}.gc-local-heading h4{font-size:29px}.gc-local-heading p{font-size:12px}.gc-local-heading>button{min-height:44px;font-size:12px}.gc-local-connection{font-size:12px}.gc-local-connection>span{font-size:11px;line-height:1.8}
+ .gc-local-metrics{grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}.gc-local-metrics>div{padding:13px 11px}.gc-local-metrics>div>span{font-size:11px}.gc-shell .gc-local-metrics svg{width:15px;height:15px}.gc-local-metrics strong{font-size:29px}
+ .gc-local-need{gap:10px;padding:19px 0}.gc-local-need>.gc-local-symbol{width:28px;height:28px;border-radius:8px}.gc-local-need h5{font-size:15px}.gc-local-need p{font-size:12px}.gc-local-plan-facts{font-size:11px}.gc-local-forecast{font-size:11px;padding:11px}.gc-local-forecast>strong{display:block;font-size:20px;margin:5px 0}.gc-local-forecast>span{font-size:11px}.gc-local-need button{min-height:44px;width:100%;font-size:12px;padding:11px}
+ .gc-local-priorities-heading h4{font-size:18px}.gc-local-other,.gc-local-explainer,.gc-local-success{font-size:11px}.gc-local-residents>button{min-height:44px;font-size:11px}
+}
+@media(prefers-reduced-motion:reduce){.gc-neighbourhood-pin>span{transition:none}.gc-neighbourhood-pin:hover>span{transform:none}}

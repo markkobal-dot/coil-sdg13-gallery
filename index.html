@@ -45,7 +45,8 @@
     <link rel="stylesheet" href="green-city.css?v=9e43faded8">
     <link rel="stylesheet" href="green-city-ui.css?v=0ec0103cbe">
     <link rel="stylesheet" href="motion.css?v=89a45ffb6c">
-    <link rel="stylesheet" href="green-city-transport.css?v=12edce3b0a">
+    <link rel="stylesheet" href="green-city-transport.css?v=a1c7e303b5">
+    <link rel="stylesheet" href="green-city-neighbourhoods.css?v=9fae421b49">
     <link rel="stylesheet" href="home-experience.css?v=63710de0a0">
   </head>
 
@@ -907,9 +908,9 @@
                 <canvas id="gc-board" tabindex="0" role="application" aria-label="Interactive 3D city. Drag to pan, scroll or pinch to zoom, right-drag to orbit. Arrow keys select tiles, Enter applies the selected tool. Q and E rotate large buildings. Escape cancels a route or move."></canvas>
                 <div class="gc-world-loading" id="gc-loading"><span></span><strong>Preparing your island…</strong><small>Local 3D assets · no account needed</small></div>
                 <div id="gc-fallback" class="gc-fallback" hidden></div>
-                <div class="gc-world-top"><span class="gc-location-tag"><i></i> NEW TERRA <small>28 × 28</small></span><label class="gc-overlay-control"><span class="sr-only">Map overlay</span><select id="gc-overlay"><option value="city">City view</option><option value="heat">Heat exposure</option><option value="power">Clean energy</option><option value="transit">Transit coverage</option><option value="water">Climate resilience</option><option value="noise">Neighbourhood noise</option><option value="traffic">Road congestion</option></select></label></div>
+                <div class="gc-world-top"><span class="gc-location-tag"><i></i> NEW TERRA <small>28 × 28</small></span><label class="gc-overlay-control"><span class="sr-only">Map overlay</span><select id="gc-overlay"><option value="city">City view</option><option value="heat">Heat exposure</option><option value="power">Clean energy</option><option value="transit">Transit coverage</option><option value="water">Climate resilience</option><option value="noise">Neighbourhood noise</option><option value="traffic">Road congestion</option><option value="neighbourhood">Resident needs</option></select></label></div>
                 <div id="gc-overlay-legend" class="gc-overlay-legend" hidden><span id="gc-overlay-name">Heat exposure</span><i></i><small id="gc-overlay-scale">Needs attention → Better prepared</small></div>
-                <div class="gc-camera-controls" role="group" aria-label="Camera controls"><button type="button" data-gc-camera="zoom-in" aria-label="Zoom in">＋</button><button type="button" data-gc-camera="zoom-out" aria-label="Zoom out">−</button><span></span><button type="button" data-gc-camera="rotate-left" aria-label="Rotate camera left">↶</button><button type="button" data-gc-camera="rotate-right" aria-label="Rotate camera right">↷</button><button type="button" data-gc-camera="reset" aria-label="Fit the entire island">⌂</button><button type="button" data-gc-camera="night" aria-pressed="false" aria-label="Toggle night view">☾</button><button type="button" data-gc-camera="grid" aria-pressed="true" aria-label="Toggle map grid">▦</button></div>
+                <div class="gc-camera-controls" role="group" aria-label="Camera controls"><button type="button" data-gc-camera="zoom-in" aria-label="Zoom in">＋</button><button type="button" data-gc-camera="zoom-out" aria-label="Zoom out">−</button><span></span><button type="button" data-gc-camera="rotate-left" aria-label="Rotate camera left">↶</button><button type="button" data-gc-camera="rotate-right" aria-label="Rotate camera right">↷</button><button type="button" data-gc-camera="reset" aria-label="Fit the entire island">⌂</button><button type="button" data-gc-camera="night" aria-pressed="false" aria-label="Toggle night view">☾</button><button type="button" data-gc-camera="grid" aria-pressed="true" aria-label="Toggle map grid">▦</button><button type="button" data-gc-camera="needs" aria-pressed="true" aria-label="Toggle neighbourhood feedback markers">⌂</button></div>
                 <div class="gc-world-bottom"><div class="gc-minimap-wrap"><canvas id="gc-minimap" width="168" height="168" tabindex="0" role="button" aria-label="Island mini-map. Click a location to centre the camera. Press Enter to centre the selected tile."></canvas><span>ISLAND OVERVIEW</span></div><div class="gc-world-caption"><strong id="gc-hover">Explore your island.</strong><span>Drag to pan · Scroll to zoom · Right-drag to orbit</span></div></div>
                 <div class="gc-onboarding" id="gc-onboarding"><button id="gc-dismiss-tutorial" type="button" aria-label="Dismiss welcome guide">×</button><span class="gc-overline">WELCOME, MAYOR.</span><h4>A better city starts with a plan.</h4><p>Choose a building, then a plot. Advance a month to earn income and welcome residents. Balance all five indicators.</p><span>01 / PLAN &nbsp; 02 / BUILD &nbsp; 03 / GROW</span></div>
               </div>
@@ -1066,9 +1067,9 @@
     <script src="weather-data.js?v=2322cbfeff" defer></script>
     <script src="assets/data/weather-snapshot.js" defer></script>
     <script src="evidence.js?v=6aea94b196" defer></script>
-    <script src="green-city-core.js?v=61f488640a"></script>
+    <script src="green-city-core.js?v=b859d34f4f"></script>
     <script src="green-city-art.js?v=3889596789"></script>
-    <script type="module" src="green-city.js?v=4cc90b208a"></script>
+    <script type="module" src="green-city.js?v=815fa88417"></script>
     <script src="home-experience.js?v=71fd154cea" defer></script>
     <script src="motion.js?v=2fdb95190e" defer></script>
   </body>

@@ -2,6 +2,7 @@
 import * as THREE from './assets/vendor/three/three.module.js';
 import { OrbitControls } from './assets/vendor/three/OrbitControls.js';
 import { mergeGeometries } from './assets/vendor/three/BufferGeometryUtils.js';
+import {needIcon} from './green-city-neighbourhood-icons.js?v=98db9558ad';
 
 const C = globalThis.GreenCity;
 const mapSize=C.size, center=(mapSize-1)/2, viewHalf=mapSize*.725;
@@ -16,8 +17,8 @@ const cylinderGeo = () => geometry('cylinder', () => new THREE.CylinderGeometry(
 const coneGeo = () => geometry('cone', () => new THREE.ConeGeometry(1,1,10));
 
 export class CityWorld {
-  constructor(canvas, { onSelect, onHover, onError }) {
-    this.canvas = canvas; this.onSelect=onSelect; this.onHover=onHover; this.onError=onError;
+  constructor(canvas, { onSelect, onHover, onError, onNeighbourhood }) {
+    this.canvas = canvas; this.onSelect=onSelect; this.onHover=onHover; this.onError=onError;this.onNeighbourhood=onNeighbourhood;
     this.materials = new Map(); this.night=false; this.overlay='city'; this.mode='inspect'; this.type='tree'; this.focus=8*mapSize+8;
     this.active=false; this.raf=0; this.lastFrame=0; this.time=0; this.dirty=true; this.reduced=matchMedia('(prefers-reduced-motion: reduce)');
     this.renderer = new THREE.WebGLRenderer({ canvas, antialias:true, alpha:false, powerPreference:'low-power' });
@@ -48,6 +49,8 @@ export class CityWorld {
     this.labels=document.createElement('div');this.labels.className='gc-world-labels';this.labels.setAttribute('aria-hidden','true');canvas.parentElement.append(this.labels);
     this.districts=[['OLD TOWN',-7.8,.6,-8.5],['THE GREEN QUARTER',0,.6,-6],['SOUTHERN EXPANSION',4,.6,5]];
     this.districts.forEach(([name])=>{const span=document.createElement('span');span.textContent=name;this.labels.append(span);});
+    this.pinLayer=document.createElement('div');this.pinLayer.className='gc-neighbourhood-pins';this.pinLayer.setAttribute('aria-label','Neighbourhood feedback markers');canvas.parentElement.append(this.pinLayer);this.pinButtons=new Map();this.showNeeds=true;
+    this.pinLayer.addEventListener('click',event=>{const button=event.target.closest('[data-gc-neighbourhood]');if(button)this.onNeighbourhood?.(Number(button.dataset.gcNeighbourhood));});
     this.bindInput();this.observer=new ResizeObserver(()=>this.resize());this.observer.observe(canvas.parentElement);this.resize();
     canvas.addEventListener('webglcontextlost',e=>{e.preventDefault();this.setActive(false);onError?.('The 3D view paused because the graphics context was lost. Your city is saved. Reload to restore the view.');});
     this.reduced.addEventListener('change',()=>{this.makeSmoke();this.dirty=true;this.schedule();});
@@ -369,7 +372,7 @@ export class CityWorld {
   }
   clear(group){for(const child of [...group.children]){group.remove(child);if(child.isMesh)child.geometry.dispose();}}
   setState(state,analysis){
-    if(this.state?.cells===state.cells){const changeCars=Math.floor(this.state.population/45)!==Math.floor(state.population/45);this.state=state;this.analysis=analysis;if(changeCars){for(const car of this.cars)this.dynamicGroup.remove(car.g);this.makeCars();}this.syncTransit();this.updateOverlay();this.updateSelection();this.dirty=true;this.schedule();return;}
+    if(this.state?.cells===state.cells){const changeCars=Math.floor(this.state.population/45)!==Math.floor(state.population/45);this.state=state;this.analysis=analysis;if(changeCars){for(const car of this.cars)this.dynamicGroup.remove(car.g);this.makeCars();}this.syncTransit();this.updateOverlay();this.updateSelection();this.updateLabels();this.dirty=true;this.schedule();return;}
     this.state=state;this.analysis=analysis;this.clear(this.staticGroup);this.dynamicGroup.clear();this.rotors=[];this.animatedWindCount=0;this.smokePoints=[];this.pickTargets=[];
     const root=new THREE.Group();
     state.cells.forEach((cell,i)=>{
@@ -382,7 +385,7 @@ export class CityWorld {
     root.updateMatrixWorld(true);
     const rotors=[];root.traverse(node=>{if(node.userData.animated)rotors.push(node);});
     for(const rotor of rotors){const world=new THREE.Vector3();rotor.getWorldPosition(world);rotor.removeFromParent();rotor.position.copy(world);this.dynamicGroup.add(rotor);this.rotors.push(rotor);}
-    this.batch(root,this.staticGroup);this.makeCars();this.syncTransit();this.makeSmoke();this.updateOverlay();this.updateSelection();this.dirty=true;this.schedule();
+    this.batch(root,this.staticGroup);this.makeCars();this.syncTransit();this.makeSmoke();this.updateOverlay();this.updateSelection();this.updateLabels();this.dirty=true;this.schedule();
   }
   makeCars(){
     this.cars=[];const roads=[...this.analysis.roads];if(roads.length<2)return;
@@ -427,7 +430,7 @@ export class CityWorld {
     if(!this.analysis||this.reduced.matches||!this.smokePoints.length||this.analysis.pollution<45)return;
     this.smoke=new THREE.InstancedMesh(new THREE.SphereGeometry(.13,6,4),new THREE.MeshBasicMaterial({color:'#b7b5a5',transparent:true,opacity:.25,depthWrite:false}),this.smokePoints.length*6);this.scene.add(this.smoke);
   }
-  setTool(mode,type,focus,source=null,lineStart=null,rotation=0){this.rotation=rotation;this.mode=mode;this.type=type;this.focus=focus;this.source=source;this.lineStart=lineStart;this.hover=null;this.updateSelection();this.dirty=true;this.schedule();}
+  setTool(mode,type,focus,source=null,lineStart=null,rotation=0){this.rotation=rotation;this.mode=mode;this.type=type;this.focus=focus;this.source=source;this.lineStart=lineStart;this.hover=null;this.updateSelection();this.updateLabels();this.dirty=true;this.schedule();}
   allowed(i){
     if(!this.state)return false;
     if(this.mode==='build')return !C.canPlace(this.state,this.type,i,this.analysis,this.rotation);
@@ -461,15 +464,15 @@ export class CityWorld {
   updateOverlay(){
     if(!this.state)return;this.overlayMesh.visible=this.overlay!=='city';if(!this.overlayMesh.visible)return;
     const colors=new THREE.Color();
-    this.overlayMesh.userData.cells.forEach((i,n)=>{const info=C.tileInfo(this.state,i,this.analysis);const value=this.overlay==='heat'?100-info.heat:this.overlay==='transit'?info.transit:this.overlay==='water'?info.resilience:this.overlay==='noise'?100-info.noise:this.overlay==='traffic'?100-info.congestion:info.power;colors.setHSL(.025+value/100*.3,.5,.51);this.overlayMesh.setColorAt(n,colors);});
+    this.overlayMesh.userData.cells.forEach((i,n)=>{const info=C.tileInfo(this.state,i,this.analysis);if(this.overlay==='neighbourhood'&&!info.neighbourhood){colors.set('#b9c6ad');this.overlayMesh.setColorAt(n,colors);return;}const value=this.overlay==='heat'?100-info.heat:this.overlay==='transit'?info.transit:this.overlay==='water'?info.resilience:this.overlay==='noise'?100-info.noise:this.overlay==='traffic'?100-info.congestion:this.overlay==='neighbourhood'?100-(info.neighbourhood?.urgency||0):info.power;colors.setHSL(.025+value/100*.3,.5,.51);this.overlayMesh.setColorAt(n,colors);});
     this.overlayMesh.instanceColor.needsUpdate=true;
   }
-  setOverlay(value){this.overlay=value;this.updateOverlay();this.dirty=true;this.schedule();}
+  setOverlay(value){this.overlay=value;this.updateOverlay();this.updateLabels();this.dirty=true;this.schedule();}
   resize(){const rect=this.canvas.parentElement.getBoundingClientRect();if(rect.width<2||rect.height<2)return;this.renderer.setSize(rect.width,rect.height,false);const aspect=rect.width/rect.height,half=viewHalf;this.camera.left=-half*aspect;this.camera.right=half*aspect;this.camera.top=half;this.camera.bottom=-half;if(!this.initialFit){this.camera.zoom=Math.min(1.35,aspect*1.2);this.initialFit=true;}this.camera.updateProjectionMatrix();this.dirty=true;this.updateLabels();this.schedule();}
-  zoomBy(factor){this.camera.zoom=THREE.MathUtils.clamp(this.camera.zoom*factor,.55,3.7);this.camera.updateProjectionMatrix();this.controls.update();this.dirty=true;this.schedule();}
-  rotateBy(direction){const offset=this.camera.position.clone().sub(this.controls.target);offset.applyAxisAngle(new THREE.Vector3(0,1,0),direction*Math.PI/4);this.camera.position.copy(this.controls.target).add(offset);this.controls.update();this.dirty=true;this.schedule();}
-  focusCell(i){const target=new THREE.Vector3(i%mapSize-center,.5,Math.floor(i/mapSize)-center);this.camera.position.add(target.clone().sub(this.controls.target));this.controls.target.copy(target);this.controls.update();this.dirty=true;this.schedule();}
-  resetView(){this.controls.target.set(0,.5,0);this.camera.position.set(27,31,27);const rect=this.canvas.parentElement.getBoundingClientRect();this.camera.zoom=Math.min(1,rect.width/rect.height*.98);this.camera.updateProjectionMatrix();this.controls.update();this.dirty=true;this.schedule();}
+  zoomBy(factor){this.camera.zoom=THREE.MathUtils.clamp(this.camera.zoom*factor,.55,3.7);this.camera.updateProjectionMatrix();this.controls.update();this.updateLabels();this.dirty=true;this.schedule();}
+  rotateBy(direction){const offset=this.camera.position.clone().sub(this.controls.target);offset.applyAxisAngle(new THREE.Vector3(0,1,0),direction*Math.PI/4);this.camera.position.copy(this.controls.target).add(offset);this.controls.update();this.updateLabels();this.dirty=true;this.schedule();}
+  focusCell(i){const target=new THREE.Vector3(i%mapSize-center,.5,Math.floor(i/mapSize)-center);this.camera.position.add(target.clone().sub(this.controls.target));this.controls.target.copy(target);this.controls.update();this.updateLabels();this.dirty=true;this.schedule();}
+  resetView(){this.controls.target.set(0,.5,0);this.camera.position.set(27,31,27);const rect=this.canvas.parentElement.getBoundingClientRect();this.camera.zoom=Math.min(1,rect.width/rect.height*.98);this.camera.updateProjectionMatrix();this.controls.update();this.updateLabels();this.dirty=true;this.schedule();}
   toggleNight(){this.night=!this.night;this.waterMaterial.uniforms.uNight.value=this.night?1:0;this.scene.background.set(this.night?'#172d38':'#d4e4dd');this.scene.fog.color.copy(this.scene.background);this.ambient.intensity=this.night?.65:1.55;this.sun.intensity=this.night?.45:2.7;this.sun.color.set(this.night?'#b6d5e1':'#fff1cf');for(const mat of this.materials.values())if(mat.emissive?.getHex())mat.emissiveIntensity=this.night?1.8:.08;this.labels.classList.toggle('gc-night-labels',this.night);this.dirty=true;this.schedule();return this.night;}
   toggleGrid(){this.grid.visible=!this.grid.visible;this.dirty=true;this.schedule();return this.grid.visible;}
   photo(){this.renderer.render(this.scene,this.camera);return this.canvas.toDataURL('image/png');}
@@ -486,7 +489,32 @@ export class CityWorld {
   updateLabels(){
     if(!this.labels)return;const rect=this.canvas.parentElement.getBoundingClientRect(),point=new THREE.Vector3();
     this.districts.forEach(([,x,y,z],n)=>{point.set(x,y,z).project(this.camera);const el=this.labels.children[n];el.style.left=(point.x*.5+.5)*rect.width+'px';el.style.top=(-point.y*.5+.5)*rect.height+'px';el.hidden=Math.abs(point.x)>1||Math.abs(point.y)>1||this.camera.zoom>2.5;});
+    this.updateNeighbourhoodPins();
   }
+  updateNeighbourhoodPins(){
+    if(!this.pinLayer)return;
+    const visible=this.showNeeds&&this.mode==='inspect'&&['city','neighbourhood'].includes(this.overlay)&&this.analysis;
+    this.pinLayer.hidden=!visible;if(!visible)return;
+    const parent=this.canvas.parentElement,rect=parent.getBoundingClientRect(),expanded=this.canvas.closest('.gc-expanded'),point=new THREE.Vector3(),limit=this.overlay==='neighbourhood'?12:6,placed=[],keep=new Set();
+    const blocked=[...parent.querySelectorAll('.gc-world-top,.gc-overlay-legend,.gc-camera-controls,.gc-world-bottom,.gc-onboarding,.gc-alert-banner')].filter(el=>!el.hidden).map(el=>el.getBoundingClientRect()).filter(r=>r.width&&r.height).map(r=>({left:r.left-rect.left-4,right:r.right-rect.left+4,top:r.top-rect.top-4,bottom:r.bottom-rect.top+4}));
+    const candidates=[...this.analysis.neighbourhoods].filter(h=>this.overlay==='neighbourhood'||h.needs.length||h.i===this.focus).sort((a,b)=>(b.i===this.focus)-(a.i===this.focus)||b.urgency-a.urgency||a.i-b.i);
+    for(const home of candidates){
+      const cell=this.state.cells[home.i],height=cell.type==='apartment'?(1.8+hash(home.i)*.55)*(1+(cell.level-1)*.35)+.55:1.2*(1+(cell.level-1)*.35)+.35;
+      point.set(home.i%mapSize-center,landY+height,Math.floor(home.i/mapSize)-center).project(this.camera);
+      const x=(point.x*.5+.5)*rect.width,y=(-point.y*.5+.5)*rect.height;
+      if(Math.abs(point.z)>1||x<26||x>rect.width-58||y<(expanded?225:103)||y>rect.height-(expanded?200:105)||placed.some(p=>Math.abs(p.x-x)<52&&Math.abs(p.y-y)<52)||blocked.some(r=>x+22>r.left&&x-22<r.right&&y>r.top&&y-44<r.bottom))continue;
+      placed.push({x,y});keep.add(home.i);
+      let button=this.pinButtons.get(home.i);
+      if(!button){button=document.createElement('button');button.type='button';button.dataset.gcNeighbourhood=String(home.i);this.pinButtons.set(home.i,button);this.pinLayer.append(button);}
+      if(button.dataset.issue!==home.primary){button.dataset.issue=home.primary;button.innerHTML='<span>'+needIcon(home.primary)+'</span>';}
+      button.className='gc-neighbourhood-pin '+(home.urgency>=70?'is-urgent':home.needs.length?'':'is-supported')+(home.i===this.focus?' is-selected':'');
+      const description=C.label(home.i)+' · '+(home.needs.length?C.localNeeds[home.primary].label:'Well supported')+' · Open local resident feedback';
+      button.title=description;button.setAttribute('aria-label',description);button.style.left=x+'px';button.style.top=y+'px';
+      if(placed.length>=limit)break;
+    }
+    for(const[i,button]of this.pinButtons)if(!keep.has(i)){button.remove();this.pinButtons.delete(i);}
+  }
+  toggleNeighbourhoodPins(){this.showNeeds=!this.showNeeds;this.updateNeighbourhoodPins();return this.showNeeds;}
   setActive(active){this.active=active&&!document.hidden;if(!this.active){cancelAnimationFrame(this.raf);this.raf=0;}else{this.lastFrame=0;this.dirty=true;this.resize();this.schedule();}}
   schedule(){if(this.active&&!this.raf)this.raf=requestAnimationFrame(t=>this.frame(t));}
   frame(timestamp){

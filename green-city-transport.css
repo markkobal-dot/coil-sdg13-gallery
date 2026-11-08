@@ -81,6 +81,24 @@
 .gc-transport-card>strong>small{font-size:11px;letter-spacing:0;font-weight:400}
 .gc-transport-card>b{display:block;font-size:10px;font-weight:550;margin-top:11px}
 .gc-visually-hidden{position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%);white-space:nowrap}
+.gc-transport-notice{display:flex;align-items:center;gap:12px;padding:12px 14px;margin:0 0 14px;border:1px solid #cdddbd;border-radius:10px;background:#e9f2de;color:#45613c;font-size:12px;line-height:1.7;outline:none}
+.gc-transport-notice[hidden]{display:none}
+.gc-transport-notice>span{flex:1;min-width:0;overflow-wrap:anywhere}
+.gc-transport-notice>button{flex-shrink:0;min-height:36px;padding:8px 12px;border:1px solid #c2d5ad;border-radius:8px;background:#f8fcf2;color:#4d6c3e;font:inherit;font-weight:600}
 @media(max-width:900px){.gc-transport-layout{gap:20px;padding:22px}.gc-transport-summary{gap:10px;padding:22px 22px 0}.gc-transport-summary>div{padding:13px}.gc-network-priorities{grid-template-columns:1fr}.gc-route-form{padding:15px}.gc-network-heading{display:block}#gc-network-mode{display:block;margin-top:10px}.gc-line-card{gap:8px;padding:11px 9px}.gc-transport-summary small{font-size:10px}}
 @media(max-width:700px){.gc-transport-dialog{width:calc(100% - 20px);border-radius:17px}.gc-transport-dialog .gc-modal-heading{padding:22px;gap:10px}.gc-transport-dialog .gc-modal-heading h3{font-size:27px}.gc-transport-dialog .gc-modal-heading p{font-size:12px;line-height:1.7}.gc-transport-summary{gap:8px;padding:18px 19px 0}.gc-transport-summary>div{padding:12px 9px;border-radius:10px}.gc-transport-summary span{font-size:9px}.gc-transport-summary strong{font-size:27px}.gc-transport-summary small{font-size:9px;line-height:1.7}.gc-transport-layout{display:flex;flex-direction:column;gap:25px;padding:23px 19px}.gc-lines-side{order:-1}.gc-network-map{max-height:430px}.gc-route-field input,.gc-route-field select{min-height:44px;font-size:16px}.gc-route-stops select{font-size:13px}.gc-route-stops>div>button{min-height:44px}.gc-route-form-row{grid-template-columns:1fr 1fr;gap:9px}.gc-route-form-row select{font-size:13px}.gc-route-form{padding:17px}.gc-line-forecast p,.gc-route-build-note{font-size:11px}.gc-line-error{font-size:12px}.gc-route-actions>button{font-size:12px;min-height:44px}.gc-line-card>div{flex-direction:row}.gc-line-card>div>button{width:33px;height:38px}.gc-line-card strong{font-size:14px}.gc-line-card span,.gc-line-card small{font-size:11px}.gc-network-priorities{grid-template-columns:1fr 1fr;gap:14px}.gc-network-priorities button{min-height:49px}.gc-network-instructions,.gc-transport-footer{font-size:11px}.gc-transport-footer{padding:19px 22px}.gc-transport-card>span{font-size:10px}.gc-transport-card>b{font-size:11px}}
 @media(max-width:359px){.gc-transport-summary{padding-inline:14px;gap:6px}.gc-transport-summary strong{font-size:24px}.gc-transport-summary small{font-size:8px}.gc-transport-layout{padding-inline:15px}.gc-route-form{padding:14px}.gc-route-form-row{grid-template-columns:1fr}.gc-line-card>div{flex-direction:column}.gc-network-priorities{grid-template-columns:1fr}}
+@media(max-width:700px),(max-width:900px) and (max-height:500px){
+ .gc-transport-dialog{max-width:calc(100% - 20px)}
+ .gc-transport-dialog .gc-modal-heading>.gc-icon-button{width:44px;height:44px;min-width:44px;flex-shrink:0}
+ .gc-transport-summary span{font-size:11px}
+ .gc-transport-summary small{font-size:10px;overflow-wrap:anywhere}
+ .gc-line-card>div>button{width:44px;height:44px}
+ #gc-new-line,.gc-add-line-stop,.gc-line-empty button{min-height:44px}
+ .gc-route-editor-title>.gc-icon-button{width:44px;height:44px;min-width:44px}
+ .gc-route-field input,.gc-route-field select{min-height:44px;font-size:16px}
+ .gc-route-stops>div{grid-template-columns:24px minmax(0,1fr) 44px;gap:7px}
+ .gc-route-stops>div>button{width:44px;min-height:44px}
+ .gc-transport-notice{font-size:12px;gap:9px;padding:12px}
+ .gc-transport-notice>button{min-height:44px}
+}

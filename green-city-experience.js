@@ -1,6 +1,6 @@
 /* City workspace: fullscreen, commands, council briefings and budget controls. */
-import { createResidents } from './green-city-residents.js?v=ba1183d646';
-import { createTransport } from './green-city-transport.js?v=f00ac04cb3';
+import { createResidents } from './green-city-residents.js?v=faf073c8df';
+import { createTransport } from './green-city-transport.js?v=a4128191f3';
 const C=globalThis.GreenCity;
 const paths={
  route:'M5 5h5a4 4 0 0 1 0 8H9a4 4 0 0 0 0 8h10M5 2v6M19 18v5',
@@ -57,12 +57,12 @@ export function createExperience(api){
  $('review-decision').addEventListener('click',openDecision);$('inbox-button').addEventListener('click',openDecision);$('finance-button').addEventListener('click',openFinance);$('command-button').addEventListener('click',openCommands);
  const policyBox=q('.gc-policies');policyBox.innerHTML=`<summary>City economy</summary><p>Taxes, public fares, utility prices and service funding.</p><button id="gc-budget-from-city" type="button">Manage city budget ${glyph('finance')}</button>`;$('budget-from-city').addEventListener('click',openFinance);
  rootButtons();
- const residents=createResidents({...api,openFinance},glyph);
+ const residents=createResidents({...api,openFinance,openTransport:()=>transport.open()},glyph);
  const transport=createTransport(api,glyph);
  function rootButtons(){
   shell.querySelectorAll('[data-gc-tool]').forEach(button=>{const labels={inspect:'Inspect',build:'Build',road:'Roads',upgrade:'Upgrade',move:'Move',demolish:'Remove'};button.innerHTML=glyph(button.dataset.gcTool)+'<span>'+labels[button.dataset.gcTool]+'</span>';button.setAttribute('aria-label',labels[button.dataset.gcTool]+' tool');});
   $('undo').innerHTML=glyph('undo');$('redo').innerHTML=glyph('redo');
-  const cameras={'zoom-in':'zoomIn','zoom-out':'zoomOut','rotate-left':'rotateLeft','rotate-right':'rotateRight',reset:'home',night:'moon',grid:'grid'};
+  const cameras={'zoom-in':'zoomIn','zoom-out':'zoomOut','rotate-left':'rotateLeft','rotate-right':'rotateRight',reset:'home',night:'moon',grid:'grid',needs:'city'};
   shell.querySelectorAll('[data-gc-camera]').forEach(b=>b.innerHTML=glyph(cameras[b.dataset.gcCamera]));
   $('focus').innerHTML=glyph('inspect');
   shell.querySelectorAll('.gc-close-panel').forEach(b=>b.innerHTML=glyph('close'));
@@ -122,7 +122,7 @@ export function createExperience(api){
  const commandDefs=()=>{
   const tools=[['inspect','Inspect a tile','I'],['build','Build an improvement','B'],['road','Draw a road route','R'],['upgrade','Upgrade a building','U'],['move','Relocate a building','M'],['demolish','Remove an improvement','X']].map(([key,name,shortcut])=>({id:'tool-'+key,name,group:'Tools',icon:key,shortcut,run:()=>{api.setMode(key);if(key==='build')api.openPanel('build');if(key==='inspect')api.openPanel('city');}}));
   const actions=[
-   ['budget','Taxes, prices & city budget','Economy','finance',openFinance],['residents','Resident happiness & household needs','Residents','city',residents.open],['transport','Transport routes, traffic & congestion','Transport','route',transport.open],['council','Council decisions & alerts','Council','bell',openDecision],
+   ['budget','Taxes, prices & city budget','Economy','finance',openFinance],['residents','Resident happiness & household needs','Residents','city',residents.open],['neighbourhoods','Neighbourhood needs, noise & local services','Residents','city',()=>residents.openNeighbourhood()],['transport','Transport routes, traffic & congestion','Transport','route',transport.open],['council','Council decisions & alerts','Council','bell',openDecision],
    ['fullscreen',shell.classList.contains('gc-expanded')?'Exit fullscreen':'Enter fullscreen','View','expand',()=>setExpanded(!shell.classList.contains('gc-expanded'))],
    ['dashboard','Show city dashboard','Panels','city',()=>api.openPanel('city')],['goals','Mission goals & grants','Panels','flag',()=>api.openPanel('goals')],['help','Open the field guide','Panels','help',()=>api.openPanel('help')],
    ['report','Open the mayor’s report','City','file',api.evaluate],['next','Advance to next month','Time','next',api.step],['play','Play / pause simulation','Time','play',()=> $('play').click()],
@@ -148,7 +148,7 @@ export function createExperience(api){
  applyFocus(false);
  return {
   render(){renderInbox();renderPanels();residents.render();transport.render();if($('finance').open)renderFinance();$('play').innerHTML=glyph($('play').getAttribute('aria-pressed')==='true'?'pause':'play');$('next').innerHTML='<span>Next month</span>'+glyph('next');},
-  openDecision,openFinance,openCommands,setExpanded,
+  openDecision,openFinance,openCommands,openNeighbourhood:residents.openNeighbourhood,setExpanded,
   toast(){clearTimeout(toastTimer);shell.classList.add('gc-show-toast');toastTimer=setTimeout(()=>shell.classList.remove('gc-show-toast'),6500);},
   closeOverlays(){residents.close();transport.close();for(const name of ['finance','decision','commands'])if($(name).open)$(name).close();}
  };

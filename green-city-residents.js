@@ -1,4 +1,5 @@
 /* Resident pulse: household groups, practical needs and a saved happiness history. */
+import {createNeighbourhoods} from './green-city-neighbourhoods.js?v=7e86af3272';
 const C=globalThis.GreenCity;
 export function createResidents(api,glyph){
  const $=id=>document.getElementById('gc-'+id),shell=$('shell');
@@ -7,17 +8,25 @@ export function createResidents(api,glyph){
  const dialog=document.createElement('dialog');dialog.id='gc-residents';dialog.className='gc-dialog gc-residents-dialog';dialog.setAttribute('aria-labelledby','gc-residents-title');
  dialog.innerHTML=`<div class="gc-modal-heading"><div><span class="gc-overline">NEW TERRA / RESIDENT PULSE</span><h3 id="gc-residents-title">A place to call home.</h3><p>Listen to your residents. Give every neighbourhood a reason to thrive.</p></div><button type="button" class="gc-icon-button" aria-label="Close resident report">${glyph('close')}</button></div><div class="gc-resident-layout"><aside class="gc-resident-summary"><div id="gc-resident-summary"></div><div id="gc-resident-trend"></div><h4>Simulated resident groups</h4><div id="gc-resident-groups"></div></aside><div class="gc-resident-detail"><div class="gc-resident-section-title"><h4>What makes life better</h4><span>YOUR CITY / RIGHT NOW</span></div><div id="gc-resident-needs"></div><h4 class="gc-resident-priorities-title">Your next priorities</h4><div id="gc-resident-priorities"></div></div></div><footer class="gc-resident-footer">Happiness affects how quickly people move in. Growth also needs available homes and local jobs.</footer>`;
  shell.append(dialog);dialog.querySelector('button').addEventListener('click',()=>dialog.close());dialog.addEventListener('close',api.syncClock);
+ const overview=document.createElement('div');overview.id='gc-resident-overview';const layout=dialog.querySelector('.gc-resident-layout');layout.before(overview);overview.append(layout);
+ const tabs=document.createElement('div');tabs.className='gc-resident-tabs';tabs.setAttribute('role','group');tabs.setAttribute('aria-label','Resident report views');tabs.innerHTML='<button type="button" data-gc-resident-view="overview" aria-pressed="true">City overview</button><button type="button" data-gc-resident-view="neighbourhoods" aria-pressed="false">Neighbourhoods</button>';overview.before(tabs);
+ const neighbourhoods=createNeighbourhoods(api,dialog);let view='overview';
+ function setView(next,target){view=next;overview.hidden=view!=='overview';neighbourhoods.view.hidden=view!=='neighbourhoods';tabs.querySelectorAll('button').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.gcResidentView===view)));if(view==='neighbourhoods')neighbourhoods.render(target);}
+ tabs.addEventListener('click',event=>{const b=event.target.closest('[data-gc-resident-view]');if(b){setView(b.dataset.gcResidentView);if(view==='overview')render(true);dialog.scrollTop=0;}});
  const population=shell.querySelector('.gc-population-stat');population.setAttribute('role','button');population.tabIndex=0;population.classList.add('gc-residents-trigger');
  population.addEventListener('click',open);population.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();e.stopPropagation();open();}});
  const card=document.createElement('button');card.id='gc-resident-card';card.type='button';card.className='gc-resident-card';card.addEventListener('click',open);$('tab-city').insertBefore(card,$('tab-city').querySelector('.gc-live-stats'));
- function open(){render(true);if(!dialog.open){dialog.showModal();dialog.scrollTop=0;}api.syncClock();}
+ const localButton=document.createElement('button');localButton.type='button';localButton.id='gc-neighbourhood-trigger';localButton.className='gc-neighbourhood-trigger';card.after(localButton);localButton.addEventListener('click',()=>openNeighbourhood());
+ function openNeighbourhood(i){if(api.hasOverlay()&&!dialog.open)return;setView('neighbourhoods',i);if(!dialog.open){dialog.showModal();dialog.scrollTop=0;}api.syncClock();}
+ function open(){if(api.hasOverlay()&&!dialog.open)return;setView('overview');render(true);if(!dialog.open){dialog.showModal();dialog.scrollTop=0;}api.syncClock();}
  function render(force=false){
   const state=api.getState(),a=api.getAnalysis(),life=a.life;
   population.setAttribute('aria-label','Resident happiness '+life.happiness+' out of 100. Open resident report.');
   population.querySelector(':scope>span').textContent='RESIDENTS · '+face(life.happiness)+' '+life.happiness+'%';
   card.innerHTML=`<span class="gc-resident-card-face" aria-hidden="true">${face(life.happiness)}</span><span><small>RESIDENT HAPPINESS</small><strong>${life.happiness}<em>/100 · ${life.mood}</em></strong><span>${life.priorities[0].score<65?life.priorities[0].name+' needs attention':'Residents feel well supported'}</span></span><b aria-hidden="true">↗</b>`;
   card.setAttribute('aria-label','Open resident report. Happiness '+life.happiness+' out of 100. '+life.mood+'.');
-  if(!dialog.open&&!force)return;
+  const localCount=a.neighbourhoods.filter(h=>h.needs.length).length;localButton.innerHTML='<span>'+localCount+' home plots need attention</span><b>Explore neighbourhoods ↗</b>';
+  if(!dialog.open&&!force)return;if(view==='neighbourhoods'){neighbourhoods.render();return;}
   const next=a.nextPopulation-state.population;
   $('resident-summary').innerHTML=`<span class="gc-resident-face" aria-hidden="true">${face(life.happiness)}</span><span class="gc-overline">RESIDENT HAPPINESS</span><strong class="gc-happiness-value">${life.happiness}<small>/100</small></strong><span class="gc-resident-mood">${life.mood}</span><div class="gc-resident-summary-stats"><div><span>People living here</span><strong>${number(state.population)}</strong></div><div><span>Available homes</span><strong>${number(Math.max(0,a.capacity-state.population))}</strong></div><div><span>Population forecast</span><strong>${signed(next)} <small>next month</small></strong></div><div><span>Noise at homes</span><strong>${a.noiseExposure}<small>/100</small></strong></div></div>`;
   const history=state.history.filter(h=>Number.isInteger(h.happiness)).map(h=>({month:h.month,value:h.happiness})).concat({month:state.month,value:life.happiness});
@@ -29,5 +38,5 @@ export function createResidents(api,glyph){
   $('resident-priorities').innerHTML=life.priorities.map(n=>`<div class="gc-resident-priority"><span class="gc-overline">${n.name} / ${n.score<40?'HIGH PRIORITY':n.score<65?'ROOM TO IMPROVE':'KEEP IT STRONG'}</span><blockquote>“${n.score>=65?'Keep this support accessible as our city grows.':comments[n.id]}”</blockquote><p>${n.tip}</p><button type="button" data-gc-resident-plan="${n.build||'budget'}">${n.build?'Plan '+C.upgrades[n.build].name.toLowerCase():'Review household prices'} <span aria-hidden="true">↗</span></button></div>`).join('');
  }
  dialog.addEventListener('click',e=>{const b=e.target.closest('[data-gc-resident-plan]');if(!b)return;dialog.close();if(b.dataset.gcResidentPlan==='budget')api.openFinance();else api.choose(b.dataset.gcResidentPlan);});
- return {render,open,close:()=>{if(dialog.open)dialog.close();}};
+ return {render,open,openNeighbourhood,close:()=>{if(dialog.open)dialog.close();}};
 }
