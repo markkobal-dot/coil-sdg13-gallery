@@ -17,7 +17,7 @@ test('planning spends nothing and a suggested improvement produces the exact loc
  assert.equal(C.canPlace(state,shade.action.type,shade.action.target,a),'');
  const built=apply(C.place(state,shade.action.type,shade.action.target)),after=C.analyse(built).homeProfiles.find(h=>h.i===home);
  assert.equal(after.shade,shade.forecast.after);assert.ok(after.shade>shade.forecast.before);
- assert.equal(built.cash,state.cash-shade.action.cost);assert.equal(state.cash,14000);
+ assert.equal(built.cash,state.cash-shade.action.cost);assert.equal(state.cash,C.challenges.sandbox.budget);
 });
 
 test('an unaffordable plan remains a forecast and cannot bypass the actual construction budget',()=>{

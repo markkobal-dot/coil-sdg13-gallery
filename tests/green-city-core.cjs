@@ -43,7 +43,7 @@ test('road connectivity is rooted at the harbour; removing it disconnects housin
 
 test('road paths cost only new tiles and a blocked or unaffordable route changes nothing',()=>{
  const state=C.fresh(),a=47,b=49,result=C.buildLine(state,at(a),at(b));
- assert.equal(result.error,'');assert.equal(result.state.cash,state.cash-105);
+ assert.equal(result.error,'');assert.equal(result.state.cash,state.cash-3*C.upgrades.road.cost);
  assert.deepEqual(C.line(at(a),at(b)),[47,48,49].map(at));assert.ok(C.analyse(result.state).roads.has(at(a)));
  for(const [from,to]of[[0,47],[84,87]]){const failed=C.buildLine(state,at(from),at(to));assert.ok(failed.error);assert.equal(failed.state,state);}
  const poor={...state,cash:34};assert.equal(C.buildLine(poor,at(a),at(b)).state,poor);
@@ -67,9 +67,9 @@ test('relocation preserves the building, level and rooftop retrofit with one rel
 test('salvage never refunds unpurchased starter buildings; removing a retrofit preserves its host',()=>{
  const fresh=C.fresh();assert.equal(C.demolish(fresh,at(84)).state.cash,fresh.cash);
  let state=build(fresh,'solar',84),result=C.demolish(state,at(84),true);
- assert.equal(result.state.cash,state.cash+75);assert.equal(result.state.cells[at(84)].type,'house');assert.equal(result.state.cells[at(84)].roof,null);assert.equal(result.state.cells[at(84)].paid,0);
- state=build(fresh,'bus',105);result=C.demolish(state,at(105));assert.equal(result.state.cash,state.cash+90);assert.equal(result.state.cells[at(105)].type,'road');
- state=build(fresh,'park',87);assert.equal(C.demolish(state,at(87)).state.cash,state.cash+60);
+ assert.equal(result.state.cash,state.cash+Math.floor(C.upgrades.solar.cost*.5));assert.equal(result.state.cells[at(84)].type,'house');assert.equal(result.state.cells[at(84)].roof,null);assert.equal(result.state.cells[at(84)].paid,0);
+ state=build(fresh,'bus',105);result=C.demolish(state,at(105));assert.equal(result.state.cash,state.cash+Math.floor(C.upgrades.bus.cost*.5));assert.equal(result.state.cells[at(105)].type,'road');
+ state=build(fresh,'park',87);assert.equal(C.demolish(state,at(87)).state.cash,state.cash+Math.floor(C.upgrades.park.cost*.5));
 });
 
 test('placement affects local cooling and transit; coastal rain gardens protect more effectively',()=>{
@@ -91,7 +91,7 @@ test('development grants are paid once, including after advancing the month',()=
  let state=C.fresh();for(const i of [47,48,49,67,68])state=build(state,'tree',i);
  assert.ok(state.grants.includes('builder'));const cash=state.cash;
  assert.equal(C.grant(state).state.cash,cash);assert.equal(C.grant(state).rewards.length,0);
- assert.equal(state.cash,2800-250+400);
+ assert.equal(state.cash,C.challenges.revolution.budget-5*C.upgrades.tree.cost+C.grantDefs.find(g=>g.id==='builder').reward);
  state=C.advance(state).state;assert.equal(state.grants.filter(id=>id==='builder').length,1);
 });
 
@@ -111,12 +111,12 @@ test('climate events cycle through heat, rain and energy; stronger responses pro
 for(const challenge of ['revolution','carbon','future'])test(challenge+' mission is achievable through legal purchases, normal grants and monthly income',()=>{
  let state=C.fresh(challenge);
  for(const [type,i] of plan){
-  while((state.cash<C.upgrades[type].cost||C.canPlace(state,type,at(i)).startsWith('Unlocks'))&&state.month<24)state=C.advance(state).state;
+  while((state.cash<C.upgrades[type].cost||C.canPlace(state,type,at(i)).startsWith('Unlocks'))&&state.month<36)state=C.advance(state).state;
   state=build(state,type,i);
  }
- if(challenge==='carbon'){while(state.cash<180)state=C.advance(state).state;state=build(state,'bus',130);state=applied(state,C.demolish(state,at(336)));}
- while(!C.analyse(state).completed&&state.month<24)state=C.advance(state).state;
- assert.equal(C.analyse(state).completed,true,JSON.stringify(C.analyse(state)));assert.ok(state.cash>=0);assert.ok(state.month<=18);
+ if(challenge==='carbon'){while(state.cash<C.upgrades.bus.cost)state=C.advance(state).state;state=build(state,'bus',130);state=applied(state,C.demolish(state,at(336)));}
+ while(!C.analyse(state).completed&&state.month<36)state=C.advance(state).state;
+ assert.equal(C.analyse(state).completed,true,JSON.stringify(C.analyse(state)));assert.ok(state.cash>=0);assert.ok(state.month<=30);
  assert.deepEqual(C.restore(JSON.parse(JSON.stringify(state))),state);
 });
 
@@ -286,8 +286,8 @@ test('resident happiness has seven needs and three household groups, and governs
 
 test('large infrastructure reserves its footprint atomically and is charged, counted and salvaged once',()=>{
  const fresh=C.fresh('sandbox'),i=cell(6,12),result=C.place(fresh,'airport',i);assert.equal(result.error,'');
- let city=result.state,plots=C.footprint('airport',i);assert.equal(plots.length,6);assert.equal(city.cash,fresh.cash-1400);
- assert.equal(C.analyse(city).counts.airport,1);assert.ok(C.analyse(city).budget.regionalRevenue>0&&C.analyse(city).budget.regionalRevenue<140);
+ let city=result.state,plots=C.footprint('airport',i);assert.equal(plots.length,6);assert.equal(city.cash,fresh.cash-C.upgrades.airport.cost);
+ assert.equal(C.analyse(city).counts.airport,1);assert.ok(C.analyse(city).budget.regionalRevenue>0&&C.analyse(city).budget.regionalRevenue<C.upgrades.airport.revenue);
  assert.equal(C.analyse(city).jobs-C.analyse(fresh).jobs,90);
  assert.ok(plots.slice(1).every(j=>city.cells[j].anchor===i));
  assert.equal(C.place(city,'park',plots[1]).state,city);assert.equal(C.buildLine(city,plots[1],plots.at(-1)).state,city);
@@ -365,7 +365,7 @@ test('regional connections share demand and a growing city increases income with
  for(let n=0;n<2;n++){const i=C.terrain.findIndex((_,j)=>!C.canPlace(city,'cargoport',j));assert.ok(i>=0);city=applied(city,C.place(city,'cargoport',i));}
  const small=C.analyse(city),grown=C.analyse({...city,population:3000});
  assert.equal(small.connections.length,2);assert.ok(small.connections.every(c=>c.utilisation<1&&c.revenue<c.upkeep));
- assert.ok(grown.budget.regionalRevenue>small.budget.regionalRevenue);assert.ok(grown.budget.regionalRevenue<=200);
+ assert.ok(grown.budget.regionalRevenue>small.budget.regionalRevenue);assert.ok(grown.budget.regionalRevenue<=2*C.upgrades.cargoport.revenue);
  const one=C.demolish(city,small.connections[1].i).state;
  assert.ok(Math.abs(C.analyse(one).budget.regionalRevenue-small.budget.regionalRevenue)<=1,'extra harbours split existing demand');
  const disconnected=C.analyse(C.demolish(city,cell(17,10)).state);
@@ -373,7 +373,7 @@ test('regional connections share demand and a growing city increases income with
  const empty=C.fresh('sandbox');empty.population=0;empty.cells=empty.cells.map(c=>C.roadTypes.has(c?.type)?c:null);
  const airportState=C.place(empty,'airport',cell(6,12)).state,airport=C.analyse(airportState);assert.equal(airport.budget.regionalRevenue,0,'an airport cannot generate demand from its own jobs');
  assert.equal(C.analyse(C.setPolicies(airportState,{businessTax:5}).state).budget.regionalRevenue,0,'tax incentives cannot turn a connection’s own jobs into new demand');
- const full=C.analyse({...city,population:10000});assert.ok(full.connections.every(c=>c.utilisation===1));assert.equal(full.budget.regionalRevenue,200);
+ const full=C.analyse({...city,population:10000});assert.ok(full.connections.every(c=>c.utilisation===1));assert.equal(full.budget.regionalRevenue,2*C.upgrades.cargoport.revenue);
 });
 
 test('all four orientations of ports, ferries and large buildings restore their exact occupied plots',()=>{

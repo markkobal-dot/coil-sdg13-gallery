@@ -1,4 +1,4 @@
-import { createExperience, glyph } from './green-city-experience.js?v=297fdeebf0';
+import { createExperience, glyph } from './green-city-experience.js?v=f075b41f54';
 let experience=null;
 /* New Terra: city tools, simulation clock, local saves and responsive game UI. */
 const C=globalThis.GreenCity, A=globalThis.GreenCityArt;
@@ -7,6 +7,7 @@ const $=id=>document.getElementById(id==='game-sound'?id:'gc-'+id);
 const shell=$('shell'), storageKey='coil-green-city-v3';
 const escape=text=>String(text).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const format=n=>Math.round(n).toLocaleString('en-GB');
+const money=n=>n.toLocaleString('en-GB',{maximumFractionDigits:2});
 let state=C.fresh(),undo=[],redo=[],saved=true,restored=false,saveWarning='',world=null,worldPromise=null,fallback=false;
 let rotation=0;
 let selected='tree',category='Nature',mode='inspect',focus=8*C.size+8,source=null,lineStart=null,tab='city',playing=false,speed=1,timer=null,pending=null;
@@ -26,12 +27,12 @@ function renderCatalogue(){
   const entries=Object.entries(C.upgrades).filter(([,item])=>query?(item.name+' '+item.description+' '+item.category).toLowerCase().includes(query):item.category===category);
   $('catalogue').innerHTML=entries.length?entries.map(([type,item])=>{
     const locked=item.unlock&&analysis.tier<item.unlock;
-    return `<button type="button" class="gc-building-card${selected===type?' is-selected':''}${state.cash<item.cost?' gc-unaffordable':''}${locked?' gc-locked':''}" data-upgrade="${type}" aria-pressed="${selected===type}" title="${escape(item.description)}"><span class="gc-building-art">${icon(type)}</span><span class="gc-building-name">${item.name}<small>${locked?'MONTH 3 / 35 POINTS':item.site==='roof'?'ROOFTOP RETROFIT':item.site==='road'?'ROAD UPGRADE':item.coast?'COASTAL · '+(item.footprint||[1,1]).join(' × '):item.footprint?item.footprint.join(' × ')+' PLOTS':item.road?'ROAD ACCESS':'OPEN LAND'}</small></span><span class="gc-building-facts"><small>${item.upkeep} EP / month</small><strong>${item.cost}<small>EP</small></strong></span></button>`;
+    return `<button type="button" class="gc-building-card${selected===type?' is-selected':''}${state.cash<item.cost?' gc-unaffordable':''}${locked?' gc-locked':''}" data-upgrade="${type}" aria-pressed="${selected===type}" title="${escape(item.description)}"><span class="gc-building-art">${icon(type)}</span><span class="gc-building-name">${item.name}<small>${locked?'MONTH 3 / 35 POINTS':item.site==='roof'?'ROOFTOP RETROFIT':item.site==='road'?'ROAD UPGRADE':item.coast?'COASTAL · '+(item.footprint||[1,1]).join(' × '):item.footprint?item.footprint.join(' × ')+' PLOTS':item.road?'ROAD ACCESS':'OPEN LAND'}</small></span><span class="gc-building-facts"><small>${money(item.upkeep)} EP / month</small><strong>${money(item.cost)}<small>EP</small></strong></span></button>`;
   }).join(''):'<p class="gc-no-results">No buildings match. Try “park”, “energy” or “homes”.</p>';
   if(active)$('catalogue').querySelector(`[data-upgrade="${active}"]`)?.focus({preventScroll:true});
   root.querySelectorAll('[data-gc-category]').forEach(b=>{b.setAttribute('aria-pressed',String(b.dataset.gcCategory===category));const name={Nature:'Nature','Clean energy':'Energy',Transport:'Travel',Community:'Community'}[b.dataset.gcCategory],count=Object.values(C.upgrades).filter(item=>item.category===b.dataset.gcCategory).length;b.innerHTML=name+' <span class="gc-category-count">'+count+'</span>';});
   $('selected-name').textContent=meta().name;$('selected-description').textContent=meta().description;
-  $('selected-effects').innerHTML=`<span>${escape(meta().effect)}</span><span>${meta().upkeep} EP upkeep / month</span>`;
+  $('selected-effects').innerHTML=`<span>${escape(meta().effect)}</span><span>${money(meta().upkeep)} EP base upkeep / month</span>`;
   $('tier').textContent=analysis.tier===2?'CITY LEVEL 2 / ALL TOOLS UNLOCKED':'CITY LEVEL 1 / STARTING OUT';$('tier').nextElementSibling.hidden=analysis.tier===2;
 }
 function actionInfo(){
