@@ -1,0 +1,92 @@
+/* A short route through the evidence, with the original research one click away. */
+.evidence-overview{margin:0 0 36px}
+.evidence-overview>p{font-size:12px;color:#64746b;margin:0 0 16px}
+.evidence-findings{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:18px}
+.evidence-finding{border-top:1px solid #b9c7b7;padding:23px 0 0;min-width:0}
+.evidence-finding>span{font-size:10px;font-weight:600;letter-spacing:.12em;color:#66776c}
+.evidence-finding>strong{display:block;font-size:clamp(28px,3.3vw,46px);font-weight:500;letter-spacing:-.045em;color:#143c30;margin:13px 0 9px;line-height:1.15}
+.evidence-finding>p{font-size:14px;line-height:1.7;color:#5d7066;max-width:34ch;margin:0 0 13px}
+.evidence-finding>button{min-height:44px;padding:9px 0;background:transparent;border:0;border-bottom:1px solid #94a595;border-radius:0;font:600 12px/1.5 'DM Sans',Arial,sans-serif;text-align:left;color:#173f30;cursor:pointer}
+.evidence-finding>button:focus-visible,.evidence-detail>summary:focus-visible{outline:3px solid #bf4b2e;outline-offset:5px}
+.evidence-detail{border-block-start:1px solid #c5d0c0;scroll-margin-top:100px}
+.evidence-detail:last-of-type{border-block-end:1px solid #c5d0c0}
+.evidence-detail>summary{position:relative;display:grid;grid-template-columns:1fr auto;align-items:center;gap:6px 20px;padding:23px 42px 23px 0;list-style:none;cursor:pointer;color:#183b2e}
+.evidence-detail>summary::-webkit-details-marker{display:none}
+.evidence-detail>summary>span{font-size:10px;letter-spacing:.1em;font-weight:600;color:#6c7c6e}
+.evidence-detail>summary>strong{grid-column:1;grid-row:2;font-size:clamp(20px,2.4vw,28px);line-height:1.3;font-weight:500;letter-spacing:-.035em}
+.evidence-detail>summary>small{grid-column:2;grid-row:1/3;font-size:12px;color:#748473}
+.evidence-detail>summary::after{content:'+';position:absolute;right:4px;top:50%;transform:translateY(-50%);font-size:25px;font-weight:400;color:#6f8468}
+.evidence-detail[open]>summary::after{content:'−'}
+.evidence-detail-body{padding:12px 0 35px}
+.evidence-detail-body>.problem-grid,.evidence-detail-body>.slovenia-data-grid,.evidence-detail-body>.glacier-card,.evidence-detail-body>.flood-card{margin-block:0}
+.evidence-context{margin-bottom:35px}
+.evidence-context .evidence-detail-body{padding-top:8px}
+.evidence-detail .field-notes{margin-bottom:0}
+.slovenia-data .evidence-detail .glacier-card,.slovenia-data .evidence-detail .flood-card{border:0;padding-top:18px}
+/* The welcome card remains above the tool dock, with a single useful next step. */
+.gc-shell .gc-onboarding{top:60px;bottom:auto;right:64px;width:min(310px,calc(100% - 86px));max-height:calc(100% - 80px);overflow:auto;overscroll-behavior:contain;padding:25px 20px 18px;box-sizing:border-box;border-radius:18px}
+.gc-shell .gc-onboarding>span.gc-overline{font-size:10px;letter-spacing:.08em;display:block;padding-right:32px}
+.gc-shell .gc-onboarding h4{font-size:24px;line-height:1.15;margin:12px 0}
+.gc-shell .gc-onboarding p{font-size:13px;line-height:1.65}
+.gc-shell .gc-onboarding>#gc-dismiss-tutorial{width:44px;min-height:44px;top:1px;right:1px;font-size:22px;z-index:1}
+.gc-shell .gc-onboarding>#gc-welcome-start{position:static;display:block;width:100%;min-height:44px;padding:10px;margin-top:16px;border:1px solid #b9cda4;border-radius:10px;background:#e3ecd5;color:#3e6032;font-size:12px;line-height:1.5;font-weight:600}
+.gc-shell .gc-onboarding>span:last-child{font-size:11px;line-height:1.6;letter-spacing:0;margin-top:11px}
+.gc-expanded .gc-onboarding{top:calc(var(--gc-hud-bottom,110px) + 60px);left:50%;right:auto;transform:translateX(-50%);width:330px;max-width:calc(100% - 88px);max-height:calc(100dvh - var(--gc-hud-bottom,110px) - 260px)}
+.gc-expanded .gc-panel-toggles,.gc-expanded .gc-world-top{top:calc(var(--gc-hud-bottom,110px) + 8px)}
+.gc-expanded .gc-tool-switcher>button span{font-size:10px}
+.gc-shell .gc-world-caption>span,.gc-shell .gc-world-caption strong{font-size:11px;line-height:1.5}
+.gc-expanded:has(#gc-onboarding:not([hidden])) .gc-message{opacity:0;pointer-events:none}
+.gc-expanded:not([data-panel=none]) .gc-onboarding{display:none}
+@media(max-width:700px){
+ .evidence-findings{gap:24px;grid-template-columns:1fr}
+ .evidence-overview{margin-bottom:30px}
+ .evidence-finding{display:grid;grid-template-columns:1fr auto;column-gap:15px;padding-top:18px}
+ .evidence-finding>span{grid-column:1/-1;font-size:10px}
+ .evidence-finding>strong{grid-column:1/-1;font-size:34px;margin:10px 0}
+ .evidence-finding>p{grid-column:1/-1;font-size:14px;max-width:none;margin-bottom:4px}
+ .evidence-finding>button{grid-column:1;justify-self:start}
+ .evidence-detail{scroll-margin-top:85px}
+ .evidence-detail>summary{padding-block:20px;gap:7px}
+ .evidence-detail>summary>small{grid-column:1;grid-row:3;font-size:12px}
+ .evidence-detail>summary>strong{font-size:23px}
+ .evidence-detail-body{padding-bottom:24px}
+ .gc-shell .gc-onboarding{padding:21px 17px 15px;top:58px;right:58px;width:calc(100% - 76px)}
+ .gc-expanded .gc-onboarding{top:calc(var(--gc-hud-bottom,130px) + 58px);right:auto;width:320px;max-height:calc(100dvh - var(--gc-hud-bottom,130px) - 245px)}
+ .gc-expanded .gc-top-stat>span{font-size:9px}
+ .gc-expanded .gc-top-stat>small{font-size:10px;line-height:1.4}
+ .gc-expanded .gc-city-brand>div>span{font-size:9px;letter-spacing:.02em}
+ .gc-expanded .gc-time-controls strong{font-size:12px}
+ .gc-expanded .gc-time-controls>div>span{font-size:10px}
+ .gc-expanded .gc-panel-toggles,.gc-expanded .gc-world-top{top:calc(var(--gc-hud-bottom,130px) + 8px)}
+ .gc-expanded .gc-camera-controls{top:calc(var(--gc-hud-bottom,130px) + 60px)}
+ .gc-expanded .gc-build-panel,.gc-expanded .gc-dashboard{top:calc(var(--gc-hud-bottom,130px) + 57px)!important}
+ .gc-expanded .gc-alert-banner{top:calc(var(--gc-hud-bottom,130px) + 56px)}
+ .gc-expanded .gc-map-toolbar{width:calc(100% - 20px);max-width:480px;gap:0;padding:5px}
+ .gc-expanded .gc-tool-switcher{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));width:100%;gap:2px}
+ .gc-expanded .gc-tool-switcher>button{min-width:0;min-height:48px;padding:6px 2px}
+ .gc-expanded .gc-tool-switcher>button span{font-size:10px;line-height:1.35}
+ .gc-expanded .gc-history-buttons{position:absolute;right:0;bottom:calc(100% + 8px);padding:3px;gap:2px;border:1px solid #ffffffa0;border-radius:12px;background:#f7faefe8;backdrop-filter:blur(20px)}
+ .gc-expanded .gc-history-buttons>button{width:40px;min-height:40px;padding:8px}
+ .gc-expanded .gc-map-toolbar:has(+.gc-world-wrap #gc-onboarding:not([hidden])) .gc-history-buttons{visibility:hidden}
+ .gc-expanded .gc-world-caption>span{font-size:11px}
+ .gc-page-heading .kicker{font-size:10px}
+ .gc-expanded .gc-panel-toggles>button{font-size:11px;min-height:36px;padding:7px}
+ .gc-expanded .gc-world-top .gc-overlay-control select{font-size:11px;min-height:36px;max-width:125px}
+ .gc-shell .gc-message{font-size:12px}
+}
+@media(max-height:650px) and (max-width:700px){
+ .gc-shell.gc-expanded .gc-onboarding{padding:14px;max-height:calc(100dvh - var(--gc-hud-bottom,130px) - 240px)}
+ .gc-expanded .gc-onboarding>span.gc-overline,.gc-expanded .gc-onboarding>span:last-child{display:none}
+ .gc-expanded .gc-onboarding h4{font-size:20px;margin:6px 25px 8px 0}
+ .gc-expanded .gc-onboarding p{font-size:12px;line-height:1.5}
+ .gc-expanded .gc-onboarding p{display:none}
+}
+@media(max-height:540px) and (min-width:701px){
+ .gc-expanded .gc-onboarding{top:calc(var(--gc-hud-bottom,110px) + 48px);width:min(580px,calc(100% - 100px));max-height:calc(100dvh - var(--gc-hud-bottom,110px) - 205px);padding:12px 54px 12px 16px;display:grid;grid-template-columns:1fr auto;gap:12px;align-items:center}
+ .gc-expanded .gc-onboarding>span.gc-overline,.gc-expanded .gc-onboarding p,.gc-expanded .gc-onboarding>span:last-child{display:none}
+ .gc-expanded .gc-onboarding h4{font-size:20px;margin:0}
+ .gc-expanded .gc-onboarding>#gc-welcome-start{margin:0;width:auto}
+ .gc-expanded .gc-camera-controls{top:calc(var(--gc-hud-bottom,110px) + 56px);right:12px;grid-template-columns:repeat(2,32px);gap:3px}
+ .gc-expanded .gc-camera-controls>button{width:32px;min-height:32px}
+ .gc-expanded .gc-camera-controls>span{display:none}
+}

@@ -134,3 +134,10 @@ body.effects-paused .hero-landscape { animation-play-state: paused; }
   html[data-motion] main > section,
   html[data-motion] .hero-landscape { animation: none; }
 }
+/* Keep atmosphere behind the opening photograph, away from reading and gallery pages. */
+.home-opening .climate-atmosphere{position:absolute;inset:0;z-index:1;mask-image:linear-gradient(to right,#000,transparent 9%,transparent 91%,#000)}
+.home-opening .climate-leaf{animation-duration:40s}
+@keyframes climate-flight{0%{opacity:0;transform:translate3d(0,-10vh,0) rotate(var(--leaf-turn))}12%,82%{opacity:.16}100%{opacity:0;transform:translate3d(0,110vh,0) rotate(calc(var(--leaf-turn) + 100deg))}}
+.home-opening-bottom>.effects-toggle{position:static;flex:none;min-height:44px;background:#183b30a8;border-color:#e7efcf4d;color:#e1e8d6;box-shadow:none;font-size:11px}
+body:not([data-view="home"]) .climate-atmosphere,body:not([data-view="home"]) .effects-toggle{display:none}
+@media(max-width:700px){.home-opening .climate-atmosphere,.home-opening-bottom>.effects-toggle{display:none}}

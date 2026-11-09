@@ -31,7 +31,8 @@ const galleryPhotos = [ {
   author: "Photo: Lovro Trošt"
 },
 {
-  src: "assets/images/drought-and-water.png",
+  src: "assets/images/optimized/drought-field.webp",
+  fullSrc: "assets/images/drought-and-water.png",
   title: "Drought and water",
   description: "A dry cornfield shows how a lack of water can affect crops. Hot weather can increase water loss from soil and plants.",
   action: "We can use water thoughtfully and learn how our community protects water during dry periods.",
@@ -99,7 +100,8 @@ const galleryPhotos = [ {
   author: "Photo provided by Lovro Trošt"
 },
 {
-  src: "assets/images/shade-in-our-neighbourhood.jpg?v=20261030-tree-shade",
+  src: "assets/images/optimized/neighbourhood-shade.webp",
+  fullSrc: "assets/images/shade-in-our-neighbourhood.jpg?v=20261030-tree-shade",
   title: "Shade in our neighbourhood",
   description: "A broad tree canopy shades a picnic table and grassy neighbourhood space. Trees can make shared outdoor areas more comfortable on hot days.",
   action: "We can plant and care for trees that provide shade in shared neighbourhood spaces.",
@@ -108,7 +110,8 @@ const galleryPhotos = [ {
   author: "Photo: Mark Kobal"
 },
 {
-  src: "assets/images/saving-energy-at-home.png",
+  src: "assets/images/optimized/solar-roof.webp",
+  fullSrc: "assets/images/saving-energy-at-home.png",
   title: "Solar energy at home",
   description: "My photograph shows solar panels on a house roof. They generate electricity from sunlight, one way to reduce reliance on fossil-fuel electricity.",
   action: "We can reduce energy use at home and consider renewable electricity where available.",

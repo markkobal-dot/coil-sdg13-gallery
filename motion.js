@@ -10,7 +10,7 @@
   atmosphere.className = 'climate-atmosphere';
   atmosphere.setAttribute('aria-hidden', 'true');
   atmosphere.setAttribute('inert', '');
-  const positions = [2, 95, 7, 91, 4, 97, 10, 89, 1, 94, 6, 98];
+  const positions = [1, 98, 3, 96, 2, 99];
   const leaf = '<svg viewBox="0 0 40 56" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M32 3C9 7 0 22 8 36c7 12 28 7 27-12L32 3Z" fill="currentColor"/><path d="M5 52C10 34 20 22 29 12M12 37l-1-13m9 2 10-3" stroke="var(--leaf-vein, #f7f6f0)" stroke-width="1.8" stroke-linecap="round"/></svg>';
   positions.forEach((x, index) => {
     const particle = document.createElement('span');
@@ -23,7 +23,7 @@
     particle.innerHTML = leaf;
     atmosphere.append(particle);
   });
-  document.body.append(atmosphere);
+  document.querySelector('.home-opening').append(atmosphere);
 
   const image = document.querySelector('.hero-visual');
   if (image) {
@@ -38,7 +38,7 @@
   toggle.type = 'button';
   toggle.className = 'effects-toggle';
   toggle.innerHTML = leaf + '<span></span>';
-  document.body.append(toggle);
+  document.querySelector('.home-opening-bottom').append(toggle);
   function update() {
     const on = enabled && !preference.matches;
     document.documentElement.dataset.motion = on ? 'on' : 'off';

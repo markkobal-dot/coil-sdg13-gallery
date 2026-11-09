@@ -7,6 +7,20 @@
     <meta name="theme-color" content="#f7f6f0">
     <meta property="og:title" content="COIL SDG 13 Gallery | Climate Action">
     <meta property="og:description" content="Explore our student-made gallery about climate action.">
+    <link rel="icon" href="assets/brand/favicon.svg" type="image/svg+xml">
+    <link rel="alternate icon" href="favicon.ico" sizes="16x16 32x32 48x48">
+    <link rel="apple-touch-icon" href="assets/brand/apple-touch-icon.png">
+    <link rel="canonical" href="https://markkobal-dot.github.io/coil-sdg13-gallery/">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://markkobal-dot.github.io/coil-sdg13-gallery/">
+    <meta property="og:image" content="https://markkobal-dot.github.io/coil-sdg13-gallery/assets/brand/social-preview.jpg">
+    <meta property="og:image:width" content="1200">
+    <meta property="og:image:height" content="630">
+    <meta property="og:image:alt" content="This is home. Let’s keep it that way. COIL SDG 13 Gallery by Mark Kobal and Lovro Trošt, with an Alpine landscape photograph.">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="This is home. — COIL SDG 13 Gallery">
+    <meta name="twitter:description" content="Twelve photographs, one changing climate. Explore our Slovenian climate journal and build a greener city.">
+    <meta name="twitter:image" content="https://markkobal-dot.github.io/coil-sdg13-gallery/assets/brand/social-preview.jpg">
     <title>COIL SDG 13 Gallery | Climate Action</title>
     <script id="initial-route-bootstrap">
       // Choose the initial section before any page content can be painted.
@@ -44,11 +58,12 @@
     <link rel="stylesheet" href="evidence.css?v=ef89f667b6">
     <link rel="stylesheet" href="green-city.css?v=9e43faded8">
     <link rel="stylesheet" href="green-city-ui.css?v=0ec0103cbe">
-    <link rel="stylesheet" href="motion.css?v=89a45ffb6c">
+    <link rel="stylesheet" href="motion.css?v=250eaf008d">
     <link rel="stylesheet" href="green-city-transport.css?v=a1c7e303b5">
     <link rel="stylesheet" href="green-city-neighbourhoods.css?v=9fae421b49">
     <link rel="stylesheet" href="green-city-missions.css?v=86f350ff2d">
     <link rel="stylesheet" href="home-experience.css?v=63710de0a0">
+    <link rel="stylesheet" href="site-polish.css?v=b2b42f92c7">
   </head>
 
   <body>
@@ -84,9 +99,9 @@
       <section class="hero" id="home">
         <div class="home-opening" data-scene="home">
           <div class="home-backdrop" aria-hidden="true">
-            <img class="home-scene is-active" data-home-image="home" src="assets/images/triglav-hike-lovro.webp" alt="" width="1569" height="1045" fetchpriority="high" decoding="async">
-            <img class="home-scene" data-home-image="signs" src="assets/images/dry-forest-lovro-2026.webp" alt="" width="720" height="960" decoding="async">
-            <img class="home-scene" data-home-image="choices" src="assets/images/saving-energy-at-home.png" alt="" width="930" height="619" decoding="async">
+            <img class="home-scene is-active" data-home-image="home" src="assets/images/optimized/home-alpine.webp" srcset="assets/images/optimized/home-alpine-720.webp 720w, assets/images/optimized/home-alpine.webp 1440w" sizes="100vw" alt="" width="1569" height="1045" fetchpriority="high" decoding="async">
+            <img class="home-scene" data-home-image="signs" data-home-src="assets/images/optimized/home-forest.webp" data-home-srcset="assets/images/optimized/home-forest-480.webp 480w, assets/images/optimized/home-forest.webp 720w" alt="" width="720" height="960" decoding="async">
+            <img class="home-scene" data-home-image="choices" data-home-src="assets/images/optimized/solar-roof.webp" data-home-srcset="assets/images/optimized/solar-roof-720.webp 720w, assets/images/optimized/solar-roof.webp 930w" alt="" width="930" height="619" decoding="async">
           </div>
           <div class="home-opening-top"><span><i aria-hidden="true"></i> A CLIMATE JOURNAL / SLOVENIA</span><span>46° N · OUR LOCAL PERSPECTIVE</span></div>
           <div class="home-opening-content">
@@ -155,7 +170,7 @@
               <span class="photo-meta">02 / A LOCAL OBSERVATION</span><strong>Heat, close to home.</strong><span class="photo-credit">Photo: Lovro Trošt</span>
             </button>
             <button class="home-photo" type="button" data-open-photo="11">
-              <span class="home-photo-image"><img src="assets/images/saving-energy-at-home.png" alt="Solar panels on a rooftop beneath a blue sky." width="930" height="619" loading="lazy" decoding="async" style="object-position:70% center"><span class="image-open" aria-hidden="true">↗</span></span>
+              <span class="home-photo-image"><img src="assets/images/optimized/solar-roof.webp" alt="Solar panels on a rooftop beneath a blue sky." width="930" height="619" loading="lazy" decoding="async" style="object-position:70% center"><span class="image-open" aria-hidden="true">↗</span></span>
               <span class="photo-meta">03 / A WAY FORWARD</span><strong>Energy from the sun.</strong><span class="photo-credit">Photo: Mark Kobal</span>
             </button>
           </div>
@@ -216,7 +231,12 @@
             We explored climate change and focused our project on rising temperatures in Slovenia and how our communities can prepare for hotter days.
           </p>
         </div>
-        <div class="problem-grid">
+        <section class="evidence-overview" aria-label="Three key findings"><p>THE EVIDENCE AT A GLANCE</p><div class="evidence-findings">
+<article class="evidence-finding"><span>01 / A WARMER SLOVENIA</span><strong>~2.7°C</strong><p>Rise in Slovenia’s annual mean temperature since 1970, according to ARSO.</p><button type="button" data-evidence-open="evidence-trend">See the temperature records ↗</button></article>
+<article class="evidence-finding"><span>02 / A SHRINKING GLACIER</span><strong>14 → 0.2 ha</strong><p>Comparable mapped area of the Triglav Glacier in 1946 and 2024. Later observations are explained separately.</p><button type="button" data-evidence-open="evidence-glacier">Explore the glacier evidence ↗</button></article>
+<article class="evidence-finding"><span>03 / PREPARING FOR EXTREMES</span><strong>Act &amp; adapt.</strong><p>Cut emissions, prepare for heat and understand the factors that contribute to flood risk.</p><button type="button" data-evidence-open="evidence-flood">Understand the flood context ↗</button></article>
+</div></section>
+        <details class="evidence-detail evidence-context" id="evidence-context"><summary><span>THE CONTEXT</span><strong>Why warming matters here</strong><small>Background, 2025 snapshot & sources</small></summary><div class="evidence-detail-body"><div class="problem-grid">
           <article class="problem-main">
             <span class="small-tag">OUR CHALLENGE</span>
             <h3>
@@ -252,7 +272,8 @@
             <span class="fact-bottom">PRELIMINARY NATIONAL DATA</span>
           </aside>
         </div>
-        <div id="climate-explorer" class="ce" aria-labelledby="ce-title">
+        </div></details>
+          <div id="climate-explorer" class="ce" aria-labelledby="ce-title">
           <div class="ce-heading"><div><span class="kicker">OBSERVE / COMPARE / EXPLORE</span><h2 id="ce-title">Today &amp;<br><span class="accent">ten years ago.</span></h2></div>
           <label class="ce-city">YOUR VIEW FROM<select id="ce-city"><option value="nova">Nova Gorica</option><option value="ajdovscina">Ajdovščina</option><option value="paris">Paris</option><option value="newyork">New York</option></select></label></div>
           <p class="ce-intro">Same city. Same calendar date. Two days, ten years apart — with matching daily measurements so you can compare at a glance.</p>
@@ -277,7 +298,7 @@
               We focused on rising temperatures to connect global climate change with the place where we live and study.
             </p>
           </div>
-          <div class="slovenia-data-grid">
+          <details class="evidence-detail " id="evidence-trend"><summary><span>01 / TEMPERATURE RECORDS</span><strong>Follow the long-term trend</strong><small>ARSO data & annual comparison</small></summary><div class="evidence-detail-body"><div class="slovenia-data-grid">
             <article class="slovenia-longtrend">
               <span class="small-tag">LONG-TERM CHANGE</span><strong>~2.7<span>°C</span></strong>
               <h3>
@@ -316,7 +337,8 @@
               </a>
             </figure>
           </div>
-          <article class="glacier-card" aria-labelledby="glacier-title">
+          </div></details>
+          <details class="evidence-detail " id="evidence-glacier"><summary><span>02 / THE TRIGLAV GLACIER</span><strong>See the change in our mountains</strong><small>Mapped area, photographs & field notes</small></summary><div class="evidence-detail-body"><article class="glacier-card" aria-labelledby="glacier-title">
             <div class="glacier-copy">
               <span class="small-tag">A VISIBLE SIGN OF CHANGE</span>
               <h3 id="glacier-title">
@@ -379,7 +401,8 @@
               </figcaption>
             </figure>
           </article>
-          <article class="flood-card" aria-labelledby="flood-title">
+          </div></details>
+          <details class="evidence-detail " id="evidence-flood"><summary><span>03 / EXTREME WEATHER</span><strong>Understand heavy rain and flood risk</strong><small>What warming can influence & what else matters</small></summary><div class="evidence-detail-body"><article class="flood-card" aria-labelledby="flood-title">
             <figure class="climate-photo flood-photo">
               <button class="photo-zoom" type="button" aria-label="View larger photo: Flood-damaged bridge in Stahovica"><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/c/c7/Destroyed_bridge_in_Stahovica_%282023%29.jpg/1280px-Destroyed_bridge_in_Stahovica_%282023%29.jpg" alt="A bridge destroyed by the August 2023 floods across the Kamniška Bistrica in Stahovica." width="1280" height="853" loading="lazy" decoding="async"></button>
               <figcaption>
@@ -417,6 +440,7 @@
               </a>
             </div>
           </article>
+          </div></details>
           <p class="slovenia-context">
             We connect national climate data with the places we photograph. Our sources are linked beside each chart and case study.
           </p>
@@ -690,8 +714,8 @@
           <div class="city-case-layout"><div><figure class="climate-photo city-photo city-comparison">
                 <span class="story-photo-label">PARIS / COMPARE THE CHANGE</span>
                 <button class="photo-zoom" type="button" aria-label="Enlarge the after photograph of Rue de la Brèche-aux-Loups">
-                  <img src="assets/images/paris-school-street-after.jpg" alt="The same Paris school street after redesign, with planted beds and a broad pedestrian space beside the school." width="1200" height="800" loading="lazy" decoding="async">
-                  <img id="paris-before-overlay" class="comparison-before" src="assets/images/paris-school-street-before.jpg" alt="" aria-hidden="true" width="1200" height="800" loading="lazy" decoding="async">
+                  <img src="assets/images/optimized/paris-after.webp" alt="The same Paris school street after redesign, with planted beds and a broad pedestrian space beside the school." width="1200" height="800" loading="lazy" decoding="async">
+                  <img id="paris-before-overlay" class="comparison-before" src="assets/images/optimized/paris-before.webp" alt="" aria-hidden="true" width="1200" height="800" loading="lazy" decoding="async">
                   <span id="paris-comparison-divider" class="comparison-divider" aria-hidden="true"></span>
                   <span class="comparison-label comparison-label-before" aria-hidden="true">Before</span>
                   <span class="comparison-label comparison-label-after" aria-hidden="true">After</span>
@@ -913,7 +937,7 @@
                 <div id="gc-overlay-legend" class="gc-overlay-legend" hidden><span id="gc-overlay-name">Heat exposure</span><i></i><small id="gc-overlay-scale">Needs attention → Better prepared</small></div>
                 <div class="gc-camera-controls" role="group" aria-label="Camera controls"><button type="button" data-gc-camera="zoom-in" aria-label="Zoom in">＋</button><button type="button" data-gc-camera="zoom-out" aria-label="Zoom out">−</button><span></span><button type="button" data-gc-camera="rotate-left" aria-label="Rotate camera left">↶</button><button type="button" data-gc-camera="rotate-right" aria-label="Rotate camera right">↷</button><button type="button" data-gc-camera="reset" aria-label="Fit the entire island">⌂</button><button type="button" data-gc-camera="night" aria-pressed="false" aria-label="Toggle night view">☾</button><button type="button" data-gc-camera="grid" aria-pressed="true" aria-label="Toggle map grid">▦</button><button type="button" data-gc-camera="needs" aria-pressed="true" aria-label="Toggle neighbourhood feedback markers">⌂</button></div>
                 <div class="gc-world-bottom"><div class="gc-minimap-wrap"><canvas id="gc-minimap" width="168" height="168" tabindex="0" role="button" aria-label="Island mini-map. Click a location to centre the camera. Press Enter to centre the selected tile."></canvas><span>ISLAND OVERVIEW</span></div><div class="gc-world-caption"><strong id="gc-hover">Explore your island.</strong><span>Drag to pan · Scroll to zoom · Right-drag to orbit</span></div></div>
-                <div class="gc-onboarding" id="gc-onboarding"><button id="gc-dismiss-tutorial" type="button" aria-label="Dismiss welcome guide">×</button><span class="gc-overline">WELCOME, MAYOR.</span><h4>A better city starts with a plan.</h4><p>Choose a building, then a plot. Advance a month to earn income and welcome residents. Balance all five indicators.</p><span>01 / PLAN &nbsp; 02 / BUILD &nbsp; 03 / GROW</span></div>
+                <div class="gc-onboarding" id="gc-onboarding"><button id="gc-dismiss-tutorial" type="button" aria-label="Dismiss welcome guide">×</button><span class="gc-overline">WELCOME, MAYOR.</span><h4>Your first block.</h4><p>Start with a neighbourhood mission. Choose a home, add something useful and watch its needs improve.</p><button id="gc-welcome-start" type="button">Find my first mission ↗</button><span>Drag to explore · Pinch or scroll to zoom</span></div>
               </div>
               <div id="gc-placement" class="gc-placement-hint" hidden><span aria-hidden="true"></span><div><strong id="gc-placement-title"></strong><p id="gc-placement-detail"></p></div></div>
               <div class="gc-contextbar"><button id="gc-open-build" class="gc-current-tool" type="button"><span id="gc-current-icon" aria-hidden="true">↖</span><span><small>ACTIVE TOOL</small><strong id="gc-current-tool">Inspect city</strong></span><span class="gc-change-tool">Change ↗</span></button><button id="gc-rotate" class="gc-rotate-building" type="button" title="Rotate building clockwise (E). Q rotates counterclockwise." aria-label="Rotate building clockwise" hidden>↻ 0°</button><div class="gc-tile-select"><label>ROW<select id="gc-row" aria-label="Selected tile row"></select></label><label>COL<select id="gc-col" aria-label="Selected tile column"></select></label><button id="gc-focus" type="button" aria-label="Centre camera on selected tile">◎</button></div><button id="gc-build" class="gc-action-button" type="button">Inspect tile</button></div>
@@ -1061,7 +1085,7 @@
         <div class="viewer-copy"><span id="lightbox-type" class="kicker"></span><h2 id="lightbox-title"></h2><p id="lightbox-description"></p><p id="lightbox-caption"></p><div class="viewer-controls"><button id="lightbox-previous" type="button" aria-label="Previous photograph">← Previous</button><button id="lightbox-next" type="button" aria-label="Next photograph">Next →</button></div><span class="viewer-key-hint">ARROW KEYS OR SWIPE TO EXPLORE · ESC TO CLOSE</span></div>
       </div>
     </div>
-    <script src="gallery-data.js?v=580cca3112">
+    <script src="gallery-data.js?v=30edd18472">
     </script>
     <script src="script.js?v=5ff79cb755">
     </script>
@@ -1070,8 +1094,9 @@
     <script src="evidence.js?v=6aea94b196" defer></script>
     <script src="green-city-core.js?v=2888b01324"></script>
     <script src="green-city-art.js?v=3889596789"></script>
-    <script type="module" src="green-city.js?v=eeb06e09a5"></script>
-    <script src="home-experience.js?v=71fd154cea" defer></script>
-    <script src="motion.js?v=2fdb95190e" defer></script>
+    <script type="module" src="green-city.js?v=3fc87111bb"></script>
+    <script src="home-experience.js?v=8018b3c3cb" defer></script>
+    <script src="site-polish.js?v=5e3dd6839b" defer></script>
+    <script src="motion.js?v=b4df224cdd" defer></script>
   </body>
 </html>
