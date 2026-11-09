@@ -3,6 +3,7 @@ import * as THREE from './assets/vendor/three/three.module.js';
 import { OrbitControls } from './assets/vendor/three/OrbitControls.js';
 import { mergeGeometries } from './assets/vendor/three/BufferGeometryUtils.js';
 import {needIcon} from './green-city-neighbourhood-icons.js?v=98db9558ad';
+import {CityLife} from './green-city-life-world.js?v=city-life-1';
 
 const C = globalThis.GreenCity;
 const mapSize=C.size, center=(mapSize-1)/2, viewHalf=mapSize*.725;
@@ -17,7 +18,7 @@ const cylinderGeo = () => geometry('cylinder', () => new THREE.CylinderGeometry(
 const coneGeo = () => geometry('cone', () => new THREE.ConeGeometry(1,1,10));
 
 export class CityWorld {
-  constructor(canvas, { onSelect, onHover, onError, onNeighbourhood }) {
+  constructor(canvas, { onSelect, onHover, onError, onNeighbourhood, onLife }) {
     this.canvas = canvas; this.onSelect=onSelect; this.onHover=onHover; this.onError=onError;this.onNeighbourhood=onNeighbourhood;
     this.materials = new Map(); this.night=false; this.overlay='city'; this.mode='inspect'; this.type='tree'; this.focus=8*mapSize+8;
     this.active=false; this.raf=0; this.lastFrame=0; this.time=0; this.dirty=true; this.reduced=matchMedia('(prefers-reduced-motion: reduce)');
@@ -39,6 +40,7 @@ export class CityWorld {
     this.sun.shadow.mapSize.set(2048,2048);Object.assign(this.sun.shadow.camera,{left:-27,right:27,top:27,bottom:-27,near:.5,far:65});
     this.sun.shadow.bias=-.00045;this.sun.shadow.normalBias=.025;this.sun.shadow.radius=3;this.scene.add(this.sun);
     this.staticGroup=new THREE.Group();this.dynamicGroup=new THREE.Group();this.scene.add(this.staticGroup,this.dynamicGroup);
+    this.life=new CityLife(this.scene);this.onLife=onLife;
     this.rotors=[];this.cars=[];this.clouds=[];this.smokePoints=[];this.pickTargets=[];
     this.addWater(); this.addGround(); this.addClouds();
     this.cursor=new THREE.LineLoop(new THREE.BufferGeometry().setFromPoints([[-.51,0,-.51],[.51,0,-.51],[.51,0,.51],[-.51,0,.51]].map(v=>new THREE.Vector3(...v))),new THREE.LineBasicMaterial({color:'#fff2b8',depthTest:false,transparent:true,opacity:1}));
@@ -53,7 +55,7 @@ export class CityWorld {
     this.pinLayer.addEventListener('click',event=>{const button=event.target.closest('[data-gc-neighbourhood]');if(button)this.onNeighbourhood?.(Number(button.dataset.gcNeighbourhood));});
     this.bindInput();this.observer=new ResizeObserver(()=>this.resize());this.observer.observe(canvas.parentElement);this.resize();
     canvas.addEventListener('webglcontextlost',e=>{e.preventDefault();this.setActive(false);onError?.('The 3D view paused because the graphics context was lost. Your city is saved. Reload to restore the view.');});
-    this.reduced.addEventListener('change',()=>{this.makeSmoke();this.dirty=true;this.schedule();});
+    this.reduced.addEventListener('change',()=>{this.makeSmoke();this.life.update(this.time,true);this.dirty=true;this.schedule();});
   }
   mat(color, options={}) {
     const key=color+JSON.stringify(options);if(!this.materials.has(key))this.materials.set(key,new THREE.MeshStandardMaterial({color,roughness:.83,metalness:0,...options}));return this.materials.get(key);
@@ -372,7 +374,7 @@ export class CityWorld {
   }
   clear(group){for(const child of [...group.children]){group.remove(child);if(child.isMesh)child.geometry.dispose();}}
   setState(state,analysis){
-    if(this.state?.cells===state.cells){const changeCars=Math.floor(this.state.population/45)!==Math.floor(state.population/45);this.state=state;this.analysis=analysis;if(changeCars){for(const car of this.cars)this.dynamicGroup.remove(car.g);this.makeCars();}this.syncTransit();this.updateOverlay();this.updateSelection();this.updateLabels();this.dirty=true;this.schedule();return;}
+    if(this.state?.cells===state.cells){const changeCars=Math.floor(this.state.population/45)!==Math.floor(state.population/45);this.state=state;this.analysis=analysis;if(changeCars){for(const car of this.cars)this.dynamicGroup.remove(car.g);this.makeCars();}this.syncTransit();this.syncLife();this.updateOverlay();this.updateSelection();this.updateLabels();this.dirty=true;this.schedule();return;}
     this.state=state;this.analysis=analysis;this.clear(this.staticGroup);this.dynamicGroup.clear();this.rotors=[];this.animatedWindCount=0;this.smokePoints=[];this.pickTargets=[];
     const root=new THREE.Group();
     state.cells.forEach((cell,i)=>{
@@ -385,8 +387,10 @@ export class CityWorld {
     root.updateMatrixWorld(true);
     const rotors=[];root.traverse(node=>{if(node.userData.animated)rotors.push(node);});
     for(const rotor of rotors){const world=new THREE.Vector3();rotor.getWorldPosition(world);rotor.removeFromParent();rotor.position.copy(world);this.dynamicGroup.add(rotor);this.rotors.push(rotor);}
-    this.batch(root,this.staticGroup);this.makeCars();this.syncTransit();this.makeSmoke();this.updateOverlay();this.updateSelection();this.updateLabels();this.dirty=true;this.schedule();
+    this.batch(root,this.staticGroup);this.makeCars();this.syncTransit();this.syncLife();this.makeSmoke();this.updateOverlay();this.updateSelection();this.updateLabels();this.dirty=true;this.schedule();
   }
+  syncLife(){if(!this.state)return;this.life.sync(C,this.state,this.analysis,this.canvas.parentElement.clientWidth<600);this.onLife?.(this.life.counts);}
+  toggleLife(){const enabled=this.life.toggle();this.onLife?.(this.life.counts);this.dirty=true;this.schedule();return enabled;}
   makeCars(){
     this.cars=[];const roads=[...this.analysis.roads];if(roads.length<2)return;
     const count=Math.min(16,Math.max(5,Math.floor(this.state.population/45)));
@@ -468,7 +472,7 @@ export class CityWorld {
     this.overlayMesh.instanceColor.needsUpdate=true;
   }
   setOverlay(value){this.overlay=value;this.updateOverlay();this.updateLabels();this.dirty=true;this.schedule();}
-  resize(){const rect=this.canvas.parentElement.getBoundingClientRect();if(rect.width<2||rect.height<2)return;this.renderer.setSize(rect.width,rect.height,false);const aspect=rect.width/rect.height,half=viewHalf;this.camera.left=-half*aspect;this.camera.right=half*aspect;this.camera.top=half;this.camera.bottom=-half;if(!this.initialFit){this.camera.zoom=Math.min(1.35,aspect*1.2);this.initialFit=true;}this.camera.updateProjectionMatrix();this.dirty=true;this.updateLabels();this.schedule();}
+  resize(){const rect=this.canvas.parentElement.getBoundingClientRect();if(rect.width<2||rect.height<2)return;this.renderer.setSize(rect.width,rect.height,false);const aspect=rect.width/rect.height,half=viewHalf;this.camera.left=-half*aspect;this.camera.right=half*aspect;this.camera.top=half;this.camera.bottom=-half;if(!this.initialFit){this.camera.zoom=Math.min(1.35,aspect*1.2);this.initialFit=true;}this.camera.updateProjectionMatrix();this.syncLife();this.dirty=true;this.updateLabels();this.schedule();}
   zoomBy(factor){this.camera.zoom=THREE.MathUtils.clamp(this.camera.zoom*factor,.55,3.7);this.camera.updateProjectionMatrix();this.controls.update();this.updateLabels();this.dirty=true;this.schedule();}
   rotateBy(direction){const offset=this.camera.position.clone().sub(this.controls.target);offset.applyAxisAngle(new THREE.Vector3(0,1,0),direction*Math.PI/4);this.camera.position.copy(this.controls.target).add(offset);this.controls.update();this.updateLabels();this.dirty=true;this.schedule();}
   focusCell(i){const target=new THREE.Vector3(i%mapSize-center,.5,Math.floor(i/mapSize)-center);this.camera.position.add(target.clone().sub(this.controls.target));this.controls.target.copy(target);this.controls.update();this.updateLabels();this.dirty=true;this.schedule();}
@@ -525,6 +529,7 @@ export class CityWorld {
     if(animate){
       this.time+=dt;this.waterMaterial.uniforms.uTime.value=this.time;
       this.rotors.forEach(r=>r.rotation.z-=dt*.75);
+      this.life.update(this.time,false,this.analysis?.transport.roadLoads);
       for(const car of this.cars){
         car.t+=dt*car.speed*Math.max(.22,1-this.analysis.transport.roadLoads[car.from]/150);if(car.t>=1){car.previous=car.from;car.from=car.to;const choices=C.neighbours(car.from).filter(j=>this.analysis.roads.has(j)&&j!==car.previous);car.to=choices.length?choices[Math.floor(hash(car.seed+Math.floor(this.time)*13)*choices.length)]:car.previous;car.t=0;}
         const x=THREE.MathUtils.lerp(car.from%mapSize,car.to%mapSize,car.t)-center,z=THREE.MathUtils.lerp(Math.floor(car.from/mapSize),Math.floor(car.to/mapSize),car.t)-center;

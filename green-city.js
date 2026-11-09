@@ -161,10 +161,14 @@ function evaluate(){
   $('advice').innerHTML='<h4>Your next planning decision</h4><p>'+advice+'</p><p class="gc-report-note">Game indicators and financial rules are simplified learning mechanics, not real-world emissions, costs or climate predictions.</p>';
   $('results').showModal();syncClock();
 }
+function renderLifeStatus({walkers,services,enabled}){
+  $('life').disabled=false;$('life').setAttribute('aria-pressed',String(enabled));$('life').textContent='City life · '+(enabled?'On':'Off');
+  $('life-status').textContent=enabled?(walkers+' walking · '+services+' service vehicle'+(services===1?'':'s')+(walkers+services?' · connected journeys':' · connect homes to local destinations')):'Pedestrians and service vehicles hidden.';
+}
 async function initWorld(){
   if(world){world.setActive(visibleGame());return;}if(worldPromise||!visibleGame()||fallback)return;
   worldPromise=import('./green-city-world.js?v=f4026c9da2').then(({CityWorld})=>{
-    world=new CityWorld($('board'),{onSelect:i=>selectTile(i),onNeighbourhood:i=>experience?.openNeighbourhood(i),onHover:i=>{renderPlacement(i);if(i<0)return;const cell=state.cells[i];$('hover').textContent=C.label(i)+' / '+(cell?C.types[cell.type].name:C.terrain[i]==='water'?'Protected waterfront':'Open land');},onError:announce});
+    world=new CityWorld($('board'),{onSelect:i=>selectTile(i),onNeighbourhood:i=>experience?.openNeighbourhood(i),onHover:i=>{renderPlacement(i);if(i<0)return;const cell=state.cells[i];$('hover').textContent=C.label(i)+' / '+(cell?C.types[cell.type].name:C.terrain[i]==='water'?'Protected waterfront':'Open land');},onError:announce,onLife:renderLifeStatus});
     world.setState(state,analysis);world.setTool(mode,selected,focus,source,lineStart,rotation);world.setActive(visibleGame());$('loading').hidden=true;
   }).catch(()=>{fallback=true;$('loading').hidden=true;$('board').hidden=true;$('fallback').hidden=false;renderFallback();announce('3D graphics are unavailable in this browser. The planning grid is ready; all city tools and simulation features still work.');});
 }
@@ -197,6 +201,7 @@ for(const name of ['confirm','results'])$(name).addEventListener('close',syncClo
 $('evaluate').addEventListener('click',evaluate);$('continue').addEventListener('click',()=>$('results').close());$('results-close').addEventListener('click',()=>$('results').close());
 $('export').addEventListener('click',()=>download('new-terra-month-'+state.month+'.json',new Blob([JSON.stringify({game:'New Terra',state},null,2)],{type:'application/json'})));
 $('import').addEventListener('click',()=>$('import-file').click());$('import-file').addEventListener('change',async()=>{const file=$('import-file').files[0];if(!file)return;try{if(file.size>2000000)throw new Error('File too large');const raw=JSON.parse(await file.text()),city=C.restore(raw.state||raw);confirmAction('Open this city save?','This replaces the expanded city on this device. Your current city can be exported before you open another.',()=>{playing=false;state=city;undo=[];redo=[];mode='inspect';source=null;lineStart=null;syncClock();save();render();announce('City save opened successfully.');});}catch{announce('That file is not a valid expanded city save. Your current city is unchanged.');}$('import-file').value='';});
+$('life').addEventListener('click',()=>world?.toggleLife());
 $('photo').addEventListener('click',()=>{if(!world){announce('City photos are available once the 3D view is ready.');return;}const link=document.createElement('a');link.download='new-terra-month-'+state.month+'.png';link.href=world.photo();link.click();});
 function setExpanded(value){return experience?.setExpanded(value);}
 $('expand').addEventListener('click',()=>setExpanded(!shell.classList.contains('gc-expanded')));

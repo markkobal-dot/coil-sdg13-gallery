@@ -128,6 +128,7 @@ export function createExperience(api){
    ['report','Open the mayor’s report','City','file',api.evaluate],['next','Advance to next month','Time','next',api.step],['play','Play / pause simulation','Time','play',()=> $('play').click()],
    ['undo','Undo last city action','History','undo',api.undo],['redo','Redo city action','History','redo',api.redo],
    ['save','Export city save','Files','save',()=> $('export').click()],['import','Open a saved city','Files','file',()=> $('import').click()],['photo','Save a city photo','Files','photo',()=> $('photo').click()],
+   ['life','Toggle pedestrians & service vehicles','View','city',()=> $('life').click()],
    ['night','Toggle day / night','Camera','moon',()=>q('[data-gc-camera="night"]').click()],['fit','Fit the whole island','Camera','home',()=>q('[data-gc-camera="reset"]').click()],['grid','Toggle the planning grid','Camera','grid',()=>q('[data-gc-camera="grid"]').click()],
    ['zoom-in','Zoom in','Camera','zoomIn',()=>q('[data-gc-camera="zoom-in"]').click()],['zoom-out','Zoom out','Camera','zoomOut',()=>q('[data-gc-camera="zoom-out"]').click()]
   ].map(([id,name,group,icon,run])=>({id,name,group,icon,run}));
