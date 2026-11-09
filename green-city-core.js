@@ -497,6 +497,56 @@
     if(!earned.length)return {state,rewards:[]};
     return {state:{...state,cash:state.cash+earned.reduce((s,g)=>s+g.reward,0),grants:[...state.grants,...earned.map(g=>g.id)]},rewards:earned};
   }
+  const neighbourhoodMissionDefs=[
+    {id:'shade',name:'Cool the block',metric:'shade',target:40,reward:180,icon:'tree',detail:'Bring shade around one underserved home to 40/100.',hint:'Plan parks, street trees or green spaces near this home.'},
+    {id:'transit',name:'Connect the community',metric:'mobility',target:55,reward:220,icon:'route',detail:'Reach 55/100 transport access with nearby public transport.',hint:'Add a connected bus stop, tram stop, metro or ferry nearby, or create a useful transit line.'},
+    {id:'care',name:'Healthy streets',metric:'health',target:40,reward:240,icon:'health',detail:'Reach 40/100 healthcare access and keep the monthly budget balanced.',hint:'Place or upgrade nearby healthcare, then check service funding and the monthly balance.'}
+  ];
+  const missionBook=state=>state.missions||{active:null,completed:[]};
+  function missionPublicTransit(home,a){
+    return !!home.namedLineAccess||a.localSources.transit.some(t=>['bus','tram','metro','ferry'].includes(t.type)&&distance(home.i,t.i)<(types[t.type].transportRadius||(t.type==='tram'?7:6)));
+  }
+  function neighbourhoodMissions(state,a=analyse(state)){
+    const book=missionBook(state);
+    return neighbourhoodMissionDefs.map(def=>{
+      const completed=book.completed.find(m=>m.id===def.id),active=book.active?.id===def.id?book.active:null;
+      const candidates=a.homeProfiles.filter(home=>home.linked&&home[def.metric]<def.target).sort((x,y)=>x[def.metric]-y[def.metric]||x.i-y.i);
+      const home=active?a.homeProfiles.find(h=>h.i===active.home):null,value=home?.[def.metric]||0;
+      const checks=active?[{name:'Home connected to main roads',done:!!home?.linked},{name:{shade:'Local shade',mobility:'Transport access',health:'Healthcare access'}[def.metric]+' '+value+' / '+def.target,done:!!home&&value>=def.target},...(def.id==='transit'?[{name:'Nearby public transport',done:!!home&&missionPublicTransit(home,a)}]:[]),...(def.id==='care'?[{name:'Monthly balance '+(a.net>=0?'+':'')+a.net+' EP',done:a.net>=0}]:[])]:[];
+      const ready=!!active&&checks.every(c=>c.done);
+      const progress=completed?100:!active||!home?0:Math.min(ready?100:99,Math.max(0,Math.round((value-active.baseline)/(def.target-active.baseline)*100)));
+      return {...def,active,completed,home,value,candidates,checks,ready,progress,missing:!!active&&!home};
+    });
+  }
+  function startNeighbourhoodMission(state,id,i){
+    const def=neighbourhoodMissionDefs.find(m=>m.id===id),book=missionBook(state);
+    if(!def||!validCell(i))return rejected(state,'Choose a neighbourhood mission and a home.');
+    if(book.active)return rejected(state,'Finish or leave your current neighbourhood mission first.');
+    if(book.completed.some(m=>m.id===id))return rejected(state,'This neighbourhood mission has already earned its reward.');
+    const home=analyse(state).homeProfiles.find(h=>h.i===i);
+    if(!home?.linked||home[def.metric]>=def.target)return rejected(state,'Choose a connected home that still needs this improvement.');
+    return ok({...state,missions:{...book,active:{id,home:i,baseline:home[def.metric],started:state.month}}},def.name+' started around '+label(i)+'. Track your progress in Goals.');
+  }
+  function leaveNeighbourhoodMission(state){
+    const book=missionBook(state);if(!book.active)return rejected(state,'There is no active neighbourhood mission.');
+    return ok({...state,missions:{...book,active:null}},'Neighbourhood mission left. Your buildings and Eco Points are unchanged.');
+  }
+  function awardNeighbourhoodMission(state){
+    const report=neighbourhoodMissions(state).find(m=>m.ready);
+    if(!report)return {state,reward:null};
+    const book=missionBook(state),record={id:report.id,home:report.active.home,baseline:report.active.baseline,value:report.value,month:state.month};
+    return {state:{...state,cash:state.cash+report.reward,missions:{active:null,completed:[...book.completed,record]},log:[report.name+' completed around '+label(record.home)+' · +'+report.reward+' EP.',...state.log].slice(0,16)},reward:{...record,name:report.name,reward:report.reward,metric:report.metric}};
+  }
+  function restoreMissions(raw,month){
+    if(raw===undefined)return undefined;
+    const int=(n,min,max)=>Number.isInteger(n)&&n>=min&&n<=max;
+    const valid=(m,completed)=>{
+      const def=neighbourhoodMissionDefs.find(d=>d.id===m?.id);
+      return def&&int(m.home,0,size*size-1)&&terrain[m.home]==='land'&&int(m.baseline,0,def.target-1)&&(completed?int(m.value,def.target,100)&&int(m.month,1,month):int(m.started,1,month));
+    };
+    if(!raw||typeof raw!=='object'||!Array.isArray(raw.completed)||raw.completed.length>3||raw.completed.some(m=>!valid(m,true))||new Set(raw.completed.map(m=>m.id)).size!==raw.completed.length||(raw.active!==null&&(!valid(raw.active,false)||raw.completed.some(m=>m.id===raw.active.id))))throw new Error('Invalid neighbourhood missions');
+    return {active:raw.active?{id:raw.active.id,home:raw.active.home,baseline:raw.active.baseline,started:raw.active.started}:null,completed:raw.completed.map(m=>({id:m.id,home:m.home,baseline:m.baseline,value:m.value,month:m.month}))};
+  }
   const events={
     heat:{name:'Heatwave forecast',eyebrow:'Climate readiness',icon:'sun',description:'A hot spell is putting pressure on residents. Shade, cool roofs and reliable services reduce the impact. Choose how your council will support people this month.',options:[{id:'shelters',name:'Open cooling shelters',cost:120,protection:1,detail:'Fully cover the remaining wellbeing impact this month.'},{id:'volunteers',name:'Neighbourhood checks',cost:60,protection:.5,detail:'Reduce the wellbeing impact by half at a lower cost.'},{id:'none',name:'Rely on existing preparations',cost:0,protection:0,detail:'Keep your budget; the city takes the remaining impact.'}]},
     rain:{name:'Heavy rain warning',eyebrow:'Waterfront resilience',icon:'rain',description:'Heavy rainfall is approaching the waterfront. Rain gardens and water recycling have already reduced your exposure. Decide how much additional support to fund.',options:[{id:'drains',name:'Mobilise drainage teams',cost:130,protection:1,detail:'Fully protect wellbeing from the remaining event impact.'},{id:'alerts',name:'Community alerts',cost:50,protection:.5,detail:'Halve the remaining impact with a basic response.'},{id:'none',name:'Use existing defences',cost:0,protection:0,detail:'Spend nothing now; rely on your current resilience.'}]},
@@ -586,8 +636,10 @@
     let routes=[];
     if(raw.routes!==undefined){if(!Array.isArray(raw.routes)||raw.routes.length>12||new Set(raw.routes.map(r=>r?.id)).size!==raw.routes.length)throw new Error('Invalid transport lines');routes=raw.routes.map(r=>{if(!validRoute(r)||!integer(r.id,1,12))throw new Error('Invalid transport line');return {id:r.id,name:r.name.trim(),type:r.type,colour:r.colour,enabled:r.enabled,stops:[...r.stops]};});}
     const log=(Array.isArray(raw.log)?raw.log:[]).filter(s=>typeof s==='string'&&s.length<=400).slice(0,16);
-    return {version:3,challenge:raw.challenge,cells,cash:raw.cash,population:raw.population,month:raw.month,policies:restoredPolicies,routes,loan,grants:[...raw.grants],event,history,log};
+    const missions=restoreMissions(raw.missions,raw.month);
+    return {version:3,challenge:raw.challenge,cells,cash:raw.cash,population:raw.population,month:raw.month,policies:restoredPolicies,routes,loan,grants:[...raw.grants],event,history,log,...(missions?{missions}:{})};
   }
   const api={size,terrain,metrics,upgrades,types,challenges,localNeeds,homeFeedback,neighbourhoodInfo,routeColours,roadPath,routeInfo,setRoute,removeRoute,setRouteEnabled,roadTypes,buildingTypes,greenTypes,fresh,board,remaining,score,analyse,neighbours,distance,rowLabel,label,rotatable,dimensions,footprint,anchorAt,coastal,canPlace,place,upgrade,upgradeCost,demolish,relocate,moveCost,line,buildLine,grantDefs,grant,events,respond,policies,policyRanges,setPolicies,setPolicy,borrow,repayLoan,advance,goals,tileInfo,restore};
+  Object.assign(api,{neighbourhoodMissionDefs,neighbourhoodMissions,startNeighbourhoodMission,leaveNeighbourhoodMission,awardNeighbourhoodMission});
   if(typeof module==='object'&&module.exports)module.exports=api;else host.GreenCity=api;
 })(globalThis);

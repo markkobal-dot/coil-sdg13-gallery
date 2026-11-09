@@ -3,7 +3,7 @@ import * as THREE from './assets/vendor/three/three.module.js';
 import { OrbitControls } from './assets/vendor/three/OrbitControls.js';
 import { mergeGeometries } from './assets/vendor/three/BufferGeometryUtils.js';
 import {needIcon} from './green-city-neighbourhood-icons.js?v=98db9558ad';
-import {CityLife} from './green-city-life-world.js?v=city-life-1';
+import {CityLife} from './green-city-life-world.js?v=499c79081b';
 
 const C = globalThis.GreenCity;
 const mapSize=C.size, center=(mapSize-1)/2, viewHalf=mapSize*.725;
@@ -41,8 +41,8 @@ export class CityWorld {
     this.sun.shadow.bias=-.00045;this.sun.shadow.normalBias=.025;this.sun.shadow.radius=3;this.scene.add(this.sun);
     this.staticGroup=new THREE.Group();this.dynamicGroup=new THREE.Group();this.scene.add(this.staticGroup,this.dynamicGroup);
     this.life=new CityLife(this.scene);this.onLife=onLife;
-    this.rotors=[];this.cars=[];this.clouds=[];this.smokePoints=[];this.pickTargets=[];
-    this.addWater(); this.addGround(); this.addClouds();
+    this.rotors=[];this.cars=[];this.smokePoints=[];this.pickTargets=[];
+    this.addWater(); this.addGround();
     this.cursor=new THREE.LineLoop(new THREE.BufferGeometry().setFromPoints([[-.51,0,-.51],[.51,0,-.51],[.51,0,.51],[-.51,0,.51]].map(v=>new THREE.Vector3(...v))),new THREE.LineBasicMaterial({color:'#fff2b8',depthTest:false,transparent:true,opacity:1}));
     this.cursor.renderOrder=20;this.cursor.position.y=.18;this.scene.add(this.cursor);
     this.selection=this.cursor.clone();this.selection.material=this.cursor.material.clone();this.selection.material.color.set('#f3c383');this.selection.position.y=.19;this.scene.add(this.selection);
@@ -364,9 +364,6 @@ export class CityWorld {
     this.overlayMesh=new THREE.InstancedMesh(new THREE.PlaneGeometry(.96,.96),new THREE.MeshBasicMaterial({transparent:true,opacity:.6,depthWrite:false,side:THREE.DoubleSide}),land.length);this.overlayMesh.userData.cells=land;this.overlayMesh.visible=false;
     land.forEach((i,n)=>{dummy.position.set(i%mapSize-center,.17,Math.floor(i/mapSize)-center);dummy.rotation.x=-Math.PI/2;dummy.updateMatrix();this.overlayMesh.setMatrixAt(n,dummy.matrix);this.overlayMesh.setColorAt(n,new THREE.Color('#ffffff'));});this.overlayMesh.renderOrder=2;this.scene.add(this.overlayMesh);
   }
-  addClouds(){
-    for(let n=0;n<5;n++){const g=new THREE.Group();for(let k=0;k<3;k++)this.leaf(g,'#f0f1df',(k-1)*.7,.1+(k%2)*.12,0,1,.25,.55);g.position.set((n-2)*8,7.3+(n%2),-13+n*2);g.userData.origin=g.position.x;this.scene.add(g);this.clouds.push(g);}
-  }
   batch(source,target){
     source.updateMatrixWorld(true);const byMaterial=new Map();
     source.traverse(obj=>{if(!obj.isMesh||obj.userData.skipBatch)return;let parent=obj.parent;while(parent&&parent!==source){if(parent.userData.animated)return;parent=parent.parent;}const clone=obj.geometry.clone().applyMatrix4(obj.matrixWorld);const geo=clone.index?clone.toNonIndexed():clone;if(geo!==clone)clone.dispose();if(!byMaterial.has(obj.material))byMaterial.set(obj.material,[]);byMaterial.get(obj.material).push(geo);});
@@ -536,7 +533,6 @@ export class CityWorld {
         car.g.position.set(x,landY+.03,z);car.g.rotation.y=Math.atan2(car.to%mapSize-car.from%mapSize,Math.floor(car.to/mapSize)-Math.floor(car.from/mapSize));
       }
       for(const vehicle of this.routeVehicles||[]){vehicle.progress=(vehicle.progress+dt*(vehicle.type==='tram'?.85:.65)*(1-this.analysis.transport.congestion*.004))%vehicle.path.length;this.positionTransit(vehicle);}
-      this.clouds.forEach((cloud,n)=>cloud.position.x=cloud.userData.origin+Math.sin(this.time*.012+n)*1.5);
       if(this.smoke){const dummy=new THREE.Object3D();this.smokePoints.forEach((origin,k)=>{for(let n=0;n<6;n++){const t=(this.time*.3+n/6)%1;dummy.position.copy(origin).add(new THREE.Vector3(t*.5,.1+t*1.6,Math.sin(t*4+k)*.09));dummy.scale.setScalar(.6+t*1.5);dummy.updateMatrix();this.smoke.setMatrixAt(k*6+n,dummy.matrix);}});this.smoke.instanceMatrix.needsUpdate=true;}
     }
     if(animate||this.dirty){this.renderer.render(this.scene,this.camera);this.dirty=false;}

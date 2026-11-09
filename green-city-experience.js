@@ -1,6 +1,7 @@
 /* City workspace: fullscreen, commands, council briefings and budget controls. */
 import { createResidents } from './green-city-residents.js?v=faf073c8df';
 import { createTransport } from './green-city-transport.js?v=a4128191f3';
+import { createMissions } from './green-city-missions.js?v=a2764ec7c8';
 const C=globalThis.GreenCity;
 const paths={
  route:'M5 5h5a4 4 0 0 1 0 8H9a4 4 0 0 0 0 8h10M5 2v6M19 18v5',
@@ -59,6 +60,7 @@ export function createExperience(api){
  rootButtons();
  const residents=createResidents({...api,openFinance,openTransport:()=>transport.open()},glyph);
  const transport=createTransport(api,glyph);
+ const missions=createMissions({...api,openNeighbourhood:residents.openNeighbourhood});
  function rootButtons(){
   shell.querySelectorAll('[data-gc-tool]').forEach(button=>{const labels={inspect:'Inspect',build:'Build',road:'Roads',upgrade:'Upgrade',move:'Move',demolish:'Remove'};button.innerHTML=glyph(button.dataset.gcTool)+'<span>'+labels[button.dataset.gcTool]+'</span>';button.setAttribute('aria-label',labels[button.dataset.gcTool]+' tool');});
   $('undo').innerHTML=glyph('undo');$('redo').innerHTML=glyph('redo');
@@ -124,6 +126,7 @@ export function createExperience(api){
   const actions=[
    ['budget','Taxes, prices & city budget','Economy','finance',openFinance],['residents','Resident happiness & household needs','Residents','city',residents.open],['neighbourhoods','Neighbourhood needs, noise & local services','Residents','city',()=>residents.openNeighbourhood()],['transport','Transport routes, traffic & congestion','Transport','route',transport.open],['council','Council decisions & alerts','Council','bell',openDecision],
    ['fullscreen',shell.classList.contains('gc-expanded')?'Exit fullscreen':'Enter fullscreen','View','expand',()=>setExpanded(!shell.classList.contains('gc-expanded'))],
+   ['local-missions','Neighbourhood missions & rewards','Goals','flag',()=>api.openPanel('goals')],
    ['dashboard','Show city dashboard','Panels','city',()=>api.openPanel('city')],['goals','Mission goals & grants','Panels','flag',()=>api.openPanel('goals')],['help','Open the field guide','Panels','help',()=>api.openPanel('help')],
    ['report','Open the mayor’s report','City','file',api.evaluate],['next','Advance to next month','Time','next',api.step],['play','Play / pause simulation','Time','play',()=> $('play').click()],
    ['undo','Undo last city action','History','undo',api.undo],['redo','Redo city action','History','redo',api.redo],
@@ -148,9 +151,9 @@ export function createExperience(api){
  document.addEventListener('keydown',e=>{if(document.body.dataset.view!=='game')return;if((e.ctrlKey||e.metaKey)&&e.key.toLowerCase()==='k'){e.preventDefault();openCommands();}if(!api.hasOverlay()&&!/INPUT|SELECT|TEXTAREA/.test(e.target.tagName)&&e.key.toLowerCase()==='f'){e.preventDefault();setExpanded(!shell.classList.contains('gc-expanded'));}});
  applyFocus(false);
  return {
-  render(){renderInbox();renderPanels();residents.render();transport.render();if($('finance').open)renderFinance();$('play').innerHTML=glyph($('play').getAttribute('aria-pressed')==='true'?'pause':'play');$('next').innerHTML='<span>Next month</span>'+glyph('next');},
-  openDecision,openFinance,openCommands,openNeighbourhood:residents.openNeighbourhood,setExpanded,
+  render(){renderInbox();renderPanels();residents.render();transport.render();missions.render();if($('finance').open)renderFinance();$('play').innerHTML=glyph($('play').getAttribute('aria-pressed')==='true'?'pause':'play');$('next').innerHTML='<span>Next month</span>'+glyph('next');},
+  notifyMission:missions.notify,openDecision,openFinance,openCommands,openNeighbourhood:residents.openNeighbourhood,setExpanded,
   toast(){clearTimeout(toastTimer);shell.classList.add('gc-show-toast');toastTimer=setTimeout(()=>shell.classList.remove('gc-show-toast'),6500);},
-  closeOverlays(){residents.close();transport.close();for(const name of ['finance','decision','commands'])if($(name).open)$(name).close();}
+  closeOverlays(){missions.close();residents.close();transport.close();for(const name of ['finance','decision','commands'])if($(name).open)$(name).close();}
  };
 }

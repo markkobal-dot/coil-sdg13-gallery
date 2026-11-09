@@ -1,4 +1,4 @@
-import { createExperience, glyph } from './green-city-experience.js?v=aed8752ad8';
+import { createExperience, glyph } from './green-city-experience.js?v=297fdeebf0';
 let experience=null;
 /* New Terra: city tools, simulation clock, local saves and responsive game UI. */
 const C=globalThis.GreenCity, A=globalThis.GreenCityArt;
@@ -119,8 +119,9 @@ function render(){
 }
 function commit(result){
   if(result.error){announce(result.error);return false;}
-  const awarded=C.grant(result.state);undo.push(state);undo=undo.slice(-28);redo=[];state=awarded.state;save();render();
+  const awarded=C.grant(result.state),mission=C.awardNeighbourhoodMission(awarded.state);undo.push(state);undo=undo.slice(-28);redo=[];state=mission.state;save();render();
   announce(result.notice+(awarded.rewards.length?' Development grant +'+format(awarded.rewards.reduce((sum,g)=>sum+g.reward,0))+' EP!':''));
+  if(mission.reward){announce(mission.reward.name+' completed · +'+mission.reward.reward+' EP!');experience?.notifyMission(mission.reward);}
   return true;
 }
 function choose(type){rotation=0;selected=type;category=C.upgrades[type].category;mode='build';source=null;lineStart=null;renderCatalogue();renderSelection();if(innerWidth<=1000)setPanel('none');$('onboarding').hidden=true;announce(meta().name+' selected. '+meta().description);}
@@ -143,7 +144,7 @@ function selectTile(i,apply=true){
 function undoAction(){if(!undo.length)return;redo.push(state);state=undo.pop();source=null;lineStart=null;save();render();announce('Last city action undone. Budget and city state restored.');}
 function redoAction(){if(!redo.length)return;undo.push(state);state=redo.pop();source=null;lineStart=null;save();render();announce('City action restored.');}
 function step(){if(state.event&&!state.event.choice){playing=false;syncClock();experience?.openDecision();return;}source=null;lineStart=null;if(commit(C.advance(state))&&state.event&&!state.event.choice){playing=false;syncClock();experience?.openDecision();}}
-function hasOverlay(){return ['results','confirm','finance','decision','commands','residents','transport'].some(name=>$(name)?.open);}
+function hasOverlay(){return ['results','confirm','finance','decision','commands','residents','transport','mission-completion'].some(name=>$(name)?.open);}
 function visibleGame(){return document.body.dataset.view==='game'&&!document.hidden;}
 function renderClock(){const running=playing&&visibleGame()&&!hasOverlay();$('play').innerHTML=glyph(playing?'pause':'play');$('play').setAttribute('aria-pressed',String(playing));$('play').setAttribute('aria-label',playing?'Pause the monthly simulation':'Run the monthly simulation');$('speed').textContent=speed+'×';$('city-status').innerHTML='<i></i> CITY SIMULATION '+(running?'RUNNING':'PAUSED');$('city-status').classList.toggle('gc-running',running);}
 function syncClock(){clearInterval(timer);timer=null;if(playing&&visibleGame()&&!hasOverlay())timer=setInterval(step,12000/speed);renderClock();}
@@ -167,7 +168,7 @@ function renderLifeStatus({walkers,services,enabled}){
 }
 async function initWorld(){
   if(world){world.setActive(visibleGame());return;}if(worldPromise||!visibleGame()||fallback)return;
-  worldPromise=import('./green-city-world.js?v=f4026c9da2').then(({CityWorld})=>{
+  worldPromise=import('./green-city-world.js?v=a3744ea301').then(({CityWorld})=>{
     world=new CityWorld($('board'),{onSelect:i=>selectTile(i),onNeighbourhood:i=>experience?.openNeighbourhood(i),onHover:i=>{renderPlacement(i);if(i<0)return;const cell=state.cells[i];$('hover').textContent=C.label(i)+' / '+(cell?C.types[cell.type].name:C.terrain[i]==='water'?'Protected waterfront':'Open land');},onError:announce,onLife:renderLifeStatus});
     world.setState(state,analysis);world.setTool(mode,selected,focus,source,lineStart,rotation);world.setActive(visibleGame());$('loading').hidden=true;
   }).catch(()=>{fallback=true;$('loading').hidden=true;$('board').hidden=true;$('fallback').hidden=false;renderFallback();announce('3D graphics are unavailable in this browser. The planning grid is ready; all city tools and simulation features still work.');});

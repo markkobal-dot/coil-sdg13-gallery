@@ -1,5 +1,5 @@
 import * as THREE from './assets/vendor/three/three.module.js';
-import './green-city-life.js?v=city-life-1';
+import './green-city-life.js?v=f60e6fe754';
 const L=globalThis.GreenCityLife;
 
 /* Fixed-size instancing keeps the number of draw calls independent of population. */
@@ -70,6 +70,6 @@ export class CityLife {
     }
     for(const part of this.parts)part.instanceMatrix.needsUpdate=true;
   }
-  toggle(){this.enabled=!this.enabled;this.group.visible=this.enabled;return this.enabled;}
+  toggle(){this.enabled=!this.enabled;this.group.visible=this.enabled;if(this.enabled)this.update(this.time||0,true);return this.enabled;}
   get counts(){return {walkers:this.people.length,services:this.vehicles.length,enabled:this.enabled};}
 }
