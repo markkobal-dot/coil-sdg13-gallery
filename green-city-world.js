@@ -243,6 +243,7 @@ export class CityWorld {
       if(horizontal){this.box(g,'#bdc4b5',0,.025,-.46,1,.025,.07);this.box(g,'#bdc4b5',0,.025,.46,1,.025,.07);for(const x of[-.31,0,.31])this.box(g,'#d7d6bf',x,.025,0,.13,.008,.02);}
       if(vertical){this.box(g,'#bdc4b5',-.46,.025,0,.07,.025,1);this.box(g,'#bdc4b5',.46,.025,0,.07,.025,1);for(const z of[-.31,0,.31])this.box(g,'#d7d6bf',0,.026,z,.02,.008,.13);}
       if(arms.length>2)for(let j=0;j<4;j++)this.box(g,'#e3e1cc',(j-1.5)*.095,.03,.29,.055,.01,.18);
+      const roadPartCount=g.children.length;
       if(type==='bike'){
         this.box(g,'#619a79',0,.033,.32,1,.015,.17);for(const x of[-.3,.3])this.box(g,'#d9e7cc',x,.05,.32,.025,.008,.13);
         for(const x of[-.35,.35])this.cylinder(g,'#dfdec8',x,.09,.2,.013,.1);
@@ -275,6 +276,7 @@ export class CityWorld {
         }
       }
       if(i%8===0){this.cylinder(g,'#6b8174',-.42,.32,-.42,.013,.59);this.box(g,'#e9d6a0',-.42,.63,-.4,.13,.035,.07,{emissive:'#ffdd99',emissiveIntensity:.2});}
+      const fixtures=new THREE.Group();fixtures.name='Road fixtures';for(const child of g.children.slice(roadPartCount))fixtures.add(child);fixtures.rotation.y=-(cell.rotation||0)*Math.PI/2;g.add(fixtures);
       return g;
     }
     if(C.greenTypes.has(type)){
@@ -375,7 +377,7 @@ export class CityWorld {
     this.state=state;this.analysis=analysis;this.clear(this.staticGroup);this.dynamicGroup.clear();this.rotors=[];this.animatedWindCount=0;this.smokePoints=[];this.pickTargets=[];
     const root=new THREE.Group();
     state.cells.forEach((cell,i)=>{
-      if(!cell||cell.anchor!==undefined)return;const [w,d]=C.dimensions(cell.type,cell.rotation),model=this.model(cell,i,state.cells);model.rotation.y=-(cell.rotation||0)*Math.PI/2;model.position.set(i%mapSize-center+(w-1)/2,landY,Math.floor(i/mapSize)-center+(d-1)/2);root.add(model);
+      if(!cell||cell.anchor!==undefined)return;const [w,d]=C.dimensions(cell.type,cell.rotation),model=this.model(cell,i,state.cells);model.rotation.y=C.roadTypes.has(cell.type)?0:-(cell.rotation||0)*Math.PI/2;model.position.set(i%mapSize-center+(w-1)/2,landY,Math.floor(i/mapSize)-center+(d-1)/2);root.add(model);
       // Separate pick volumes preserve a building's tile after static geometry is batched.
       // Clicking a tall roof must select that building, rather than the ground behind it.
       const h=cell.type==='apartment'?(1.8+hash(i)*.55)*(1+(cell.level-1)*.35)+.3:cell.type==='office'?1.35*(1+(cell.level-1)*.35)+.5:cell.type==='geothermal'?1.3*(1+(cell.level-1)*.35)+.3:cell.type==='wind'?3.1*(1+(cell.level-1)*.18):cell.type==='cargoport'?1.7:cell.type==='stadium'?1.4:cell.type==='airport'?1.35:cell.type==='metro'?.95:C.roadTypes.has(cell.type)?.4:C.greenTypes.has(cell.type)?1.15:cell.type==='coal'?1.9:cell.type==='factory'?1.8:1.2*(1+(cell.level-1)*.35);
@@ -455,8 +457,8 @@ export class CityWorld {
     if(this.ghost){this.scene.remove(this.ghost);this.ghost.traverse(m=>{if(m.isMesh&&m.material.userData.ghost)m.material.dispose();});this.ghost=null;}
     if((this.mode==='build'||moving)&&allowed&&previewType!=='solar'&&previewType!=='roof'){
       const smokeBackup=this.smokePoints;
-      this.smokePoints=[];this.ghost=this.model(moving?this.state.cells[this.source]:{type:previewType,level:1,roof:null,paid:0},i,this.state.cells);this.smokePoints=smokeBackup;
-      this.ghost.rotation.y=-rotation*Math.PI/2;this.ghost.position.set(i%mapSize-center+(w-1)/2,landY,Math.floor(i/mapSize)-center+(h-1)/2);
+      this.smokePoints=[];this.ghost=this.model(moving?this.state.cells[this.source]:{type:previewType,level:1,roof:null,paid:0,rotation},i,this.state.cells);this.smokePoints=smokeBackup;
+      this.ghost.rotation.y=C.roadTypes.has(previewType)?0:-rotation*Math.PI/2;this.ghost.position.set(i%mapSize-center+(w-1)/2,landY,Math.floor(i/mapSize)-center+(h-1)/2);
       this.ghost.traverse(obj=>{if(obj.isMesh){obj.material=obj.material.clone();obj.material.transparent=true;obj.material.opacity=.42;obj.material.depthWrite=false;obj.material.userData.ghost=true;}});this.scene.add(this.ghost);
     }
     if(this.mode==='road'&&this.lineStart!==null){const points=C.line(this.lineStart,i).map(j=>new THREE.Vector3(j%mapSize-center,.22,Math.floor(j/mapSize)-center));this.route.geometry.dispose();this.route.geometry=new THREE.BufferGeometry().setFromPoints(points);this.route.visible=true;}else this.route.visible=false;

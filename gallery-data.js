@@ -10,7 +10,7 @@ const galleryPhotos = [ {
   author: "Photo: Lovro Trošt"
 },
 {
-  src: "assets/images/dry-forest-lovro-2026-card.webp",
+  src: "assets/images/dry-forest-lovro-2026.webp",
   fullSrc: "assets/images/dry-forest-lovro-2026.webp",
   objectPosition: "center 100%",
   title: "Wildfire risk",
@@ -21,7 +21,7 @@ const galleryPhotos = [ {
   author: "Photo: Lovro Trošt"
 },
 {
-  src: "assets/images/triglav-hike-lovro-card.webp",
+  src: "assets/images/triglav-hike-lovro.webp",
   fullSrc: "assets/images/triglav-hike-lovro.webp",
   title: "Melting glaciers",
   description: "A summer 2025 photo showing how little ice remained at the Triglav Glacier.",
@@ -31,7 +31,7 @@ const galleryPhotos = [ {
   author: "Photo: Lovro Trošt"
 },
 {
-  src: "assets/images/optimized/drought-field.webp",
+  src: "assets/images/drought-and-water.png",
   fullSrc: "assets/images/drought-and-water.png",
   title: "Drought and water",
   description: "A dry cornfield shows how a lack of water can affect crops. Hot weather can increase water loss from soil and plants.",
@@ -41,7 +41,7 @@ const galleryPhotos = [ {
   author: "Photo: Mark Kobal"
 },
 {
-  src: "assets/images/floods-moste-komenda-2023-card.webp",
+  src: "assets/images/floods-moste-komenda-2023.webp",
   fullSrc: "assets/images/floods-moste-komenda-2023.webp",
   title: "Extreme rainfall and floods",
   description: "Floodwater covers a street in Moste pri Komendi during the August 2023 floods in Slovenia.",
@@ -69,7 +69,7 @@ const galleryPhotos = [ {
   author: "Photo: Mark Kobal"
 },
 {
-  src: "assets/images/wind-turbines-lovro-card.webp",
+  src: "assets/images/wind-turbines-lovro.webp",
   fullSrc: "assets/images/wind-turbines-lovro.webp",
   objectPosition: "center 70%",
   title: "Renewable energy",
@@ -80,7 +80,7 @@ const galleryPhotos = [ {
   author: "Photo: Lovro Trošt"
 },
 {
-  src: "assets/images/protecting-forests-card.webp",
+  src: "assets/images/protecting-forests.webp",
   fullSrc: "assets/images/protecting-forests.webp",
   title: "Protecting forests",
   description: "My photograph shows a forested landscape. Its trees store carbon, provide habitats and help protect soil and water.",
@@ -90,7 +90,7 @@ const galleryPhotos = [ {
   author: "Photo: Mark Kobal"
 },
 {
-  src: "assets/images/electric-buses-lovro-card.webp",
+  src: "assets/images/electric-buses-lovro.webp",
   fullSrc: "assets/images/electric-buses-lovro.webp",
   title: "Lower-emission travel",
   description: "Two electric buses on a tree-lined road, an alternative to diesel public transport.",
@@ -100,7 +100,7 @@ const galleryPhotos = [ {
   author: "Photo provided by Lovro Trošt"
 },
 {
-  src: "assets/images/optimized/neighbourhood-shade.webp",
+  src: "assets/images/shade-in-our-neighbourhood.jpg",
   fullSrc: "assets/images/shade-in-our-neighbourhood.jpg?v=20261030-tree-shade",
   title: "Shade in our neighbourhood",
   description: "A broad tree canopy shades a picnic table and grassy neighbourhood space. Trees can make shared outdoor areas more comfortable on hot days.",
@@ -110,7 +110,7 @@ const galleryPhotos = [ {
   author: "Photo: Mark Kobal"
 },
 {
-  src: "assets/images/optimized/solar-roof.webp",
+  src: "assets/images/saving-energy-at-home.png",
   fullSrc: "assets/images/saving-energy-at-home.png",
   title: "Solar energy at home",
   description: "My photograph shows solar panels on a house roof. They generate electricity from sunlight, one way to reduce reliance on fossil-fuel electricity.",

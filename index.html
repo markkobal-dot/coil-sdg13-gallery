@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="description" content="We explore SDG 13 through climate stories, student perspectives and interactive activities.">
+    <meta name="description" content="A photography and climate project by Mark Kobal and Lovro Trošt at ERŠ Nova Gorica. Twelve photographs, climate records and a city-building game.">
     <meta name="theme-color" content="#f7f6f0">
     <meta property="og:title" content="COIL SDG 13 Gallery | Climate Action">
     <meta property="og:description" content="Explore our student-made gallery about climate action.">
@@ -16,7 +16,7 @@
     <meta property="og:image" content="https://markkobal-dot.github.io/coil-sdg13-gallery/assets/brand/social-preview.jpg">
     <meta property="og:image:width" content="1200">
     <meta property="og:image:height" content="630">
-    <meta property="og:image:alt" content="This is home. Let’s keep it that way. COIL SDG 13 Gallery by Mark Kobal and Lovro Trošt, with an Alpine landscape photograph.">
+    <meta property="og:image:alt" content="COIL SDG 13 Gallery by Mark Kobal and Lovro Trošt, with an Alpine landscape photograph.">
     <meta name="twitter:card" content="summary_large_image">
     <meta name="twitter:title" content="This is home. — COIL SDG 13 Gallery">
     <meta name="twitter:description" content="Twelve photographs, one changing climate. Explore our Slovenian climate journal and build a greener city.">
@@ -63,7 +63,8 @@
     <link rel="stylesheet" href="green-city-neighbourhoods.css?v=9fae421b49">
     <link rel="stylesheet" href="green-city-missions.css?v=86f350ff2d">
     <link rel="stylesheet" href="home-experience.css?v=63710de0a0">
-    <link rel="stylesheet" href="site-polish.css?v=b2b42f92c7">
+    <link rel="stylesheet" href="site-polish.css?v=a52a281be9">
+    <link rel="stylesheet" href="refined-ui.css?v=13d9a6ea41">
   </head>
 
   <body>
@@ -92,44 +93,62 @@
       <a id="mobile-home" href="#home">← Overview</a>
       <span class="view-bar-divider" aria-hidden="true">/</span>
       <span id="mobile-view-title"></span>
-      <span class="view-bar-note">A LOCAL PERSPECTIVE ON A GLOBAL CHALLENGE</span>
+      <span class="view-bar-note">COIL · ERŠ Nova Gorica</span>
     </div>
 
     <main id="main" tabindex="-1">
       <section class="hero" id="home">
         <div class="home-opening" data-scene="home">
           <div class="home-backdrop" aria-hidden="true">
-            <img class="home-scene is-active" data-home-image="home" src="assets/images/optimized/home-alpine.webp" srcset="assets/images/optimized/home-alpine-720.webp 720w, assets/images/optimized/home-alpine.webp 1440w" sizes="100vw" alt="" width="1569" height="1045" fetchpriority="high" decoding="async">
+            <img class="home-scene is-active" data-home-image="home" src="assets/images/triglav-hike-lovro.webp" alt="" width="1569" height="1045" fetchpriority="high" decoding="async">
             <img class="home-scene" data-home-image="signs" data-home-src="assets/images/optimized/home-forest.webp" data-home-srcset="assets/images/optimized/home-forest-480.webp 480w, assets/images/optimized/home-forest.webp 720w" alt="" width="720" height="960" decoding="async">
-            <img class="home-scene" data-home-image="choices" data-home-src="assets/images/optimized/solar-roof.webp" data-home-srcset="assets/images/optimized/solar-roof-720.webp 720w, assets/images/optimized/solar-roof.webp 930w" alt="" width="930" height="619" decoding="async">
+            <img class="home-scene" data-home-image="choices" data-home-src="assets/images/saving-energy-at-home.png" data-home-srcset="assets/images/saving-energy-at-home.png 930w" alt="" width="930" height="619" decoding="async">
           </div>
-          <div class="home-opening-top"><span><i aria-hidden="true"></i> A CLIMATE JOURNAL / SLOVENIA</span><span>46° N · OUR LOCAL PERSPECTIVE</span></div>
+          <div class="home-opening-top"><span>Photography &amp; climate change</span><span>ERŠ Nova Gorica · 2026</span></div>
           <div class="home-opening-content">
-            <div class="home-statement"><h1>This is<br><span>home<span class="home-full-stop">.</span></span></h1><p>Let’s keep it that way.</p></div>
-            <div class="home-opening-note"><span class="home-note-index" aria-hidden="true">01 / LOOK AROUND</span><h2 id="home-scene-heading">The places we love.<br>The future we share.</h2><p id="home-scene-copy">We are Mark and Lovro. Twelve photographs, one changing climate, and a story that starts where we live.</p><div class="home-opening-actions"><a class="btn" href="#gallery">Explore our gallery <span aria-hidden="true">↗</span></a><a href="#game">Build a greener city <span aria-hidden="true">↗</span></a></div></div>
+            <div class="home-statement"><h1>This is<br><span>home<span class="home-full-stop">.</span></span></h1></div>
+            <div class="home-opening-note"><h2 id="home-scene-heading">Triglav Glacier, summer 2025.</h2><p id="home-scene-copy">Lovro photographed this landscape in summer 2025. The glacier measurements in our evidence section give the photograph some context.</p><div class="home-opening-actions"><a class="btn" href="#gallery">View the photographs <span aria-hidden="true">→</span></a><a href="#game">Play the city game</a></div></div>
           </div>
           <div class="home-opening-bottom">
             <div class="home-scenes" role="group" aria-label="Explore our photographic perspectives" hidden>
-              <button type="button" data-home-scene="home" aria-pressed="true"><span>01</span> What we love <i aria-hidden="true">↗</i></button>
-              <button type="button" data-home-scene="signs" aria-pressed="false"><span>02</span> What we notice <i aria-hidden="true">↗</i></button>
-              <button type="button" data-home-scene="choices" aria-pressed="false"><span>03</span> What we can change <i aria-hidden="true">↗</i></button>
+              <button type="button" data-home-scene="home" aria-pressed="true">Triglav</button>
+              <button type="button" data-home-scene="signs" aria-pressed="false">Forest floor</button>
+              <button type="button" data-home-scene="choices" aria-pressed="false">Solar panels</button>
             </div>
-            <p class="home-photo-caption" id="home-photo-caption">Alpine landscape<br><span>Photograph by Lovro Trošt</span></p>
+            <p class="home-photo-caption" id="home-photo-caption">Triglav Glacier · Summer 2025<br><span>Photograph by Lovro Trošt</span></p>
           </div>
           <p class="sr-only" id="home-scene-announcement" role="status" aria-live="polite"></p>
         </div>
-        <div class="home-temperature-note"><a href="#problem"><strong>~2.7°C</strong><span>Slovenia is warming.<small>Rise in annual mean temperature since 1970.</small></span><span class="home-temperature-link">Follow the evidence ↗</span></a><a class="home-temperature-source" href="https://meteo.arso.gov.si/met/sl/climate/current/climate_year/" target="_blank" rel="noopener noreferrer">Source: ARSO ↗</a></div>
         <div class="hero-index">
-          <span>AN EXPLORATION OF SDG 13</span>
-          <span>RISING TEMPERATURES</span>
-          <span>BY MARK KOBAL &amp; LOVRO TROŠT</span>
-          <span>ERŠ NOVA GORICA / 2026</span>
+          <strong>Mark Kobal &amp; Lovro Trošt</strong>
+          <p>We are students at ERŠ Nova Gorica. For our SDG 13 project, we each contributed six photographs about climate change and possible responses.</p>
+          <a href="#team">About the project →</a>
+        </div>
+        <div class="home-collection">
+          <div class="collection-heading">
+            <div><h2>From our collection</h2></div>
+            <a class="text-link" href="#gallery">All 12 photographs <span aria-hidden="true">→</span></a>
+          </div>
+          <div class="home-photo-grid">
+            <button class="home-photo" type="button" data-open-photo="1">
+              <span class="home-photo-image"><img src="assets/images/dry-forest-lovro-2026.webp" alt="Dry pine needles covering the forest floor." width="720" height="960" loading="lazy" decoding="async" style="object-position:center bottom"><span class="image-open" aria-hidden="true">↗</span></span>
+              <strong>A dry forest floor</strong><span class="photo-credit">Lovro Trošt · Dry pine needles</span>
+            </button>
+            <button class="home-photo" type="button" data-open-photo="0">
+              <span class="home-photo-image"><img src="assets/images/thermometer-33c-lovro-2024.webp" alt="An outdoor thermometer showing a warm early September day." width="475" height="645" loading="lazy" decoding="async"><span class="image-open" aria-hidden="true">↗</span></span>
+              <strong>33°C in September</strong><span class="photo-credit">Lovro Trošt · A local thermometer reading</span>
+            </button>
+            <button class="home-photo" type="button" data-open-photo="11">
+              <span class="home-photo-image"><img src="assets/images/saving-energy-at-home.png" alt="Solar panels on a rooftop beneath a blue sky." width="930" height="619" loading="lazy" decoding="async" style="object-position:70% center"><span class="image-open" aria-hidden="true">↗</span></span>
+              <strong>Solar panels at home</strong><span class="photo-credit">Mark Kobal · Rooftop solar panels</span>
+            </button>
+          </div>
         </div>
         <div class="hero-evidence">
           <div class="evidence-intro">
-            <span class="kicker">01 / THE BIGGER PICTURE</span>
-            <h2>The world is warming.<br><span class="accent">Europe is warming faster.</span></h2>
-            <p>Our local observations belong to a much bigger story. Explore the European temperature record, then see what is changing closer to home.</p>
+            <span class="kicker">The climate records</span>
+            <h2>What the measurements show.</h2>
+            <p>A photograph records one place and one moment. To understand the longer-term change, we also looked at temperature records for Europe and Slovenia.</p>
             <a class="text-link" href="#slovenia-data">Look closer at Slovenia ↗</a>
           </div>
         <figure class="hero-chart" aria-labelledby="hero-chart-title">
@@ -155,35 +174,11 @@
         </figure>
         </div>
 
-        <div class="home-collection">
-          <div class="collection-heading">
-            <div><span class="kicker">02 / SEEN THROUGH OUR LENS</span><h2>Small details.<br><span class="accent">A bigger story.</span></h2></div>
-            <a class="text-link" href="#gallery">Explore the full collection <span aria-hidden="true">↗</span></a>
-          </div>
-          <div class="home-photo-grid">
-            <button class="home-photo" type="button" data-open-photo="1">
-              <span class="home-photo-image"><img src="assets/images/dry-forest-lovro-2026-card.webp" alt="Dry pine needles covering the forest floor." width="720" height="960" loading="lazy" decoding="async" style="object-position:center bottom"><span class="image-open" aria-hidden="true">↗</span></span>
-              <span class="photo-meta">01 / THE CHALLENGE</span><strong>When the forest floor dries.</strong><span class="photo-credit">Photo: Lovro Trošt</span>
-            </button>
-            <button class="home-photo" type="button" data-open-photo="0">
-              <span class="home-photo-image"><img src="assets/images/thermometer-33c-lovro-2024.webp" alt="An outdoor thermometer showing a warm early September day." width="475" height="645" loading="lazy" decoding="async"><span class="image-open" aria-hidden="true">↗</span></span>
-              <span class="photo-meta">02 / A LOCAL OBSERVATION</span><strong>Heat, close to home.</strong><span class="photo-credit">Photo: Lovro Trošt</span>
-            </button>
-            <button class="home-photo" type="button" data-open-photo="11">
-              <span class="home-photo-image"><img src="assets/images/optimized/solar-roof.webp" alt="Solar panels on a rooftop beneath a blue sky." width="930" height="619" loading="lazy" decoding="async" style="object-position:70% center"><span class="image-open" aria-hidden="true">↗</span></span>
-              <span class="photo-meta">03 / A WAY FORWARD</span><strong>Energy from the sun.</strong><span class="photo-credit">Photo: Mark Kobal</span>
-            </button>
-          </div>
-        </div>
-        <div class="home-perspective">
-          <span class="kicker">GLOBAL GOAL. LOCAL PERSPECTIVE.</span>
-          <p>Climate change can feel distant.<br><em>We started by looking closer.</em></p>
-          <span>Mark Kobal &amp; Lovro Trošt · ERŠ Nova Gorica</span>
-        </div>
+        <div class="home-temperature-note"><a href="#problem"><strong>~2.7°C</strong><span>Slovenia is warming.<small>Rise in annual mean temperature since 1970.</small></span><span class="home-temperature-link">Follow the evidence ↗</span></a><a class="home-temperature-source" href="https://meteo.arso.gov.si/met/sl/climate/current/climate_year/" target="_blank" rel="noopener noreferrer">Source: ARSO ↗</a></div>
         <div class="discovery-grid" aria-label="Explore the project">
-          <a href="#problem"><span class="discovery-index">01 / UNDERSTAND</span><h3>Behind the numbers.</h3><p>Follow the evidence from a warming Slovenia to changing Alpine landscapes.</p><span class="discovery-arrow" aria-hidden="true">↗</span></a>
-          <a href="#climate-story"><span class="discovery-index">02 / FOLLOW</span><h3>A neighbourhood in transition.</h3><p>Explore the causes of warming and the choices that shape our surroundings.</p><span class="discovery-arrow" aria-hidden="true">↗</span></a>
-          <a href="#solutions"><span class="discovery-index">03 / PARTICIPATE</span><h3>What would you change?</h3><p>Try our quiz, share your perspective or build your own green city.</p><span class="discovery-arrow" aria-hidden="true">↗</span></a>
+          <a href="#problem"><h3>Climate records</h3><p>Temperature data, the Triglav Glacier and flood risk.</p><span class="discovery-arrow" aria-hidden="true">→</span></a>
+          <a href="#climate-story"><h3>How warming happens</h3><p>An illustrated neighbourhood, from emissions to heat adaptation.</p><span class="discovery-arrow" aria-hidden="true">→</span></a>
+          <a href="#solutions"><h3>Try it yourself</h3><p>Our quiz, a survey and the city-building game.</p><span class="discovery-arrow" aria-hidden="true">→</span></a>
         </div>
       </section>
 
@@ -930,7 +925,7 @@
             <div class="gc-map-panel">
               <div class="gc-map-toolbar"><div class="gc-tool-switcher" role="group" aria-label="City tools"><button type="button" data-gc-tool="inspect" aria-pressed="true" title="Inspect (I)">↖ <span>Inspect</span></button><button type="button" data-gc-tool="build" aria-pressed="false" title="Build (B)">＋ <span>Build</span></button><button type="button" data-gc-tool="road" aria-pressed="false" title="Road path (R)">⌁ <span>Road path</span></button><button type="button" data-gc-tool="upgrade" aria-pressed="false" title="Upgrade (U)">↥ <span>Upgrade</span></button><button type="button" data-gc-tool="move" aria-pressed="false" title="Move (M)">✥ <span>Move</span></button><button type="button" data-gc-tool="demolish" aria-pressed="false" title="Demolish (X)">⌫ <span>Remove</span></button></div><div class="gc-history-buttons"><button id="gc-undo" type="button" aria-label="Undo last city action" title="Undo (Ctrl+Z)" disabled>↶</button><button id="gc-redo" type="button" aria-label="Redo last city action" title="Redo (Ctrl+Y)" disabled>↷</button></div></div>
               <div class="gc-world-wrap" id="gc-world-wrap">
-                <canvas id="gc-board" tabindex="0" role="application" aria-label="Interactive 3D city. Drag to pan, scroll or pinch to zoom, right-drag to orbit. Arrow keys select tiles, Enter applies the selected tool. Q and E rotate large buildings. Escape cancels a route or move."></canvas>
+                <canvas id="gc-board" tabindex="0" role="application" aria-label="Interactive 3D city. Drag to pan, scroll or pinch to zoom, right-drag to orbit. Arrow keys select tiles, Enter applies the selected tool. Q and E rotate buildings and road improvements. Escape cancels a route or move."></canvas>
                 <div class="gc-world-loading" id="gc-loading"><span></span><strong>Preparing your island…</strong><small>Local 3D assets · no account needed</small></div>
                 <div id="gc-fallback" class="gc-fallback" hidden></div>
                 <div class="gc-world-top"><span class="gc-location-tag"><i></i> NEW TERRA <small>28 × 28</small></span><label class="gc-overlay-control"><span class="sr-only">Map overlay</span><select id="gc-overlay"><option value="city">City view</option><option value="heat">Heat exposure</option><option value="power">Clean energy</option><option value="transit">Transit coverage</option><option value="water">Climate resilience</option><option value="noise">Neighbourhood noise</option><option value="traffic">Road congestion</option><option value="neighbourhood">Resident needs</option></select></label></div>
@@ -947,7 +942,7 @@
             <aside class="gc-dashboard" aria-label="City dashboard"><div class="gc-dashboard-tabs" role="group" aria-label="Dashboard panel"><button type="button" data-gc-tab="city" aria-pressed="true">City</button><button type="button" data-gc-tab="goals" aria-pressed="false">Goals</button><button type="button" data-gc-tab="help" aria-pressed="false">Guide</button><button type="button" class="gc-close-panel" data-gc-panel="none" aria-label="Close city dashboard">×</button></div>
               <div id="gc-tab-city" class="gc-tab-content"><div class="gc-overall"><div><span class="gc-overline">SUSTAINABILITY</span><strong id="gc-overall">10<small>/100</small></strong></div><span id="gc-rating">A new beginning</span><svg id="gc-sparkline" viewBox="0 0 220 35" role="img" aria-label="Sustainability history"></svg></div><div id="gc-metrics" class="gc-metrics"></div><div class="gc-live-stats"><div><span>Resident wellbeing</span><strong id="gc-wellbeing">45/100</strong></div><div><span>Local employment</span><strong id="gc-employment">100%</strong></div><div><span>Clean power / demand</span><strong id="gc-power">0 / 49</strong></div><div><span>Monthly income</span><strong id="gc-income">252 EP</strong></div><div><span>Monthly costs</span><strong id="gc-expenses">90 EP</strong></div></div><div id="gc-inspector" class="gc-inspector"></div><div class="gc-council" id="gc-event"></div><details class="gc-policies"><summary>City policies</summary><label>Local tax rate<select id="gc-tax"><option value="low">Low · happier residents</option><option value="balanced">Balanced</option><option value="high">High · slower growth</option></select></label><label><input id="gc-free-transit" type="checkbox"> Fare-free public transport <span>45 EP / month</span></label><label><input id="gc-clean-industry" type="checkbox"> Cleaner industry standards <span>35 EP / month</span></label></details><button id="gc-evaluate" class="gc-evaluate" type="button">Mayor’s report ↗</button></div>
               <div id="gc-tab-goals" class="gc-tab-content" hidden><span class="gc-overline">LONG-TERM CITY CHALLENGE</span><h3 id="gc-mission-name">Green Revolution</h3><p id="gc-mission-detail"></p><div id="gc-mission-progress"></div><strong id="gc-mission-status"></strong><h4 class="gc-subheading">Development grants</h4><p class="gc-small-copy">One-time rewards. Earn them through thoughtful growth.</p><div id="gc-grants"></div><h4 class="gc-subheading">City journal</h4><ol id="gc-journal"></ol></div>
-              <div id="gc-tab-help" class="gc-tab-content" hidden><span class="gc-overline">THE MAYOR’S FIELD GUIDE</span><h3>Plan. Build. Adapt.</h3><ol class="gc-guide"><li><strong>Explore first.</strong> Drag the island to pan. Scroll or pinch to zoom. Right-drag or use the rotation buttons to orbit. The mini-map takes you across the island.</li><li><strong>Build with purpose.</strong> Choose from Nature, Energy, Travel and Community. Preview a building, then click a plot. Solar and green roofs go on existing buildings; transport upgrades go on plain roads. Airports need a clear 3 × 2 footprint. Harbours and marinas need 2 × 2 coastal land with road access.</li><li><strong>Connect your city.</strong> Homes and services need roads linked to the regional gateway at R11. The road path tool builds an entire route in one action. A disconnected road does not provide transit service.</li><li><strong>Watch the city come alive.</strong> Residents walk along connected streets to parks, shops, schools and transport stops. Care, fire, recycling and water-service vehicles make routine rounds from buildings you have placed. Traffic slows their journeys. These animations illustrate city activity; they do not add service coverage or simulate individual emergencies. Turn them off under City settings → City life. Reduced-motion preferences keep them still.</li><li><strong>Improve one neighbourhood.</strong> Open Goals to start a local mission for shade, public transport or healthcare. Choose an underserved home, follow its live progress and earn a one-time Eco Points reward. The healthcare mission also needs a balanced monthly budget. Undo and Redo include mission progress and rewards.</li><li><strong>Grow month by month.</strong> The city starts paused. Next month collects income, pays upkeep and moves residents into connected housing. Jobs and resident happiness affect growth. Click the population counter or the Resident happiness card to see household needs and plan improvements. Play advances time automatically; 3× speeds it up.</li><li><strong>Adapt to the climate.</strong> Check the heat, energy and transit overlays. Place nature near homes, protect the waterfront and respond to council alerts. Renewable generation reduces imported-power costs.</li><li><strong>Refine your plan.</strong> Upgrade buildings to level 3, move them, or remove them for 50% salvage. Undo and Redo also cover roads, policies and monthly changes. Press F for fullscreen and Ctrl/Cmd K to search every command. Open the treasury to set taxes, fares, utility prices and service funding. Council briefings pause time until you choose a response.</li></ol><p class="gc-guide-note">This is an educational simulation. Eco Points, climate scores, power units, population and financial rules are simplified game mechanics, not measured emissions, real prices or climate predictions. City saves stay in this browser; exported files contain only your game state. The earlier 6 × 6 city save is kept separately.</p><div class="gc-shortcuts"><span>I / Inspect</span><span>B / Build</span><span>R / Road path</span><span>U / Upgrade</span><span>M / Move</span><span>X / Remove</span><span>Ctrl Z / Undo</span><span>Ctrl Y / Redo</span><span>Arrows / Select tile</span><span>Enter / Apply tool</span><span>Esc / Cancel</span></div></div>
+              <div id="gc-tab-help" class="gc-tab-content" hidden><span class="gc-overline">THE MAYOR’S FIELD GUIDE</span><h3>Plan. Build. Adapt.</h3><ol class="gc-guide"><li><strong>Explore first.</strong> Drag the island to pan. Scroll or pinch to zoom. Right-drag or use the rotation buttons to orbit. The mini-map takes you across the island.</li><li><strong>Build with purpose.</strong> Choose from Nature, Energy, Travel and Community. Preview a building, then click a plot. Solar and green roofs go on existing buildings; transport upgrades go on plain roads. Airports need a clear 3 × 2 footprint. Harbours and marinas need 2 × 2 coastal land with road access.</li><li><strong>Connect your city.</strong> Homes and services need roads linked to the regional gateway at R11. The road path tool builds an entire route in one action. A disconnected road does not provide transit service.</li><li><strong>Watch the city come alive.</strong> Residents walk along connected streets to parks, shops, schools and transport stops. Care, fire, recycling and water-service vehicles make routine rounds from buildings you have placed. Traffic slows their journeys. These animations illustrate city activity; they do not add service coverage or simulate individual emergencies. Turn them off under City settings → City life. Reduced-motion preferences keep them still.</li><li><strong>Improve one neighbourhood.</strong> Open Goals to start a local mission for shade, public transport or healthcare. Choose an underserved home, follow its live progress and earn a one-time Eco Points reward. The healthcare mission also needs a balanced monthly budget. Undo and Redo include mission progress and rewards.</li><li><strong>Grow month by month.</strong> The city starts paused. Next month collects income, pays upkeep and moves residents into connected housing. Jobs and resident happiness affect growth. Click the population counter or the Resident happiness card to see household needs and plan improvements. Play advances time automatically; 3× speeds it up.</li><li><strong>Adapt to the climate.</strong> Check the heat, energy and transit overlays. Place nature near homes, protect the waterfront and respond to council alerts. Renewable generation reduces imported-power costs.</li><li><strong>Refine your plan.</strong> Upgrade buildings to level 3, move them, or remove them for 50% salvage. Undo and Redo also cover roads, policies and monthly changes. Use Rotate or Q / E to align road improvements before building. Inspect an existing road improvement and choose Rotate to adjust it for free. Press F for fullscreen and Ctrl/Cmd K to search every command. Open the treasury to set taxes, fares, utility prices and service funding. Council briefings pause time until you choose a response.</li></ol><p class="gc-guide-note">This is an educational simulation. Eco Points, climate scores, power units, population and financial rules are simplified game mechanics, not measured emissions, real prices or climate predictions. City saves stay in this browser; exported files contain only your game state. The earlier 6 × 6 city save is kept separately.</p><div class="gc-shortcuts"><span>I / Inspect</span><span>B / Build</span><span>R / Road path</span><span>U / Upgrade</span><span>M / Move</span><span>X / Remove</span><span>Ctrl Z / Undo</span><span>Ctrl Y / Redo</span><span>Arrows / Select tile</span><span>Enter / Apply tool</span><span>Esc / Cancel</span></div></div>
             </aside>
           </div>
           <footer class="gc-statusbar"><span id="gc-city-status"><i></i> CITY SIMULATION PAUSED</span><span id="gc-milestone">Your first milestone: 5 improvements → +400 EP</span><span>OBSERVE. PLAN. REBUILD.</span></footer>
@@ -1071,11 +1066,11 @@
     </main>
     <footer class="site-footer">
       <div class="footer-main">
-        <div><a class="footer-brand" href="#home">COIL / SDG 13 GALLERY</a><p>A global challenge.<br>Our local perspective.</p></div>
+        <div><a class="footer-brand" href="#home">COIL / SDG 13 GALLERY</a><p>A photography and climate project<br>by Mark Kobal &amp; Lovro Trošt.</p></div>
         <div class="footer-links"><a href="#gallery">The collection ↗</a><a href="#problem">Our evidence ↗</a><a href="#team">Meet us ↗</a></div>
         <div class="footer-school"><strong>ERŠ Nova Gorica · 2026</strong><p>Mark Kobal &amp; Lovro Trošt<br>Mentor: Elizaveta Galič</p><a href="https://sdgs.un.org/goals/goal13" target="_blank" rel="noopener noreferrer">SDG 13 · Climate Action ↗</a></div>
       </div>
-      <div class="footer-bottom"><span>A <abbr title="Collaborative Online International Learning">COIL</abbr> SCHOOL PROJECT</span><span>OBSERVE. UNDERSTAND. ACT.</span><a href="#home">Back to overview ↑</a></div>
+      <div class="footer-bottom"><span>A <abbr title="Collaborative Online International Learning">COIL</abbr> SCHOOL PROJECT</span><a href="#home">Back to overview ↑</a></div>
     </footer>
 
     <div class="lightbox" id="lightbox" hidden role="dialog" aria-modal="true" aria-labelledby="lightbox-title">
@@ -1085,18 +1080,17 @@
         <div class="viewer-copy"><span id="lightbox-type" class="kicker"></span><h2 id="lightbox-title"></h2><p id="lightbox-description"></p><p id="lightbox-caption"></p><div class="viewer-controls"><button id="lightbox-previous" type="button" aria-label="Previous photograph">← Previous</button><button id="lightbox-next" type="button" aria-label="Next photograph">Next →</button></div><span class="viewer-key-hint">ARROW KEYS OR SWIPE TO EXPLORE · ESC TO CLOSE</span></div>
       </div>
     </div>
-    <script src="gallery-data.js?v=30edd18472">
+    <script src="gallery-data.js?v=1fa0364050">
     </script>
     <script src="script.js?v=5ff79cb755">
     </script>
     <script src="weather-data.js?v=2322cbfeff" defer></script>
     <script src="assets/data/weather-snapshot.js" defer></script>
     <script src="evidence.js?v=6aea94b196" defer></script>
-    <script src="green-city-core.js?v=2888b01324"></script>
+    <script src="green-city-core.js?v=0925189478"></script>
     <script src="green-city-art.js?v=3889596789"></script>
-    <script type="module" src="green-city.js?v=3fc87111bb"></script>
-    <script src="home-experience.js?v=8018b3c3cb" defer></script>
+    <script type="module" src="green-city.js?v=d033d8bcb7"></script>
+    <script src="home-experience.js?v=8294775e9c" defer></script>
     <script src="site-polish.js?v=5e3dd6839b" defer></script>
-    <script src="motion.js?v=b4df224cdd" defer></script>
   </body>
 </html>

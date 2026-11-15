@@ -377,7 +377,7 @@ test('regional connections share demand and a growing city increases income with
 });
 
 test('all four orientations of ports, ferries and large buildings restore their exact occupied plots',()=>{
- for(const type of Object.keys(C.upgrades).filter(C.rotatable))for(let rotation=0;rotation<4;rotation++){
+ for(const type of Object.keys(C.upgrades).filter(t=>C.rotatable(t)&&C.upgrades[t].site!=='road'))for(let rotation=0;rotation<4;rotation++){
   const fresh=C.fresh('sandbox'),i=C.terrain.findIndex((_,j)=>!C.canPlace(fresh,type,j,undefined,rotation));
   assert.ok(i>=0,type+' '+rotation);const city=C.place(fresh,type,i,rotation).state;
   assert.deepEqual(C.restore(JSON.parse(JSON.stringify(city))),city,type+' '+rotation);

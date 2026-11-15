@@ -4,9 +4,9 @@
   const opening=document.querySelector('.home-opening');
   if(!opening)return;
   const scenes={
-    home:{index:'01 / LOOK AROUND',heading:'The places we love.\nThe future we share.',copy:'We are Mark and Lovro. Twelve photographs, one changing climate, and a story that starts where we live.',caption:'Alpine landscape',credit:'Lovro Trošt'},
-    signs:{index:'02 / LOOK CLOSER',heading:'Small details.\nA changing climate.',copy:'A dry forest floor. A hot September day. Our photographs ask what everyday observations can tell us, alongside the evidence.',caption:'Dry forest floor · a local observation',credit:'Lovro Trošt'},
-    choices:{index:'03 / LOOK AHEAD',heading:'A different future\nstarts with a choice.',copy:'From energy at home to the way we build a city: explore practical responses, then try your own ideas in New Terra.',caption:'Saving energy at home',credit:'Mark Kobal'}
+    home:{heading:'Triglav Glacier, summer 2025.',copy:'Lovro photographed this landscape in summer 2025. The glacier measurements in our evidence section give the photograph some context.',caption:'Triglav Glacier · Summer 2025',credit:'Lovro Trošt'},
+    signs:{heading:'A dry forest floor.',copy:'Dry pine needles cover the ground in Lovro’s photograph. We included it to discuss wildfire risk, alongside the climate evidence.',caption:'Dry pine needles on the forest floor',credit:'Lovro Trošt'},
+    choices:{heading:'Solar panels at home.',copy:'Mark’s photograph shows rooftop solar panels. It is one of the examples in our gallery of ways to reduce reliance on fossil fuels.',caption:'Rooftop solar panels',credit:'Mark Kobal'}
   };
   const controls=opening.querySelector('.home-scenes');
   let request=0;
@@ -35,7 +35,6 @@
     opening.dataset.scene=key;
     controls.querySelectorAll('button').forEach(el=>el.setAttribute('aria-pressed',String(el===button)));
     opening.querySelectorAll('[data-home-image]').forEach(el=>el.classList.toggle('is-active',el.dataset.homeImage===key));
-    opening.querySelector('.home-note-index').textContent=scene.index;
     document.getElementById('home-scene-heading').textContent=scene.heading;
     document.getElementById('home-scene-copy').textContent=scene.copy;
     const caption=document.getElementById('home-photo-caption');

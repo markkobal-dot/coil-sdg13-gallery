@@ -80,7 +80,7 @@
     return [[r - 1, c], [r + 1, c], [r, c - 1], [r, c + 1]].filter(([y, x]) => y >= 0 && x >= 0 && y < size && x < size).map(([y, x]) => y * size + x);
   }
   const distance = (a, b) => Math.abs(Math.floor(a / size) - Math.floor(b / size)) + Math.abs(a % size - b % size);
-  const rotatable=type=>!!(types[type]?.footprint||types[type]?.coast);
+  const rotatable=type=>!!(types[type]?.footprint||types[type]?.coast||upgrades[type]?.site==='road');
   const dimensions=(type,rotation=0)=>{const [w,h]=types[type]?.footprint||[1,1];return rotation%2?[h,w]:[w,h];};
   function footprint(type,i,rotation=0){const [w,h]=dimensions(type,rotation);if(!validCell(i)||i%size+w>size||Math.floor(i/size)+h>size)return [];return Array.from({length:w*h},(_,n)=>i+Math.floor(n/w)*size+n%w);}
   const anchorAt=(state,i)=>validCell(i)?(state.cells[i]?.anchor??i):i;
@@ -453,6 +453,12 @@
     if(roadTypes.has(cell.type)&&cell.type!=='road')cells[i]={type:'road',level:1,roof:null,paid:0};
     return ok({...state,cells,cash:state.cash+refund},types[cell.type].name+' removed · +'+refund+' EP salvage. Undo is available.');
   }
+  function rotateRoadItem(state,i,direction=1){
+    if(!Number.isInteger(i)||!state.cells[i]||upgrades[state.cells[i].type]?.site!=='road'||![1,-1].includes(direction))return rejected(state,'Choose a road improvement to rotate.');
+    const cells=state.cells.slice(),cell=cells[i],rotation=((cell.rotation||0)+direction+4)%4;
+    cells[i]={...cell};delete cells[i].rotation;if(rotation)cells[i].rotation=rotation;
+    return ok({...state,cells},types[cell.type].name+' rotated to '+rotation*90+' degrees.');
+  }
   function moveCost(cell){return cell?Math.max(15,Math.round(types[cell.type].cost*.15)):0;}
   function relocate(state,from,to,rotation) {
     from=anchorAt(state,from);
@@ -642,6 +648,6 @@
     return {version:3,challenge:raw.challenge,cells,cash:raw.cash,population:raw.population,month:raw.month,policies:restoredPolicies,routes,loan,grants:[...raw.grants],event,history,log,...(missions?{missions}:{})};
   }
   const api={size,terrain,metrics,upgrades,types,challenges,localNeeds,homeFeedback,neighbourhoodInfo,routeColours,roadPath,routeInfo,setRoute,removeRoute,setRouteEnabled,roadTypes,buildingTypes,greenTypes,fresh,board,remaining,score,analyse,neighbours,distance,rowLabel,label,rotatable,dimensions,footprint,anchorAt,coastal,canPlace,place,upgrade,upgradeCost,demolish,relocate,moveCost,line,buildLine,grantDefs,grant,events,respond,policies,policyRanges,setPolicies,setPolicy,borrow,repayLoan,advance,goals,tileInfo,restore};
-  Object.assign(api,{neighbourhoodMissionDefs,neighbourhoodMissions,startNeighbourhoodMission,leaveNeighbourhoodMission,awardNeighbourhoodMission});
+  Object.assign(api,{rotateRoadItem,neighbourhoodMissionDefs,neighbourhoodMissions,startNeighbourhoodMission,leaveNeighbourhoodMission,awardNeighbourhoodMission});
   if(typeof module==='object'&&module.exports)module.exports=api;else host.GreenCity=api;
 })(globalThis);
