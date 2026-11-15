@@ -4,9 +4,9 @@
   const opening=document.querySelector('.home-opening');
   if(!opening)return;
   const scenes={
-    home:{heading:'Triglav Glacier, summer 2025.',copy:'Lovro photographed this landscape in summer 2025. The glacier measurements in our evidence section give the photograph some context.',caption:'Triglav Glacier · Summer 2025',credit:'Lovro Trošt'},
-    signs:{heading:'A dry forest floor.',copy:'Dry pine needles cover the ground in Lovro’s photograph. We included it to discuss wildfire risk, alongside the climate evidence.',caption:'Dry pine needles on the forest floor',credit:'Lovro Trošt'},
-    choices:{heading:'Solar panels at home.',copy:'Mark’s photograph shows rooftop solar panels. It is one of the examples in our gallery of ways to reduce reliance on fossil fuels.',caption:'Rooftop solar panels',credit:'Mark Kobal'}
+    home:{heading:'Triglav Glacier, summer 2025',copy:'Very little ice remains in this summer view. See how the glacier’s mapped area has changed since 1946.',caption:'Triglav Glacier · Summer 2025',credit:'Lovro Trošt'},
+    signs:{heading:'A dry forest floor',copy:'Dry pine needles cover the ground. When vegetation dries out, it can become fuel for wildfires.',caption:'Dry pine needles on the forest floor',credit:'Lovro Trošt'},
+    choices:{heading:'Solar panels at home',copy:'Solar panels generate electricity from sunlight and can reduce reliance on fossil fuels.',caption:'Rooftop solar panels',credit:'Mark Kobal'}
   };
   const controls=opening.querySelector('.home-scenes');
   let request=0;
