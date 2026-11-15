@@ -4,9 +4,9 @@
   const opening=document.querySelector('.home-opening');
   if(!opening)return;
   const scenes={
-    home:{heading:'Triglav Glacier, summer 2025',copy:'Very little ice remains in this summer view. See how the glacier’s mapped area has changed since 1946.',caption:'Triglav Glacier · Summer 2025',credit:'Lovro Trošt'},
-    signs:{heading:'A dry forest floor',copy:'Dry pine needles cover the ground. When vegetation dries out, it can become fuel for wildfires.',caption:'Dry pine needles on the forest floor',credit:'Lovro Trošt'},
-    choices:{heading:'Solar panels at home',copy:'Solar panels generate electricity from sunlight and can reduce reliance on fossil fuels.',caption:'Rooftop solar panels',credit:'Mark Kobal'}
+    home:{heading:'Triglav Glacier, summer 2025',copy:'Very little ice remains in this summer view. See how the glacier’s mapped area has changed since 1946.',caption:'Triglav Glacier · Summer 2025'},
+    signs:{heading:'A dry forest floor',copy:'Dry pine needles cover the ground. When vegetation dries out, it can become fuel for wildfires.',caption:'Dry pine needles on the forest floor'},
+    choices:{heading:'Solar panels at home',copy:'Solar panels generate electricity from sunlight and can reduce reliance on fossil fuels.',caption:'Rooftop solar panels'}
   };
   const controls=opening.querySelector('.home-scenes');
   let request=0;
@@ -38,8 +38,7 @@
     document.getElementById('home-scene-heading').textContent=scene.heading;
     document.getElementById('home-scene-copy').textContent=scene.copy;
     const caption=document.getElementById('home-photo-caption');
-    caption.replaceChildren(document.createTextNode(scene.caption),document.createElement('br'));
-    const credit=document.createElement('span');credit.textContent='Photograph by '+scene.credit;caption.append(credit);
-    document.getElementById('home-scene-announcement').textContent=scene.heading.replace('\n',' ')+' '+scene.caption+'. Photograph by '+scene.credit+'.';
+    caption.textContent=scene.caption;
+    document.getElementById('home-scene-announcement').textContent=scene.heading.replace('\n',' ')+'. '+scene.caption+'.';
   });
 })();

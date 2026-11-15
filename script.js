@@ -11,8 +11,6 @@ const galleryGrid = document.getElementById('photo-grid');
 const galleryCards = [];
 let activeCategory = ['all', 'challenge', 'solutions'].includes(reloadContext?.category)
   ? reloadContext.category : 'all';
-let activeAuthor = ['all', 'lovro', 'mark'].includes(reloadContext?.author)
-  ? reloadContext.author : 'all';
 let visiblePhotoIndices = galleryPhotos.map((_, index) => index);
 const mediaType = (photo) => photo.src.endsWith('.svg') ? 'study' : 'photograph';
 
@@ -22,7 +20,6 @@ galleryPhotos.forEach((photo, index) => {
   if (photo.featured) card.classList.add('photo-feature');
   card.dataset.category = photo.category;
   card.dataset.media = mediaType(photo);
-  card.dataset.author = photo.photographer;
 
   const button = document.createElement('button');
   button.type = 'button';
@@ -49,15 +46,7 @@ galleryPhotos.forEach((photo, index) => {
   information.className = 'info';
   const title = document.createElement('h3');
   title.textContent = photo.title;
-  const author = document.createElement(photo.sourceUrl ? 'a' : 'span');
-  author.className = 'photo-author';
-  author.textContent = photo.author;
-  if (photo.sourceUrl) {
-    author.href = photo.sourceUrl;
-    author.target = '_blank';
-    author.rel = 'noopener noreferrer';
-  }
-  information.append(title, author);
+  information.append(title);
   if (photo.featured) {
     const note = document.createElement('p');
     note.className = 'photo-note';
@@ -73,8 +62,7 @@ function filterCollection() {
   visiblePhotoIndices = [];
   galleryCards.forEach((card, index) => {
     const matchesCategory = activeCategory === 'all' || card.dataset.category === activeCategory;
-    const matchesAuthor = activeAuthor === 'all' || card.dataset.author === activeAuthor;
-    card.hidden = !(matchesCategory && matchesAuthor);
+    card.hidden = !matchesCategory;
     if (!card.hidden) visiblePhotoIndices.push(index);
   });
   const count = visiblePhotoIndices.length;
@@ -96,12 +84,6 @@ for (const button of document.querySelectorAll('.filter')) {
     filterCollection();
   });
 }
-document.getElementById('gallery-author').value = activeAuthor;
-document.getElementById('gallery-author').addEventListener('change', (event) => {
-  activeAuthor = event.target.value;
-  filterCollection();
-});
-
 filterCollection();
 
 // The same accessible viewer opens photographs, field images and the chart.
@@ -125,7 +107,8 @@ function showViewerItem(photo) {
   viewerImage.alt = photo.description || photo.title || '';
   viewerTitle.textContent = photo.title || 'A closer look';
   viewerDescription.textContent = photo.description || '';
-  viewerCaption.textContent = photo.author || photo.caption || '';
+  viewerCaption.textContent = viewerIndex === null ? photo.caption || '' : '';
+  viewerCaption.hidden = !viewerCaption.textContent;
   viewerType.textContent = viewerIndex === null ? 'THE EVIDENCE' :
     mediaType(photo) === 'study' ? 'VISUAL STUDY' : 'FROM OUR COLLECTION';
   const hasNeighbours = viewerIndex !== null && viewerSequence.length > 1;
@@ -817,7 +800,7 @@ document.getElementById('poll-reset').addEventListener('click', () => {
       history.replaceState({ ...history.state,
         coilContext: {
           hash: location.hash, city, chapter, openDetails,
-          category: activeCategory, author: activeAuthor,
+          category: activeCategory,
           comparison: Number(document.getElementById('paris-comparison')?.value)
         }
       }, '', location.pathname + location.search + location.hash);
