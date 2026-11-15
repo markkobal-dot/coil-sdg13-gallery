@@ -19,6 +19,7 @@ const mediaType = (photo) => photo.src.endsWith('.svg') ? 'study' : 'photograph'
 galleryPhotos.forEach((photo, index) => {
   const card = document.createElement('article');
   card.className = 'photo-card';
+  if (photo.featured) card.classList.add('photo-feature');
   card.dataset.category = photo.category;
   card.dataset.media = mediaType(photo);
   card.dataset.author = photo.photographer;
@@ -46,11 +47,6 @@ galleryPhotos.forEach((photo, index) => {
 
   const information = document.createElement('div');
   information.className = 'info';
-  const number = document.createElement('span');
-  number.className = 'photo-number';
-  number.textContent = String(index + 1).padStart(2, '0');
-  number.setAttribute('aria-hidden', 'true');
-
   const title = document.createElement('h3');
   title.textContent = photo.title;
   const author = document.createElement(photo.sourceUrl ? 'a' : 'span');
@@ -61,7 +57,13 @@ galleryPhotos.forEach((photo, index) => {
     author.target = '_blank';
     author.rel = 'noopener noreferrer';
   }
-  information.append(number, title, author);
+  information.append(title, author);
+  if (photo.featured) {
+    const note = document.createElement('p');
+    note.className = 'photo-note';
+    note.textContent = photo.description;
+    information.append(note);
+  }
   card.append(button, information);
   galleryGrid.append(card);
   galleryCards.push(card);

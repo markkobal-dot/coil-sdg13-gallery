@@ -161,7 +161,7 @@ function evaluate(){
   $('achievements').innerHTML=awards.map(([name,earned])=>`<div class="${earned?'gc-award-earned':''}"><span>${earned?'✓':'○'}</span><span>${name}<small>${earned?'Achievement earned':'Keep developing your city'}</small></span></div>`).join('');
   const lowest=a.scores.indexOf(Math.min(...a.scores));
   const advice=['Replace polluting industry gradually, protect homes with trees, and reduce fossil energy dependence. Keep enough clean jobs for your residents.','Add solar roofs or wind power. Track demand as your population grows; batteries help renewable power go further.','Bring green space close to residents. A park beside homes improves wellbeing more than a remote decorative plot.','Serve homes with connected bus and tram stops, then link bike lanes into a network. The transit overlay reveals gaps.','Prepare for extreme weather with rain gardens near water, green roofs, water recycling and dependable local power.'][lowest];
-  $('advice').innerHTML='<h4>Your next planning decision</h4><p>'+advice+'</p><p class="gc-report-note">Game indicators and financial rules are simplified learning mechanics, not real-world emissions, costs or climate predictions.</p>';
+  $('advice').innerHTML='<h4>Your next planning decision</h4><p>'+advice+'</p><details class="method-note gc-report-note"><summary>About these scores</summary><div><p>Game indicators and financial rules are simplified learning mechanics, not real-world emissions, costs or climate predictions.</p></div></details>';
   $('results').showModal();syncClock();
 }
 function renderLifeStatus({walkers,services,enabled}){
