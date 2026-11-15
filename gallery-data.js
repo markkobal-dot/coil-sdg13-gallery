@@ -23,7 +23,6 @@ const galleryPhotos = [ {
 {
   src: "assets/images/triglav-hike-lovro.webp",
   fullSrc: "assets/images/triglav-hike-lovro.webp",
-  featured: true,
   title: "Triglav Glacier, summer 2025",
   description: "A summer 2025 view of the Triglav Glacier, with very little ice remaining.",
   action: "Compare this local mountain landscape with the glacier measurements and climate data in our Slovenia section.",
