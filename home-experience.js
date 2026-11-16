@@ -34,7 +34,11 @@
     button.removeAttribute('aria-busy');
     opening.dataset.scene=key;
     controls.querySelectorAll('button').forEach(el=>el.setAttribute('aria-pressed',String(el===button)));
-    opening.querySelectorAll('[data-home-image]').forEach(el=>el.classList.toggle('is-active',el.dataset.homeImage===key));
+    opening.querySelectorAll('[data-home-image]').forEach(el=>{
+      const active=el.dataset.homeImage===key;
+      el.classList.toggle('is-active',active);
+      el.setAttribute('aria-hidden',String(!active));
+    });
     document.getElementById('home-scene-heading').textContent=scene.heading;
     document.getElementById('home-scene-copy').textContent=scene.copy;
     const caption=document.getElementById('home-photo-caption');

@@ -82,7 +82,7 @@ test('invalid, cross-origin and oversized submissions cannot change totals', asy
 test('only public website files are served; Git, database and server source stay private', async () => {
   const {server,url}=await start({databasePath:':memory:'});
   try {
-    for(const file of ['/','/index.html','/script.js','/assets/brand/favicon.svg']) {
+    for(const file of ['/','/index.html','/site.js','/assets/data/weather-snapshot.js','/assets/brand/favicon.svg']) {
       assert.equal((await fetch(url+file)).status,200,file);
     }
     for(const file of ['/.git/config','/.local-data/poll.sqlite','/server.cjs','/tests/poll-server.cjs','/package.json','/assets/%2e%2e%5c.git/config']) {

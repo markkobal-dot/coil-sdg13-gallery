@@ -5,11 +5,13 @@ const fs = require('node:fs');
 const path = require('node:path');
 const crypto = require('node:crypto');
 const { DatabaseSync } = require('node:sqlite');
+const { buildSiteBundle } = require('./scripts/build-site-bundle.cjs');
 
 const choices = ['Shade', 'Cool spaces', 'Buildings'];
 const mime = { '.html':'text/html; charset=utf-8', '.css':'text/css; charset=utf-8', '.js':'text/javascript; charset=utf-8', '.svg':'image/svg+xml', '.webp':'image/webp', '.png':'image/png', '.jpg':'image/jpeg', '.jpeg':'image/jpeg', '.ico':'image/x-icon', '.mp3':'audio/mpeg', '.ogg':'audio/ogg', '.woff2':'font/woff2' };
 
 function createSiteServer({ root = __dirname, databasePath = path.join(__dirname, '.local-data', 'poll.sqlite') } = {}) {
+  buildSiteBundle(root);
   if (databasePath !== ':memory:') fs.mkdirSync(path.dirname(databasePath), { recursive:true });
   const db = new DatabaseSync(databasePath);
   db.exec(`PRAGMA journal_mode=WAL; PRAGMA busy_timeout=5000;
@@ -76,6 +78,7 @@ function createSiteServer({ root = __dirname, databasePath = path.join(__dirname
     const file = path.resolve(root, relative);
     if (!allowed || !file.startsWith(path.resolve(root) + path.sep)) return json(404, { error:'Not found.' });
     try {
+      if (relative === 'index.html') buildSiteBundle(root);
       const real = await fs.promises.realpath(file);
       if (!real.startsWith(path.resolve(root) + path.sep)) return json(404, { error:'Not found.' });
       const data = await fs.promises.readFile(real);

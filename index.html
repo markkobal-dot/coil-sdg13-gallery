@@ -69,7 +69,7 @@
     <link rel="stylesheet" href="refined-ui.css?v=efb3db79b5">
   </head>
 
-  <body>
+  <body style="background-color:var(--color-paper,#f5f3ee)">
     <noscript><p class="noscript-message">Enable JavaScript to use the gallery filters, activities and section navigation.</p></noscript>
     <div class="scroll-progress" aria-hidden="true"></div>
     <a class="skip" href="#main">Skip to content</a>
@@ -101,10 +101,10 @@
     <main id="main" tabindex="-1">
       <section class="hero" id="home">
         <div class="home-opening" data-scene="home">
-          <div class="home-backdrop" aria-hidden="true">
-            <img class="home-scene is-active" data-home-image="home" src="assets/images/triglav-hike-lovro.webp" alt="" width="1569" height="1045" fetchpriority="high" decoding="async">
-            <img class="home-scene" data-home-image="signs" data-home-src="assets/images/optimized/home-forest.webp" data-home-srcset="assets/images/optimized/home-forest-480.webp 480w, assets/images/optimized/home-forest.webp 720w" alt="" width="720" height="960" decoding="async">
-            <img class="home-scene" data-home-image="choices" data-home-src="assets/images/saving-energy-at-home.png" data-home-srcset="assets/images/saving-energy-at-home.png 930w" alt="" width="930" height="619" decoding="async">
+          <div class="home-backdrop">
+            <img class="home-scene is-active" data-home-image="home" src="assets/images/triglav-hike-lovro.webp" alt="Rocky slopes at the Triglav Glacier, with very little ice visible." width="1569" height="1045" fetchpriority="high" decoding="async">
+            <img class="home-scene" data-home-image="signs" data-home-src="assets/images/optimized/home-forest.webp" data-home-srcset="assets/images/optimized/home-forest-480.webp 480w, assets/images/optimized/home-forest.webp 720w" alt="Picnic tables beneath pine trees, with dry needles covering the ground." aria-hidden="true" width="720" height="960" decoding="async">
+            <img class="home-scene" data-home-image="choices" data-home-src="assets/images/saving-energy-at-home.png" data-home-srcset="assets/images/saving-energy-at-home.png 930w" alt="Solar panels covering a farm building’s roof, with wooded slopes behind it." aria-hidden="true" width="930" height="619" decoding="async">
           </div>
           <div class="home-opening-top"><span>Photography &amp; climate change</span><span>ERŠ Nova Gorica · 2026</span></div>
           <div class="home-opening-content">
@@ -689,15 +689,16 @@
                 <span class="story-photo-label">PARIS / COMPARE THE CHANGE</span>
                 <button class="photo-zoom" type="button" aria-label="Enlarge the after photograph of Rue de la Brèche-aux-Loups">
                   <img src="assets/images/optimized/paris-after.webp" alt="The same Paris school street after redesign, with planted beds and a broad pedestrian space beside the school." width="1200" height="800" loading="lazy" decoding="async">
-                  <img id="paris-before-overlay" class="comparison-before" src="assets/images/optimized/paris-before.webp" alt="" aria-hidden="true" width="1200" height="800" loading="lazy" decoding="async">
+                  <img id="paris-before-overlay" class="comparison-before" src="assets/images/optimized/paris-before.webp" alt="Before redesign: an asphalt road and narrow pavements beside the school on Rue de la Brèche-aux-Loups." aria-hidden="true" width="1200" height="800" loading="lazy" decoding="async">
                   <span id="paris-comparison-divider" class="comparison-divider" aria-hidden="true"></span>
                   <span class="comparison-label comparison-label-before" aria-hidden="true">Before</span>
                   <span class="comparison-label comparison-label-after" aria-hidden="true">After</span>
                   <span class="image-open" aria-hidden="true">↗</span>
                 </button>
                 <label class="comparison-control" for="paris-comparison">Drag to compare
-                  <input id="paris-comparison" type="range" min="0" max="100" value="50" aria-label="Amount of the before photograph revealed" aria-valuetext="50 percent before, 50 percent after">
+                  <input id="paris-comparison" type="range" min="0" max="100" value="50" aria-label="Amount of the before photograph revealed" aria-describedby="paris-comparison-description" aria-valuetext="50 percent before, 50 percent after">
                 </label>
+                <p id="paris-comparison-description" class="sr-only">Before: an asphalt road and narrow pavements beside the school. After: a wider pedestrian space with planted beds. The slider changes how much of each photograph is visible.</p>
                 <figcaption>The same street after its school-street redesign. Photo: Christophe Belin / Ville de Paris. <a href="https://www.paris.fr/pages/57-nouvelles-rues-aux-ecoles-dans-paris-8197" target="_blank" rel="noopener noreferrer">Original comparison ↗</a></figcaption>
               </figure></div><div><dl class="city-facts">
 <div><dt>The challenge</dt><dd>Rue de la Brèche-aux-Loups gave much of its space to an asphalt roadway beside a school.</dd></div>
@@ -995,18 +996,11 @@
     <div class="lightbox" id="lightbox" hidden role="dialog" aria-modal="true" aria-labelledby="lightbox-title">
       <div class="viewer-top"><span id="lightbox-counter">THE COLLECTION</span><button id="lightbox-close" class="lightbox-close" type="button" aria-label="Close image viewer">×</button></div>
       <div class="viewer-layout">
-        <div class="viewer-image-wrap"><img id="lightbox-image" alt="" width="720" height="540"></div>
+        <div class="viewer-image-wrap"><img id="lightbox-image" alt="Selected photograph" width="720" height="540"></div>
         <div class="viewer-copy"><span id="lightbox-type" class="kicker"></span><h2 id="lightbox-title"></h2><p id="lightbox-description"></p><p id="lightbox-caption"></p><div class="viewer-controls"><button id="lightbox-previous" type="button" aria-label="Previous photograph">← Previous</button><button id="lightbox-next" type="button" aria-label="Next photograph">Next →</button></div><span class="viewer-key-hint">ARROW KEYS OR SWIPE TO EXPLORE · ESC TO CLOSE</span></div>
       </div>
     </div>
-    <script src="gallery-data.js?v=fb0d5a4bb8">
-    </script>
-    <script src="script.js?v=70572cfd87">
-    </script>
-    <script src="weather-data.js?v=2322cbfeff" defer></script>
     <script src="assets/data/weather-snapshot.js" defer></script>
-    <script src="evidence.js?v=6aea94b196" defer></script>
-    <script src="home-experience.js?v=1305fa9086" defer></script>
-    <script src="site-polish.js?v=5e3dd6839b" defer></script>
+    <script src="site.js?v=54d4623e1c" defer></script>
   </body>
 </html>

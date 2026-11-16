@@ -2,6 +2,7 @@
   "name": "coil-sdg13-gallery",
   "private": true,
   "scripts": {
+    "build": "node scripts/build-site-bundle.cjs",
     "start": "node server.cjs",
     "start:lan": "node server.cjs --lan",
     "test:poll": "node --test tests/poll-server.cjs"

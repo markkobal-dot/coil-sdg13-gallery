@@ -63,10 +63,10 @@
     <p class="guide-preview-label" id="sample">Homepage sample · The same component and styles used on the website</p>
     <section class="hero" id="home">
               <div class="home-opening" data-scene="home">
-          <div class="home-backdrop" aria-hidden="true">
-            <img class="home-scene is-active" data-home-image="home" src="assets/images/triglav-hike-lovro.webp" alt="" width="1569" height="1045" fetchpriority="high" decoding="async">
-            <img class="home-scene" data-home-image="signs" data-home-src="assets/images/optimized/home-forest.webp" data-home-srcset="assets/images/optimized/home-forest-480.webp 480w, assets/images/optimized/home-forest.webp 720w" alt="" width="720" height="960" decoding="async">
-            <img class="home-scene" data-home-image="choices" data-home-src="assets/images/saving-energy-at-home.png" data-home-srcset="assets/images/saving-energy-at-home.png 930w" alt="" width="930" height="619" decoding="async">
+          <div class="home-backdrop">
+            <img class="home-scene is-active" data-home-image="home" src="assets/images/triglav-hike-lovro.webp" alt="Rocky slopes at the Triglav Glacier, with very little ice visible." width="1569" height="1045" fetchpriority="high" decoding="async">
+            <img class="home-scene" data-home-image="signs" data-home-src="assets/images/optimized/home-forest.webp" data-home-srcset="assets/images/optimized/home-forest-480.webp 480w, assets/images/optimized/home-forest.webp 720w" alt="Picnic tables beneath pine trees, with dry needles covering the ground." aria-hidden="true" width="720" height="960" decoding="async">
+            <img class="home-scene" data-home-image="choices" data-home-src="assets/images/saving-energy-at-home.png" data-home-srcset="assets/images/saving-energy-at-home.png 930w" alt="Solar panels covering a farm building’s roof, with wooded slopes behind it." aria-hidden="true" width="930" height="619" decoding="async">
           </div>
           <div class="home-opening-top"><span>Photography &amp; climate change</span><span>ERŠ Nova Gorica · 2026</span></div>
           <div class="home-opening-content">
@@ -114,6 +114,6 @@
     document.querySelectorAll('[data-token]').forEach(label=>{label.textContent=sharedStyle.getPropertyValue(label.dataset.token).trim().toUpperCase();});
     document.querySelectorAll('.guide-filter-box button').forEach(button=>button.addEventListener('click',()=>{document.querySelectorAll('.guide-filter-box button').forEach(item=>{item.classList.toggle('active',item===button);item.setAttribute('aria-pressed',String(item===button));});}));
   </script>
-  <script src="home-experience.js?v=1305fa9086" defer></script>
+  <script src="home-experience.js?v=49a9dedf57" defer></script>
 </body>
 </html>

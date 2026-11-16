@@ -123,7 +123,7 @@ function showViewerItem(photo) {
   viewerImage.width = photo.width || 720;
   viewerImage.height = photo.height || 540;
   viewerImage.src = photo.fullSrc || photo.src;
-  viewerImage.alt = photo.description || photo.title || '';
+  viewerImage.alt = photo.description || photo.title || 'Selected photograph';
   viewerTitle.textContent = photo.title || 'A closer look';
   viewerDescription.textContent = photo.description || '';
   viewerCaption.textContent = photo.caption || '';
