@@ -53,6 +53,7 @@
         }
       })();
     </script>
+    <style>html,body{background-color:#f5f3ee}</style>
     <link rel="stylesheet" href="style.css?v=d12cee861a">
     <link rel="stylesheet" href="editorial.css?v=f6e7b8b49a">
     <link rel="stylesheet" href="evidence.css?v=ef89f667b6">
@@ -65,7 +66,7 @@
     <link rel="stylesheet" href="home-experience.css?v=63710de0a0">
     <link rel="stylesheet" href="site-polish.css?v=a52a281be9">
     <link rel="stylesheet" href="design-tokens.css?v=2e57de22aa">
-    <link rel="stylesheet" href="refined-ui.css?v=50915d0064">
+    <link rel="stylesheet" href="refined-ui.css?v=46e438609d">
   </head>
 
   <body>
@@ -159,14 +160,14 @@
             </h2>
           </div>
           <button class="hero-chart-image-frame chart-open" type="button" aria-label="Enlarge the European temperature graph">
-            <img class="hero-chart-image" src="https://climate.copernicus.eu/sites/default/files/custom-uploads/ESOTC-2024/temperature/fig03.1/ESOTC2024-gallery-03-temperature-fig03.1b/fig03.1b_ESOTC_2024_Temperature_Annual_anomalies_timeseries_ERA5.png" alt="Copernicus line graph of annual European land temperature anomalies from 1950 to 2024, relative to the 1991–2020 average." loading="lazy" decoding="async">
+            <img class="hero-chart-image" width="1440" height="1274" src="https://climate.copernicus.eu/sites/default/files/custom-uploads/ESOTC-2024/temperature/fig03.1/ESOTC2024-gallery-03-temperature-fig03.1b/fig03.1b_ESOTC_2024_Temperature_Annual_anomalies_timeseries_ERA5.png" alt="Copernicus line graph of annual European land temperature anomalies from 1950 to 2024, relative to the 1991–2020 average." loading="lazy" decoding="async">
           </button>
           <figcaption>
-            Annual temperature anomalies, 1950–2024. Reference period: 1991–2020. Data: ERA5. Credit: C3S / ECMWF / KNMI. 
+            Annual temperature anomalies, 1950–2024. Reference period: 1991–2020. Data: ERA5. Credit: C3S / ECMWF / KNMI.
             <a href="https://climate.copernicus.eu/esotc/2024/graphics-gallery/temperature" target="_blank" rel="noopener noreferrer">
             Copernicus graph
             </a>
-             · 
+             ·
             <a href="https://www.eea.europa.eu/en/analysis/indicators/global-and-european-temperatures" target="_blank" rel="noopener noreferrer">
             EEA comparison
             </a>
@@ -375,7 +376,7 @@
             <figure class="climate-photo glacier-photo">
               <button class="photo-zoom" type="button" aria-label="View larger photo: Triglav Glacier in August 2018"><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/b/b0/Triglav_Glacier.jpg/1280px-Triglav_Glacier.jpg" alt="The Triglav Glacier beneath rocky Alpine slopes in August 2018." width="1280" height="960" loading="lazy" decoding="async"></button>
               <figcaption>
-                The Triglav Glacier in August 2018. Photo: 
+                The Triglav Glacier in August 2018. Photo:
                 <a href="https://commons.wikimedia.org/wiki/File:Triglav_Glacier.jpg" target="_blank" rel="noopener noreferrer">
                 Janezdrilc / Wikimedia Commons
                 </a>
@@ -388,7 +389,7 @@
             <figure class="climate-photo flood-photo">
               <button class="photo-zoom" type="button" aria-label="View larger photo: Flood-damaged bridge in Stahovica"><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/c/c7/Destroyed_bridge_in_Stahovica_%282023%29.jpg/1280px-Destroyed_bridge_in_Stahovica_%282023%29.jpg" alt="A bridge destroyed by the August 2023 floods across the Kamniška Bistrica in Stahovica." width="1280" height="853" loading="lazy" decoding="async"></button>
               <figcaption>
-                Flood damage in Stahovica, August 2023. Photo: 
+                Flood damage in Stahovica, August 2023. Photo:
                 <a href="https://commons.wikimedia.org/wiki/File:Destroyed_bridge_in_Stahovica_(2023).jpg" target="_blank" rel="noopener noreferrer">
                 Anže Malovrh / STA via Wikimedia Commons
                 </a>
@@ -789,7 +790,7 @@
         </div>
         <a class="mission-invitation" href="#game">
           <div><h3>Build your green city</h3><p>Plan the roads, add homes and services, set taxes and keep residents happy. Try it on our 784-tile island.</p><span class="mission-link"><span class="mission-play" aria-hidden="true">▶</span> Build your green city <span aria-hidden="true">↗</span></span></div>
-          <svg id="gc-preview" viewBox="0 0 680 450" role="img" aria-label="An isometric green city with parks, solar roofs, a wind turbine and electric transport" xmlns="http://www.w3.org/2000/svg"></svg>
+          <img id="gc-preview" src="assets/brand/green-city-preview.svg" alt="An isometric green city with parks, solar roofs, a wind turbine and electric transport" width="680" height="450" loading="lazy" decoding="async">
         </a>
         <div class="action-grid">
           <article class="interactive-card">
@@ -832,12 +833,14 @@
             </fieldset>
             <div id="poll-results" hidden aria-live="polite">
               <p class="results-note">
-                Votes on this device
+                Shared results
               </p>
+              <p id="poll-total">Loading shared results…</p>
               <div id="poll-bars"></div>
-              <button id="poll-reset" class="text-button" type="button">Reset votes on this device</button>
+              <p id="poll-updated" class="results-note"></p>
+              <div class="poll-actions"><button id="poll-refresh" class="text-button" type="button">Refresh results</button><button id="poll-change" class="text-button" type="button">Change my answer</button></div>
             </div>
-            <details class="method-note"><summary>About this poll</summary><div><p>Votes are saved in this browser. They are not combined with other visitors’ answers. Resetting clears the votes on this device.</p></div></details>
+            <details class="method-note"><summary>About this poll</summary><div><p>Everyone using the same classroom link shares these results. Your browser remembers a random voting key so changing your answer updates your existing vote. The poll stores only a hash of that key and your choice, without names or cookies. Results refresh every 30 seconds while open. This is one vote per browser, rather than verified voting per person.</p></div></details>
           </article>
         </div>
         <div class="tips">
@@ -875,6 +878,7 @@
 
       <section class="section game-section green-city-section" id="game" aria-labelledby="gc-title">
         <div class="gc-page-heading"><div><h2 id="gc-title">Build your green city</h2></div><p>Manage housing, transport, energy and your city’s budget.</p></div>
+        <div id="gc-start-status" hidden role="status"><p>The city tools could not load. Reload the page to try again.</p><button id="gc-reload" class="btn" type="button">Reload game</button></div>
         <div class="gc-shell" id="gc-shell" data-panel="none">
           <header class="gc-topbar">
             <div class="gc-city-brand"><span class="gc-city-emblem" aria-hidden="true">N<span>↗</span></span><div><strong>New Terra</strong><span>ISLAND CITY / 784 TILES</span></div></div>
@@ -917,7 +921,7 @@
           </div>
           <footer class="gc-statusbar"><span id="gc-city-status"><i></i> CITY SIMULATION PAUSED</span><span id="gc-milestone">Your first milestone: 5 improvements → +400 EP</span><span>OBSERVE. PLAN. REBUILD.</span></footer>
         </div>
-        <input id="gc-import-file" type="file" accept="application/json,.json" hidden>
+        <input id="gc-import-file" aria-label="Import a saved city JSON file" type="file" accept="application/json,.json" hidden>
         <dialog id="gc-results" class="gc-dialog" aria-labelledby="gc-results-title"><div class="gc-report"><span class="gc-overline">NEW TERRA / MAYOR’S REPORT</span><h3 id="gc-results-title" tabindex="-1" autofocus>Your city report</h3><div id="gc-result-score" class="gc-result-score"></div><p id="gc-result-message"></p><div id="gc-achievements" class="gc-achievements"></div><div id="gc-advice" class="gc-advice"></div><div class="gc-dialog-actions"><button id="gc-continue" class="gc-action-button" type="button">Keep building</button><button id="gc-results-close" class="gc-plain-button" type="button">Close report</button></div></div></dialog>
         <dialog id="gc-confirm" class="gc-dialog gc-confirm" aria-labelledby="gc-confirm-title"><div class="gc-report"><span class="gc-overline">YOUR CITY SAVE</span><h3 id="gc-confirm-title">Start a new city?</h3><p id="gc-confirm-message">This replaces the expanded city saved on this device. Export a save first if you want to keep it.</p><div class="gc-dialog-actions"><button id="gc-confirm-start" class="gc-action-button" type="button">Continue</button><button id="gc-confirm-cancel" class="gc-plain-button" type="button" autofocus>Keep my city</button></div></div></dialog>
       </section>
@@ -994,20 +998,17 @@
     <div class="lightbox" id="lightbox" hidden role="dialog" aria-modal="true" aria-labelledby="lightbox-title">
       <div class="viewer-top"><span id="lightbox-counter">THE COLLECTION</span><button id="lightbox-close" class="lightbox-close" type="button" aria-label="Close image viewer">×</button></div>
       <div class="viewer-layout">
-        <div class="viewer-image-wrap"><img id="lightbox-image" alt=""></div>
+        <div class="viewer-image-wrap"><img id="lightbox-image" alt="" width="720" height="540"></div>
         <div class="viewer-copy"><span id="lightbox-type" class="kicker"></span><h2 id="lightbox-title"></h2><p id="lightbox-description"></p><p id="lightbox-caption"></p><div class="viewer-controls"><button id="lightbox-previous" type="button" aria-label="Previous photograph">← Previous</button><button id="lightbox-next" type="button" aria-label="Next photograph">Next →</button></div><span class="viewer-key-hint">ARROW KEYS OR SWIPE TO EXPLORE · ESC TO CLOSE</span></div>
       </div>
     </div>
     <script src="gallery-data.js?v=4a99d2f2a4">
     </script>
-    <script src="script.js?v=d360da0c08">
+    <script src="script.js?v=3c6aebd3ae">
     </script>
     <script src="weather-data.js?v=2322cbfeff" defer></script>
     <script src="assets/data/weather-snapshot.js" defer></script>
     <script src="evidence.js?v=6aea94b196" defer></script>
-    <script src="green-city-core.js?v=0925189478"></script>
-    <script src="green-city-art.js?v=3889596789"></script>
-    <script type="module" src="green-city.js?v=00b9be480d"></script>
     <script src="home-experience.js?v=d880ac9bd9" defer></script>
     <script src="site-polish.js?v=5e3dd6839b" defer></script>
   </body>

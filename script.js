@@ -108,8 +108,14 @@ let viewerIndex = null;
 let viewerSequence = [];
 let viewerPreviousFocus = null;
 let viewerCloseTimer = null;
+viewerImage.addEventListener('load', () => {
+  viewerImage.width = viewerImage.naturalWidth;
+  viewerImage.height = viewerImage.naturalHeight;
+});
 
 function showViewerItem(photo) {
+  viewerImage.width = photo.width || 720;
+  viewerImage.height = photo.height || 540;
   viewerImage.src = photo.fullSrc || photo.src;
   viewerImage.alt = photo.description || photo.title || '';
   viewerTitle.textContent = photo.title || 'A closer look';
@@ -269,7 +275,7 @@ window.addEventListener('app:view', (event) => {
   }
 });
 
-// Quiz and browser-local poll.
+// Quiz and shared community poll.
 (() => {
 const questions = [
   {
@@ -369,88 +375,130 @@ document.getElementById('quiz-restart').addEventListener('click', () => {
   showQuestion()
 });
 showQuestion();
-// SURVEY: Demo results are stored in localStorage on THIS browser only.
-// A public survey that aggregates all visitors needs an external database/backend.
-const key = 'coil-sdg-heat-poll-v1', choices = ['Shade',
-'Cool spaces',
-'Buildings'];
-let votes;
+// Shared totals live on the server. A random browser key makes retries idempotent.
+const choices = ['Shade', 'Cool spaces', 'Buildings'];
+const choiceLabels = ['Trees and shaded routes', 'Cool public spaces', 'Better buildings'];
+const key = 'coil-shared-heat-poll-v1';
+const form = document.getElementById('poll'), results = document.getElementById('poll-results');
+const status = document.getElementById('poll-status'), submit = document.getElementById('poll-vote');
+const refresh = document.getElementById('poll-refresh');
+let voter, chosen = null, posting = false, fetching = false, revision = 0, pollTimer;
 try {
-  votes = JSON.parse(localStorage.getItem(key)) || {
-    Shade: 0,
-    'Cool spaces': 0,
-    Buildings: 0
-  }
-} catch {
-  votes = {
-    Shade: 0,
-    'Cool spaces': 0,
-    Buildings: 0
-  }
-};
-// Recover from invalid or outdated data without interrupting site navigation.
-if (!votes || typeof votes !== 'object' || Array.isArray(votes)) {
-  votes = { Shade: 0, 'Cool spaces': 0, Buildings: 0 };
+  const saved = JSON.parse(localStorage.getItem(key));
+  if (/^[a-f0-9]{64}$/.test(saved?.voter || '')) voter = saved.voter;
+  if (voter && choices.includes(saved.choice)) chosen = saved.choice;
+} catch {}
+if (!voter) voter = Array.from(crypto.getRandomValues(new Uint8Array(32)), n => n.toString(16).padStart(2, '0')).join('');
+function remember() {
+  try { localStorage.setItem(key, JSON.stringify({ voter, choice:chosen })); } catch {}
 }
-for (const c of choices) {
-  if (!Number.isSafeInteger(votes[c]) || votes[c] < 0) votes[c] = 0;
+remember();
+function validResults(data) {
+  return data && choices.every(c => Number.isSafeInteger(data.counts?.[c]) && data.counts[c] >= 0) &&
+    Number.isSafeInteger(data.total) && data.total === choices.reduce((n,c) => n + data.counts[c], 0);
 }
-function drawVotes() {
-  const total = choices.reduce((s, c) => s + votes[c], 0),
-  target = document.getElementById('poll-bars');
+function drawVotes(data) {
+  const exact = choices.map(c => data.total ? data.counts[c] / data.total * 100 : 0);
+  const percentages = exact.map(Math.floor);
+  const order = exact.map((n,i) => i).sort((a,b) => (exact[b] - percentages[b]) - (exact[a] - percentages[a]));
+  const remainder = data.total ? 100 - percentages.reduce((a,b) => a+b, 0) : 0;
+  for (let i=0; i<remainder; i++) percentages[order[i]]++;
+  const target = document.getElementById('poll-bars');
   target.replaceChildren();
-  for (const c of choices) {
-    const percent = total ? Math.round(votes[c] / total * 100): 0;
-    const row = document.createElement('div');
-    row.className = 'poll-row';
-    const label = document.createElement('div');
-    label.className = 'poll-row-top';
-    const name = document.createElement('span');
-    name.textContent = c;
+  choices.forEach((choice,i) => {
+    const row = document.createElement('div'); row.className = 'poll-row';
+    const label = document.createElement('div'); label.className = 'poll-row-top';
+    const name = document.createElement('span'); name.textContent = choiceLabels[i];
     const amount = document.createElement('span');
-    amount.textContent = `${votes[c]} ${votes[c]===1?'vote':'votes'} | ${percent}%`;
+    amount.textContent = `${percentages[i]}% · ${data.counts[choice]} ${data.counts[choice] === 1 ? 'vote' : 'votes'}`;
     label.append(name, amount);
-    const track = document.createElement('div');
-    track.className = 'poll-track';
-    const fill = document.createElement('div');
-    fill.className = 'poll-fill';
-    fill.style.width = percent + '%';
-    track.append(fill);
-    row.append(label, track);
-    target.append(row)
-  }
+    const track = document.createElement('div'); track.className = 'poll-track'; track.setAttribute('aria-hidden','true');
+    const fill = document.createElement('div'); fill.className = 'poll-fill'; fill.style.width = percentages[i] + '%';
+    track.append(fill); row.append(label, track); target.append(row);
+  });
+  document.getElementById('poll-total').textContent = data.total
+    ? `${data.total} ${data.total === 1 ? 'vote' : 'votes'} so far` : 'No answers yet. Be the first to vote.';
+  document.getElementById('poll-updated').textContent = 'Updated ' + new Date().toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'});
 }
-document.getElementById('poll-vote').addEventListener('click', () => {
+async function requestPoll(body) {
+  const response = await fetch(new URL('./api/poll', document.baseURI), {
+    method:body ? 'POST' : 'GET', cache:'no-store', credentials:'omit',
+    headers:body ? {'Content-Type':'application/json'} : {'X-Poll-Key':voter},
+    body:body ? JSON.stringify(body) : undefined, signal:AbortSignal.timeout(10000)
+  });
+  if (!response.ok) throw new Error('Poll unavailable');
+  const data = await response.json();
+  if (!validResults(data)) throw new Error('Invalid poll results');
+  return data;
+}
+async function loadResults(manual = false) {
+  if (fetching || posting) return;
+  fetching = true; refresh.disabled = true;
+  const requestRevision = revision;
+  try {
+    const data = await requestPoll();
+    if (revision !== requestRevision) return;
+    drawVotes(data);
+    if (chosen && data.choice === null) {
+      chosen = null; remember(); form.hidden = false; results.hidden = true; scheduleResults();
+    }
+    if (manual || status.textContent.includes('unavailable') || status.textContent.includes('connected')) status.textContent = '';
+  } catch {
+    if (revision === requestRevision) status.textContent = results.hidden
+      ? 'Shared voting is not connected in this preview. Open the shared classroom link to vote.'
+      : 'Shared results are unavailable. Check the connection and try Refresh results.';
+  } finally { fetching = false; refresh.disabled = false; }
+}
+function scheduleResults() {
+  clearInterval(pollTimer);
+  if (document.body.dataset.view === 'solutions' && !document.hidden && !results.hidden) pollTimer = setInterval(() => loadResults(), 30000);
+}
+function showResults() { form.hidden = true; results.hidden = false; scheduleResults(); }
+if (chosen) {
+  document.querySelector('input[name="poll"][value="' + chosen + '"]').checked = true;
+  showResults();
+}
+submit.addEventListener('click', async () => {
   const selected = document.querySelector('input[name="poll"]:checked');
-  if (!selected) {
-    document.getElementById('poll-status').textContent = 'Choose an option before submitting your answer.';
-    return
-  }
-  document.getElementById('poll-status').textContent = '';
-  votes[selected.value]++;
+  if (!selected) { status.textContent = 'Choose an option before submitting your answer.'; return; }
+  if (posting) return;
+  posting = true; revision++; submit.disabled = true; form.setAttribute('aria-busy','true');
+  submit.textContent = 'Saving your answer…'; status.textContent = '';
   try {
-    localStorage.setItem(key, JSON.stringify(votes))
+    const data = await requestPoll({voter, choice:selected.value});
+    chosen = selected.value; remember(); drawVotes(data); showResults(); status.textContent = 'Your answer is saved.';
   } catch {
-  }
-  document.getElementById('poll').hidden = true;
-  document.getElementById('poll-results').hidden = false;
-  drawVotes()
+    status.textContent = 'Your answer could not be confirmed. Check the shared classroom connection and submit again; a retry will not add a second vote.';
+  } finally { posting = false; submit.disabled = false; submit.textContent = 'Submit my answer'; form.removeAttribute('aria-busy'); }
 });
-document.getElementById('poll-reset').addEventListener('click', () => {
-  votes = {
-    Shade: 0,
-    'Cool spaces': 0,
-    Buildings: 0
-  };
-  try {
-    localStorage.removeItem(key)
-  } catch {
-  }
-  document.getElementById('poll').hidden = false;
-  document.getElementById('poll-results').hidden = true;
-  document.querySelectorAll('input[name="poll"]').forEach(x => x.checked = false)
+document.getElementById('poll-change').addEventListener('click', () => {
+  form.hidden = false; results.hidden = true; status.textContent = ''; scheduleResults();
+  document.querySelector('input[name="poll"]:checked')?.focus();
+});
+refresh.addEventListener('click', () => loadResults(true));
+window.addEventListener('app:view', event => {
+  scheduleResults(); if (event.detail.id === 'solutions') loadResults();
+});
+document.addEventListener('visibilitychange', () => {
+  scheduleResults(); if (!document.hidden && document.body.dataset.view === 'solutions' && !results.hidden) loadResults();
 });
 
+})();
+
+// Load the city simulation and artwork only when a visitor enters the game.
+(() => {
+  let loading;
+  async function loadGame() {
+    if (loading) return;
+    loading = (async () => {
+      await Promise.all([import('./green-city-core.js?v=0925189478'), import('./green-city-art.js?v=3889596789')]);
+      await import('./green-city.js?v=bf78c93726');
+    })();
+    try { await loading; }
+    catch { document.getElementById('gc-start-status').hidden = false; }
+  }
+  document.getElementById('gc-reload').addEventListener('click', () => location.reload());
+  window.addEventListener('app:view', event => { if (event.detail.id === 'game') loadGame(); });
 })();
 
 // Static, deep-linkable destinations work equally on a phone and a computer.

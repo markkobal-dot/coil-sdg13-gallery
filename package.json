@@ -1,0 +1,10 @@
+{
+  "name": "coil-sdg13-gallery",
+  "private": true,
+  "scripts": {
+    "start": "node server.cjs",
+    "start:lan": "node server.cjs --lan",
+    "test:poll": "node --test tests/poll-server.cjs"
+  },
+  "engines": { "node": ">=24" }
+}

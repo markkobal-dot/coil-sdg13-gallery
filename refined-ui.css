@@ -150,6 +150,11 @@ main>section:not(#game) :is(.btn,.filter):active,.viewer-controls button:active{
 .interactive-card h3,.student h3{font-weight:600;letter-spacing:-.04em}
 .quiz-options>button,#poll>label{border-radius:var(--radius-panel);background:#f5f6f5;border-color:#e5e9e4;font-family:var(--site-font)}
 .quiz-options>button:not(:disabled):hover{background:#edf2ed;border-color:#b8cbbc}
+.poll-actions{display:flex;flex-wrap:wrap;gap:12px 24px;align-items:center}
+.poll-actions button{min-height:44px}
+.poll-row-top{gap:16px;align-items:baseline}
+.poll-row-top>span:last-child{white-space:nowrap}
+#poll-total{font-weight:600}
 .quiz-options>button.correct{background:#e2f0e5;border-color:#83ad8d}
 .quiz-options>button.wrong{background:#faeae4;border-color:#ce9d89}
 .tips{border-radius:var(--radius-panel);background:#e9eee9}
