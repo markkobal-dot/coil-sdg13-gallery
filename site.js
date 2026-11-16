@@ -6,14 +6,16 @@
 // Place captions use the project owner's identifications.
 // The owner identifies the refinery as INA near Rijeka; the linked stock listing does not name its location.
 const galleryPhotos = [ {
-  src: "assets/images/thermometer-33c-lovro-2024.webp",
-  fullSrc: "assets/images/thermometer-33c-lovro-2024.webp",
-  objectPosition: "center 65%",
-  title: "33°C in September",
-  caption: "Early September · Local thermometer reading",
-  description: "The thermometer reads 33°C, even though it is already September. A single reading captures the heat of that moment; the longer temperature records are in The evidence.",
-  action: "We can map shady routes near us and notice where trees or cool public spaces could help.",
-  category: "challenge",
+  src: "assets/images/rabeljsko-jezero.jpg",
+  fullSrc: "assets/images/rabeljsko-jezero.jpg",
+  objectPosition: "center 70%",
+  width: 1200,
+  height: 1600,
+  title: "Protecting Alpine nature",
+  caption: "Rabeljsko jezero (Lake Predil) · Italy",
+  description: "Turquoise water and forested mountain slopes at Rabeljsko jezero. Forests store carbon, while the woodland and lake provide wildlife habitats—a connection between climate action (SDG 13) and life on land (SDG 15).",
+  action: "Protect forests and freshwater habitats, stay on marked paths and take litter home.",
+  category: "solutions",
   photographer: "lovro",
   author: "Photo: Lovro Trošt"
 },
