@@ -35,7 +35,7 @@
     const purpose={house:'Visiting neighbours',apartment:'Visiting neighbours',park:'Visiting a park',garden:'Visiting the community garden',plaza:'Meeting neighbours',playground:'Visiting the playground',market:'Shopping locally',school:'Going to the learning centre',library:'Visiting the library',office:'Going to work',clinic:'Visiting the clinic',hospital:'Visiting the hospital',bus:'Walking to a bus stop',tram:'Walking to the tram',metro:'Walking to the metro',bikeshare:'Picking up a bicycle',ferry:'Walking to the ferry',stadium:'Visiting the sports grounds',marina:'Visiting the waterfront'};
     const priority=home.needs[0];
     return {name:['Alex','Maya','Sam','Robin','Leo','Charlie','Noor','Jamie'][(actor.from+actor.id)%8],
-      from:actor.from,to:actor.to,purpose:purpose[actor.purpose]||'Travelling locally',destination:C.types[state.cells[actor.to].type].name,
+      from:actor.from,to:actor.to,purpose:actor.activity==='work'?'Going to work':purpose[actor.purpose]||'Travelling locally',destination:C.types[state.cells[actor.to].type].name,
       links:Math.max(0,actor.path.length-1),priority:priority?C.localNeeds[priority.id].label:'Well-supported neighbourhood',
       detail:priority?C.localNeeds[priority.id].message:'Local roads, shade and services are meeting this neighbourhood’s needs.',
       shade:conditions.shade,transport:conditions.mobility,noise:conditions.noise,happiness:analysis.happiness};

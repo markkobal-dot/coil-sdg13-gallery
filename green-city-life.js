@@ -2,6 +2,8 @@
 (function(host){
   'use strict';
   const destinations=new Set(['house','apartment','park','garden','plaza','playground','market','school','library','office','clinic','hospital','bus','tram','metro','bikeshare','ferry','stadium','marina']);
+  const workplaces=new Set(['factory','coal','office','heat','battery','recycling','waterworks','geothermal','solarfarm','airport','cargoport']);
+  const activity=type=>workplaces.has(type)?'work':['house','apartment'].includes(type)?'visit':['bus','tram','metro','bikeshare','ferry'].includes(type)?'transport':['school','library'].includes(type)?'learning':['clinic','hospital'].includes(type)?'care':type==='market'?'shopping':'leisure';
   const serviceKinds={clinic:'care',hospital:'care',firestation:'fire',recycling:'waste',waterworks:'utility'};
   const hash=n=>{const v=Math.sin(n*127.1+311.7)*43758.5453;return v-Math.floor(v);};
   function plan(C,state,analysis,{walkers=72,services=6}={}){
@@ -34,20 +36,22 @@
       const path=[];for(let i=best.end;i!==-1;i=best.t.parents.get(i))path.push(i);
       return path.reverse();
     }
-    const places=buildings.filter(b=>destinations.has(b.type)),walkingRoutes=[];
+    const places=buildings.filter(b=>destinations.has(b.type)||workplaces.has(b.type)),walkingRoutes=[];
     for(const home of homes){
       const nearby=places.filter(b=>b.i!==home.i).map(place=>({place,distance:Math.abs(home.i%C.size-place.i%C.size)+Math.abs(Math.floor(home.i/C.size)-Math.floor(place.i/C.size))})).sort((a,b)=>Number(['house','apartment'].includes(a.place.type))-Number(['house','apartment'].includes(b.place.type))||a.distance-b.distance||a.place.i-b.place.i);
       const kinds=new Set();let found=0;
       for(const {place} of nearby){
-        if(kinds.has(place.type))continue;
-        const path=journey(home,place,18);if(!path)continue;
-        walkingRoutes.push({from:home.i,to:place.i,purpose:place.type,path});kinds.add(place.type);
-        if(++found===3)break;
+        const purpose=activity(place.type);if(kinds.has(purpose))continue;
+        const path=journey(home,place,purpose==='work'?32:18);if(!path)continue;
+        walkingRoutes.push({from:home.i,to:place.i,purpose:place.type,activity:purpose,path});kinds.add(purpose);
+        if(++found===7)break;
       }
     }
     const limit=Math.min(Math.max(0,Math.floor(walkers)),Math.ceil(state.population/16),walkingRoutes.length*3);
+    const activities=new Map();for(const route of walkingRoutes){if(!activities.has(route.activity))activities.set(route.activity,[]);activities.get(route.activity).push(route);}
+    const groups=[...activities.values()];
     for(let n=0;n<limit;n++){
-      const route=walkingRoutes[n%walkingRoutes.length];
+      const group=groups[n%groups.length],route=group[Math.floor(n/groups.length)%group.length];
       result.walkers.push({...route,id:n,phase:hash(n+route.from),speed:.2+hash(n+19)*.07});
     }
     const stations=buildings.filter(b=>serviceKinds[b.type]),byKind=new Map();

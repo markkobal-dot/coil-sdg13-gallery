@@ -3,8 +3,8 @@ import * as THREE from './assets/vendor/three/three.module.js';
 import { OrbitControls } from './assets/vendor/three/OrbitControls.js';
 import { mergeGeometries } from './assets/vendor/three/BufferGeometryUtils.js';
 import {needIcon} from './green-city-neighbourhood-icons.js?v=98db9558ad';
-import {CityLife} from './green-city-life-world.js?v=499c79081b';
-import './green-city-planning.js?v=1f4559b487';
+import {CityLife} from './green-city-life-world.js?v=59ceca172c';
+import './green-city-planning.js?v=bc7222fe14';
 
 const C = globalThis.GreenCity;
 const P = globalThis.GreenCityPlanning;

@@ -26,6 +26,16 @@ test('a new city has neighbour visits, while zero population has no visual resid
   const state=C.fresh(),plan=L.plan(C,state,C.analyse(state));assert.ok(plan.walkers.length>0);assert.equal(plan.services.length,0);
   const empty={...city(),population:0};assert.deepEqual(L.plan(C,empty,C.analyse(empty)),{walkers:[],services:[]});
 });
+test('a small city includes genuine work trips, and new destinations diversify the visible residents',()=>{
+  const state=C.fresh(),plan=L.plan(C,state,C.analyse(state));
+  assert.ok(plan.walkers.some(p=>p.activity==='work'&&['factory','coal'].includes(state.cells[p.to].type)));
+  assert.ok(plan.walkers.some(p=>p.activity==='visit'));validateJourneys(state,plan);
+  let developed=city();developed=apply(C.place(developed,'market',tile(8,6)));developed=apply(C.place(developed,'bus',tile(8,5)));
+  const diverse=L.plan(C,developed,C.analyse(developed),{walkers:32});
+  for(const activity of ['work','visit','leisure','care','shopping','transport'])assert.ok(diverse.walkers.some(p=>p.activity===activity),activity+' should be represented');
+  assert.ok(diverse.walkers.every(p=>developed.cells[p.to]));validateJourneys(developed,diverse);
+  const removed=apply(C.demolish(developed,tile(8,6)));assert.ok(!L.plan(C,removed,C.analyse(removed)).walkers.some(p=>p.activity==='shopping'));
+});
 test('render budgets cap actors independently of population, including compact screens',()=>{
   const state={...city(),population:100000},a=C.analyse(state),full=L.plan(C,state,a),phone=L.plan(C,state,a,{walkers:32,services:2});
   assert.ok(full.walkers.length<=72);assert.ok(full.services.length<=6);assert.equal(phone.walkers.length,32);assert.equal(phone.services.length,2);

@@ -1,5 +1,5 @@
 import * as THREE from './assets/vendor/three/three.module.js';
-import './green-city-life.js?v=f60e6fe754';
+import './green-city-life.js?v=e59a5d339e';
 const L=globalThis.GreenCityLife;
 
 /* Fixed-size instancing keeps the number of draw calls independent of population. */

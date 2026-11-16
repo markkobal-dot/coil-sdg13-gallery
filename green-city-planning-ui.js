@@ -1,5 +1,5 @@
-import './green-city-planning.js?v=1f4559b487';
-import './green-city-life.js?v=f60e6fe754';
+import './green-city-planning.js?v=bc7222fe14';
+import './green-city-life.js?v=e59a5d339e';
 const C=globalThis.GreenCity,P=globalThis.GreenCityPlanning,L=globalThis.GreenCityLife;
 const escape=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const signed=n=>(n>0?'+':'')+Math.round(n);
@@ -28,7 +28,7 @@ export function createPlanning(api){
     if(api.getMode()!=='inspect')api.setMode('inspect');
     api.closePanels();
     following=false;panel.querySelector('[data-person-follow]').setAttribute('aria-pressed','false');panel.querySelector('[data-person-follow]').textContent='Follow resident';
-    const select=panel.querySelector('#gc-person-select');select.innerHTML=journeys.map(p=>{const r=P.resident(C,api.getState(),api.getAnalysis(),p);return r?`<option value="${key(p)}">${r.name} · ${C.label(p.from)} → ${C.label(p.to)}</option>`:'';}).join('');
+    const select=panel.querySelector('#gc-person-select');select.innerHTML=journeys.map(p=>{const r=P.resident(C,api.getState(),api.getAnalysis(),p);return r?`<option value="${key(p)}">${r.name} · ${r.purpose} · ${C.label(p.from)} → ${C.label(p.to)}</option>`:'';}).join('');
     panel.hidden=false;detail();api.getWorld()?.showResident(actor);select.focus({preventScroll:true});
     if(!shell.classList.contains('gc-expanded')){const rect=panel.getBoundingClientRect();if(rect.top<0||rect.bottom>innerHeight)panel.scrollIntoView({block:'center',behavior:'instant'});}
   }
