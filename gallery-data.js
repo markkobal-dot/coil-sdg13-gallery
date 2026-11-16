@@ -51,7 +51,9 @@ const galleryPhotos = [ {
   author: "Photo: Lovro Trošt"
 },
 {
-  src: "assets/images/heat-trapping-surfaces.png",
+  src: "assets/images/heat-trapping-surfaces-city.jpg",
+  fullSrc: "assets/images/heat-trapping-surfaces-city.jpg",
+  objectPosition: "center 65%",
   title: "Heat-trapping surfaces",
   description: "A view over a densely built-up city. Roads and buildings absorb heat, while limited greenery leaves fewer shaded places to cool down.",
   action: "We can add shade and greenery to paved areas to make neighbourhoods more comfortable during hot weather.",
@@ -60,7 +62,8 @@ const galleryPhotos = [ {
   author: "Photo: Mark Kobal"
 },
 {
-  src: "assets/images/fossil-fuels-and-emissions.png",
+  src: "assets/images/fossil-fuels-and-emissions-photo.jpg",
+  fullSrc: "assets/images/fossil-fuels-and-emissions-photo.jpg",
   title: "Fossil fuels and emissions",
   description: "An industrial energy facility highlights the role of energy production in our lives. Burning fossil fuels releases carbon dioxide, which contributes to warming.",
   action: "We can save energy where possible and support cleaner ways to produce and use it.",
@@ -100,10 +103,11 @@ const galleryPhotos = [ {
   author: "Photo provided by Lovro Trošt"
 },
 {
-  src: "assets/images/shade-in-our-neighbourhood.jpg",
-  fullSrc: "assets/images/shade-in-our-neighbourhood.jpg?v=20261030-tree-shade",
+  src: "assets/images/shade-in-our-neighbourhood-photo.jpg",
+  fullSrc: "assets/images/shade-in-our-neighbourhood-photo.jpg",
+  objectPosition: "center 70%",
   title: "Shade in our neighbourhood",
-  description: "A broad tree canopy shades a picnic table and grassy neighbourhood space. Trees can make shared outdoor areas more comfortable on hot days.",
+  description: "Trees and greenery grow among buildings in a densely built-up neighbourhood. Tree cover provides shade and can make outdoor spaces more comfortable on hot days.",
   action: "We can plant and care for trees that provide shade in shared neighbourhood spaces.",
   category: "solutions",
   photographer: "mark",
