@@ -171,6 +171,8 @@ main>section:not(#game) :is(.btn,.filter):active,.viewer-controls button:active{
 /* Display the original classroom photo upright, cropped around Lovro in the foreground. */
 #team .student-photo-crop{display:block;position:relative;overflow:hidden}
 #team .student-photo-crop>img{display:block;position:absolute;width:204.545455%;height:auto;max-width:none;left:-222.727273%;top:140%;transform-origin:0 0;transform:rotate(-90deg)}
+#team .student-photo-mark{display:block;position:relative;overflow:hidden}
+#team .student-photo-mark>img{display:block;position:absolute;width:545.454545%;height:auto;max-width:none;left:-159.090909%;top:-163.636364%}
 #team .student>h3{grid-area:name;margin:0;align-self:start;font-size:30px}
 #team .student>p{grid-area:bio;margin:0;font-size:16px;line-height:1.75;max-width:40ch}
 #team .student>.video-slot{grid-area:video;align-self:start;width:100%;margin:0;border-radius:var(--radius-panel)}
