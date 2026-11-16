@@ -1,5 +1,7 @@
 import { createExperience, glyph } from './green-city-experience.js?v=c82c169f55';
+import { createPlanning } from './green-city-planning-ui.js?v=64959c098e';
 let experience=null;
+let planning=null;
 /* New Terra: city tools, simulation clock, local saves and responsive game UI. */
 const C=globalThis.GreenCity, A=globalThis.GreenCityArt;
 const root=document.querySelector('.green-city-section');
@@ -60,6 +62,7 @@ function renderSelection(){
   renderInspector();
 }
 function renderPlacement(i){
+  planning?.preview({mode,type:selected,i:i>=0?i:focus,rotation,source,start:lineStart});
   const type=mode==='build'?selected:mode==='move'&&source!==null?state.cells[source]?.type:mode==='inspect'&&C.upgrades[state.cells[focus]?.type]?.site==='road'?state.cells[focus].type:null;
   $('rotate').hidden=!type||!C.rotatable(type);
   $('rotate').textContent='↻ '+((mode==='inspect'?state.cells[focus]?.rotation||0:rotation)*90)+'°';
@@ -118,7 +121,7 @@ function render(){
   const history=[...state.history.map(h=>h.score),analysis.overall],points=history.map((s,i)=>(i/(Math.max(1,history.length-1))*220).toFixed(1)+','+(33-s*.3).toFixed(1)).join(' ');
   $('sparkline').innerHTML=`<path d="M0 35 ${history.map((s,i)=>'L'+(i/Math.max(1,history.length-1)*220).toFixed(1)+' '+(33-s*.3).toFixed(1)).join(' ')} L220 35Z" fill="#accf8c1c"/><polyline points="${points}" fill="none" stroke="#b7ce98" stroke-width="1.6"/>`;
   $('save-status').textContent=saved?'Saved automatically on this device':'Saving unavailable. Export a city save before closing.';
-  renderCatalogue();renderSelection();renderGoals();renderEvent();minimap();world?.setState(state,analysis);if(fallback)renderFallback();renderClock();experience?.render();
+  renderCatalogue();renderSelection();renderGoals();renderEvent();minimap();world?.setState(state,analysis);if(fallback)renderFallback();renderClock();experience?.render();planning?.render();
 }
 function commit(result){
   if(result.error){announce(result.error);return false;}
@@ -171,8 +174,8 @@ function renderLifeStatus({walkers,services,enabled}){
 }
 async function initWorld(){
   if(world){world.setActive(visibleGame());return;}if(worldPromise||!visibleGame()||fallback)return;
-  worldPromise=import('./green-city-world.js?v=0c9c4ffe4b').then(({CityWorld})=>{
-    world=new CityWorld($('board'),{onSelect:i=>selectTile(i),onNeighbourhood:i=>experience?.openNeighbourhood(i),onHover:i=>{renderPlacement(i);if(i<0)return;const cell=state.cells[i];$('hover').textContent=C.label(i)+' / '+(cell?C.types[cell.type].name:C.terrain[i]==='water'?'Protected waterfront':'Open land');},onError:announce,onLife:renderLifeStatus});
+  worldPromise=import('./green-city-world.js?v=07475b4df1').then(({CityWorld})=>{
+    world=new CityWorld($('board'),{onSelect:(i,apply)=>{selectTile(i,apply);if(!apply)announce('Preview at '+C.label(i)+'. '+(actionInfo().error||'Check the forecast, then confirm below.'));},onResident:actor=>planning?.openResident(actor),onFollowStop:()=>planning?.stopFollowing(),onNeighbourhood:i=>experience?.openNeighbourhood(i),onHover:i=>{renderPlacement(i);if(i<0)return;const cell=state.cells[i];$('hover').textContent=C.label(i)+' / '+(cell?C.types[cell.type].name:C.terrain[i]==='water'?'Protected waterfront':globalThis.GreenCityPlanning.district(C,i));},onError:announce,onLife:renderLifeStatus});
     world.setState(state,analysis);world.setTool(mode,selected,focus,source,lineStart,rotation);world.setActive(visibleGame());$('loading').hidden=true;
   }).catch(()=>{fallback=true;$('loading').hidden=true;$('board').hidden=true;$('fallback').hidden=false;renderFallback();announce('3D graphics are unavailable in this browser. The planning grid is ready; all city tools and simulation features still work.');});
 }
@@ -224,5 +227,7 @@ function syncView(){if(document.body.dataset.view!=='game'){experience?.closeOve
 window.addEventListener('app:view',syncView);document.addEventListener('visibilitychange',syncView);window.addEventListener('pagehide',()=>{music.pause();clearInterval(timer);world?.setActive(false);});
 document.addEventListener('keydown',e=>{if(!visibleGame()||hasOverlay()||/INPUT|SELECT|TEXTAREA/.test(e.target.tagName))return;if(e.key==='Escape'){source=null;lineStart=null;shell.dataset.panel='none';if(shell.classList.contains('gc-expanded'))setExpanded(false);renderSelection();return;}if(e.ctrlKey||e.metaKey){if(e.key.toLowerCase()==='z'){e.preventDefault();e.shiftKey?redoAction():undoAction();}if(e.key.toLowerCase()==='y'){e.preventDefault();redoAction();}return;}if(['q','e'].includes(e.key.toLowerCase())){e.preventDefault();rotateBuilding(e.key.toLowerCase()==='q'?-1:1);return;}const tools={i:'inspect',b:'build',r:'road',u:'upgrade',m:'move',x:'demolish'};if(tools[e.key.toLowerCase()]){e.preventDefault();setMode(tools[e.key.toLowerCase()]);}});
 experience=createExperience({getState:()=>state,getAnalysis:()=>analysis,focusTile:(i,overlay)=>{setMode('inspect');selectTile(i,false);world?.focusCell(i);if(overlay){$('overlay').value=overlay;$('overlay').dispatchEvent(new Event('change'));}},focusPlan:i=>{selectTile(i,false);world?.focusCell(i);},commit,announce,setMode,choose,setPanel,openPanel:panel=>{if(shell.dataset.panel!==panel)setPanel(panel);},syncClock,hasOverlay,confirmAction,evaluate,step,undo:undoAction,redo:redoAction,resize:()=>world?.resize()});
+planning=createPlanning({getState:()=>state,getAnalysis:()=>analysis,getWorld:()=>world,getMode:()=>mode,setMode,announce,closePanels:()=>setPanel('none'),openNeighbourhood:i=>experience?.openNeighbourhood(i)});
+window.addEventListener('app:view',()=>{if(document.body.dataset.view!=='game')planning.close();});
 if(restored)save();
 render();announce(saveWarning||(restored?'Welcome back, Mayor. Your expanded city and recent undo history are ready.':'Welcome to New Terra. Explore your island, choose your first improvements, then advance a month.'));syncView();

@@ -5,6 +5,20 @@ const fs = require('node:fs');
 const os = require('node:os');
 const path = require('node:path');
 const { buildSiteBundle } = require('../scripts/build-site-bundle.cjs');
+const { updateGameCache } = require('../scripts/update-game-cache.cjs');
+
+test('changed game helpers refresh their importers transitively and remain stable on the next build',()=>{
+  const root=fs.mkdtempSync(path.join(os.tmpdir(),'coil-game-cache-'));
+  try{
+    fs.writeFileSync(path.join(root,'green-city-planning.js'),'// first\n');
+    fs.writeFileSync(path.join(root,'green-city-planning-ui.js'),"import './green-city-planning.js';\n");
+    fs.writeFileSync(path.join(root,'green-city.js'),"import './green-city-planning-ui.js';\n");
+    fs.writeFileSync(path.join(root,'script.js'),"import('./green-city.js');\n");
+    updateGameCache(root);const before=fs.readFileSync(path.join(root,'script.js'),'utf8');
+    fs.appendFileSync(path.join(root,'green-city-planning.js'),'// changed\n');updateGameCache(root);
+    const after=fs.readFileSync(path.join(root,'script.js'),'utf8');assert.notEqual(after,before);updateGameCache(root);assert.equal(fs.readFileSync(path.join(root,'script.js'),'utf8'),after);
+  }finally{fs.rmSync(root,{recursive:true,force:true});}
+});
 
 test('source edits refresh the bundle and cache version; daily weather stays independent', () => {
   const root = fs.mkdtempSync(path.join(os.tmpdir(), 'coil-bundle-'));
