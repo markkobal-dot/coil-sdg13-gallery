@@ -6,7 +6,7 @@
   const scenes={
     home:{heading:'Triglav Glacier, summer 2025',copy:'Very little ice remains in this summer view. See how the glacier’s mapped area has changed since 1946.',caption:'Triglav Glacier · Summer 2025'},
     signs:{heading:'A dry forest floor',copy:'Dry pine needles cover the ground. When vegetation dries out, it can become fuel for wildfires.',caption:'Dry pine needles on the forest floor'},
-    choices:{heading:'Solar panels at home',copy:'Solar panels generate electricity from sunlight and can reduce reliance on fossil fuels.',caption:'Rooftop solar panels'}
+    choices:{heading:'Rooftop solar panels',copy:'Solar panels generate electricity from sunlight and can reduce reliance on fossil fuels.',caption:'Solar panels on an Alpine farm building'}
   };
   const controls=opening.querySelector('.home-scenes');
   let request=0;

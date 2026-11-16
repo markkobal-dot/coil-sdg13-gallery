@@ -127,6 +127,14 @@ function showViewerItem(photo) {
   viewerTitle.textContent = photo.title || 'A closer look';
   viewerDescription.textContent = photo.description || '';
   viewerCaption.textContent = photo.caption || '';
+  if (photo.sourceUrl) {
+    const source = document.createElement('a');
+    source.href = photo.sourceUrl;
+    source.target = '_blank';
+    source.rel = 'noopener noreferrer';
+    source.textContent = 'Photo source ↗';
+    viewerCaption.append(document.createTextNode(' · '), source);
+  }
   viewerCaption.hidden = !viewerCaption.textContent;
   viewerType.textContent = viewerIndex === null ? 'THE EVIDENCE' :
     mediaType(photo) === 'study' ? 'VISUAL STUDY' : 'FROM OUR COLLECTION';
