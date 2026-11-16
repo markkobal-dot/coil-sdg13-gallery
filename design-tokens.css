@@ -23,6 +23,8 @@
   --weight-display: 900;
   --size-label: 13px;
   --size-body: 16px;
+  --duration-ui: 140ms;
+  --ease-ui: ease-out;
   --space-1: 4px;
   --space-2: 8px;
   --space-3: 12px;

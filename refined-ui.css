@@ -86,6 +86,10 @@ main>section:not(#game) .btn-primary:hover{background:var(--color-action-hover);
 .gallery-section .accent{color:#d2e1bf}
 .gallery-section .filter{border-radius:var(--radius-panel);border-color:#ffffff26;padding:10px 18px;font-size:13px;min-height:44px}
 .gallery-section .filter.active{background:var(--color-accent);color:#173c2d;border-color:var(--color-accent)}
+.gallery-section :is(.filter,.photo-open):focus-visible,.lightbox :is(button,a):focus-visible{outline-color:var(--color-accent)}
+header.nav .menu-toggle:focus-visible,#navlinks a:focus-visible{outline:3px solid var(--color-focus);outline-offset:4px}
+main>section:not(#game) :is(.btn,.filter),.menu-toggle,.viewer-controls button{transition:background-color var(--duration-ui) var(--ease-ui),color var(--duration-ui) var(--ease-ui),border-color var(--duration-ui) var(--ease-ui)}
+main>section:not(#game) :is(.btn,.filter):active,.viewer-controls button:active{filter:brightness(.9)}
 .gallery-section #gallery-author{border-radius:var(--radius-panel);font-family:var(--site-font)}
 .photo-open{border-radius:var(--radius-panel);overflow:hidden}
 .gallery-section .photo-card{border-bottom-color:#ffffff16}
@@ -234,3 +238,4 @@ main>section:not(#game) .btn-primary:hover{background:var(--color-action-hover);
  .evidence-detail>summary>small{grid-row:2}
 }
 @media(prefers-reduced-motion:reduce){.home-photo,.discovery-grid>a,.city-picker button{transition:none}.home-photo:hover,.discovery-grid>a:hover,main>section:not(#game) .btn:hover{transform:none}}
+@media(prefers-reduced-motion:reduce){main>section:not(#game) :is(.btn,.filter),.menu-toggle,.viewer-controls button{transition:none}}

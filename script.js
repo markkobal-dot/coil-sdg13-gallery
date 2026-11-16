@@ -58,7 +58,7 @@ galleryPhotos.forEach((photo, index) => {
   galleryCards.push(card);
 });
 
-function filterCollection() {
+function filterCollection(animate = false) {
   visiblePhotoIndices = [];
   galleryCards.forEach((card, index) => {
     const matchesCategory = activeCategory === 'all' || card.dataset.category === activeCategory;
@@ -69,19 +69,26 @@ function filterCollection() {
   document.getElementById('gallery-empty').hidden = count > 0;
   document.getElementById('gallery-count').textContent =
     count + (count === 1 ? ' photograph' : ' photographs');
+  if (animate && galleryGrid.animate && !matchMedia('(prefers-reduced-motion: reduce)').matches) {
+    galleryGrid.getAnimations().forEach(animation => animation.cancel());
+    galleryGrid.animate([{ opacity: .65, transform: 'translateY(4px)' }, { opacity: 1, transform: 'translateY(0)' }], {
+      duration: 150, easing: 'ease-out'
+    });
+  }
 }
 for (const button of document.querySelectorAll('.filter')) {
   const selected = button.dataset.filter === activeCategory;
   button.classList.toggle('active', selected);
   button.setAttribute('aria-pressed', String(selected));
   button.addEventListener('click', () => {
+    if (activeCategory === button.dataset.filter) return;
     activeCategory = button.dataset.filter;
     for (const filter of document.querySelectorAll('.filter')) {
       const selected = filter === button;
       filter.classList.toggle('active', selected);
       filter.setAttribute('aria-pressed', String(selected));
     }
-    filterCollection();
+    filterCollection(true);
   });
 }
 filterCollection();
@@ -468,11 +475,16 @@ document.getElementById('poll-reset').addEventListener('click', () => {
   const navDestination = (id) => id === 'game' ? 'solutions' : id;
   let currentView = null;
 
+  function setMenuOpen(opening) {
+    nav.classList.toggle('open', opening);
+    document.body.classList.toggle('menu-open', opening);
+    toggle.setAttribute('aria-expanded', String(opening));
+    menuLabel.textContent = opening ? 'Close' : 'Menu';
+    document.querySelector('main').inert = opening;
+    document.querySelector('.site-footer').inert = opening;
+  }
   function closeMenu() {
-    nav.classList.remove('open');
-    document.body.classList.remove('menu-open');
-    toggle.setAttribute('aria-expanded', 'false');
-    menuLabel.textContent = 'Menu';
+    setMenuOpen(false);
   }
 
   function renderView(hash, focus = true, preserveScroll = false) {
@@ -513,11 +525,7 @@ document.getElementById('poll-reset').addEventListener('click', () => {
   }
 
   toggle.addEventListener('click', () => {
-    const opening = !nav.classList.contains('open');
-    nav.classList.toggle('open', opening);
-    document.body.classList.toggle('menu-open', opening);
-    toggle.setAttribute('aria-expanded', String(opening));
-    menuLabel.textContent = opening ? 'Close' : 'Menu';
+    setMenuOpen(!nav.classList.contains('open'));
   });
   document.addEventListener('click', (event) => {
     const link = event.target.closest('a[href^="#"]');
@@ -537,6 +545,15 @@ document.getElementById('poll-reset').addEventListener('click', () => {
     if (event.key === 'Escape' && nav.classList.contains('open')) {
       closeMenu();
       toggle.focus();
+    } else if (event.key === 'Tab' && nav.classList.contains('open')) {
+      const first = nav.querySelector('a');
+      if (event.shiftKey && document.activeElement === first) {
+        event.preventDefault();
+        toggle.focus();
+      } else if (!event.shiftKey && document.activeElement === toggle) {
+        event.preventDefault();
+        first?.focus();
+      }
     }
   });
   window.addEventListener('popstate', () => renderView(location.hash));
