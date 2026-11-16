@@ -79,7 +79,6 @@ const galleryPhotos = [ {
   fullSrc: "assets/images/fossil-fuels-and-emissions-photo.jpg",
   title: "Fossil fuels and emissions",
   caption: "INA refinery near Rijeka · Croatia",
-  sourceUrl: "https://www.shutterstock.com/tr/image-photo/refinery-spews-out-greenhouse-gases-one-1692847867",
   description: "Processing towers, storage tanks and a white plume at an oil refinery. The scene shows part of the infrastructure used to turn crude oil into fuels.",
   action: "Use less energy and support cleaner power for homes, transport and industry.",
   category: "challenge",
