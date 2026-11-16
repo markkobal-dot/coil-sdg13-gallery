@@ -26,6 +26,33 @@ test('an unaffordable plan remains a forecast and cannot bypass the actual const
  const result=C.place(state,shade.action.type,shade.action.target);assert.equal(result.state,state);assert.ok(result.error);assert.equal(state.cash,0);
 });
 
+test('mission planning prioritises its target without changing needs, scores or money',()=>{
+ const state=C.fresh(),a=C.analyse(state),before=JSON.stringify(state),needs=JSON.stringify(a.neighbourhoods);
+ for(const metric of ['shade','mobility','health']){
+  const report=C.neighbourhoodInfo(state,home,a,metric);
+  assert.equal(report.priorities[0].id,metric);
+  assert.ok(report.priorities[0].action);
+  assert.equal(C.canPlace(state,report.priorities[0].action.type,report.priorities[0].action.target,a),'');
+ }
+ assert.equal(JSON.stringify(state),before);
+ assert.equal(JSON.stringify(a.neighbourhoods),needs);
+ const disconnected=apply(C.demolish(state,tile(17,10)));
+ assert.equal(C.neighbourhoodInfo(disconnected,home,undefined,'shade').priorities[0].id,'roads');
+});
+
+test('shade planning remains available between the normal need threshold and the mission target',()=>{
+ let state=C.fresh();
+ const plan=C.neighbourhoodInfo(state,home,undefined,'shade').priorities[0].action;
+ state=apply(C.place(state,plan.type,plan.target));
+ state=apply(C.upgrade(state,plan.target));
+ const a=C.analyse(state),local=a.homeProfiles.find(h=>h.i===home);
+ assert.ok(local.shade>=25&&local.shade<40);
+ assert.ok(!C.neighbourhoodInfo(state,home,a).needs.some(n=>n.id==='shade'));
+ const report=C.neighbourhoodInfo(state,home,a,'shade');
+ assert.equal(report.priorities[0].id,'shade');
+ assert.ok(report.priorities[0].forecast.after>local.shade);
+});
+
 test('noise feedback identifies the actual footprint source and resolves after it is relocated',()=>{
  let state=C.fresh('sandbox');state=apply(C.place(state,'airport',tile(6,12),1));
  const i=tile(6,11),report=C.neighbourhoodInfo(state,i),noise=report.priorities.find(n=>n.id==='noise');

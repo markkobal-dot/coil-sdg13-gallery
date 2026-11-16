@@ -1,5 +1,5 @@
 /* Resident pulse: household groups, practical needs and a saved happiness history. */
-import {createNeighbourhoods} from './green-city-neighbourhoods.js?v=7e86af3272';
+import {createNeighbourhoods} from './green-city-neighbourhoods.js?v=10598264cb';
 const C=globalThis.GreenCity;
 export function createResidents(api,glyph){
  const $=id=>document.getElementById('gc-'+id),shell=$('shell');

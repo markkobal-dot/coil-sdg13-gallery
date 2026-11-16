@@ -1,7 +1,7 @@
 /* City workspace: fullscreen, commands, council briefings and budget controls. */
-import { createResidents } from './green-city-residents.js?v=faf073c8df';
+import { createResidents } from './green-city-residents.js?v=ec2ab88e9b';
 import { createTransport } from './green-city-transport.js?v=a4128191f3';
-import { createMissions } from './green-city-missions.js?v=a2764ec7c8';
+import { createMissions } from './green-city-missions.js?v=25d5a855c2';
 const C=globalThis.GreenCity;
 const paths={
  route:'M5 5h5a4 4 0 0 1 0 8H9a4 4 0 0 0 0 8h10M5 2v6M19 18v5',

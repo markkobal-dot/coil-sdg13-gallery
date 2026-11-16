@@ -96,6 +96,7 @@ main>section:not(#game) :is(.btn,.filter):active,.viewer-controls button:active{
 #gallery .photo-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:48px 40px}
 #gallery .photo-card .info{display:block;padding:18px 0 22px}
 #gallery .photo-card .info h3{margin:0;font-size:24px;line-height:1.3}
+#gallery .photo-context{margin:8px 0 0;font-size:13px;line-height:1.5;color:var(--color-secondary-on-dark)}
 #gallery .photo-card .photo-author{display:block;margin-top:8px;letter-spacing:0}
 #gallery .photo-feature:not([hidden]){grid-column:1/-1;display:grid;grid-template-columns:minmax(0,1.8fr) minmax(0,1fr);align-items:end;gap:35px;padding-bottom:28px}
 #gallery .photo-feature .photo-open{aspect-ratio:3/2}

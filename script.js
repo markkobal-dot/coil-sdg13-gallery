@@ -47,6 +47,12 @@ galleryPhotos.forEach((photo, index) => {
   const title = document.createElement('h3');
   title.textContent = photo.title;
   information.append(title);
+  if (photo.caption) {
+    const context = document.createElement('p');
+    context.className = 'photo-context';
+    context.textContent = photo.caption;
+    information.append(context);
+  }
   if (photo.featured) {
     const note = document.createElement('p');
     note.className = 'photo-note';
@@ -120,7 +126,7 @@ function showViewerItem(photo) {
   viewerImage.alt = photo.description || photo.title || '';
   viewerTitle.textContent = photo.title || 'A closer look';
   viewerDescription.textContent = photo.description || '';
-  viewerCaption.textContent = viewerIndex === null ? photo.caption || '' : '';
+  viewerCaption.textContent = photo.caption || '';
   viewerCaption.hidden = !viewerCaption.textContent;
   viewerType.textContent = viewerIndex === null ? 'THE EVIDENCE' :
     mediaType(photo) === 'study' ? 'VISUAL STUDY' : 'FROM OUR COLLECTION';
@@ -491,8 +497,8 @@ document.addEventListener('visibilitychange', () => {
   async function loadGame() {
     if (loading) return;
     loading = (async () => {
-      await Promise.all([import('./green-city-core.js?v=0925189478'), import('./green-city-art.js?v=3889596789')]);
-      await import('./green-city.js?v=bf78c93726');
+      await Promise.all([import('./green-city-core.js?v=c2a7053d1d'), import('./green-city-art.js?v=3889596789')]);
+      await import('./green-city.js?v=70007661f3');
     })();
     try { await loading; }
     catch { document.getElementById('gc-start-status').hidden = false; }

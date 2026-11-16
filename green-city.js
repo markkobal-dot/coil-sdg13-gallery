@@ -1,4 +1,4 @@
-import { createExperience, glyph } from './green-city-experience.js?v=f075b41f54';
+import { createExperience, glyph } from './green-city-experience.js?v=c82c169f55';
 let experience=null;
 /* New Terra: city tools, simulation clock, local saves and responsive game UI. */
 const C=globalThis.GreenCity, A=globalThis.GreenCityArt;
@@ -37,7 +37,7 @@ function renderCatalogue(){
 }
 function actionInfo(){
   const cell=state.cells[focus];
-  if(mode==='build')return {label:'Build · '+meta().cost+' EP',error:C.canPlace(state,selected,focus,analysis,rotation)};
+  if(mode==='build')return {label:'Build at '+C.label(focus)+' · '+meta().cost+' EP',error:C.canPlace(state,selected,focus,analysis,rotation)};
   if(mode==='upgrade')return {label:cell?'Upgrade · '+C.upgradeCost(cell)+' EP':'Select a building',error:!cell?'Choose a building to upgrade.':cell.level>=3?'Maximum level reached.':['road','factory','coal'].includes(cell.type)?'Use the build catalogue to retrofit this tile.':state.cash<C.upgradeCost(cell)?'Not enough Eco Points.':''};
   if(mode==='demolish')return {label:cell?'Remove · +'+Math.floor(cell.paid*.5)+' EP':'Select a building',error:cell?'':'Select an occupied tile.'};
   if(mode==='move')return {label:source===null?'Choose building':'Move · '+C.moveCost(state.cells[source])+' EP',error:source===null?(!cell?'Choose a building.':C.roadTypes.has(cell.type)?'Roads cannot be relocated.':''):C.relocate(state,source,focus,rotation).error};
@@ -107,6 +107,7 @@ function minimap(){
 function render(){
   analysis=C.analyse(state);
   $('budget').innerHTML=format(state.cash)+' <small>EP</small>';$('balance').textContent=(analysis.net>=0?'+':'')+format(analysis.net)+' EP / month';$('balance').classList.toggle('gc-negative',analysis.net<0);
+  $('onboarding-copy').textContent='You have '+format(state.cash)+' Eco Points and the city starts paused. Try the shade mission: choose a home, plan nearby greenery, then confirm it on the map.';
   $('population').textContent=format(state.population);$('capacity').textContent=format(analysis.capacity)+' housing capacity';
   $('date').textContent='Month '+state.month;$('season').textContent=['Spring','Summer','Autumn','Winter'][Math.floor((state.month-1)%12/3)]+' / Year '+(Math.floor((state.month-1)/12)+1);
   $('challenge').value=state.challenge;$('undo').disabled=!undo.length;$('redo').disabled=!redo.length;

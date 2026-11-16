@@ -60,6 +60,10 @@
 .gc-local-priorities-heading h4{font-size:16px;font-weight:550;color:#526f43;margin:0}
 .gc-local-priorities-heading>span{font-size:8px;letter-spacing:.05em;color:#95a087}
 .gc-local-need{display:flex;align-items:start;gap:13px;padding:18px 0;border-top:1px solid #dfe7d4}
+.gc-local-mission{display:flex;flex-wrap:wrap;gap:8px 20px;margin:18px 0 8px;padding:16px;border:1px solid #c9d8b8;border-radius:11px;background:#edf4e5;color:#47633c;font-size:13px;line-height:1.6}
+.gc-local-mission>span{margin-left:auto;font-variant-numeric:tabular-nums}
+.gc-local-mission>p{flex-basis:100%;margin:0;font-size:12px}
+.gc-local-need.is-mission-priority{border-top-color:#91ad78}
 .gc-local-need>div{min-width:0;flex:1}
 .gc-local-need h5{margin:1px 0 9px;font-size:14px;font-weight:600;color:#587449;line-height:1.5}
 .gc-local-need p{font-size:11px;color:#7d8b6f;line-height:1.8;margin:0 0 12px}

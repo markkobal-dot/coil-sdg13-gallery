@@ -146,9 +146,17 @@
     const target=candidates.find(j=>!canPlace(planning,type,j,a));if(target===undefined)return null;
     return {kind:'build',type,target,cost:upgrades[type].cost,upkeep:upgrades[type].upkeep,affordable:state.cash>=upgrades[type].cost};
   }
-  function neighbourhoodInfo(state,i,a=analyse(state)){
+  function neighbourhoodInfo(state,i,a=analyse(state),priorityId=null){
     i=anchorAt(state,i);const summary=a.neighbourhoods.find(h=>h.i===i),home=a.homeProfiles.find(h=>h.i===i);if(!summary||!home)return null;
-    const priorities=summary.needs.slice(0,3).map(need=>{
+    const ordered=[...summary.needs],preferred=localNeeds[priorityId];
+    // Mission targets can be higher than the ordinary unmet-need threshold.
+    // Keep the relevant plan available until that target is reached; do not change any scores.
+    if(preferred?.build){
+      const index=ordered.findIndex(need=>need.id===priorityId);
+      const need=index>=0?ordered.splice(index,1)[0]:{id:priorityId,severity:0,value:home[preferred.metric]};
+      ordered.splice(ordered[0]?.id==='roads'?1:0,0,need);
+    }
+    const priorities=ordered.slice(0,3).map(need=>{
       const def=localNeeds[need.id];let action=null,source=null,forecast=null;
       if(need.id==='roads')action={kind:'road',target:i};
       else if(need.id==='noise'){
