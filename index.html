@@ -66,7 +66,7 @@
     <link rel="stylesheet" href="home-experience.css?v=63710de0a0">
     <link rel="stylesheet" href="site-polish.css?v=a52a281be9">
     <link rel="stylesheet" href="design-tokens.css?v=2e57de22aa">
-    <link rel="stylesheet" href="refined-ui.css?v=bae7b12f4d">
+    <link rel="stylesheet" href="refined-ui.css?v=dfcd858d44">
   </head>
 
   <body style="background-color:var(--color-paper,#f5f3ee)">
@@ -103,8 +103,8 @@
         <div class="home-opening" data-scene="home">
           <div class="home-backdrop">
             <img class="home-scene is-active" data-home-image="home" src="assets/images/triglav-hike-lovro.webp" alt="Rocky slopes at the Triglav Glacier, with very little ice visible." width="1569" height="1045" fetchpriority="high" decoding="async">
-            <img class="home-scene" data-home-image="signs" data-home-src="assets/images/optimized/home-forest.webp" data-home-srcset="assets/images/optimized/home-forest-480.webp 480w, assets/images/optimized/home-forest.webp 720w" alt="Picnic tables beneath pine trees, with dry needles covering the ground." aria-hidden="true" width="720" height="960" decoding="async">
-            <img class="home-scene" data-home-image="choices" data-home-src="assets/images/saving-energy-at-home.png" data-home-srcset="assets/images/saving-energy-at-home.png 930w" alt="Solar panels covering a farm building’s roof, with wooded slopes behind it." aria-hidden="true" width="930" height="619" decoding="async">
+            <img class="home-scene" data-home-image="signs" data-home-src="assets/images/optimized/home-forest.webp" data-home-srcset="assets/images/optimized/home-forest-480.webp 480w, assets/images/optimized/home-forest.webp 960w" alt="Picnic tables beneath pine trees, with dry needles covering the ground." aria-hidden="true" width="960" height="1280" decoding="async" style="object-position:center 70%">
+            <img class="home-scene" data-home-image="choices" data-home-src="assets/images/optimized/solar-roof.webp" data-home-srcset="assets/images/optimized/solar-roof-720.webp 720w, assets/images/optimized/solar-roof.webp 930w" alt="Solar panels covering a farm building’s roof, with wooded slopes behind it." aria-hidden="true" width="930" height="619" decoding="async">
           </div>
           <div class="home-opening-top"><span>Photography &amp; climate change</span><span>ERŠ Nova Gorica · 2026</span></div>
           <div class="home-opening-content">
@@ -123,7 +123,7 @@
         </div>
         <div class="hero-index">
           <strong>Mark Kobal &amp; Lovro Trošt</strong>
-          <p>We’re both students at ERŠ Nova Gorica. For our SDG 13 project, we put photographs beside climate records and asked what could change in our streets.</p>
+          <p>We’re students at ERŠ Nova Gorica. These twelve photographs take us from Slovenian landscapes to cities abroad. The climate records help us look beyond a single moment.</p>
           <a href="#team">About the project →</a>
         </div>
         <div class="home-collection">
@@ -133,7 +133,7 @@
           </div>
           <div class="home-photo-grid">
             <button class="home-photo" type="button" data-open-photo="1">
-              <span class="home-photo-image"><img src="assets/images/dry-forest-lovro-2026.webp" alt="Dry pine needles covering the forest floor." width="720" height="960" loading="lazy" decoding="async" style="object-position:center bottom"><span class="image-open" aria-hidden="true">↗</span></span>
+              <span class="home-photo-image"><img src="assets/images/dry-forest-lovro-2026-card.webp" srcset="assets/images/dry-forest-lovro-2026-card.webp 600w, assets/images/dry-forest-lovro-2026.webp 1200w" sizes="(max-width:700px) calc(100vw - 48px), (max-width:1000px) 45vw, 28vw" alt="Dry pine needles covering the forest floor." width="1200" height="1600" loading="lazy" decoding="async" style="object-position:center bottom"><span class="image-open" aria-hidden="true">↗</span></span>
               <strong>A dry forest floor</strong>
             </button>
             <button class="home-photo" type="button" data-open-photo="0">
@@ -141,7 +141,7 @@
               <strong>Protecting Alpine nature</strong>
             </button>
             <button class="home-photo" type="button" data-open-photo="11">
-              <span class="home-photo-image"><img src="assets/images/saving-energy-at-home.png" alt="Solar panels on a rooftop beneath a blue sky." width="930" height="619" loading="lazy" decoding="async" style="object-position:70% center"><span class="image-open" aria-hidden="true">↗</span></span>
+              <span class="home-photo-image"><img src="assets/images/optimized/solar-roof.webp" srcset="assets/images/optimized/solar-roof-720.webp 720w, assets/images/optimized/solar-roof.webp 930w" sizes="(max-width:1000px) calc(100vw - 48px), 40vw" alt="Solar panels on a rooftop beneath a blue sky." width="930" height="619" loading="lazy" decoding="async" style="object-position:70% center"><span class="image-open" aria-hidden="true">↗</span></span>
               <strong>Rooftop solar panels</strong>
             </button>
           </div>
@@ -191,12 +191,12 @@
             </h2>
           </div>
           <p>
-            Rabeljsko jezero, floodwater in Moste pri Komendi, a summer view of Triglav. Open a photograph for a closer look.
+            A lake in the Alps, floodwater near Komenda and a view across New York. Explore the photographs and the climate questions behind them.
           </p>
         </div>
         <div class="gallery-toolbar">
-        <div class="filters" role="group" aria-label="Filter gallery images">
-          <button class="filter active" data-filter="all" aria-pressed="true">All images</button><button class="filter" data-filter="challenge" aria-pressed="false">The challenge</button><button class="filter" data-filter="solutions" aria-pressed="false">Solutions</button>
+        <div class="filters" role="group" aria-label="Filter photographs">
+          <button class="filter active" data-filter="all" aria-pressed="true">All photographs</button><button class="filter" data-filter="challenge" aria-pressed="false">The challenge</button><button class="filter" data-filter="solutions" aria-pressed="false">Solutions</button>
         </div>
         </div>
         <div class="gallery-collection-note"><span id="gallery-count" role="status" aria-live="polite">12 photographs</span><span>Select a photograph to read its caption</span></div>
@@ -996,11 +996,11 @@
     <div class="lightbox" id="lightbox" hidden role="dialog" aria-modal="true" aria-labelledby="lightbox-title">
       <div class="viewer-top"><span id="lightbox-counter">THE COLLECTION</span><button id="lightbox-close" class="lightbox-close" type="button" aria-label="Close image viewer">×</button></div>
       <div class="viewer-layout">
-        <div class="viewer-image-wrap"><img id="lightbox-image" alt="Selected photograph" width="720" height="540"></div>
+        <div class="viewer-image-wrap"><img id="lightbox-image" alt="Selected photograph" width="720" height="540" decoding="async"><p id="lightbox-status" class="sr-only" role="status" aria-live="polite"></p></div>
         <div class="viewer-copy"><span id="lightbox-type" class="kicker"></span><h2 id="lightbox-title"></h2><p id="lightbox-description"></p><p id="lightbox-caption"></p><div class="viewer-controls"><button id="lightbox-previous" type="button" aria-label="Previous photograph">← Previous</button><button id="lightbox-next" type="button" aria-label="Next photograph">Next →</button></div><span class="viewer-key-hint">ARROW KEYS OR SWIPE TO EXPLORE · ESC TO CLOSE</span></div>
       </div>
     </div>
     <script src="assets/data/weather-snapshot.js" defer></script>
-    <script src="site.js?v=ea92f8623f" defer></script>
+    <script src="site.js?v=24f90189a7" defer></script>
   </body>
 </html>

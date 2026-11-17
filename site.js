@@ -17,7 +17,8 @@ const galleryPhotos = [ {
   action: "Protect forests and freshwater habitats, stay on marked paths and take litter home.",
   category: "solutions",
   photographer: "lovro",
-  author: "Photo: Lovro Trošt"
+  author: "Photo: Lovro Trošt",
+  alt: "Turquoise lake water beneath forested mountains at Rabeljsko jezero."
 },
 {
   src: "assets/images/dry-forest-lovro-2026.webp",
@@ -29,7 +30,12 @@ const galleryPhotos = [ {
   action: "We can learn how our local area prepares for wildfire and follow official fire-safety guidance.",
   category: "challenge",
   photographer: "lovro",
-  author: "Photo: Lovro Trošt"
+  author: "Photo: Lovro Trošt",
+  width: 1200,
+  height: 1600,
+  alt: "Dry pine needles cover the ground around picnic tables beneath pine trees.",
+  previewSrc: "assets/images/dry-forest-lovro-2026-card.webp",
+  srcSet: "assets/images/dry-forest-lovro-2026-card.webp 600w, assets/images/dry-forest-lovro-2026.webp 1200w"
 },
 {
   src: "assets/images/triglav-hike-lovro.webp",
@@ -40,7 +46,12 @@ const galleryPhotos = [ {
   action: "Compare this local mountain landscape with the glacier measurements and climate data in our Slovenia section.",
   category: "challenge",
   photographer: "lovro",
-  author: "Photo: Lovro Trošt"
+  author: "Photo: Lovro Trošt",
+  width: 1569,
+  height: 1045,
+  alt: "Rocky slopes and a small patch of remaining ice at the Triglav Glacier.",
+  previewSrc: "assets/images/triglav-hike-lovro-card.webp",
+  srcSet: "assets/images/triglav-hike-lovro-card.webp 800w, assets/images/triglav-hike-lovro.webp 1569w"
 },
 {
   src: "assets/images/drought-and-water.png",
@@ -51,7 +62,12 @@ const galleryPhotos = [ {
   action: "We can use water thoughtfully and learn how our community protects water during dry periods.",
   category: "challenge",
   photographer: "mark",
-  author: "Photo: Mark Kobal"
+  author: "Photo: Mark Kobal",
+  width: 630,
+  height: 378,
+  alt: "Dry soil and browning maize leaves in fields near Ajdovščina.",
+  previewSrc: "assets/images/optimized/drought-field.webp",
+  srcSet: "assets/images/optimized/drought-field.webp 630w"
 },
 {
   src: "assets/images/floods-moste-komenda-2023.webp",
@@ -62,7 +78,12 @@ const galleryPhotos = [ {
   action: "We can find out how our community prepares for heavy rain and keep drains clear where it is safe to do so.",
   category: "challenge",
   photographer: "lovro",
-  author: "Photo: Lovro Trošt"
+  author: "Photo: Lovro Trošt",
+  width: 1200,
+  height: 914,
+  alt: "Floodwater covers a street and surrounds buildings in Moste pri Komendi.",
+  previewSrc: "assets/images/floods-moste-komenda-2023-card.webp",
+  srcSet: "assets/images/floods-moste-komenda-2023-card.webp 800w, assets/images/floods-moste-komenda-2023.webp 1200w"
 },
 {
   src: "assets/images/heat-trapping-surfaces-city.jpg",
@@ -74,7 +95,10 @@ const galleryPhotos = [ {
   action: "Plan shade and greenery around paved streets, squares and buildings.",
   category: "challenge",
   photographer: "mark",
-  author: "Photo: Mark Kobal"
+  author: "Photo: Mark Kobal",
+  width: 1200,
+  height: 1600,
+  alt: "Dense rooftops and streets stretch towards Lower Manhattan and New York Harbour."
 },
 {
   src: "assets/images/fossil-fuels-and-emissions-photo.jpg",
@@ -85,7 +109,10 @@ const galleryPhotos = [ {
   action: "Use less energy and support cleaner power for homes, transport and industry.",
   category: "challenge",
   photographer: "external",
-  author: "Matt Gush"
+  author: "Matt Gush",
+  width: 4885,
+  height: 3664,
+  alt: "Refinery towers and storage tanks beneath a large white plume."
 },
 {
   src: "assets/images/wind-turbines-lovro.webp",
@@ -97,7 +124,12 @@ const galleryPhotos = [ {
   action: "We can learn where our electricity comes from and how renewable energy is used in our area.",
   category: "solutions",
   photographer: "lovro",
-  author: "Photo: Lovro Trošt"
+  author: "Photo: Lovro Trošt",
+  width: 1200,
+  height: 1600,
+  alt: "Wind turbines stand along the south coast of Tenerife.",
+  previewSrc: "assets/images/wind-turbines-lovro-card.webp",
+  srcSet: "assets/images/wind-turbines-lovro-card.webp 600w, assets/images/wind-turbines-lovro.webp 1200w"
 },
 {
   src: "assets/images/protecting-forests.webp",
@@ -108,7 +140,12 @@ const galleryPhotos = [ {
   action: "We can care for local trees and forests and support their protection and restoration.",
   category: "solutions",
   photographer: "mark",
-  author: "Photo: Mark Kobal"
+  author: "Photo: Mark Kobal",
+  width: 1600,
+  height: 2133,
+  alt: "A gravel path runs between tall trees in a shaded forest.",
+  previewSrc: "assets/images/protecting-forests-card.webp",
+  srcSet: "assets/images/protecting-forests-card.webp 720w, assets/images/protecting-forests.webp 1600w"
 },
 {
   src: "assets/images/electric-buses-lovro.webp",
@@ -119,7 +156,12 @@ const galleryPhotos = [ {
   action: "For a suitable trip, we can walk, cycle, take public transport or share a ride.",
   category: "solutions",
   photographer: "lovro",
-  author: "Photo provided by Lovro Trošt"
+  author: "Photo provided by Lovro Trošt",
+  width: 936,
+  height: 936,
+  alt: "Two buses in GO! 2025 colours, including a bus marked 100% elettrico.",
+  previewSrc: "assets/images/electric-buses-lovro-card.webp",
+  srcSet: "assets/images/electric-buses-lovro-card.webp 800w, assets/images/electric-buses-lovro.webp 936w"
 },
 {
   src: "assets/images/shade-in-our-neighbourhood-photo.jpg",
@@ -131,7 +173,10 @@ const galleryPhotos = [ {
   action: "Protect existing trees and leave space for greenery as neighbourhoods grow.",
   category: "solutions",
   photographer: "mark",
-  author: "Photo: Mark Kobal"
+  author: "Photo: Mark Kobal",
+  width: 1200,
+  height: 1600,
+  alt: "Trees grow between tiled temple roofs and buildings in George Town."
 },
 {
   src: "assets/images/saving-energy-at-home.png",
@@ -142,13 +187,13 @@ const galleryPhotos = [ {
   action: "We can reduce energy use at home and consider renewable electricity where available.",
   category: "solutions",
   photographer: "mark",
-  author: "Photo: Mark Kobal"
-}
-];
-
-
-
-
+  author: "Photo: Mark Kobal",
+  width: 930,
+  height: 619,
+  alt: "Solar panels cover a farm building’s roof, with wooded slopes behind it.",
+  previewSrc: "assets/images/optimized/solar-roof-720.webp",
+  srcSet: "assets/images/optimized/solar-roof-720.webp 720w, assets/images/optimized/solar-roof.webp 930w"
+} ];
 
 ;
 
@@ -182,10 +227,11 @@ galleryPhotos.forEach((photo, index) => {
   button.setAttribute('aria-label', 'Open ' + photo.title);
 
   const image = document.createElement('img');
-  image.src = photo.src;
-  image.alt = photo.description;
-  image.width = 720;
-  image.height = 540;
+  image.src = photo.previewSrc || photo.src;
+  if (photo.srcSet) { image.srcset = photo.srcSet; image.sizes = '(max-width: 700px) calc(100vw - 48px), (max-width: 1600px) calc(45vw - 20px), 45vw'; }
+  image.alt = photo.alt || photo.description;
+  image.width = photo.width || 720;
+  image.height = photo.height || 540;
   image.loading = 'lazy';
   image.decoding = 'async';
   if (photo.objectPosition) image.style.objectPosition = photo.objectPosition;
@@ -269,16 +315,34 @@ let viewerIndex = null;
 let viewerSequence = [];
 let viewerPreviousFocus = null;
 let viewerCloseTimer = null;
+const viewerStatus = document.getElementById('lightbox-status');
+let viewerBackground = [];
+function restoreViewerBackground() {
+  viewerBackground.forEach(([element, inert]) => { element.inert = inert; });
+  viewerBackground = [];
+}
 viewerImage.addEventListener('load', () => {
   viewerImage.width = viewerImage.naturalWidth;
   viewerImage.height = viewerImage.naturalHeight;
+  viewerImage.parentElement.removeAttribute('aria-busy');
+  viewerStatus.textContent = '';
+  viewerStatus.className = 'sr-only';
+});
+viewerImage.addEventListener('error', () => {
+  if (lightbox.hidden || !viewerImage.getAttribute('src')) return;
+  viewerImage.parentElement.removeAttribute('aria-busy');
+  viewerStatus.className = 'viewer-image-status';
+  viewerStatus.textContent = 'This image could not load. Close the viewer and try opening it again.';
 });
 
 function showViewerItem(photo) {
+  viewerImage.parentElement.setAttribute('aria-busy', 'true');
+  viewerStatus.className = 'sr-only';
+  viewerStatus.textContent = 'Loading image…';
   viewerImage.width = photo.width || 720;
   viewerImage.height = photo.height || 540;
   viewerImage.src = photo.fullSrc || photo.src;
-  viewerImage.alt = photo.description || photo.title || 'Selected photograph';
+  viewerImage.alt = photo.alt || photo.description || photo.title || 'Selected photograph';
   viewerTitle.textContent = photo.title || 'A closer look';
   viewerDescription.textContent = photo.description || '';
   viewerCaption.textContent = photo.caption || '';
@@ -315,6 +379,10 @@ function openPhoto(photoOrIndex) {
     viewerSequence = [];
     showViewerItem(photoOrIndex);
   }
+  if (!viewerBackground.length) {
+    viewerBackground = [...document.querySelectorAll('body > header, body > main, body > footer, body > .view-bar, body > .skip')].map(element => [element, element.inert]);
+    viewerBackground.forEach(([element]) => { element.inert = true; });
+  }
   lightbox.hidden = false;
   document.body.classList.add('viewer-open');
   requestAnimationFrame(() => {
@@ -327,6 +395,7 @@ function closePhoto(restoreFocus = true) {
   if (lightbox.hidden) return;
   lightbox.classList.remove('is-open');
   document.body.classList.remove('viewer-open');
+  restoreViewerBackground();
   if (restoreFocus && viewerPreviousFocus?.isConnected) {
     viewerPreviousFocus.focus({ preventScroll: true });
   }
@@ -349,8 +418,8 @@ lightbox.addEventListener('click', (event) => {
   if (event.target === lightbox) closePhoto();
 });
 document.addEventListener('keydown', (event) => {
-  if (lightbox.hidden) return;
-  if (event.key === 'Escape') closePhoto();
+  if (lightbox.hidden || !lightbox.classList.contains('is-open')) return;
+  if (event.key === 'Escape') { event.preventDefault(); closePhoto(); }
   if (event.key === 'ArrowLeft') {
     event.preventDefault();
     moveViewer(-1);
@@ -360,7 +429,8 @@ document.addEventListener('keydown', (event) => {
     moveViewer(1);
   }
   if (event.key === 'Tab') {
-    const controls = [...lightbox.querySelectorAll('button:not([hidden])')];
+    const controls = [...lightbox.querySelectorAll('button:not(:disabled), a[href]')].filter(element => !element.closest('[hidden]') && element.getClientRects().length);
+    if (!controls.length) return;
     const first = controls[0];
     const last = controls[controls.length - 1];
     if (event.shiftKey && document.activeElement === first) {
@@ -1252,8 +1322,8 @@ document.documentElement.removeAttribute('data-initial-view');
   if(!opening)return;
   const scenes={
     home:{heading:'Triglav Glacier, summer 2025',copy:'Very little ice remains in this summer view. See how the glacier’s mapped area has changed since 1946.',caption:'Triglav Glacier · Summer 2025'},
-    signs:{heading:'A dry forest floor',copy:'Dry pine needles cover the ground. When vegetation dries out, it can become fuel for wildfires.',caption:'Dry pine needles on the forest floor'},
-    choices:{heading:'Rooftop solar panels',copy:'Solar panels generate electricity from sunlight and can reduce reliance on fossil fuels.',caption:'Solar panels on an Alpine farm building'}
+    signs:{heading:'A dry forest floor',copy:'Dry pine needles cover the ground. When vegetation dries out, it can become fuel for wildfires.',caption:'Santiago del Teide, Tenerife · Spain'},
+    choices:{heading:'Rooftop solar panels',copy:'Solar panels generate electricity from sunlight and can reduce reliance on fossil fuels.',caption:'Rateče · Slovenia'}
   };
   const controls=opening.querySelector('.home-scenes');
   let request=0;
@@ -1270,7 +1340,7 @@ document.documentElement.removeAttribute('data-initial-view');
     button.setAttribute('aria-busy','true');
     try{
       if(!image.getAttribute('src')){
-        image.sizes='100vw';image.srcset=image.dataset.homeSrcset;image.src=image.dataset.homeSrc;
+        image.sizes='(max-width:700px) 100vw, 52vw';image.srcset=image.dataset.homeSrcset;image.src=image.dataset.homeSrc;
       }
       await image.decode();
     }catch{

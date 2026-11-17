@@ -19,14 +19,14 @@ main>section:not(#game) .btn{border-radius:var(--radius-panel);gap:15px;padding:
 main>section:not(#game) .btn-primary{background:var(--color-action);border-color:var(--color-action)}
 main>section:not(#game) .btn-primary:hover{background:var(--color-action-hover);border-color:var(--color-action-hover)}
 :is(a,button,input,select,summary):focus-visible{outline:3px solid var(--color-focus);outline-offset:4px}
-.home-opening{margin:0;border-radius:0;min-height:clamp(620px,72svh,720px);padding:0;grid-template-columns:minmax(0,44fr) minmax(0,56fr);grid-template-rows:auto 1fr auto;background:var(--color-ink);color:var(--cream)}
-.home-backdrop{left:44%;width:56%}
+.home-opening{margin:0;border-radius:0;min-height:clamp(620px,72svh,720px);padding:0;grid-template-columns:minmax(0,48fr) minmax(0,52fr);grid-template-rows:auto 1fr auto;background:var(--color-ink);color:var(--cream)}
+.home-backdrop{left:48%;width:52%}
 .home-scene{filter:none;transform:none;transition:opacity .35s ease}
-.home-opening::after{left:44%;background:linear-gradient(0deg,#0b1d1aaa,transparent 32%)}
+.home-opening::after{left:48%;background:linear-gradient(0deg,#0b1d1aaa,transparent 32%)}
 .home-opening-top{grid-column:1;grid-row:1;display:block;padding:30px 34px 0 var(--gutter);font-size:13px;letter-spacing:0;color:var(--cream);font-weight:500;line-height:1.6}
 .home-opening-top>span:last-child{display:block;margin-top:4px;color:var(--color-secondary-on-dark);font-size:12px}
 .home-opening-content{grid-column:1;grid-row:2;display:flex;flex-direction:column;align-items:start;justify-content:center;gap:28px;padding:36px 34px 36px var(--gutter)}
-#home .home-statement h1{font-family:var(--font-display);font-size:clamp(42px,4.8vw,76px);font-weight:var(--weight-display);line-height:.98;letter-spacing:-.065em;color:var(--cream);margin:0}
+#home .home-statement h1{font-family:var(--font-display);font-size:clamp(36px,4.1vw,76px);font-weight:var(--weight-display);line-height:.98;letter-spacing:-.065em;color:var(--cream);margin:0}
 .hero .home-statement h1>span{font-size:inherit;font-weight:inherit;letter-spacing:inherit;line-height:inherit}
 .home-opening-note{margin:0;max-width:35ch;justify-self:auto;padding:0}
 .home-opening-note h2{font-size:17px;font-weight:600;letter-spacing:-.015em;color:var(--cream);margin-bottom:10px;line-height:1.4}
@@ -42,7 +42,7 @@ main>section:not(#game) .btn-primary:hover{background:var(--color-action-hover);
 .home-scenes button::before{display:block;top:-1px;background:var(--color-accent);height:2px}
 .home-scenes button[aria-pressed=true]{background:none;color:var(--cream);font-weight:700;box-shadow:none}
 .home-scenes button:hover:not([aria-pressed=true]){background:none;color:var(--color-accent)}
-.home-photo-caption{position:absolute;bottom:28px;right:32px;max-width:calc(56% - 64px);font-size:13px;text-align:right;text-shadow:0 1px 8px #0008}
+.home-photo-caption{position:absolute;bottom:28px;right:32px;max-width:calc(52% - 64px);font-size:13px;text-align:right;text-shadow:0 1px 8px #0008}
 .home-photo-caption>span{color:#eee;font-size:12px}
 .hero-index{display:grid;grid-template-columns:1fr 1.7fr auto;gap:30px;align-items:start;padding:35px var(--gutter);border-bottom:1px solid var(--line);font-size:14px;letter-spacing:0;line-height:1.65;text-transform:none}
 .hero-index>strong{font-size:15px;font-weight:600;color:var(--ink)}
@@ -146,6 +146,7 @@ main>section:not(#game) :is(.btn,.filter):active,.viewer-controls button:active{
 .city-comparison-table{border-radius:var(--radius-panel);background:#ecefec;padding-inline:22px;border-color:transparent}
 .mission-invitation{border-radius:var(--radius-panel);overflow:hidden;box-shadow:none}
 .mission-invitation h3{font-weight:600;letter-spacing:-.05em;line-height:1.08}
+.mission-invitation:hover .mission-link{background:var(--color-accent);border-color:var(--color-accent);color:var(--color-action)}
 .mission-link{border-radius:var(--radius-panel);background:var(--color-paper);color:var(--color-action);border:0;font-size:14px}
 .interactive-card,.student{border:0;border-radius:var(--radius-panel);background:var(--color-white);box-shadow:none;overflow:hidden}
 .interactive-card h3,.student h3{font-weight:600;letter-spacing:-.04em}
@@ -186,7 +187,13 @@ main>section:not(#game) :is(.btn,.filter):active,.viewer-controls button:active{
 .footer-brand{font-size:15px;font-weight:600;letter-spacing:-.025em}
 .footer-bottom{border-top-color:#1c342c12;font-size:10px;letter-spacing:.05em}
 .viewer-image-wrap{border-radius:var(--radius-panel);overflow:hidden}
-.viewer-controls button,#lightbox-close{border-radius:var(--radius-panel)}
+.viewer-controls button,#lightbox-close{border-radius:var(--radius-panel);min-height:44px;min-width:44px}
+.viewer-copy #lightbox-description,.viewer-copy #lightbox-caption{text-align:left}
+.viewer-copy #lightbox-description{font-size:15px;line-height:1.75}
+.viewer-copy #lightbox-caption{font-size:13px;line-height:1.65}
+.viewer-image-wrap{position:relative}
+.viewer-image-status{position:absolute;inset:auto 20px 20px;margin:0;padding:14px 18px;background:#102f27;color:#f5f3ee;font-size:14px;line-height:1.6;text-align:left}
+#navlinks a[aria-current=page]{text-decoration:underline;text-decoration-thickness:2px;text-underline-offset:6px}
 #navlinks a{font-weight:700}
 @media(min-width:1025px){#navlinks a{font-size:13px;color:#414e46;padding-inline:6px}#navlinks a::after{display:none}#navlinks a[aria-current=page]{color:#153f2d}}
 @media(hover:hover) and (pointer:fine){
@@ -208,7 +215,7 @@ main>section:not(#game) :is(.btn,.filter):active,.viewer-controls button:active{
  .home-opening-content{padding:26px var(--gutter) 28px;gap:25px}
  .home-backdrop{position:relative;grid-column:1;grid-row:3;left:0;width:100%;height:clamp(300px,85vw,520px)}
  .home-opening::after{display:none}
- #home .home-statement h1{font-size:38px}
+ #home .home-statement h1{font-size:clamp(26px,8.5vw,36px)}
  .hero .home-statement h1>span{font-size:inherit}
  .home-opening-note{margin:0;max-width:42ch}
  .home-opening-note h2{font-size:17px}

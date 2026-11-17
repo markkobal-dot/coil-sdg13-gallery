@@ -27,10 +27,11 @@ galleryPhotos.forEach((photo, index) => {
   button.setAttribute('aria-label', 'Open ' + photo.title);
 
   const image = document.createElement('img');
-  image.src = photo.src;
-  image.alt = photo.description;
-  image.width = 720;
-  image.height = 540;
+  image.src = photo.previewSrc || photo.src;
+  if (photo.srcSet) { image.srcset = photo.srcSet; image.sizes = '(max-width: 700px) calc(100vw - 48px), (max-width: 1600px) calc(45vw - 20px), 45vw'; }
+  image.alt = photo.alt || photo.description;
+  image.width = photo.width || 720;
+  image.height = photo.height || 540;
   image.loading = 'lazy';
   image.decoding = 'async';
   if (photo.objectPosition) image.style.objectPosition = photo.objectPosition;
@@ -114,16 +115,34 @@ let viewerIndex = null;
 let viewerSequence = [];
 let viewerPreviousFocus = null;
 let viewerCloseTimer = null;
+const viewerStatus = document.getElementById('lightbox-status');
+let viewerBackground = [];
+function restoreViewerBackground() {
+  viewerBackground.forEach(([element, inert]) => { element.inert = inert; });
+  viewerBackground = [];
+}
 viewerImage.addEventListener('load', () => {
   viewerImage.width = viewerImage.naturalWidth;
   viewerImage.height = viewerImage.naturalHeight;
+  viewerImage.parentElement.removeAttribute('aria-busy');
+  viewerStatus.textContent = '';
+  viewerStatus.className = 'sr-only';
+});
+viewerImage.addEventListener('error', () => {
+  if (lightbox.hidden || !viewerImage.getAttribute('src')) return;
+  viewerImage.parentElement.removeAttribute('aria-busy');
+  viewerStatus.className = 'viewer-image-status';
+  viewerStatus.textContent = 'This image could not load. Close the viewer and try opening it again.';
 });
 
 function showViewerItem(photo) {
+  viewerImage.parentElement.setAttribute('aria-busy', 'true');
+  viewerStatus.className = 'sr-only';
+  viewerStatus.textContent = 'Loading image…';
   viewerImage.width = photo.width || 720;
   viewerImage.height = photo.height || 540;
   viewerImage.src = photo.fullSrc || photo.src;
-  viewerImage.alt = photo.description || photo.title || 'Selected photograph';
+  viewerImage.alt = photo.alt || photo.description || photo.title || 'Selected photograph';
   viewerTitle.textContent = photo.title || 'A closer look';
   viewerDescription.textContent = photo.description || '';
   viewerCaption.textContent = photo.caption || '';
@@ -160,6 +179,10 @@ function openPhoto(photoOrIndex) {
     viewerSequence = [];
     showViewerItem(photoOrIndex);
   }
+  if (!viewerBackground.length) {
+    viewerBackground = [...document.querySelectorAll('body > header, body > main, body > footer, body > .view-bar, body > .skip')].map(element => [element, element.inert]);
+    viewerBackground.forEach(([element]) => { element.inert = true; });
+  }
   lightbox.hidden = false;
   document.body.classList.add('viewer-open');
   requestAnimationFrame(() => {
@@ -172,6 +195,7 @@ function closePhoto(restoreFocus = true) {
   if (lightbox.hidden) return;
   lightbox.classList.remove('is-open');
   document.body.classList.remove('viewer-open');
+  restoreViewerBackground();
   if (restoreFocus && viewerPreviousFocus?.isConnected) {
     viewerPreviousFocus.focus({ preventScroll: true });
   }
@@ -194,8 +218,8 @@ lightbox.addEventListener('click', (event) => {
   if (event.target === lightbox) closePhoto();
 });
 document.addEventListener('keydown', (event) => {
-  if (lightbox.hidden) return;
-  if (event.key === 'Escape') closePhoto();
+  if (lightbox.hidden || !lightbox.classList.contains('is-open')) return;
+  if (event.key === 'Escape') { event.preventDefault(); closePhoto(); }
   if (event.key === 'ArrowLeft') {
     event.preventDefault();
     moveViewer(-1);
@@ -205,7 +229,8 @@ document.addEventListener('keydown', (event) => {
     moveViewer(1);
   }
   if (event.key === 'Tab') {
-    const controls = [...lightbox.querySelectorAll('button:not([hidden])')];
+    const controls = [...lightbox.querySelectorAll('button:not(:disabled), a[href]')].filter(element => !element.closest('[hidden]') && element.getClientRects().length);
+    if (!controls.length) return;
     const first = controls[0];
     const last = controls[controls.length - 1];
     if (event.shiftKey && document.activeElement === first) {

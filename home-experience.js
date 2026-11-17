@@ -5,8 +5,8 @@
   if(!opening)return;
   const scenes={
     home:{heading:'Triglav Glacier, summer 2025',copy:'Very little ice remains in this summer view. See how the glacier’s mapped area has changed since 1946.',caption:'Triglav Glacier · Summer 2025'},
-    signs:{heading:'A dry forest floor',copy:'Dry pine needles cover the ground. When vegetation dries out, it can become fuel for wildfires.',caption:'Dry pine needles on the forest floor'},
-    choices:{heading:'Rooftop solar panels',copy:'Solar panels generate electricity from sunlight and can reduce reliance on fossil fuels.',caption:'Solar panels on an Alpine farm building'}
+    signs:{heading:'A dry forest floor',copy:'Dry pine needles cover the ground. When vegetation dries out, it can become fuel for wildfires.',caption:'Santiago del Teide, Tenerife · Spain'},
+    choices:{heading:'Rooftop solar panels',copy:'Solar panels generate electricity from sunlight and can reduce reliance on fossil fuels.',caption:'Rateče · Slovenia'}
   };
   const controls=opening.querySelector('.home-scenes');
   let request=0;
@@ -23,7 +23,7 @@
     button.setAttribute('aria-busy','true');
     try{
       if(!image.getAttribute('src')){
-        image.sizes='100vw';image.srcset=image.dataset.homeSrcset;image.src=image.dataset.homeSrc;
+        image.sizes='(max-width:700px) 100vw, 52vw';image.srcset=image.dataset.homeSrcset;image.src=image.dataset.homeSrc;
       }
       await image.decode();
     }catch{
