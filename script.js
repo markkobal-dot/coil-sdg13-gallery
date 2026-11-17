@@ -505,8 +505,9 @@ document.addEventListener('visibilitychange', () => {
   async function loadGame() {
     if (loading) return;
     loading = (async () => {
-      await Promise.all([import('./green-city-core.js?v=c2a7053d1d'), import('./green-city-art.js?v=3889596789')]);
-      await import('./green-city.js?v=5c68eb91da');
+      await import('./green-city-development.js?v=1ee93f952e');
+      await Promise.all([import('./green-city-core.js?v=9731a1aab0'), import('./green-city-art.js?v=ca8be4039d')]);
+      await import('./green-city.js?v=21537b25f9');
     })();
     try { await loading; }
     catch { document.getElementById('gc-start-status').hidden = false; }

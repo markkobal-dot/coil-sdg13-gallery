@@ -15,7 +15,7 @@ test('unfilled workplaces cannot generate business taxes, and taxes rise when re
   assert.equal(C.analyse(extra).budget.businessRevenue,C.analyse(small).budget.businessRevenue);
 });
 test('new road tiles carry recurring maintenance and the monthly ledger charges it once',()=>{
-  const state=C.fresh(),before=C.analyse(state),next=apply(C.buildLine(state,tile(5,17),tile(5,21))),after=C.analyse(next);
+  const state={...C.fresh(),districts:['central','east']},before=C.analyse(state),next=apply(C.buildLine(state,tile(5,17),tile(5,21))),after=C.analyse(next);
   assert.equal(state.cash-next.cash,4*C.upgrades.road.cost);assert.equal(after.budget.assetUpkeep-before.budget.assetUpkeep,1);
   assert.equal(apply(C.advance(next)).cash,next.cash+after.net);
 });

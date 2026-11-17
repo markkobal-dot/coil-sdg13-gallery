@@ -73,7 +73,10 @@ test('old cities acquire an empty route list and malformed transport saves are r
 });
 
 test('passenger capacity and the twelve-line limit stay bounded, and a deleted line frees its identifier',()=>{
- const busy=applied(C.setRoute({...city(),population:10000},line())),report=C.analyse(busy).transport.routes[0];assert.equal(report.riders,report.capacity);
+ // A mature neighbourhood must physically house the riders used for this capacity check.
+ let housing=city();for(let n=0;n<30;n++){const i=C.terrain.flatMap((_,j)=>C.canPlace(housing,'apartment',j)?[]:[j]).sort((a,b)=>C.distance(a,stopA)-C.distance(b,stopA))[0];housing=applied(C.place(housing,'apartment',i));}
+ const homes=C.analyse(housing).homeProfiles;housing={...housing,population:homes.reduce((sum,h)=>sum+h.capacity,0),occupancy:Object.fromEntries(homes.map(h=>[h.i,h.capacity]))};
+ const busy=applied(C.setRoute(housing,line())),report=C.analyse(busy).transport.routes[0];assert.equal(report.riders,report.capacity);
  let state=applied(C.place(city(),'bus',tile(15,10))),count=0;
  const stops=[stopA,stopB,stopC,tile(15,10)];
  for(const a of stops)for(const b of stops)for(const c of stops){

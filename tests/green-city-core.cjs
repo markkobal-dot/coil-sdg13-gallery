@@ -7,9 +7,9 @@ function applied(state,result){assert.equal(result.error,'');return C.grant(resu
 function build(state,type,i){return applied(state,C.place(state,type,at(i)));}
 const plan=[...[87,127,167,187,227,228,171,194].map(i=>['park',i]),...[84,86,89,124].map(i=>['solar',i]),['wind',96],['wind',256],...[105,110,205,210].map(i=>['bus',i]),['wetland',223],['wetland',263],['school',132],['clinic',192],['waterworks',291],['recycling',293],['roof',126],['roof',129],['roof',184],...[106,107,108,109].map(i=>['bike',i]),['battery',257]];
 
-test('784-tile world has protected water, 38 tools, connected streets and a viable opening budget',()=>{
+test('784-tile world has protected water, 54 tools, connected streets and a viable opening budget',()=>{
  const state=C.fresh(),a=C.analyse(state);
- assert.equal(C.size,28);assert.equal(C.terrain.length,784);assert.equal(Object.keys(C.upgrades).length,38);
+ assert.equal(C.size,28);assert.equal(C.terrain.length,784);assert.equal(Object.keys(C.upgrades).length,54);
  assert.ok(C.terrain.includes('water'));assert.ok(a.roads.size>70);assert.equal(a.capacity,680);
  assert.equal(state.population,220);assert.equal(a.scores[2],0);assert.ok(a.pollution>70);assert.ok(a.net>0);
  assert.ok(C.neighbours(C.size-1).every(i=>i!==C.size));assert.equal(C.label(C.size*C.size-1),'AB28');

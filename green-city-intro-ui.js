@@ -1,6 +1,6 @@
 import './green-city-intro.js?v=9ea9a9d344';
-import './green-city-life.js?v=e59a5d339e';
-import './green-city-planning.js?v=bc7222fe14';
+import './green-city-life.js?v=acc9a6f5a0';
+import './green-city-planning.js?v=91314a0454';
 const C=globalThis.GreenCity,I=globalThis.GreenCityIntro,L=globalThis.GreenCityLife,P=globalThis.GreenCityPlanning;
 const escape=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const storeKey='coil-green-city-introduction-v1';
