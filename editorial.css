@@ -1919,8 +1919,7 @@ body[data-view="team"] .journey-section {
   z-index: 100;
   padding: 0;
   overflow: auto;
-  background: #0e211bfa;
-  backdrop-filter: blur(10px);
+  background: #151515;
   color: #f7f6f0;
 }
 .viewer-top {
@@ -1967,7 +1966,7 @@ body[data-view="team"] .journey-section {
   display: grid;
   place-items: center;
   min-width: 0;
-  background: #0b1a15;
+  background: transparent;
 }
 .lightbox .viewer-image-wrap img {
   display: block;

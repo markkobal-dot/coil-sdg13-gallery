@@ -54,8 +54,9 @@ const galleryPhotos = [ {
   srcSet: "assets/images/triglav-hike-lovro-card.webp 800w, assets/images/triglav-hike-lovro.webp 1569w"
 },
 {
-  src: "assets/images/drought-and-water.png",
-  fullSrc: "assets/images/drought-and-water.png",
+  // AI-upscaled for display. Unmodified original retained at assets/images/drought-and-water.png.
+  src: "assets/images/drought-and-water-enhanced.webp",
+  fullSrc: "assets/images/drought-and-water-enhanced.webp",
   title: "Drought and water",
   caption: "Fields near Ajdovščina · Slovenia",
   description: "Browning maize leaves and dry soil in the fields near Ajdovščina. Crops need water through the growing season, especially during hot, dry spells.",
@@ -63,15 +64,16 @@ const galleryPhotos = [ {
   category: "challenge",
   photographer: "mark",
   author: "Photo: Mark Kobal",
-  width: 630,
-  height: 378,
+  width: 2400,
+  height: 1440,
   alt: "Dry soil and browning maize leaves in fields near Ajdovščina.",
-  previewSrc: "assets/images/optimized/drought-field.webp",
-  srcSet: "assets/images/optimized/drought-field.webp 630w"
+  previewSrc: "assets/images/drought-and-water-enhanced-800.webp",
+  srcSet: "assets/images/drought-and-water-enhanced-800.webp 800w, assets/images/drought-and-water-enhanced-1200.webp 1200w, assets/images/drought-and-water-enhanced.webp 2400w"
 },
 {
-  src: "assets/images/floods-moste-komenda-2023.webp",
-  fullSrc: "assets/images/floods-moste-komenda-2023.webp",
+  // AI-upscaled for display. Unmodified original retained at assets/images/floods-moste-komenda-2023.webp.
+  src: "assets/images/floods-moste-komenda-2023-enhanced.webp",
+  fullSrc: "assets/images/floods-moste-komenda-2023-enhanced.webp",
   title: "Extreme rainfall and floods",
   caption: "Moste pri Komendi, Slovenia · August 2023",
   description: "Floodwater covers a street in Moste pri Komendi during the August 2023 floods in Slovenia.",
@@ -79,11 +81,11 @@ const galleryPhotos = [ {
   category: "challenge",
   photographer: "lovro",
   author: "Photo: Lovro Trošt",
-  width: 1200,
-  height: 914,
+  width: 2400,
+  height: 1828,
   alt: "Floodwater covers a street and surrounds buildings in Moste pri Komendi.",
-  previewSrc: "assets/images/floods-moste-komenda-2023-card.webp",
-  srcSet: "assets/images/floods-moste-komenda-2023-card.webp 800w, assets/images/floods-moste-komenda-2023.webp 1200w"
+  previewSrc: "assets/images/floods-moste-komenda-2023-enhanced-800.webp",
+  srcSet: "assets/images/floods-moste-komenda-2023-enhanced-800.webp 800w, assets/images/floods-moste-komenda-2023-enhanced-1200.webp 1200w, assets/images/floods-moste-komenda-2023-enhanced.webp 2400w"
 },
 {
   src: "assets/images/heat-trapping-surfaces-city.jpg",

@@ -192,7 +192,7 @@ main>section:not(#game) :is(.btn,.filter):active,.viewer-controls button:active{
 .viewer-copy #lightbox-description{font-size:15px;line-height:1.75}
 .viewer-copy #lightbox-caption{font-size:13px;line-height:1.65}
 .viewer-image-wrap{position:relative}
-.viewer-image-status{position:absolute;inset:auto 20px 20px;margin:0;padding:14px 18px;background:#102f27;color:#f5f3ee;font-size:14px;line-height:1.6;text-align:left}
+.viewer-image-status{position:absolute;inset:auto 20px 20px;margin:0;padding:14px 18px;background:#242424;color:#f5f3ee;font-size:14px;line-height:1.6;text-align:left}
 #navlinks a[aria-current=page]{text-decoration:underline;text-decoration-thickness:2px;text-underline-offset:6px}
 #navlinks a{font-weight:700}
 @media(min-width:1025px){#navlinks a{font-size:13px;color:#414e46;padding-inline:6px}#navlinks a::after{display:none}#navlinks a[aria-current=page]{color:#153f2d}}
