@@ -34,7 +34,7 @@
     const home=analysis.neighbourhoods.find(h=>h.i===actor.from),conditions=analysis.homeProfiles.find(h=>h.i===actor.from);
     if(!home||!conditions||conditions.residents<=0)return null;
     const purpose={luxuryhouse:'Visiting neighbours',luxuryapartment:'Visiting neighbours',regionalhospital:'Visiting the regional hospital',officepark:'Going to work',internationalairport:'Going to work',containerport:'Going to work',house:'Visiting neighbours',apartment:'Visiting neighbours',park:'Visiting a park',garden:'Visiting the community garden',plaza:'Meeting neighbours',playground:'Visiting the playground',market:'Shopping locally',school:'Going to the learning centre',library:'Visiting the library',office:'Going to work',clinic:'Visiting the clinic',hospital:'Visiting the hospital',bus:'Walking to a bus stop',tram:'Walking to the tram',metro:'Walking to the metro',bikeshare:'Picking up a bicycle',ferry:'Walking to the ferry',stadium:'Visiting the sports grounds',marina:'Visiting the waterfront'};
-    const priority=home.needs[0];
+    const homeDiagnosis=homeReport(C,state,analysis,actor.from),priority=homeDiagnosis.issues[0];
     const workplace=analysis.workplaces?.find(w=>w.i===actor.workplace&&w.linked&&w.filled>0);
     const wealthSeed=(Math.sin(actor.from*31+actor.id*17)*43758.5453)%1;
     const income=(wealthSeed+1)%1<(conditions.affluentShare||0)?'Affluent':workplace?(['office','officepark','ecofactory','gamestudio','ailab','geothermal','hospital','regionalhospital','internationalairport'].includes(workplace.type)?'Comfortable':'Working income'):'Limited income';
@@ -48,8 +48,8 @@
     const bad={'City life':'Citywide conditions are weighing on them.',Shade:'Wants more shade near home.',Healthcare:'Needs better healthcare nearby.',Services:'Needs better local services.','Getting around':'Wants better transport near home.','Quiet surroundings':'Noise near home is a problem.'};
     return {name:['Alex','Maya','Sam','Robin','Leo','Charlie','Noor','Jamie'][(actor.from+actor.id)%8],
       from:actor.from,to:current?.location??actor.to,purpose:current?.label||(actor.activity==='work'?'Going to work':purpose[actor.purpose]||'Travelling locally'),destination:C.types[state.cells[current?.location??actor.to].type].name,routeDetail:current?(actor.beachCar?current.label+' · '+(current.at==='home'?'home':C.label(actor.beachCar.lot)+' parking'):['waiting','aboard'].includes(current.at)?current.label:current.visible?'Walking · '+(current.trip?.path.length-1||0)+' road links':current.at==='home'?'At home':'Inside the building'):null,
-      links:Math.max(0,actor.path.length-1),priority:priority?C.localNeeds[priority.id].label:'Well-supported neighbourhood',
-      detail:priority?C.localNeeds[priority.id].message:'Local roads, shade and services are meeting this neighbourhood’s needs.',
+      links:Math.max(0,actor.path.length-1),priority:priority?priority.title:'Well-supported neighbourhood',
+      detail:priority?priority.evidence+' '+priority.fix:'Local roads, shade and services are meeting this neighbourhood’s needs.',
       shade:conditions.shade,health:conditions.health,safety:conditions.safety,transport:conditions.mobility,noise:conditions.noise,pollution:conditions.pollution||0,happiness,mood,profession,
       happinessDetail:[positive&&good[positive.name],conditions.pollution>=15?'Industrial pollution near home is a problem.':negative&&bad[negative.name],!workplace&&!actor.student&&'Looking for a job.'].filter(Boolean).join(' '),
       homeResidents:conditions.residents,homeCapacity:conditions.capacity,homeDemand:conditions.housingDemand,housing:C.types[state.cells[actor.from].type].name,income:actor.student?'Household support':income,workplace:workplace?{i:workplace.i,name:C.types[workplace.type].name,filled:workplace.filled,positions:workplace.positions}:null,employment:actor.student?'In education':workplace?'Employed':'Not currently employed'};
@@ -126,6 +126,39 @@
     const maintenance=budgetShare(a.budget.assetUpkeep,assets,i),regionalIncome=(connection?.revenue||0)+(visitor?.revenue||0),filled=work?.filled||0;
     return {visitor,i,positions,filled,vacancies:positions-filled,staffing:Math.round(100*filled/Math.max(1,positions)),tax,regionalIncome,maintenance,contribution:tax+regionalIncome-maintenance,linked:C.tileInfo(state,i,a).linked,status:cell.type==='beachbar'&&!C.tileInfo(state,i,a).linked?'No walking access':meta.road&&!C.tileInfo(state,i,a).linked?'No road access':!filled?'No staff':filled<positions?'Hiring':'Fully staffed',roles:meta.professions||[],utilisation:connection?Math.round(connection.utilisation*100):null};
   }
-  const api={business,forecast,resident,district,districts,groundColour,healthcare,priorities,residentBuilding,daylight,buildingActivity,occupancyMap,unlocks};
+  // Read-only diagnosis: local priorities follow the weights used by homeHappiness.
+  // Citywide pressures are labelled separately; no personal job assignment is inferred.
+  function homeReport(C,state,a,i){
+    i=C.anchorAt(state,i);const h=a.homeProfiles.find(p=>p.i===i);if(!h)return null;
+    const happiness=C.homeHappiness(h,a),issues=[],p=a.policy;
+    const add=(id,title,evidence,fix,priority,action,scope='local')=>issues.push({id,title,evidence,fix,priority,action,scope});
+    const local=(metric,title,fix,weight,threshold)=>{if(h.linked&&h[metric]<threshold)add(metric,title,metricNames[metric]+' '+h[metric]+'/100 at this home.',fix,(60-h[metric])*weight,{kind:'local',metric,label:({health:'Plan nearby care',shade:'Plan shade',services:'Plan shared services',mobility:'Plan public transport'})[metric]});};
+    const metricNames={shade:'Shade',health:'Healthcare',services:'Shared services',mobility:'Transport access'};
+    const sourceFor=kind=>(a.localSources[kind]||[]).map(s=>({...s,type:s.type||state.cells[s.i].type,value:Math.max(0,1-Math.min(...s.plots.map(j=>C.distance(i,j)))/6)*(kind==='industry'?s.localPollution:s.strength)*s.factor})).filter(s=>s.value>0).sort((x,y)=>y.value-x.value||x.i-y.i)[0];
+    if(!h.linked)add('roads','Home is cut off','There is no road connection to the regional gateway.','Reconnect this street first. Healthcare and transport cannot reach an isolated home.',1000,{kind:'road',target:i,label:'Connect this street'});
+    if(h.pollution>=12){const s=sourceFor('industry');add('pollution','Industrial pollution at home','Pollution '+h.pollution+'/100.'+(s?' Main source: '+C.types[s.type].name+' at '+C.label(s.i)+'.':''),'Move the source farther from homes or replace it with cleaner employment.',h.pollution*.18,s?{kind:'inspect',target:s.i,overlay:'neighbourhood',label:'Show pollution source'}:{kind:'neighbourhood',target:i,label:'Review this neighbourhood'});}
+    if(h.noise>=18){const s=sourceFor('noise');add('noise','Too much noise','Noise '+h.noise+'/100.'+(s?' Main source: '+C.types[s.type].name+' at '+C.label(s.i)+'.':''),'Separate homes from noisy infrastructure. Inspect the source before moving or replacing it.',h.noise*.14,s?{kind:'inspect',target:s.i,overlay:'noise',label:'Show noise source'}:{kind:'neighbourhood',target:i,label:'Review this neighbourhood'});}
+    if(h.linked&&h.health<40){
+      const clinics=state.cells.flatMap((cell,j)=>cell&&cell.anchor===undefined&&C.types[cell.type].need==='health'?[{i:j,cell,meta:C.types[cell.type],distance:Math.min(...C.footprint(cell.type,j,cell.rotation).map(k=>C.distance(i,k)))}]:[]).filter(s=>s.distance<s.meta.radius).sort((x,y)=>x.distance-y.distance||x.i-y.i);
+      const connected=clinics.filter(s=>C.tileInfo(state,s.i,a).linked);
+      if(!connected.length&&clinics.length){const s=clinics[0];add('health','Nearby care has lost road access',C.types[s.cell.type].name+' at '+C.label(s.i)+' is in range but disconnected.','Reconnect this facility to the regional road network before building another clinic.',(60-h.health)*.12,{kind:'inspect',target:s.i,overlay:'neighbourhood',label:'Show disconnected care'});}
+      else if(connected.some(s=>s.cell.level<3)){const s=connected.find(s=>s.cell.level<3);add('health','Healthcare coverage is low',C.types[s.cell.type].name+' at '+C.label(s.i)+' reaches this home, but healthcare is only '+h.health+'/100.','Upgrade existing care to extend its effective coverage before buying another facility.',(60-h.health)*.12,{kind:'upgrade',target:s.i,label:'Review care upgrade'});}
+      else if(connected.length&&p.serviceBudget<100)add('health','Care is affected by reduced funding','Healthcare '+h.health+'/100 · service funding '+p.serviceBudget+'%.','Existing care is already fully upgraded. Review service funding before adding another facility.',(60-h.health)*.12,{kind:'finance',label:'Review service funding'});
+      else local('health','Healthcare coverage is low','Bring a connected clinic or hospital into range, or upgrade existing care. One facility can serve several homes.',.12,40);
+    }
+    local('shade','Not enough shade','Plant trees or add a park within four tiles of this home.',.12,40);
+    local('services','Few shared services nearby','Add or improve a connected library or learning centre near these homes.',.1,35);
+    local('mobility','Transport access is low','Add a connected bus or tram stop near home, then review the route network.',.12,35);
+    if(h.linked&&h.commute>=45)add('traffic','Daily journeys are congested','Journey congestion '+h.commute+'% for this home.','Review routes and road bottlenecks serving these homes.',Math.max(0,h.commute-40)*.1,{kind:'transport',label:'Review transport'});
+    if(a.employment<85)add('jobs','Too few jobs in the city',a.workforce.filled+' filled jobs for '+a.workforce.workers+' workers · '+a.employment+'% employment.','Add connected workplaces that your budget and electricity supply can support. Jobs are shared citywide.',(100-a.employment)*.1,{kind:'build',type:a.tier>=2?'gamestudio':'market',label:'Browse workplaces'},'city');
+    if(p.residentialTax>12||p.transitFare>3||p.utilityTariff>2)add('prices','Household costs are high',p.residentialTax+'% household tax · '+p.transitFare+' EP transit fare · '+p.utilityTariff+' EP utility tariff.','Review these prices alongside the monthly balance before lowering them.',Math.max(0,p.residentialTax-10)*.65+Math.max(0,p.transitFare-2)*.4+Math.max(0,p.utilityTariff-1)*.7,{kind:'finance',label:'Review taxes and prices'},'city');
+    if(p.serviceBudget<100)add('funding','Public services have reduced funding','Service funding is '+p.serviceBudget+'% of the standard budget.','Review service funding: lower funding reduces coverage from existing facilities.',(100-p.serviceBudget)*.12,{kind:'finance',label:'Review service funding'},'city');
+    if(state.event&&!state.event.choice)add('event','A city event needs a decision',C.events[state.event.type].name,'Review the council decision and choose how to respond.',5,{kind:'decision',label:'Review council decision'},'city');
+    if(!issues.length&&happiness<60){const n=a.life.priorities[0];add('city','Citywide conditions are weighing on this home',n.name+': '+n.score+'/100 across the city.',n.tip,1,n.build?{kind:'build',type:n.build,label:'Browse an improvement'}:{kind:'finance',label:'Review city budget'},'city');}
+    issues.sort((x,y)=>y.priority-x.priority||x.id.localeCompare(y.id));
+    const strengths=[h.linked&&'Road connected',h.health>=60&&'Good healthcare access',h.shade>=60&&'Plenty of shade',h.mobility>=60&&'Good transport access',h.services>=60&&'Useful shared services',h.noise<18&&'Quiet surroundings'].filter(Boolean).slice(0,2);
+    return {i,happiness,mood:happiness>=75?'Thriving':happiness>=60?'Content':happiness>=40?'Uneasy':'Unhappy',occupied:h.residents>0,issues:issues.slice(0,3),issueCount:issues.length,strengths};
+  }
+  const api={homeReport,business,forecast,resident,district,districts,groundColour,healthcare,priorities,residentBuilding,daylight,buildingActivity,occupancyMap,unlocks};
   if(typeof module==='object'&&module.exports)module.exports=api;else host.GreenCityPlanning=api;
 })(globalThis);

@@ -4,7 +4,7 @@ import { OrbitControls } from './assets/vendor/three/OrbitControls.js';
 import { mergeGeometries } from './assets/vendor/three/BufferGeometryUtils.js';
 import {needIcon} from './green-city-neighbourhood-icons.js?v=98db9558ad';
 import {CityLife} from './green-city-life-world.js?v=d69e6e56f2';
-import './green-city-planning.js?v=91314a0454';
+import './green-city-planning.js?v=c7fc6e5f47';
 
 const C = globalThis.GreenCity;
 const P = globalThis.GreenCityPlanning;

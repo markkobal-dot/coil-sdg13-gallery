@@ -1,4 +1,4 @@
-import './green-city-planning.js?v=91314a0454';
+import './green-city-planning.js?v=c7fc6e5f47';
 import './green-city-life.js?v=acc9a6f5a0';
 const C=globalThis.GreenCity,P=globalThis.GreenCityPlanning,L=globalThis.GreenCityLife;
 const escape=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));

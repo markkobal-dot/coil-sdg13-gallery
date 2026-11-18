@@ -27,8 +27,8 @@ test('road, upgrade and relocation previews use their actual action price',()=>{
 test('resident details match a real connected journey and changing local conditions',()=>{
   const state=C.fresh(),before=C.analyse(state),actor=L.plan(C,state,before).walkers[0],report=P.resident(C,state,before,actor);
   assert.equal(report.from,actor.from);assert.equal(report.to,actor.to);assert.equal(report.links,actor.path.length-1);assert.equal(report.shade,before.homeProfiles.find(h=>h.i===actor.from).shade);
-  assert.equal(report.priority,C.localNeeds[before.neighbourhoods.find(h=>h.i===actor.from).primary].label);
-  const improved=C.place(state,'bus',tile(4,5));assert.equal(improved.error,'');const updated=P.resident(C,improved.state,C.analyse(improved.state),actor);assert.ok(updated.transport>report.transport);assert.notEqual(updated.priority,report.priority);
+  assert.equal(report.priority,P.homeReport(C,state,before,actor.from).issues[0].title);
+  const improved=C.place(state,'bus',tile(4,5));assert.equal(improved.error,'');const updated=P.resident(C,improved.state,C.analyse(improved.state),actor);assert.ok(updated.transport>report.transport);assert.equal(updated.priority,P.homeReport(C,improved.state,C.analyse(improved.state),actor.from).issues[0].title);
   const removed={...state,cells:state.cells.map((c,i)=>i===actor.to?null:c)};assert.equal(P.resident(C,removed,C.analyse(removed),actor),null);
 });
 test('landscape colours and districts are deterministic and preserve every saved terrain tile',()=>{

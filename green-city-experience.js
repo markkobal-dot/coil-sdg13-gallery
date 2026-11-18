@@ -153,7 +153,7 @@ export function createExperience(api){
  applyFocus(false);
  return {
   render(){renderInbox();renderPanels();residents.render();transport.render();missions.render();if($('finance').open)renderFinance();$('play').innerHTML=glyph($('play').getAttribute('aria-pressed')==='true'?'pause':'play');$('next').innerHTML='<span>Next month</span>'+glyph('next');},
-  notifyMission:missions.notify,openDecision,openFinance,openCommands,openNeighbourhood:residents.openNeighbourhood,setExpanded,
+  notifyMission:missions.notify,openTransport:()=>transport.open(),openDecision,openFinance,openCommands,openNeighbourhood:residents.openNeighbourhood,setExpanded,
   toast(){clearTimeout(toastTimer);shell.classList.add('gc-show-toast');toastTimer=setTimeout(()=>shell.classList.remove('gc-show-toast'),6500);},
   closeOverlays(){missions.close();residents.close();transport.close();for(const name of ['finance','decision','commands'])if($(name).open)$(name).close();}
  };

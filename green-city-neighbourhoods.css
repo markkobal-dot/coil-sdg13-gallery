@@ -91,3 +91,20 @@
  .gc-local-priorities-heading h4{font-size:18px}.gc-local-other,.gc-local-explainer,.gc-local-success{font-size:11px}.gc-local-residents>button{min-height:44px;font-size:11px}
 }
 @media(prefers-reduced-motion:reduce){.gc-neighbourhood-pin>span{transition:none}.gc-neighbourhood-pin:hover>span{transform:none}}
+
+/* Explain a selected home's current conditions before offering construction. */
+.gc-home-feedback{margin:18px 0;padding:17px 15px;border:1px solid #ccd8c2;border-radius:14px;background:#f5f8ee;color:#284c37}
+.gc-home-feedback>header{display:flex;align-items:center;justify-content:space-between;gap:12px}
+.gc-home-feedback .gc-overline{font-size:9px;line-height:1.6;letter-spacing:.06em}
+.gc-home-feedback h5{margin:6px 0;font-size:19px;font-weight:650;letter-spacing:-.03em}
+.gc-home-feedback>header>strong{font-size:28px;letter-spacing:-.04em;white-space:nowrap}.gc-home-feedback strong>small{font-size:11px;font-weight:500}
+.gc-home-feedback meter{display:block;width:100%;height:10px;margin:8px 0 16px;accent-color:#63844e}.gc-home-feedback meter::-webkit-meter-bar{background:#dde6d1;border:0}.gc-home-feedback meter::-webkit-meter-optimum-value{background:#63844e}
+.gc-home-feedback .gc-home-start{font-size:12px;font-weight:700;margin:0 0 10px}
+.gc-home-feedback ol{list-style:none;margin:0;padding:0}.gc-home-feedback li{padding:14px 0;border-top:1px solid #dce4d2}.gc-home-feedback li:first-child{padding-top:0;border-top:0}
+.gc-home-scope{font-size:10px;color:#5e7257}.gc-home-feedback h6{font-size:13px;line-height:1.5;font-weight:700;margin:3px 0 6px}
+.gc-shell .gc-home-feedback p{font-size:11px;line-height:1.7;margin:5px 0;color:#53664c}.gc-home-feedback p.gc-home-fix{color:#304c35}
+.gc-shell .gc-home-feedback button{width:100%;min-height:44px;margin-top:8px;padding:10px 12px;border:1px solid #bbcba8;border-radius:9px;background:#e7efda;color:#294d37;font-size:11px;text-align:left;line-height:1.5}
+.gc-home-feedback button:hover{background:#dbe9c7}.gc-home-feedback button:focus-visible{outline:2px solid #315e39;outline-offset:3px}
+.gc-home-feedback p.gc-home-strengths{border-top:1px solid #dce4d2;padding-top:12px;margin:3px 0 0}.gc-home-strengths b{display:block;color:#37583a;margin-bottom:4px}
+
+.gc-home-feedback{scroll-margin-top:65px}.gc-home-feedback details>summary{padding:3px 0;color:#304c35;font-size:12px;font-weight:650;line-height:1.6;cursor:pointer}.gc-home-feedback details[open]>summary{margin-bottom:8px}.gc-home-feedback details>summary:focus-visible{outline:2px solid #315e39;outline-offset:3px;border-radius:3px}
