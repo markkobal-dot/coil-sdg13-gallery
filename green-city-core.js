@@ -588,6 +588,28 @@
     const result=[a];let r=Math.floor(a/size),c=a%size;const tr=Math.floor(b/size),tc=b%size;
     while(c!==tc){c+=Math.sign(tc-c);result.push(r*size+c);}while(r!==tr){r+=Math.sign(tr-r);result.push(r*size+c);}return result;
   }
+  // A brush stroke is one atomic purchase, even if it crosses many plots.
+  function planTiles(state,type,tiles){
+    const report={type,cells:[],added:[],existing:[],blocked:[],reasons:{},cost:0,upkeep:0,error:''};
+    if(!['road','tree'].includes(type)){report.error='Choose roads or street trees for a brush plan.';return report;}
+    if(!Array.isArray(tiles)||!tiles.length||tiles.length>size*size||tiles.some(i=>!Number.isInteger(i)||!validCell(i))){report.error='Choose tiles inside the island.';return report;}
+    report.cells=[...new Set(tiles)];
+    for(const i of report.cells){
+      const cell=state.cells[i],reason=terrainAt(state,i)!=='land'?'Water must remain clear.':!D.owned(state,i,size)?'Purchase this district first.':cell&&!(type==='road'?roadTypes.has(cell.type):cell.type==='tree')?'This plot is occupied.':'';
+      if(reason){report.blocked.push(i);report.reasons[i]=reason;}
+      else if(cell)report.existing.push(i);else report.added.push(i);
+    }
+    report.cost=report.added.length*upgrades[type].cost;report.upkeep=report.added.length*upgrades[type].upkeep;
+    if(report.blocked.length){const i=report.blocked[0];report.error='Blocked at '+label(i)+': '+report.reasons[i]+' No points were spent.';}
+    else if(!report.added.length)report.error='Every selected plot already has '+(type==='road'?'a road':'street trees')+'.';
+    else if(report.cost>state.cash)report.error='This plan costs '+report.cost+' EP. Shorten it or earn more monthly income.';
+    return report;
+  }
+  function buildTiles(state,type,tiles){
+    const report=planTiles(state,type,tiles);if(report.error)return rejected(state,report.error);
+    const cells=state.cells.slice();report.added.forEach(i=>cells[i]={type,level:1,roof:null,paid:upgrades[type].cost});
+    return ok({...state,cells,cash:state.cash-report.cost},report.added.length+' '+(type==='road'?'road tiles':'tree plots')+' built as one plan · −'+report.cost+' EP.');
+  }
   function buildLine(state,a,b) {
     const terrain=terrainFor(state);
     const path=line(a,b);if(!path.length)return rejected(state,'Choose two tiles inside the city.');
@@ -764,7 +786,7 @@
     const missions=restoreMissions(raw.missions,raw.month,raw),occupancy=D.restoreOccupancy(api,{...raw,cells}),monthlyReport=D.restoreMonthly(api,raw);
     return {version:3,challenge:raw.challenge,cells,...(raw.reclaimed!==undefined?{reclaimed:[...raw.reclaimed]}:{}),cash:raw.cash,population:raw.population,month:raw.month,cityLevel:raw.cityLevel||1,affluentPopulation:raw.affluentPopulation||0,districts,policies:restoredPolicies,routes,loan,grants:[...raw.grants],event,history,log,...(missions?{missions}:{}),...(occupancy?{occupancy}:{}),...(monthlyReport?{monthlyReport}:{})};
   }
-  const api={size,terrain,metrics,upgrades,types,challenges,localNeeds,homeFeedback,neighbourhoodInfo,routeColours,roadPath,routeInfo,setRoute,removeRoute,setRouteEnabled,roadTypes,buildingTypes,greenTypes,fresh,board,remaining,score,analyse,neighbours,distance,rowLabel,label,rotatable,dimensions,footprint,anchorAt,coastal,canPlace,place,upgrade,upgradeCost,demolish,relocate,moveCost,line,buildLine,grantDefs,grant,events,respond,policies,policyRanges,setPolicies,setPolicy,borrow,repayLoan,advance,goals,tileInfo,restore};
+  const api={size,terrain,metrics,upgrades,types,challenges,planTiles,buildTiles,localNeeds,homeFeedback,neighbourhoodInfo,routeColours,roadPath,routeInfo,setRoute,removeRoute,setRouteEnabled,roadTypes,buildingTypes,greenTypes,fresh,board,remaining,score,analyse,neighbours,distance,rowLabel,label,rotatable,dimensions,footprint,anchorAt,coastal,canPlace,place,upgrade,upgradeCost,demolish,relocate,moveCost,line,buildLine,grantDefs,grant,events,respond,policies,policyRanges,setPolicies,setPolicy,borrow,repayLoan,advance,goals,tileInfo,restore};
   Object.assign(api,{seaRoute,terrainFor,terrainAt,reclamationCost,canReclaim,reclaimLand,rotateRoadItem,neighbourhoodMissionDefs,neighbourhoodMissions,startNeighbourhoodMission,leaveNeighbourhoodMission,awardNeighbourhoodMission,purchaseLand,ownsLand:(state,i)=>D.owned(state,i,size),landReports:(state,a=analyse(state))=>D.landReports(api,state,a),developmentLevels:D.levels,homeHappiness:D.homeHappiness,migrationReasons:D.migrationReasons});
   if(typeof module==='object'&&module.exports)module.exports=api;else host.GreenCity=api;
 })(globalThis);

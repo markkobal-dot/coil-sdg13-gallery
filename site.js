@@ -731,8 +731,8 @@ document.addEventListener('visibilitychange', () => {
     if (loading) return;
     loading = (async () => {
       await import('./green-city-development.js?v=5d7445afae');
-      await Promise.all([import('./green-city-core.js?v=4fbbbf2f14'), import('./green-city-art.js?v=ca8be4039d')]);
-      await import('./green-city.js?v=7d6cdb5dd3');
+      await Promise.all([import('./green-city-core.js?v=6cda2938bb'), import('./green-city-art.js?v=ca8be4039d')]);
+      await import('./green-city.js?v=9debdbabc7');
     })();
     try { await loading; }
     catch { document.getElementById('gc-start-status').hidden = false; }

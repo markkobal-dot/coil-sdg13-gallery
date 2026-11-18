@@ -1,4 +1,4 @@
-import './green-city-planning.js?v=c7fc6e5f47';
+import './green-city-planning.js?v=1a80a074c1';
 const C=globalThis.GreenCity,P=globalThis.GreenCityPlanning;
 const escape=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const number=n=>Math.round(n).toLocaleString('en-GB'),signed=n=>(n>0?'+':'')+number(n);

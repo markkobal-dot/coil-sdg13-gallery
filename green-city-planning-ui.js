@@ -1,4 +1,4 @@
-import './green-city-planning.js?v=c7fc6e5f47';
+import './green-city-planning.js?v=1a80a074c1';
 import './green-city-life.js?v=acc9a6f5a0';
 const C=globalThis.GreenCity,P=globalThis.GreenCityPlanning,L=globalThis.GreenCityLife;
 const escape=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
@@ -54,7 +54,7 @@ export function createPlanning(api){
     stopFollowing(){following=false;panel.querySelector('[data-person-follow]').setAttribute('aria-pressed','false');panel.querySelector('[data-person-follow]').textContent='Follow resident';},
     preview(action){
       if(action.mode!=='inspect'&&!panel.hidden)close();
-      if(!['build','move','upgrade','road','land'].includes(action.mode)){summary.hidden=true;api.getWorld()?.setForecast(null);return;}
+      if(!['build','move','upgrade','road','land','batch'].includes(action.mode)){summary.hidden=true;api.getWorld()?.setForecast(null);return;}
       const state=api.getState();if(state!==cacheState){cacheState=state;cache.clear();}
       const id=JSON.stringify(action);let report=cache.get(id);
       if(report===undefined){report=P.forecast(C,state,action,api.getAnalysis());if(cache.size>40)cache.clear();cache.set(id,report);}
@@ -62,6 +62,9 @@ export function createPlanning(api){
       if(summary.hidden)return;
       const effect=report.homes.flatMap(home=>home.changes.map(change=>({...change,i:home.i}))).sort((a,b)=>Math.abs(b.delta)-Math.abs(a.delta))[0];
       const metricNames={shade:'Shade',mobility:'Transit access',health:'Healthcare',safety:'Emergency cover',services:'Services',noise:'Noise',pollution:'Local pollution',commute:'Congestion',connection:'Road link'};
+      if(action.mode==='batch'){
+        summary.innerHTML='<p class="gc-batch-finance">Upkeep '+signed(report.upkeep)+' EP/month · Balance <strong>'+signed(report.net)+' EP/month</strong></p>'+(report.better||report.worse?'<p>'+report.better+' homes improved'+(report.worse?' · '+report.worse+' with trade-offs':'')+(effect?' · '+metricNames[effect.key]+' '+signed(effect.delta)+' at '+C.label(effect.i):'')+'.</p>':'')+'<small>Forecast before development grants.</small>';return;
+      }
       summary.innerHTML=`<div><span>Upfront <b>${report.cost} EP</b></span><span>Upkeep change <b>${signed(report.upkeep)} EP/mo</b></span><span>Monthly balance <b class="${report.net<0?'is-negative':''}">${signed(report.net)} EP <small>(${signed(report.netChange)})</small></b></span></div><p>${report.better} homes improved${report.worse?' · '+report.worse+' with trade-offs':''}${effect?' · '+metricNames[effect.key]+' '+signed(effect.delta)+' at '+C.label(effect.i):''} · City happiness ${signed(report.happinessChange)}${report.cleanPowerChange?' · Clean power '+signed(report.cleanPowerChange):''}</p>${report.jobsChange||report.capacityChange?`<p>Jobs ${signed(report.jobsChange)} · Housing capacity ${signed(report.capacityChange)}</p>`:''}${report.connection?`<p class="${report.connection.revenue<report.connection.upkeep?'is-negative':''}">${Math.round(report.connection.utilisation*100)}% used · Revenue ${report.connection.revenue} EP / upkeep ${report.connection.upkeep} EP per month${report.connection.revenue<report.connection.upkeep?' · Demand does not cover running costs.':''}</p>`:''}${action.mode==='build'&&C.types[action.type]?.need==='health'?`<p>Healthcare reach: ${C.types[action.type].radius} tiles · ${api.getAnalysis().homeProfiles.filter(h=>C.distance(action.i,h.i)<C.types[action.type].radius).length} home plots in range · ${report.homes.filter(h=>h.changes.some(c=>c.key==='health'&&c.delta>0)).length} improved</p>`:''}${C.types[action.type]?.localPollution?`<p class="gc-industry-tradeoff">Business taxes ${signed(report.businessTaxChange)} EP/mo · Air quality ${signed(report.airChange)} points · Power demand ${signed(report.powerDemandChange)} units. Tax income depends on available workers; nearby homes face pollution and noise.</p>`:''}<p class="gc-preview-key"><i></i>Area of influence <i></i>Improved home <i></i>Trade-off · forecast, before grants</p><span class="sr-only">Affected homes: ${report.homes.map(home=>C.label(home.i)+' '+home.kind).join(', ')||'none'}.</span>`;
     },
     render(){if(!panel.hidden){refreshJourneys();const current=journeys.find(p=>key(p)===key(actor));if(current){actor=current;detail();}else{close();api.announce('This journey changed as the city developed. Choose another resident.');}}}

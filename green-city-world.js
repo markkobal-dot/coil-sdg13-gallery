@@ -4,7 +4,7 @@ import { OrbitControls } from './assets/vendor/three/OrbitControls.js';
 import { mergeGeometries } from './assets/vendor/three/BufferGeometryUtils.js';
 import {needIcon} from './green-city-neighbourhood-icons.js?v=98db9558ad';
 import {CityLife} from './green-city-life-world.js?v=d69e6e56f2';
-import './green-city-planning.js?v=c7fc6e5f47';
+import './green-city-planning.js?v=1a80a074c1';
 
 const C = globalThis.GreenCity;
 const P = globalThis.GreenCityPlanning;
@@ -20,8 +20,8 @@ const cylinderGeo = () => geometry('cylinder', () => new THREE.CylinderGeometry(
 const coneGeo = () => geometry('cone', () => new THREE.ConeGeometry(1,1,10));
 
 export class CityWorld {
-  constructor(canvas, { onSelect, onHover, onError, onNeighbourhood, onLife, onResident, onFollowStop, onDaylight }) {
-    this.canvas = canvas; this.onSelect=onSelect; this.onHover=onHover; this.onError=onError;this.onNeighbourhood=onNeighbourhood;
+  constructor(canvas, { onSelect, onHover, onError, onNeighbourhood, onLife, onResident, onFollowStop, onDaylight, onDraw }) {
+    this.canvas = canvas;this.onDraw=onDraw; this.onSelect=onSelect; this.onHover=onHover; this.onError=onError;this.onNeighbourhood=onNeighbourhood;
     this.materials = new Map(); this.night=false;this.daySeconds=145;this.lifeSeconds=145;this.cycleEnabled=true;this.darkness=0;this.onDaylight=onDaylight; this.overlay='city'; this.mode='inspect'; this.type='tree'; this.focus=8*mapSize+8;
     this.active=false; this.raf=0; this.lastFrame=0; this.time=0; this.dirty=true; this.reduced=matchMedia('(prefers-reduced-motion: reduce)');
     this.renderer = new THREE.WebGLRenderer({ canvas, antialias:true, alpha:false, powerPreference:'low-power' });
@@ -52,6 +52,7 @@ export class CityWorld {
     this.cursor.renderOrder=20;this.cursor.position.y=.18;this.scene.add(this.cursor);
     this.selection=this.cursor.clone();this.selection.material=this.cursor.material.clone();this.selection.material.color.set('#f3c383');this.selection.position.y=.19;this.scene.add(this.selection);
     this.route=new THREE.Line(new THREE.BufferGeometry(),new THREE.LineBasicMaterial({color:'#f2c779',depthTest:false}));this.route.renderOrder=21;this.scene.add(this.route);
+    this.brushFill=new THREE.InstancedMesh(new THREE.PlaneGeometry(.92,.92),new THREE.MeshBasicMaterial({transparent:true,opacity:.65,depthWrite:false,depthTest:false,side:THREE.DoubleSide}),mapSize*mapSize);this.brushFill.count=0;this.brushFill.renderOrder=22;this.brushFill.frustumCulled=false;this.scene.add(this.brushFill);
     this.forecastFill=new THREE.InstancedMesh(new THREE.PlaneGeometry(.97,.97),new THREE.MeshBasicMaterial({color:'#4ba8a2',transparent:true,opacity:.22,depthWrite:false,side:THREE.DoubleSide}),mapSize*mapSize);this.forecastFill.count=0;this.forecastFill.frustumCulled=false;this.scene.add(this.forecastFill);
     this.forecastBorders=new THREE.LineSegments(new THREE.BufferGeometry(),new THREE.LineBasicMaterial({vertexColors:true,depthTest:false}));this.forecastBorders.renderOrder=24;this.scene.add(this.forecastBorders);
     this.personRoute=new THREE.Line(new THREE.BufferGeometry(),new THREE.LineBasicMaterial({color:'#486fc4',depthTest:false}));this.personRoute.renderOrder=25;this.personRoute.visible=false;this.scene.add(this.personRoute);
@@ -838,7 +839,24 @@ export class CityWorld {
     if(this.reduced.matches||!this.activeSmoke.length)return;
     this.smoke=new THREE.InstancedMesh(new THREE.SphereGeometry(.13,6,4),new THREE.MeshBasicMaterial({color:'#b7b5a5',transparent:true,opacity:.25,depthWrite:false}),this.activeSmoke.length*6);this.scene.add(this.smoke);
   }
-  setTool(mode,type,focus,source=null,lineStart=null,rotation=0){this.rotation=rotation;this.mode=mode;this.type=type;this.focus=focus;this.source=source;this.lineStart=lineStart;this.hover=null;this.updateSelection();this.updateLabels();this.dirty=true;this.schedule();}
+  configureBuildInput(){
+    const paint=this.mode==='road'||this.mode==='build'&&this.type==='tree';
+    this.controls.mouseButtons.LEFT=paint?null:THREE.MOUSE.PAN;
+    this.controls.mouseButtons.MIDDLE=paint?THREE.MOUSE.PAN:THREE.MOUSE.DOLLY;
+    this.controls.touches.ONE=paint?null:THREE.TOUCH.PAN;
+    this.controls.touches.TWO=paint?THREE.TOUCH.DOLLY_PAN:THREE.TOUCH.DOLLY_ROTATE;
+    this.canvas.style.cursor=paint?'crosshair':'';
+  }
+  setBuildDraft(report=null){
+    this.buildDraft=report;
+    const cells=report?.cells||[];this.brushFill.count=cells.length;
+    const blocked=new Set(report?.blocked),existing=new Set(report?.existing),dummy=new THREE.Object3D();
+    cells.forEach((i,n)=>{dummy.position.set(i%mapSize-center,.205,Math.floor(i/mapSize)-center);dummy.rotation.x=-Math.PI/2;dummy.updateMatrix();this.brushFill.setMatrixAt(n,dummy.matrix);this.brushFill.setColorAt(n,new THREE.Color(blocked.has(i)?'#d15b4c':existing.has(i)?'#a1b9b7':'#b6e176'));});
+    this.brushFill.instanceMatrix.needsUpdate=true;if(this.brushFill.instanceColor)this.brushFill.instanceColor.needsUpdate=true;
+    if(report?.type==='road'){this.route.geometry.dispose();this.route.geometry=new THREE.BufferGeometry().setFromPoints(cells.map(i=>new THREE.Vector3(i%mapSize-center,.23,Math.floor(i/mapSize)-center)));this.route.material.color.set(report.error?'#d15b4c':'#d6f35b');this.route.visible=true;}else this.route.visible=false;
+    this.dirty=true;this.schedule();
+  }
+  setTool(mode,type,focus,source=null,lineStart=null,rotation=0){this.rotation=rotation;this.mode=mode;this.type=type;this.focus=focus;this.source=source;this.lineStart=lineStart;this.configureBuildInput();this.hover=null;this.updateSelection();this.updateLabels();this.dirty=true;this.schedule();}
   allowed(i){
     if(!this.state)return false;
     if(this.mode==='land')return !C.canReclaim(this.state,i,this.analysis);
@@ -868,7 +886,7 @@ export class CityWorld {
       this.ghost.traverse(obj=>{if(obj.isMesh){obj.material=obj.material.clone();obj.material.transparent=true;obj.material.opacity=.42;obj.material.depthWrite=false;obj.material.userData.ghost=true;}});this.scene.add(this.ghost);
     }
     if(this.mode==='land'&&allowed){this.ghost=new THREE.Group();this.box(this.ghost,'#b2c39a',0,-.055,0,.997,.38,.997,{transparent:true,opacity:.62,depthWrite:false});this.ghost.position.set(i%mapSize-center,0,Math.floor(i/mapSize)-center);this.scene.add(this.ghost);}
-    if(this.mode==='road'&&this.lineStart!==null){const points=C.line(this.lineStart,i).map(j=>new THREE.Vector3(j%mapSize-center,.22,Math.floor(j/mapSize)-center));this.route.geometry.dispose();this.route.geometry=new THREE.BufferGeometry().setFromPoints(points);this.route.visible=true;}else this.route.visible=false;
+    if(this.mode==='road'&&this.lineStart!==null){const points=(this.buildDraft?.type==='road'?this.buildDraft.cells:C.line(this.lineStart,i)).map(j=>new THREE.Vector3(j%mapSize-center,.22,Math.floor(j/mapSize)-center));this.route.geometry.dispose();this.route.geometry=new THREE.BufferGeometry().setFromPoints(points);this.route.visible=true;}else this.route.visible=false;
     this.dirty=true;
   }
   updateOverlay(){
@@ -901,11 +919,37 @@ export class CityWorld {
   pick(event){const rect=this.canvas.getBoundingClientRect();this.pointer.set((event.clientX-rect.left)/rect.width*2-1,-(event.clientY-rect.top)/rect.height*2+1);this.ray.setFromCamera(this.pointer,this.camera);const hit=this.ray.intersectObjects(this.pickTargets,false)[0];if(hit&&!(this.mode==='build'||this.mode==='road'||this.mode==='land'||(this.mode==='move'&&this.source!==null)))return hit.object.userData.cell;if(!this.ray.ray.intersectPlane(this.plane,this.intersection))return -1;const c=Math.floor(this.intersection.x+mapSize/2),r=Math.floor(this.intersection.z+mapSize/2);return r>=0&&r<mapSize&&c>=0&&c<mapSize?r*mapSize+c:-1;}
   bindInput(){
     const pointers=new Set();let start=null,multi=false;
-    this.canvas.addEventListener('pointerdown',e=>{if(this.followingResident){this.followingResident=false;this.onFollowStop?.();}pointers.add(e.pointerId);if(pointers.size>1)multi=true;if(e.button===0)start={x:e.clientX,y:e.clientY};});
-    this.canvas.addEventListener('pointermove',e=>{if(pointers.size)return;const i=this.pick(e);if(i!==this.hover){this.updateHover(i);this.onHover?.(i);this.schedule();}});
-    const end=e=>{pointers.delete(e.pointerId);const click=!multi&&start&&e.button===0&&Math.hypot(e.clientX-start.x,e.clientY-start.y)<7;if(!pointers.size){start=null;multi=false;}if(click){const person=this.pickResident(e);if(person){this.onResident?.(person);return;}const i=this.pick(e);if(i>=0)this.onSelect?.(i,!(e.pointerType==='touch'&&this.mode!=='inspect'));}};
-    this.canvas.addEventListener('pointerup',end);this.canvas.addEventListener('pointercancel',e=>{pointers.delete(e.pointerId);start=null;if(!pointers.size)multi=false;});
-    this.canvas.addEventListener('pointerleave',()=>{if(!pointers.size){this.hover=null;this.cursor.visible=false;if(this.ghost)this.ghost.visible=false;this.onHover?.(-1);this.dirty=true;this.schedule();}});
+    const painting=()=>this.mode==='road'||this.mode==='build'&&this.type==='tree';
+    const cancel=notify=>{const drawing=start?.drawing;start=null;if(drawing&&notify)this.onDraw?.({phase:'cancel'});};
+    this.cancelStroke=(notify=false)=>cancel(notify);
+    this.canvas.addEventListener('pointerdown',e=>{
+      if(this.followingResident){this.followingResident=false;this.onFollowStop?.();}
+      pointers.add(e.pointerId);if(pointers.size>1){multi=true;cancel(true);return;}
+      if(e.button===0){const i=this.pick(e);start={x:e.clientX,y:e.clientY,tile:i,cells:i>=0?[i]:[],seen:new Set(i>=0?[i]:[]),id:e.pointerId,mode:this.mode,type:this.type,drawing:false,paint:painting()};}
+    });
+    this.canvas.addEventListener('pointermove',e=>{
+      if(pointers.size){
+        if(multi||!start?.paint||e.pointerId!==start.id)return;
+        if(start.mode!==this.mode||start.type!==this.type){cancel(false);return;}
+        if(!start.drawing&&Math.hypot(e.clientX-start.x,e.clientY-start.y)<7)return;
+        const i=this.pick(e);if(i<0||start.tile<0)return;
+        if(start.drawing&&i===start.tile)return;
+        for(const j of C.line(start.tile,i))if(!start.seen.has(j)){start.seen.add(j);start.cells.push(j);}
+        start.tile=i;start.drawing=true;this.onDraw?.({phase:'preview',type:this.mode==='road'?'road':'tree',cells:[...start.cells]});return;
+      }
+      const i=this.pick(e);if(i!==this.hover){this.updateHover(i);this.onHover?.(i);this.schedule();}
+    });
+    const end=e=>{
+      pointers.delete(e.pointerId);const current=start,wasMulti=multi;
+      if(!pointers.size){start=null;multi=false;}
+      if(wasMulti||!current||e.pointerId!==current.id)return;
+      if(current.drawing){const i=this.pick(e);if(i<0){this.onDraw?.({phase:'cancel'});return;}for(const j of C.line(current.tile,i))if(!current.seen.has(j)){current.seen.add(j);current.cells.push(j);}this.onDraw?.({phase:'ready',type:current.mode==='road'?'road':'tree',cells:[...current.cells]});return;}
+      if(e.button===0&&Math.hypot(e.clientX-current.x,e.clientY-current.y)<7){const person=this.pickResident(e);if(person){this.onResident?.(person);return;}const i=this.pick(e);if(i>=0)this.onSelect?.(i,!(e.pointerType==='touch'&&this.mode!=='inspect'));}
+    };
+    this.canvas.addEventListener('pointerup',end);
+    this.canvas.addEventListener('pointercancel',e=>{pointers.delete(e.pointerId);cancel(true);if(!pointers.size)multi=false;});
+    this.canvas.addEventListener('lostpointercapture',e=>{if(start?.id===e.pointerId){pointers.delete(e.pointerId);cancel(true);if(!pointers.size)multi=false;}});
+    this.canvas.addEventListener('pointerleave',()=>{if(!pointers.size&&!this.buildDraft){this.hover=null;this.cursor.visible=false;if(this.ghost)this.ghost.visible=false;this.onHover?.(-1);this.dirty=true;this.schedule();}});
     this.canvas.addEventListener('contextmenu',e=>e.preventDefault());
   }
   updateLabels(){

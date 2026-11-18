@@ -581,3 +581,16 @@
 
 .gc-development-body #gc-land-section,.gc-development-body #gc-tourism-section{scroll-margin-top:160px}.gc-shell:has(#gc-overlay-legend:not([hidden])) .gc-expand-land{display:none}@media(max-width:650px){.gc-development-body #gc-land-section,.gc-development-body #gc-tourism-section{scroll-margin-top:110px}}
 .gc-create-land-card{padding:20px;margin:14px 0 25px;border:1px solid #9caf86;border-radius:16px;background:#eef3e4}.gc-create-land-card h5{margin:0 0 10px;font-size:19px}.gc-create-land-card>strong{display:block;margin:12px 0;font-size:21px;color:#34563c}.gc-create-land-card>button{min-height:44px;padding:10px 16px;border:0;border-radius:10px;background:#41663f;color:#fff;font:inherit;font-weight:600;cursor:pointer}.gc-create-land-card>button:disabled{opacity:.55;cursor:default}.gc-create-land-card>button:focus-visible{outline:3px solid #82a15d;outline-offset:3px}
+
+/* Brush plans remain visible and cancellable before their atomic purchase. */
+.gc-placement-hint>div{flex:1;min-width:0}
+.gc-shell #gc-cancel-plan{pointer-events:auto;min-height:44px;padding:9px 12px;flex-shrink:0;border:1px solid #b8c8a9;border-radius:9px;background:#f8faef;color:#36543a;font-size:12px}
+.gc-shell #gc-cancel-plan[hidden]{display:none}.gc-shell #gc-cancel-plan:focus-visible{outline:2px solid #315e39;outline-offset:3px}
+
+.gc-placement-hint:has(#gc-cancel-plan:not([hidden])) strong{font-size:1rem;line-height:1.4}
+.gc-placement-hint:has(#gc-cancel-plan:not([hidden])) p{font-size:.875rem;line-height:1.55}
+.gc-shell #gc-cancel-plan{font-size:.875rem}
+.gc-placement-hint #gc-build-forecast .gc-batch-finance strong{display:inline;font-size:inherit}
+.gc-placement-hint #gc-build-forecast small{font-size:.75rem;color:#65765a;line-height:1.5}
+.gc-expanded .gc-placement-hint:has(#gc-cancel-plan:not([hidden])){width:min(560px,calc(100% - 100px))}
+@media(max-width:700px){.gc-expanded .gc-placement-hint:has(#gc-cancel-plan:not([hidden])){left:10px;transform:none;width:calc(100% - 65px)}.gc-placement-hint:has(#gc-cancel-plan:not([hidden])){gap:8px;padding:10px}.gc-shell #gc-cancel-plan{padding-inline:8px}}

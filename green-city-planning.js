@@ -4,7 +4,8 @@
   function forecast(C,state,action,before=C.analyse(state)){
     const {mode,type,i,rotation=0,source,start}=action;
     let result;
-    if(mode==='land')result=C.reclaimLand(state,i);
+    if(mode==='batch')result=C.buildTiles(state,type,action.cells);
+    else if(mode==='land')result=C.reclaimLand(state,i);
     else if(mode==='build')result=C.place(state,type,i,rotation);
     else if(mode==='move'&&source!==null)result=C.relocate(state,source,i,rotation);
     else if(mode==='upgrade')result=C.upgrade(state,i);
