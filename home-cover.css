@@ -11,14 +11,20 @@
 .home-cover-pair{display:grid;grid-template-columns:minmax(0,1.15fr) minmax(0,.85fr);gap:20px}
 .home-cover-pair figure{margin:0;min-width:0}
 .home-cover-photo{display:block;width:100%;padding:0;border:0;border-radius:0;background:none;color:inherit;text-align:left;cursor:pointer;font:inherit}
-.home-cover-image{display:block;height:clamp(240px,34svh,440px);overflow:hidden;background:#cfdbd7}
-.home-cover-image img{display:block;width:100%;height:100%;object-fit:cover;transition:transform .45s cubic-bezier(.2,.6,.2,1)}
+/* Keep each crop proportional to its column, independent of window height. */
+.home-cover-image{position:relative;display:block;width:100%;aspect-ratio:2/1;overflow:hidden;background:#cfdbd7}
+.home-cover-pair figure:nth-child(2) .home-cover-image{aspect-ratio:34/23}
+.home-cover-image img{position:absolute;inset:0;display:block;width:100%;height:100%;object-fit:cover;transition:transform .45s cubic-bezier(.2,.6,.2,1)}
 .home-cover-caption{display:flex;align-items:start;justify-content:space-between;gap:16px;padding-top:14px;line-height:1.45}
 .home-cover-caption strong{font-size:18px;font-weight:650;letter-spacing:-.025em}
 .home-cover-caption small{display:block;margin-top:4px;font-size:14px;color:var(--color-muted);letter-spacing:0}
 .home-cover-view{padding-top:3px;white-space:nowrap;font-size:14px;text-decoration:underline;text-underline-offset:4px;color:var(--color-action)}
 .home-cover-photo:focus-visible{outline:3px solid var(--color-focus);outline-offset:6px}
-#home .home-cover-observation{margin:22px 0 0;padding:0 0 25px;border-bottom:1px solid var(--line);font-size:16px;color:var(--color-muted);line-height:1.6}
+.home-cover-context{display:grid;grid-template-columns:minmax(0,.85fr) minmax(0,1.15fr);gap:clamp(24px,4vw,70px);margin-top:28px;padding:28px 0 30px;border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
+#home .home-cover-context h2{margin:0;max-width:22ch;font-size:28px;font-weight:650;line-height:1.2;letter-spacing:-.035em}
+#home .home-cover-context p{margin:0 0 16px;max-width:68ch;font-size:16px;line-height:1.65;color:var(--color-muted)}
+#home .home-cover-context .home-cover-sources{margin:0;font-size:14px}
+.home-cover-sources a{color:var(--color-action);text-decoration:underline;text-underline-offset:3px}
 #home .hero-index{border:0;padding-block:27px}
 #home .hero-index>strong,#home .hero-index>p,#home .hero-index>a{font-size:16px}
 #home .home-collection{padding-top:62px;padding-bottom:70px}
@@ -31,7 +37,7 @@
 @media(hover:hover) and (pointer:fine) and (min-width:701px){.home-cover-photo:hover img{transform:scale(1.025)}.home-cover-photo:hover .home-cover-view{color:var(--color-ink);text-decoration-thickness:2px}}
 @media(min-width:701px){body[data-view=home] .home-cover-heading{animation:cover-arrival .5s ease both}body[data-view=home] .home-cover-pair{animation:cover-arrival .65s .08s ease both}}
 @keyframes cover-arrival{from{opacity:.35;transform:translateY(10px)}to{opacity:1;transform:none}}
-@media(min-width:701px) and (max-width:1000px){#home .home-cover{padding-top:30px}.home-cover-heading{grid-template-columns:1.1fr 1fr;gap:24px}#home .home-cover-heading h1{font-size:clamp(60px,8vw,80px)}#home .home-cover-deck p{font-size:16px}.home-cover-caption{gap:10px}.home-cover-view{display:none}.home-cover-image{height:300px}}
+@media(min-width:701px) and (max-width:1000px){#home .home-cover{padding-top:30px}.home-cover-heading{grid-template-columns:1.1fr 1fr;gap:24px}#home .home-cover-heading h1{font-size:clamp(60px,8vw,80px)}#home .home-cover-deck p{font-size:16px}.home-cover-caption{gap:10px}.home-cover-view{display:none}.home-cover-image{aspect-ratio:23/15}.home-cover-pair figure:nth-child(2) .home-cover-image{aspect-ratio:17/15}}
 @media(max-width:700px){
  #home .home-cover{padding:26px 24px 0}
  .home-cover-heading{display:block;margin-bottom:24px}
@@ -46,7 +52,8 @@
  .home-cover-caption strong{font-size:18px}
  .home-cover-caption small{font-size:14px;line-height:1.45}
  .home-cover-view{display:block;padding-top:10px;font-size:14px}
- #home .home-cover-observation{font-size:16px;margin-top:21px;padding-bottom:23px}
+ .home-cover-context{display:block;margin-top:24px;padding:24px 0}
+ #home .home-cover-context h2{margin-bottom:18px;font-size:26px}
  #home .hero-index{padding-block:25px;gap:12px}
  #home .home-collection{padding-top:36px;padding-bottom:42px}
  #home .collection-heading h2{font-size:36px;max-width:12ch}
