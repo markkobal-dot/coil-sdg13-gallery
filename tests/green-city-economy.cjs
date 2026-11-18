@@ -12,7 +12,7 @@ test('unfilled workplaces cannot generate business taxes, and taxes rise when re
   state=apply(C.place(state,'office',office));assert.ok(C.analyse(state).jobs>0);assert.equal(C.analyse(state).budget.businessRevenue,0);
   const staffed=C.analyse({...state,population:600});assert.ok(staffed.budget.businessRevenue>0);assert.ok(staffed.budget.filledJobs<=600*.42);
   const small={...state,population:100},extra=apply(C.place(small,'office',tile(6,7)));
-  assert.equal(C.analyse(extra).budget.businessRevenue,C.analyse(small).budget.businessRevenue);
+  const a=C.analyse(small),b=C.analyse(extra);assert.equal(a.workforce.filled,b.workforce.filled);assert.equal(a.budget.businessRevenue-a.budget.specialistTax,b.budget.businessRevenue-b.budget.specialistTax); // Premiums follow the actual mix of filled jobs.
 });
 test('new road tiles carry recurring maintenance and the monthly ledger charges it once',()=>{
   const state={...C.fresh(),districts:['central','east']},before=C.analyse(state),next=apply(C.buildLine(state,tile(5,17),tile(5,21))),after=C.analyse(next);

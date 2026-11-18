@@ -31,14 +31,15 @@
     const luxury=homes.filter(h=>h.linked&&h.luxury),luxuryCapacity=luxury.reduce((sum,h)=>sum+h.capacity,0);
     const luxuryPeople=Math.min(state.population,luxury.reduce((sum,h)=>sum+(homeProfiles.find(p=>p.i===h.i)?.residents??state.population*h.capacity/total),0));
     const quality=luxuryCapacity?luxury.reduce((sum,h)=>{const p=homeProfiles.find(p=>p.i===h.i);return sum+h.capacity*(p.shade+p.health+p.services+Math.max(0,100-p.noise)+air)/500;},0)/luxuryCapacity:0;
-    const highPayJobs=workplaces.filter(w=>highPay.has(w.type)).reduce((sum,w)=>sum+w.jobs,0);
+    const specialistWorkplaces=workplaces.filter(w=>highPay.has(w.type));
+    const highPayJobs=specialistWorkplaces.reduce((sum,w)=>sum+(w.filled||0),0),highPayCapacity=specialistWorkplaces.reduce((sum,w)=>sum+(w.positions||0),0);
     const affluent=Math.max(0,Math.min(state.affluentPopulation||0,Math.floor(luxuryPeople),state.population));
     const target=Math.floor(Math.min(luxuryPeople*.8,highPayJobs*1.5,state.population*.35)*quality*clamp((happiness-45)/25)*clamp(employment/80)*clamp((18-policy.residentialTax)/8));
     const change=target>=affluent?Math.min(target-affluent,Math.max(1,Math.min(Math.ceil((target-affluent)*.18),Math.round(state.population*.015)))):-Math.min(affluent-target,Math.max(1,Math.ceil((affluent-target)*.3)));
     homeProfiles.forEach(p=>{const home=homes.find(h=>h.i===p.i);p.housingType=home.type;p.residents??=home.linked?state.population*home.capacity/total:0;p.affluentShare=home.luxury&&luxuryPeople?affluent/luxuryPeople:0;});
-    return {affluent,affluentTarget:target,nextAffluent:affluent+change,luxuryCapacity,highPayJobs:Math.round(highPayJobs),quality:Math.round(quality*100),
+    return {affluent,affluentTarget:target,nextAffluent:affluent+change,luxuryCapacity,highPayJobs:Math.round(highPayJobs),highPayCapacity,quality:Math.round(quality*100),
       premiumTax:Math.round(affluent*.038*policy.residentialTax),
-      advice:!luxuryCapacity?'Provide connected luxury housing to attract affluent households.':!highPayJobs?'Add well-paid jobs such as clean-tech offices and healthcare.':happiness<50?'Improve resident happiness and local living conditions.':quality<.5?'Improve shade, healthcare, services and air quality around luxury homes.':'Affluent households can move in gradually each month. Higher household taxes reduce demand.'};
+      advice:!luxuryCapacity?'Provide connected luxury housing to attract affluent households.':!highPayJobs?(highPayCapacity?'Fill existing specialist vacancies with residents before adding more offices.':'Add well-paid jobs such as clean-tech offices and healthcare.'):happiness<50?'Improve resident happiness and local living conditions.':quality<.5?'Improve shade, healthcare, services and air quality around luxury homes.':'Affluent households can move in gradually each month. Higher household taxes reduce demand.'};
   }
   // Integer allocations conserve residents and jobs, including capped or very small buildings.
   function allocate(total,items){

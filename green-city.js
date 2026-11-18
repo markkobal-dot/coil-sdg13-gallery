@@ -1,7 +1,7 @@
 let monthly=null;
-import { createDevelopment, createMonthlyReport } from './green-city-development-ui.js?v=ac7e9b3972';
+import { createDevelopment, createMonthlyReport } from './green-city-development-ui.js?v=4b4450d645';
 let development=null;
-import { createExperience, glyph } from './green-city-experience.js?v=28d21a7c8e';
+import { createExperience, glyph } from './green-city-experience.js?v=73071ee085';
 import { createPlanning } from './green-city-planning-ui.js?v=1076cca510';
 import { createIntroduction } from './green-city-intro-ui.js?v=60e7e883dc';
 let experience=null;

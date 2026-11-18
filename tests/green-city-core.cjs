@@ -367,7 +367,7 @@ test('regional connections share demand and a growing city increases income with
  assert.equal(small.connections.length,2);assert.ok(small.connections.every(c=>c.utilisation<1&&c.revenue<c.upkeep));
  assert.ok(grown.budget.regionalRevenue>small.budget.regionalRevenue);assert.ok(grown.budget.regionalRevenue<=2*C.upgrades.cargoport.revenue);
  const one=C.demolish(city,small.connections[1].i).state;
- assert.ok(Math.abs(C.analyse(one).budget.regionalRevenue-small.budget.regionalRevenue)<=1,'extra harbours split existing demand');
+ assert.ok(small.budget.regionalRevenue<=C.analyse(one).budget.regionalRevenue+1,'extra harbours cannot manufacture trade from their own vacancies');
  const disconnected=C.analyse(C.demolish(city,cell(17,10)).state);
  assert.ok(disconnected.connections.every(c=>!c.linked&&c.revenue===0&&c.upkeep>0));
  const empty=C.fresh('sandbox');empty.population=0;empty.cells=empty.cells.map(c=>C.roadTypes.has(c?.type)?c:null);

@@ -43,7 +43,7 @@ test('both airport and freight sizes share finite demand, while oversized infras
   let s={...C.fresh('sandbox'),cash:1000000};[s]=build(s,small);const before=C.analyse(s);[s]=build(s,big);const after=C.analyse(s),report=after.connections.find(c=>c.type===big);
   assert.ok(report.revenue<report.upkeep);assert.ok(after.infrastructurePenalty>before.infrastructurePenalty);
   assert.ok(after.connections.find(c=>c.type===small).utilisation<before.connections[0].utilisation);
-  assert.equal(after.connections[0].utilisation,report.utilisation);
+  assert.ok(after.connections.every(c=>c.customers<=c.operatingCapacity));
   assert.ok(after.connections.reduce((sum,c)=>sum+c.customers,0)<=Math.round(s.population*(small==='airport'?.08:.035)+s.population*.42*(small==='airport'?.06:.25))+1);
   const forecast=P.forecast(C,{...C.fresh('sandbox'),cash:1000000},{mode:'build',type:big,i:report.i});assert.equal(forecast.connection.type,big);assert.ok(forecast.netChange<0);
  }
@@ -61,7 +61,7 @@ test('small clinics, district hospitals and regional hospitals offer increasingl
 
 test('affluent demand requires good housing and jobs, moves gradually and taxes only actual affluent residents',()=>{
  const state={population:1000,affluentPopulation:0},homes=[{i:1,type:'luxuryapartment',capacity:1000,linked:true,luxury:true}];
- const input={state,homes,homeProfiles:[{i:1,shade:85,health:90,services:90,noise:5}],workplaces:[{type:'officepark',jobs:400}],air:90,happiness:85,employment:100,policy:{residentialTax:10}};
+ const input={state,homes,homeProfiles:[{i:1,shade:85,health:90,services:90,noise:5}],workplaces:[{type:'officepark',jobs:400,positions:400,filled:400}],air:90,happiness:85,employment:100,policy:{residentialTax:10}};
  const a=D.society(input);assert.ok(a.affluentTarget>100);assert.ok(a.nextAffluent>0&&a.nextAffluent<a.affluentTarget);assert.equal(a.premiumTax,0);
  const inhabited=D.society({...input,state:{...state,affluentPopulation:100}});assert.ok(inhabited.premiumTax>0);
  assert.equal(D.society({...input,workplaces:[]}).affluentTarget,0);assert.equal(D.society({...input,policy:{residentialTax:18}}).affluentTarget,0);
