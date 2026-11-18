@@ -550,7 +550,7 @@ document.addEventListener('visibilitychange', () => {
   const viewTitle = document.getElementById('mobile-view-title');
   const sections = [...document.querySelectorAll('main > section')];
   const views = {
-    home: { title: 'Overview', sections: ['home'] },
+    home: { title: 'Where’s the shade?', sections: ['home'] },
     gallery: { title: 'The gallery', sections: ['gallery'] },
     problem: { title: 'The evidence', sections: ['problem', 'slovenia-data'] },
     'climate-story': { title: 'The climate story', sections: ['climate-story'] },

@@ -1,0 +1,58 @@
+/* The two city photographs form the exhibition's opening spread. */
+#home .home-cover{display:block;min-height:0;margin:0;padding:36px var(--gutter) 0;background:var(--color-paper);color:var(--color-ink);overflow:visible;isolation:isolate}
+#home .home-cover::after{content:none}
+.home-cover-heading{display:grid;grid-template-columns:minmax(0,1.2fr) minmax(0,1fr);gap:clamp(24px,6vw,100px);align-items:end;margin-bottom:26px}
+#home .home-cover-heading h1{margin:0;max-width:12ch;font-family:var(--font-display);font-size:clamp(64px,7.3vw,140px);font-weight:var(--weight-display);line-height:.91;letter-spacing:-.07em;color:var(--color-ink)}
+#home .home-cover-heading h1>span{font:inherit;letter-spacing:inherit;line-height:inherit;box-shadow:inset 0 -.17em var(--color-accent)}
+.home-cover-deck{max-width:35ch;justify-self:end;padding-bottom:5px}
+#home .home-cover-deck p{font-size:18px;line-height:1.6;max-width:35ch;color:var(--color-muted);margin:0 0 20px}
+#home .home-cover-deck .btn{display:inline-flex;min-height:50px;padding:13px 20px;border:1px solid var(--color-action);background:var(--color-action);color:var(--color-paper);font-size:16px;font-weight:600;border-radius:0;text-decoration:none}
+#home .home-cover-deck .btn:hover{background:var(--color-action-hover)}
+.home-cover-pair{display:grid;grid-template-columns:minmax(0,1.15fr) minmax(0,.85fr);gap:20px}
+.home-cover-pair figure{margin:0;min-width:0}
+.home-cover-photo{display:block;width:100%;padding:0;border:0;border-radius:0;background:none;color:inherit;text-align:left;cursor:pointer;font:inherit}
+.home-cover-image{display:block;height:clamp(240px,34svh,440px);overflow:hidden;background:#cfdbd7}
+.home-cover-image img{display:block;width:100%;height:100%;object-fit:cover;transition:transform .45s cubic-bezier(.2,.6,.2,1)}
+.home-cover-caption{display:flex;align-items:start;justify-content:space-between;gap:16px;padding-top:14px;line-height:1.45}
+.home-cover-caption strong{font-size:18px;font-weight:650;letter-spacing:-.025em}
+.home-cover-caption small{display:block;margin-top:4px;font-size:14px;color:var(--color-muted);letter-spacing:0}
+.home-cover-view{padding-top:3px;white-space:nowrap;font-size:14px;text-decoration:underline;text-underline-offset:4px;color:var(--color-action)}
+.home-cover-photo:focus-visible{outline:3px solid var(--color-focus);outline-offset:6px}
+#home .home-cover-observation{margin:22px 0 0;padding:0 0 25px;border-bottom:1px solid var(--line);font-size:16px;color:var(--color-muted);line-height:1.6}
+#home .hero-index{border:0;padding-block:27px}
+#home .hero-index>strong,#home .hero-index>p,#home .hero-index>a{font-size:16px}
+#home .home-collection{padding-top:62px;padding-bottom:70px}
+#home .home-photo-place{display:block;color:var(--color-muted);font-size:14px;line-height:1.5;margin:2px 0 10px}
+#home .home-photo-observation{display:block;color:var(--color-ink);font-size:16px;font-weight:400;line-height:1.55;letter-spacing:-.01em}
+#home .home-photo-grid .image-open{display:none}
+#home .home-photo>strong{font-size:24px;line-height:1.25}
+.photo-reveal-ready{transition:opacity .55s ease,transform .55s cubic-bezier(.2,.6,.2,1)}
+.photo-reveal-ready:not(.is-visible){opacity:0;transform:translateY(14px)}
+@media(hover:hover) and (pointer:fine) and (min-width:701px){.home-cover-photo:hover img{transform:scale(1.025)}.home-cover-photo:hover .home-cover-view{color:var(--color-ink);text-decoration-thickness:2px}}
+@media(min-width:701px){body[data-view=home] .home-cover-heading{animation:cover-arrival .5s ease both}body[data-view=home] .home-cover-pair{animation:cover-arrival .65s .08s ease both}}
+@keyframes cover-arrival{from{opacity:.35;transform:translateY(10px)}to{opacity:1;transform:none}}
+@media(min-width:701px) and (max-width:1000px){#home .home-cover{padding-top:30px}.home-cover-heading{grid-template-columns:1.1fr 1fr;gap:24px}#home .home-cover-heading h1{font-size:clamp(60px,8vw,80px)}#home .home-cover-deck p{font-size:16px}.home-cover-caption{gap:10px}.home-cover-view{display:none}.home-cover-image{height:300px}}
+@media(max-width:700px){
+ #home .home-cover{padding:26px 24px 0}
+ .home-cover-heading{display:block;margin-bottom:24px}
+ #home .home-cover-heading h1{font-size:clamp(44px,14vw,86px);line-height:.94;letter-spacing:-.065em}
+ .home-cover-deck{max-width:none;width:100%;justify-self:stretch;margin-top:22px;padding:0}
+ #home .home-cover-deck p{font-size:16px;line-height:1.55;margin-bottom:16px}
+ #home .home-cover-deck .btn{font-size:16px;min-height:48px}
+ .home-cover-pair{grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+ .home-cover-image{height:clamp(200px,46vw,300px)}
+ .home-cover-image img{transform:scale(1.8);transform-origin:center 66%;transition:none}
+ .home-cover-caption{display:block;padding-top:11px}
+ .home-cover-caption strong{font-size:18px}
+ .home-cover-caption small{font-size:14px;line-height:1.45}
+ .home-cover-view{display:block;padding-top:10px;font-size:14px}
+ #home .home-cover-observation{font-size:16px;margin-top:21px;padding-bottom:23px}
+ #home .hero-index{padding-block:25px;gap:12px}
+ #home .home-collection{padding-top:36px;padding-bottom:42px}
+ #home .collection-heading h2{font-size:36px;max-width:12ch}
+ #home .collection-heading .text-link{font-size:14px}
+ #home .home-photo>strong{font-size:24px}
+}
+@media(prefers-reduced-motion:reduce){#home .home-cover-heading,#home .home-cover-pair{animation:none}.home-cover-image img,.photo-reveal-ready{transition:none}.photo-reveal-ready:not(.is-visible){opacity:1;transform:none}}
+
+@media(prefers-reduced-motion:reduce) and (min-width:701px){.home-cover-photo:hover img{transform:none}}
