@@ -1,5 +1,5 @@
 import * as THREE from './assets/vendor/three/three.module.js';
-import './arctic-ice.js?v=7f956b6cd5';
+import './arctic-ice.js?v=539cbf62d9';
 const I=globalThis.ArcticIce;
 
 // Bundled CC0 maps; phone variants use a quarter of the pixels.
@@ -19,12 +19,12 @@ export async function loadSurfaceTextures(low=false){
 export function iceMaterial(){
   const snow=new THREE.MeshStandardMaterial({color:'#dae6e9',roughness:.92,vertexColors:true});
   // Opaque scattering avoids glass transmission's screen-space refraction artefacts.
-  const blue=new THREE.MeshPhysicalMaterial({color:'#a1e2ed',roughness:.38,vertexColors:true,clearcoat:.18,clearcoatRoughness:.3});
+  const blue=new THREE.MeshPhysicalMaterial({color:'#b9cbd2',roughness:.56,vertexColors:true,clearcoat:.08,clearcoatRoughness:.4});
   for(const [index,material] of [snow,blue].entries()){
     material.onBeforeCompile=shader=>{
       shader.vertexShader='varying vec3 vIcePoint;\n'+shader.vertexShader.replace('#include <begin_vertex>','#include <begin_vertex>\nvIcePoint=position;');
       shader.fragmentShader='varying vec3 vIcePoint;\n'+shader.fragmentShader.replace('#include <color_fragment>','#include <color_fragment>\nfloat wetBand=1.-smoothstep(.015,.17,abs(vIcePoint.y));diffuseColor.rgb*=1.-wetBand*.19;\n'+(index===1?'float iceDepth=1.-smoothstep(-2.4,.05,vIcePoint.y);diffuseColor.rgb=mix(diffuseColor.rgb,diffuseColor.rgb*vec3(.67,.91,1.),iceDepth*.38);':''));
-      if(index===1)shader.fragmentShader=shader.fragmentShader.replace('#include <emissivemap_fragment>','#include <emissivemap_fragment>\nfloat scatter=exp(-abs(vIcePoint.y+.35)*.65);totalEmissiveRadiance+=vec3(.018,.065,.085)*scatter;');
+      if(index===1)shader.fragmentShader=shader.fragmentShader.replace('#include <emissivemap_fragment>','#include <emissivemap_fragment>\nfloat scatter=exp(-abs(vIcePoint.y+.35)*.45);totalEmissiveRadiance+=vec3(.012,.025,.032)*scatter;');
     };
   }
   return [snow,blue];
@@ -40,7 +40,14 @@ export function makeFloe(side,materials,low=false){
   const data=I.build(side,low?.5:1),geometry=new THREE.BufferGeometry();
   geometry.setAttribute('position',new THREE.Float32BufferAttribute(data.positions,3));geometry.setAttribute('color',new THREE.Float32BufferAttribute(data.colors,3));geometry.setAttribute('uv',new THREE.Float32BufferAttribute(data.uv,2));geometry.setIndex(data.indices);
   geometry.addGroup(0,data.topCount,0);geometry.addGroup(data.topCount,data.indices.length-data.topCount,1);geometry.computeVertexNormals();
-  const group=new THREE.Group(),mesh=new THREE.Mesh(geometry,materials);group.add(mesh);
+  const group=new THREE.Group(),mesh=new THREE.Mesh(geometry,materials);mesh.castShadow=mesh.receiveShadow=true;group.add(mesh);
+  const chipMaterial=new THREE.MeshStandardMaterial({color:'#dbe5e7',roughness:.95});
+  const chips=new THREE.InstancedMesh(new THREE.DodecahedronGeometry(.38,0),chipMaterial,44),pose=new THREE.Object3D();
+  chips.castShadow=chips.receiveShadow=true;
+  for(let i=0;i<44;i++){
+    const z=12-I.noise(i+side*47,11)*52,x=I.seam(z)+(side===0?-1:1)*(.5+I.noise(i+side*31,8)*2.4);
+    pose.position.set(x,I.top(x,z)+.12,z);pose.scale.set(.6+I.noise(i,2)*1.3,.2+I.noise(i,4)*.5,.8+I.noise(i,5)*1.4);pose.rotation.set(i*.7,i*1.3,i*.4);pose.updateMatrix();chips.setMatrixAt(i,pose.matrix);
+  }group.add(chips);
   const rim=[];for(let i=0;i<data.ring.length;i++){const a=data.ring[i],b=data.ring[(i+1)%data.ring.length];rim.push(a[0],.012,a[1],b[0],.012,b[1]);}
   const edge=new THREE.BufferGeometry();edge.setAttribute('position',new THREE.Float32BufferAttribute(rim,3));
   group.add(new THREE.LineSegments(edge,new THREE.LineBasicMaterial({color:'#c9e4e3',transparent:true,opacity:.24,depthWrite:false})));

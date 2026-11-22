@@ -1,4 +1,4 @@
-import './arctic-model.js?v=cc0b6b5acb';
+import './arctic-model.js?v=7204ff257c';
 
 const root=document.getElementById('climate-story');
 const M=globalThis.ArcticModel;
@@ -43,7 +43,7 @@ if(root&&M){
     lastProgress=progress();
     const dt=lastFrameTime?timestamp-lastFrameTime:16;lastFrameTime=timestamp;
     renderProgress=renderProgress===null?lastProgress:M.follow(renderProgress,lastProgress,dt);
-    const frame=M.frameAt(renderProgress,stage.clientWidth<701);
+    const frame=M.frameAt(renderProgress,stage.clientWidth<701||stage.clientWidth/stage.clientHeight<1.2);
     stage.dataset.aboveWater=String(frame.camera[1]>1);
     root.dataset.progress=lastProgress.toFixed(6);stage.style.setProperty('--progress',lastProgress);stage.style.setProperty('--underwater',frame.underwater);
     root.dataset.renderProgress=renderProgress.toFixed(6);
@@ -103,7 +103,7 @@ if(root&&M){
   }
   async function liveViews(){
     if(reduced.matches||manualStill||world||worldPromise||disposed)return;
-    worldPromise=import('./arctic-world.js?v=a42df53423').then(async({ArcticWorld})=>{
+    worldPromise=import('./arctic-world.js?v=614eb5d5aa').then(async({ArcticWorld})=>{
       if(disposed||reduced.matches||manualStill)return;
       const candidate=new ArcticWorld(canvas,mapData,selectedYear);
       if(disposed||reduced.matches||manualStill){candidate.dispose();return;}

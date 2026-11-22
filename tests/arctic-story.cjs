@@ -37,6 +37,22 @@ test('wheel smoothing settles exactly and reverses without overshooting',()=>{
     assert.equal(p,target);
   }
 });
+test('wildlife fades with scroll, returns on reversal and stays absent from the closing frame',()=>{
+  assert.equal(M.frameAt(0).wildlife,1);assert.equal(M.frameAt(.06).wildlife,1);
+  let previous=1;for(let i=0;i<=100;i++){const value=M.frameAt(i/100).wildlife;assert.ok(value>=0&&value<=previous);previous=value;}
+  const halfway=M.frameAt(.13).wildlife;assert.ok(halfway>0&&halfway<1);
+  M.frameAt(.8);assert.equal(M.frameAt(.13).wildlife,halfway);assert.equal(M.frameAt(.22).wildlife,0);assert.equal(M.frameAt(1).wildlife,0);
+});
+test('the continuous bear skin has finite unit normals and a lighter phone mesh',async()=>{
+  const {continuousBearSkin}=await import('../arctic-wildlife.js');
+  const desktop=continuousBearSkin(),phone=continuousBearSkin(true);
+  assert.ok(phone.attributes.position.count<desktop.attributes.position.count*.5);
+  for(const geometry of [desktop,phone]){
+    assert.ok(geometry.attributes.position.count<180000);assert.ok(geometry.attributes.position.array.every(Number.isFinite));
+    const n=geometry.attributes.normal.array;for(let i=0;i<n.length;i+=3)assert.ok(Math.abs(Math.hypot(n[i],n[i+1],n[i+2])-1)<.001);
+    geometry.computeBoundingBox();assert.ok(geometry.boundingBox.min.y>-.1);assert.ok(geometry.boundingBox.max.y<2.1);
+  }
+});
 test('both ice halves share an organic crack, with finite detailed relief and upward-facing caps',()=>{
   const a=Ice.outline(0).slice(0,161),b=Ice.outline(1).slice(0,161).reverse();assert.deepEqual(a,b);
   assert.ok(Math.max(...a.map(p=>p[0]))-Math.min(...a.map(p=>p[0]))>1);
@@ -46,6 +62,10 @@ test('both ice halves share an organic crack, with finite detailed relief and up
     const heights=[];for(let i=1;i<=12*200;i++)heights.push(d.positions[i*3+1]);assert.ok(Math.max(...heights)-Math.min(...heights)>.1);
     const [i,j,k]=d.indices,a=d.positions.slice(i*3,i*3+3),b=d.positions.slice(j*3,j*3+3),c=d.positions.slice(k*3,k*3+3);
     assert.ok((b[2]-a[2])*(c[0]-a[0])-(b[0]-a[0])*(c[2]-a[2])>0);
+    for(let q=0;q<d.topCount;q+=3){
+      const [i,j,k]=d.indices.slice(q,q+3).map(i=>i*3),p=d.positions;
+      assert.ok((p[j+2]-p[i+2])*(p[k]-p[i])-(p[j]-p[i])*(p[k+2]-p[i+2])>0,'folded snow cap');
+    }
     // A wall triangle must not interpolate from the end of the entire UV unwrap back to zero.
     const wallEnd=d.indices.length-d.ring.length*3;
     for(let q=d.topCount;q<wallEnd;q+=3){const u=d.indices.slice(q,q+3).map(i=>d.uv[i*2]);assert.ok(Math.max(...u)-Math.min(...u)<.5,'stretched UV seam');}

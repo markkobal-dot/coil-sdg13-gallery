@@ -30,7 +30,7 @@
 .arctic-action{display:block;width:fit-content;padding:12px 18px;background:var(--color-action);color:var(--color-paper);font-size:16px;text-decoration:none;margin-top:14px}
 .arctic-stage{position:relative;height:var(--arctic-height);min-height:530px;background:#14303b;overflow:hidden;isolation:isolate;color:#f4f7f2}
 #arctic-canvas{display:block;width:100%;height:100%;position:absolute;inset:0;touch-action:pan-y}
-.arctic-water-tint{position:absolute;inset:0;pointer-events:none;background:#006c9d;opacity:calc(var(--underwater,0)*.22);mix-blend-mode:color}
+.arctic-water-tint{position:absolute;inset:0;pointer-events:none;background:#436778;opacity:calc(var(--underwater,0)*.08);mix-blend-mode:color}
 .arctic-stage::after{content:'';position:absolute;inset:40% 0 0;z-index:0;background:linear-gradient(transparent,#071d29b8);pointer-events:none}
 .arctic-live .arctic-stage{position:sticky;top:var(--arctic-top);z-index:1}
 .arctic-live .arctic-reading{margin-top:calc(-1 * max(530px,var(--arctic-height)));pointer-events:none}
@@ -40,12 +40,12 @@
 .arctic-live .arctic-chapters{position:absolute;inset:0 0 auto;z-index:4;background:#f5f3eeed;border-color:#b5c3c3;padding-inline:20px}
 .arctic-stage-heading{position:absolute;right:var(--gutter);top:90px;z-index:2;max-width:49%;text-align:right;color:#133440;text-shadow:0 1px 12px #eef6f4a6}
 .arctic-stage-heading>span{font-size:14px;line-height:1.5;display:block;margin-bottom:10px}
-#climate-story .arctic-stage-heading h3{font-size:clamp(32px,4.5vw,76px);line-height:1.06;letter-spacing:-.05em;font-weight:650;margin:0}
+#climate-story .arctic-stage-heading h3{font-size:clamp(32px,4vw,64px);line-height:1.06;letter-spacing:-.05em;font-weight:650;margin:0}
 .arctic-stage[data-chapter='1'] .arctic-stage-heading,.arctic-stage[data-chapter='2'] .arctic-stage-heading{color:#edf6f3;text-shadow:0 1px 12px #123744}
 .arctic-stage[data-chapter='2'][data-above-water='true'] .arctic-stage-heading{color:#133440;text-shadow:0 1px 12px #eef6f4a6}
 .arctic-stage[data-chapter='3'] .arctic-stage-heading,.arctic-stage[data-chapter='4'] .arctic-stage-heading{left:var(--gutter);right:auto;text-align:left;color:#edf6f3;text-shadow:0 2px 16px #0a2936}
 .arctic-stage[data-chapter='5'] .arctic-stage-heading>span{border-top:1px dashed currentColor;padding-top:10px}
-.arctic-stage-caption{position:absolute;left:var(--gutter);bottom:84px;z-index:2;max-width:40ch;padding:20px 22px;background:#0b2534cb;border:1px solid #dbe6e126;backdrop-filter:blur(8px);color:#f4f7f2}
+.arctic-stage-caption{position:absolute;left:var(--gutter);bottom:84px;z-index:2;max-width:34ch;padding:18px 20px;background:#0b2534a8;border:1px solid #dbe6e11a;backdrop-filter:blur(12px);color:#f4f7f2}
 #climate-story .arctic-stage-caption p{font-size:17px;line-height:1.65;margin:0 0 14px}
 #climate-story .arctic-stage-caption p:last-child{margin-bottom:0}
 .arctic-stage-caption .arctic-action{background:var(--color-accent);color:var(--color-ink)}
