@@ -1,0 +1,32 @@
+{
+  "retrieved": "2026-11-19",
+  "scientificData": {
+    "title": "NSIDC Sea Ice Index, Version 4 (G02135)",
+    "monthlyCsv": "https://noaadata.apps.nsidc.org/NOAA/G02135/north/monthly/data/N_09_extent_v4.0.csv",
+    "monthlyPolygonTemplate": "https://noaadata.apps.nsidc.org/NOAA/G02135/north/monthly/shapefiles/shp_extent/09_Sep/extent_N_{year}09_polygon_v4.0.zip",
+    "definition": "Extent is the ocean area with at least 15% sea-ice concentration. Monthly mean extent and daily annual minimum are different statistics.",
+    "units": "million km²",
+    "publication": "https://nsidc.org/data/g02135/versions/4"
+  },
+  "coastline": {
+    "title": "Natural Earth 1:110m land",
+    "url": "https://raw.githubusercontent.com/nvkelso/natural-earth-vector/master/geojson/ne_110m_land.geojson",
+    "terms": "Public domain",
+    "sourceProjection": "Geographic longitude/latitude WGS84; projected for display to EPSG:3411"
+  },
+  "projection": {
+    "epsg": 3411,
+    "centralMeridian": -45,
+    "standardParallel": 70,
+    "ellipsoid": "Hughes 1980",
+    "semimajorAxisMetres": 6378273,
+    "inverseFlattening": 298.279411123064,
+    "normalizationNote": "The official 2021 ZIP uses WGS84 EPSG:3413; its coordinates were converted into the common Hughes 1980 EPSG:3411 projection. All other years use Hughes 1980 directly."
+  },
+  "projectionFinding": {
+    "source": "IPCC AR6 Working Group I, Chapter 9",
+    "url": "https://www.ipcc.ch/report/ar6/wg1/chapter/chapter-9/",
+    "pdf": "https://www.ipcc.ch/report/ar6/wg1/downloads/report/IPCC_AR6_WGI_Chapter09.pdf",
+    "statement": "Across the assessed emissions scenarios, the Arctic is likely to experience at least one practically ice-free September before 2050. Practically ice-free means sea-ice area below one million square kilometres."
+  }
+}

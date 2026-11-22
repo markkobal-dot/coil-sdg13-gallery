@@ -67,6 +67,7 @@
     <link rel="stylesheet" href="site-polish.css?v=a52a281be9">
     <link rel="stylesheet" href="design-tokens.css?v=2e57de22aa">
     <link rel="stylesheet" href="refined-ui.css?v=b5a6dab33a">
+    <link rel="stylesheet" href="arctic-story.css?v=1576cc2f5c">
     <link rel="stylesheet" href="home-cover.css?v=6e2ae5299b">
   </head>
 
@@ -177,7 +178,7 @@
         <div class="home-temperature-note"><a href="#problem"><strong>~2.7°C</strong><span>Slovenia is warming.<small>Rise in annual mean temperature since 1970.</small></span><span class="home-temperature-link">Follow the evidence ↗</span></a><a class="home-temperature-source" href="https://meteo.arso.gov.si/met/sl/climate/current/climate_year/" target="_blank" rel="noopener noreferrer">Source: ARSO ↗</a></div>
         <div class="discovery-grid" aria-label="Explore the project">
           <a href="#problem"><h3>Climate records</h3><p>Temperature data, the Triglav Glacier and flood risk.</p><span class="discovery-arrow" aria-hidden="true">→</span></a>
-          <a href="#climate-story"><h3>How warming happens</h3><p>An illustrated neighbourhood, from emissions to heat adaptation.</p><span class="discovery-arrow" aria-hidden="true">→</span></a>
+          <a href="#climate-story"><h3>The Arctic in September</h3><p>A journey through the ice, the satellite record and possible futures.</p><span class="discovery-arrow" aria-hidden="true">→</span></a>
           <a href="#solutions"><h3>Try it yourself</h3><p>Our quiz, a survey and the city-building game.</p><span class="discovery-arrow" aria-hidden="true">→</span></a>
         </div>
         <div class="hero-index">
@@ -429,253 +430,53 @@
           </p>
         </div>
       </section>
-      <section class="climate-shift" id="climate-story" aria-labelledby="climate-story-title">
-        <div class="shift-heading">
-          <h2 id="climate-story-title">How emissions lead to hotter streets</h2>
-          <p><span class="shift-story-desktop">Scroll through the same neighbourhood to see emissions, heat and changes to the street.</span><span class="shift-story-mobile">Use the chapter tabs or Next stage to see emissions, heat and changes to the same street.</span></p>
-        </div>
-        <div class="shift-layout">
-          <div class="shift-visual">
-            <div class="story-frame">
-              <div class="climate-scene story-scene" data-state="problem" aria-hidden="true">
-                <svg xmlns="http://www.w3.org/2000/svg" class="district-illustration" viewBox="0 0 1000 620" role="presentation">
-                  <defs>
-                    <linearGradient id="districtSky" x1="0" y1="0" x2="0" y2="1">
-                      <stop class="district-sky-top" offset="0"/>
-                      <stop class="district-sky-bottom" offset="1"/>
-                    </linearGradient>
-                    <linearGradient id="districtRoad" x1="0" y1="0" x2="1" y2="1">
-                      <stop offset="0" stop-color="#8b9289"/>
-                      <stop offset="1" stop-color="#707e75"/>
-                    </linearGradient>
-                  </defs>
-                  <rect width="1000" height="620" fill="url(#districtSky)"/>
-                  <circle class="district-sun-halo" cx="854" cy="125" r="71"/>
-                  <circle class="district-sun" cx="854" cy="125" r="43"/>
-                  <path d="M0 317 130 232l116 66 135-126 139 109 132-79 148 107 95-55 105 62v155H0Z" fill="#b6c5b7" opacity=".4"/>
-                  <path d="M0 346q130-66 267-22t265 7q197-93 468 17v130H0Z" fill="#a6b9a4" opacity=".65"/>
-                  <g fill="#8da59a" opacity=".24">
-                    <path d="M70 330v-48h30v48m26 0v-67h41v67m535 0v-77h40v77m180 0v-54h31v54m17 0v-83h46v83"/>
-                  </g>
-                  <g class="district-turbine">
-                    <path d="m170 217-6 150h22l-6-150Z" fill="#eceee3" stroke="#829b90" stroke-width="2"/>
-                    <g transform="translate(175 216)" fill="#f3f4e9" stroke="#7f9b91" stroke-width="1.6">
-                      <path d="M-3-4c-9-27-8-55-1-76 6 24 9 51 8 75Z"/>
-                      <path transform="rotate(120)" d="M-3-4c-9-27-8-55-1-76 6 24 9 51 8 75Z"/>
-                      <path transform="rotate(240)" d="M-3-4c-9-27-8-55-1-76 6 24 9 51 8 75Z"/>
-                      <circle r="7" fill="#c3d1c7"/>
-                    </g>
-                  </g>
-                  <path class="district-land" d="M0 387q195-36 365-2t318-4q184-29 317 25v214H0Z"/>
-                  <path d="m0 511 412-69 588 92v86H0Z" fill="url(#districtRoad)"/>
-                  <path d="m0 495 411-69 589 92" fill="none" stroke="#e4e6d5" stroke-width="13"/>
-                  <path d="m0 561 411-71 589 96" fill="none" stroke="#d6deca" stroke-width="2" stroke-dasharray="23 16"/>
-                  <path class="district-cycle-path" d="m0 599 410-72 590 93" fill="none" stroke="#8daa76" stroke-width="15"/>
-                  <path d="m0 599 410-72 590 93" fill="none" stroke="#e1e9cc" stroke-width="1.5" opacity=".65"/>
-                  <g>
-                    <path d="m80 382 118-13 32 19-118 14Z" fill="#8b9784"/>
-                    <path d="m80 382 32 20v81l-32-17Z" fill="#b9bda4"/>
-                    <path d="M112 402h118v81H112Z" fill="#d8dbc5"/>
-                    <path d="M128 419h34v31h-34m43-31h39v49h-39" fill="#93afa7" stroke="#dce4d4" stroke-width="2"/>
-                    <path d="M121 408h100" stroke="#687e71" stroke-width="3"/>
-                  </g>
-                  <g>
-                    <path d="m735 322 124-16 49 25-124 17Z" fill="#a4ad96"/>
-                    <path d="m735 322 49 26v101l-49-24Z" fill="#c9cbb0"/>
-                    <path d="m784 348 124-17v101l-124 17Z" fill="#e3ddc2"/>
-                    <path d="m803 367 26-4v35l-26 4Zm40-5 26-4v35l-26 4Zm38-6 16-2v55l-16 2Z" fill="#91b4ab"/>
-                    <path d="m794 411 75-10" stroke="#b7b599" stroke-width="3"/>
-                  </g>
-                  <g class="district-building">
-                    <path d="m300 290 50 40v140l-50-40Z" fill="#b9af91"/>
-                    <path d="M350 330h350v140H350Z" fill="#ded4b7"/>
-                    <path d="M300 290h350l50 40H350Z" fill="#c8c8af"/>
-                    <path d="M350 330h350" stroke="#a3ab96" stroke-width="4"/>
-                    <path d="M365 348h320v8H365Z" fill="#b9b69c"/>
-                    <path d="M378 373h225v61H378Z" fill="#72988e"/>
-                    <path d="M381 377h219v22H381Z" fill="#a3c1b5" opacity=".65"/>
-                    <path d="M420 373v61m46-61v61m46-61v61m46-61v61" stroke="#d5dfcc" stroke-width="3"/>
-                    <path d="M630 373h41v97h-41Z" fill="#7c998c"/>
-                    <path d="M636 380h29v40h-29Z" fill="#acc7b9"/>
-                    <circle cx="663" cy="433" r="2.5" fill="#dce5d0"/>
-                    <path d="M365 451h250" stroke="#c9bda1" stroke-width="2"/>
-                    <path d="m309 318 27 21m-27 26 27 21m-27 26 27 21" stroke="#9da38c" stroke-width="2"/>
-                  </g>
-                  <g class="district-stacks">
-                    <path d="m365 199 15 8v99l-15-8Z" fill="#9e8c73"/>
-                    <path d="M380 207h24v99h-24Z" fill="#b5a48a"/>
-                    <path d="m362 193 26-3 19 10-27 7Z" fill="#697769"/>
-                    <path d="m447 170 17 9v125l-17-9Z" fill="#9a8973"/>
-                    <path d="M464 179h25v125h-25Z" fill="#baaa8d"/>
-                    <path d="m443 164 28-3 22 10-29 8Z" fill="#6f7d6d"/>
-                  </g>
-                  <g class="district-smoke" fill="#46524f">
-                    <path d="M387 194c-31-12-49-30-38-49-33-13-27-48 3-54-15-28 12-55 38-46 11-35 61-36 77-9 37-13 66 15 55 44 38 9 37 50 6 63-43 19-100 7-121 36Z" opacity=".85"/>
-                    <path d="M475 165c-19-16-19-35-3-49-21-22-4-51 21-48 13-25 47-23 59-2 35-7 53 23 40 45-17 29-75 13-94 46Z" opacity=".6"/>
-                  </g>
-                  <g class="district-solar">
-                    <path d="M333 299h52l12 10h-52Z" fill="#315f6c" stroke="#b6d9d4" stroke-width="1.1"/>
-                    <path d="M350 299l12 10" stroke="#89b8bd" stroke-width=".8"/>
-                    <path d="M368 299l12 10" stroke="#89b8bd" stroke-width=".8"/>
-                    <path d="M396 299h52l12 10h-52Z" fill="#315f6c" stroke="#b6d9d4" stroke-width="1.1"/>
-                    <path d="M413 299l12 10" stroke="#89b8bd" stroke-width=".8"/>
-                    <path d="M431 299l12 10" stroke="#89b8bd" stroke-width=".8"/>
-                    <path d="M459 299h52l12 10h-52Z" fill="#315f6c" stroke="#b6d9d4" stroke-width="1.1"/>
-                    <path d="M476 299l12 10" stroke="#89b8bd" stroke-width=".8"/>
-                    <path d="M494 299l12 10" stroke="#89b8bd" stroke-width=".8"/>
-                    <path d="M522 299h52l12 10h-52Z" fill="#315f6c" stroke="#b6d9d4" stroke-width="1.1"/>
-                    <path d="M539 299l12 10" stroke="#89b8bd" stroke-width=".8"/>
-                    <path d="M557 299l12 10" stroke="#89b8bd" stroke-width=".8"/>
-                    <path d="M585 299h52l12 10h-52Z" fill="#315f6c" stroke="#b6d9d4" stroke-width="1.1"/>
-                    <path d="M602 299l12 10" stroke="#89b8bd" stroke-width=".8"/>
-                    <path d="M620 299l12 10" stroke="#89b8bd" stroke-width=".8"/>
-                    <path d="M349 313h52l12 10h-52Z" fill="#315f6c" stroke="#b6d9d4" stroke-width="1.1"/>
-                    <path d="M366 313l12 10" stroke="#89b8bd" stroke-width=".8"/>
-                    <path d="M384 313l12 10" stroke="#89b8bd" stroke-width=".8"/>
-                    <path d="M412 313h52l12 10h-52Z" fill="#315f6c" stroke="#b6d9d4" stroke-width="1.1"/>
-                    <path d="M429 313l12 10" stroke="#89b8bd" stroke-width=".8"/>
-                    <path d="M447 313l12 10" stroke="#89b8bd" stroke-width=".8"/>
-                    <path d="M475 313h52l12 10h-52Z" fill="#315f6c" stroke="#b6d9d4" stroke-width="1.1"/>
-                    <path d="M492 313l12 10" stroke="#89b8bd" stroke-width=".8"/>
-                    <path d="M510 313l12 10" stroke="#89b8bd" stroke-width=".8"/>
-                    <path d="M538 313h52l12 10h-52Z" fill="#315f6c" stroke="#b6d9d4" stroke-width="1.1"/>
-                    <path d="M555 313l12 10" stroke="#89b8bd" stroke-width=".8"/>
-                    <path d="M573 313l12 10" stroke="#89b8bd" stroke-width=".8"/>
-                    <path d="M601 313h52l12 10h-52Z" fill="#315f6c" stroke="#b6d9d4" stroke-width="1.1"/>
-                    <path d="M618 313l12 10" stroke="#89b8bd" stroke-width=".8"/>
-                    <path d="M636 313l12 10" stroke="#89b8bd" stroke-width=".8"/>
-                  </g>
-                  <g class="district-heat" fill="none" stroke="#bd7955" stroke-width="3" stroke-linecap="round">
-                    <path d="M555 248q-11-18 0-36t0-36m64 70q-11-18 0-36t0-36m64 66q-11-18 0-36t0-36"/>
-                    <path d="M416 566q-9-14 0-28t0-28m134 77q-9-14 0-28t0-28" opacity=".65"/>
-                  </g>
-                  <g class="district-new-green" transform="translate(102 400) scale(0.76)">
-                    <path d="M-5 14h10l3 57H-8Z" fill="#86654a"/>
-                    <path d="M-2 43-20 20M2 37l18-23" fill="none" stroke="#86654a" stroke-width="4" stroke-linecap="round"/>
-                    <path class="district-leaves" d="M-34 6C-49-13-31-34-17-32c-7-30 35-46 49-18 29-10 43 24 25 39 15 24-7 45-29 37C9 48-23 33-24 21-43 26-52 10-34 6Z"/>
-                    <path class="district-leaf-light" d="M-27-5c-9-17 12-30 23-21 5-20 34-19 38 1C15-33-5-8-27-5Z"/>
-                  </g>
-                  <g class="district-new-green" transform="translate(855 390) scale(1.05)">
-                    <path d="M-5 14h10l3 57H-8Z" fill="#86654a"/>
-                    <path d="M-2 43-20 20M2 37l18-23" fill="none" stroke="#86654a" stroke-width="4" stroke-linecap="round"/>
-                    <path class="district-leaves" d="M-34 6C-49-13-31-34-17-32c-7-30 35-46 49-18 29-10 43 24 25 39 15 24-7 45-29 37C9 48-23 33-24 21-43 26-52 10-34 6Z"/>
-                    <path class="district-leaf-light" d="M-27-5c-9-17 12-30 23-21 5-20 34-19 38 1C15-33-5-8-27-5Z"/>
-                  </g>
-                  <g class="district-new-green" transform="translate(947 430) scale(0.75)">
-                    <path d="M-5 14h10l3 57H-8Z" fill="#86654a"/>
-                    <path d="M-2 43-20 20M2 37l18-23" fill="none" stroke="#86654a" stroke-width="4" stroke-linecap="round"/>
-                    <path class="district-leaves" d="M-34 6C-49-13-31-34-17-32c-7-30 35-46 49-18 29-10 43 24 25 39 15 24-7 45-29 37C9 48-23 33-24 21-43 26-52 10-34 6Z"/>
-                    <path class="district-leaf-light" d="M-27-5c-9-17 12-30 23-21 5-20 34-19 38 1C15-33-5-8-27-5Z"/>
-                  </g>
-                  <g class="district-new-green" transform="translate(740 400) scale(0.58)">
-                    <path d="M-5 14h10l3 57H-8Z" fill="#86654a"/>
-                    <path d="M-2 43-20 20M2 37l18-23" fill="none" stroke="#86654a" stroke-width="4" stroke-linecap="round"/>
-                    <path class="district-leaves" d="M-34 6C-49-13-31-34-17-32c-7-30 35-46 49-18 29-10 43 24 25 39 15 24-7 45-29 37C9 48-23 33-24 21-43 26-52 10-34 6Z"/>
-                    <path class="district-leaf-light" d="M-27-5c-9-17 12-30 23-21 5-20 34-19 38 1C15-33-5-8-27-5Z"/>
-                  </g>
-                  <g class="district-baseline-tree" transform="translate(260 385) scale(0.53)">
-                    <path d="M-5 14h10l3 57H-8Z" fill="#86654a"/>
-                    <path d="M-2 43-20 20M2 37l18-23" fill="none" stroke="#86654a" stroke-width="4" stroke-linecap="round"/>
-                    <path class="district-leaves" d="M-34 6C-49-13-31-34-17-32c-7-30 35-46 49-18 29-10 43 24 25 39 15 24-7 45-29 37C9 48-23 33-24 21-43 26-52 10-34 6Z"/>
-                    <path class="district-leaf-light" d="M-27-5c-9-17 12-30 23-21 5-20 34-19 38 1C15-33-5-8-27-5Z"/>
-                  </g>
-                  <g class="district-life">
-                    <g fill="none" stroke="#746b4e" stroke-width="4" stroke-linecap="round">
-                      <path d="m849 480 52 8m-52-17 52 8m-46 11-3 15m42-9-3 15"/>
-                    </g>
-                    <g transform="translate(715 441) scale(1.15)">
-                      <ellipse cx="0" cy="29" rx="10" ry="3" fill="#4b6955" opacity=".18"/>
-                      <circle cy="-9" r="5" fill="#bc896b"/>
-                      <path d="M-5-11q0-9 7-5l4 6Z" fill="#473d35"/>
-                      <path d="M-6 0q6-4 12 0l2 17H-8Z" fill="#c07553"/>
-                      <path d="M-4 17-6 28m9-11 4 11" stroke="#344c4b" stroke-width="3.5" stroke-linecap="round"/>
-                      <path d="M-7 2-11 13m18-11 4 11" stroke="#bc896b" stroke-width="3" stroke-linecap="round"/>
-                    </g>
-                    <g transform="translate(756 447) scale(1.1)">
-                      <ellipse cx="0" cy="29" rx="10" ry="3" fill="#4b6955" opacity=".18"/>
-                      <circle cy="-9" r="5" fill="#bc896b"/>
-                      <path d="M-5-11q0-9 7-5l4 6Z" fill="#473d35"/>
-                      <path d="M-6 0q6-4 12 0l2 17H-8Z" fill="#4a7873"/>
-                      <path d="M-4 17-6 28m9-11 4 11" stroke="#344c4b" stroke-width="3.5" stroke-linecap="round"/>
-                      <path d="M-7 2-11 13m18-11 4 11" stroke="#bc896b" stroke-width="3" stroke-linecap="round"/>
-                    </g>
-                    <g transform="translate(781 460) scale(0.7)">
-                      <ellipse cx="0" cy="29" rx="10" ry="3" fill="#4b6955" opacity=".18"/>
-                      <circle cy="-9" r="5" fill="#bc896b"/>
-                      <path d="M-5-11q0-9 7-5l4 6Z" fill="#473d35"/>
-                      <path d="M-6 0q6-4 12 0l2 17H-8Z" fill="#d2b461"/>
-                      <path d="M-4 17-6 28m9-11 4 11" stroke="#344c4b" stroke-width="3.5" stroke-linecap="round"/>
-                      <path d="M-7 2-11 13m18-11 4 11" stroke="#bc896b" stroke-width="3" stroke-linecap="round"/>
-                    </g>
-                    <g transform="translate(807 488)" fill="#b08c59" stroke="#7f6848" stroke-width="1.5">
-                      <path d="M-10-6q7-9 18-2l5 8H-9Z"/>
-                      <circle cx="14" cy="-8" r="5"/>
-                      <path d="m11-12-1-5 7 4M-9-4l-8-5m9 9v7m12-7 2 7" fill="none" stroke-width="2.5" stroke-linecap="round"/>
-                    </g>
-                    <g transform="translate(178 560)" fill="none" stroke="#405e51" stroke-width="2.5">
-                      <circle cx="-13" cy="0" r="10"/>
-                      <circle cx="16" cy="0" r="10"/>
-                      <path d="m-13 0 9-16L6 0h-19m9-16 20 16-5-23h7m-27 7h10"/>
-                    </g>
-                    <g fill="none" stroke="#688477" stroke-width="2.4" stroke-linecap="round">
-                      <path d="M700 170q8-9 16 0 8-9 16 0m30-23q7-8 14 0 7-8 14 0"/>
-                    </g>
-                  </g>
-                </svg>
-                <span class="scene-stage">01 / 03</span>
-                <span class="scene-label">Where the smoke begins</span>
-              </div>
-              <div class="story-readout" aria-label="Current chapter at a glance">
-                <div><span>ENERGY</span><strong id="story-energy">Fossil fuels</strong></div>
-                <div><span>STREETS</span><strong id="story-streets">Exposed paving</strong></div>
-                <div><span>THE FOCUS</span><strong id="story-focus">Emissions</strong></div>
-              </div>
-              <div class="story-chapters" role="group" aria-label="Choose a story chapter">
-                <button type="button" data-story-stage="0" aria-pressed="true"><span>01</span> Sources</button>
-                <button type="button" data-story-stage="1" aria-pressed="false"><span>02</span> Impacts</button>
-                <button type="button" data-story-stage="2" aria-pressed="false"><span>03</span> Choices</button>
-              </div>
-              <div class="story-chapter-track" aria-hidden="true"><span class="story-progress-fill"></span></div>
-            </div>
-            <p class="scene-hint">A conceptual neighbourhood. Scroll or choose a chapter, then explore the real city examples.</p>
-          </div>
-          <div class="shift-steps">
-            <article class="shift-step is-active" data-scene-state="problem">
-              <h3>Burning fossil fuels</h3>
-              <p>Burning coal, oil and gas releases greenhouse gases that trap heat in the atmosphere. Our illustration starts with the emissions behind a warming climate.</p>
-              <span class="story-step-note">THE CAUSE / GREENHOUSE GAS EMISSIONS</span>
-            </article>
-            <article class="shift-step" data-scene-state="impact">
-              <h3>Heat on streets without shade</h3>
-              <p>Heatwaves can put people, nature and infrastructure under pressure. Roads and buildings absorb and hold heat, while a lack of shade makes exposed streets less comfortable.</p>
-              <a class="text-link" href="https://www.ipcc.ch/report/ar6/syr/downloads/report/IPCC_AR6_SYR_SPM.pdf" target="_blank" rel="noopener noreferrer">Read the IPCC summary (PDF) ↗</a>
-              <span class="story-step-note">THE IMPACT / HOTTER DAYS, GREATER PRESSURE</span>
-            </article>
-            <article class="shift-step" data-scene-state="action">
-              <h3>Trees, shade and cleaner energy</h3>
-              <p>Cleaner energy and lower-emission travel help limit future warming. Trees, shade and green public places help us cope with heat now. Communities, businesses and governments all have a role to play.</p>
-              <a class="text-link" href="#solutions">Explore what we can do ↗</a>
-              <span class="story-step-note">THE RESPONSE / CUT EMISSIONS &amp; ADAPT</span>
-            </article>
-            <div class="story-controls" aria-label="Story stage controls">
-              <button id="story-previous" class="story-step-button" type="button" disabled>← Previous</button>
-              <span id="story-progress" aria-live="polite">Stage 1 of 3</span>
-              <button id="story-next" class="story-step-button" type="button">Next stage →</button>
-            </div>
-          </div>
-        </div>
-        <div class="story-followup">
-          <div class="story-local-fact">
-            <span class="place-caption">Nova Gorica · Where we study</span>
-            <p><strong>379 trees planted.</strong> In August 2026, the municipality reported planting 379 trees over the previous four years.</p>
-            <a href="https://www.nova-gorica.si/sl/novice/zasaditve-dreves-za-bolj-zeleno-in-prijetnejse-mesto/" target="_blank" rel="noopener noreferrer">Read the municipal report ↗</a>
-          </div>
-          <div class="story-local-fact">
-            <p><strong>What happens when cities act?</strong> Explore Paris, Ajdovščina and Phoenix: changes made, benefits and challenges that remain.</p>
-            <a class="text-link" href="#cities">Explore cities in transition ↗</a>
-          </div>
-        </div>
-      </section>
+      <section class="arctic-story" id="climate-story" aria-labelledby="climate-story-title">
+  <header class="arctic-intro"><div><p class="arctic-eyebrow">COIL · Climate action</p><h2 id="climate-story-title">The Arctic<br>in September.</h2></div><div><p>Follow the ice edge, pass beneath the surface and through an opening, then rise above it to explore the satellite record.</p><p class="arctic-intro-note">Scroll at your own pace, or choose a chapter.</p><button class="arctic-mode" id="arctic-mode" type="button" hidden>Use still views</button></div></header>
+  <nav class="arctic-chapters" aria-label="Arctic story chapters"><button type="button" data-arctic-go="0" data-story-stage="0" aria-controls="arctic-chapter-0" aria-pressed="true">Ice edge</button><button type="button" data-arctic-go="1" data-story-stage="1" aria-controls="arctic-chapter-1" aria-pressed="false">Ocean heat</button><button type="button" data-arctic-go="2" data-story-stage="2" aria-controls="arctic-chapter-2" aria-pressed="false">Open water</button><button type="button" data-arctic-go="3" data-story-stage="3" aria-controls="arctic-chapter-3" aria-pressed="false">Satellite record</button><button type="button" data-arctic-go="4" data-story-stage="4" aria-controls="arctic-chapter-4" aria-pressed="false">2026</button><button type="button" data-arctic-go="5" data-story-stage="5" aria-controls="arctic-chapter-5" aria-pressed="false">Before 2050</button></nav>
+  <div class="arctic-journey" id="arctic-journey">
+    <div class="arctic-stage" id="arctic-stage" hidden>
+      <canvas id="arctic-canvas" aria-hidden="true"></canvas><div class="arctic-water-tint" aria-hidden="true"></div>
+      <div class="arctic-stage-heading"><span id="arctic-stage-kind">Illustrated sea-ice processes</span><h3 id="arctic-stage-date">At the ice edge</h3></div>
+      <div class="arctic-stage-caption" id="arctic-stage-caption"></div>
+      <p class="arctic-map-note" id="arctic-map-note" hidden>Map: September monthly mean · NSIDC / Natural Earth</p>
+      <div class="arctic-stage-controls" aria-label="Story controls"><button type="button" id="arctic-previous" aria-label="Previous chapter">Previous</button><span id="arctic-progress" role="status">1 / 6</span><button type="button" id="arctic-next" aria-label="Next chapter">Next</button></div>
+      <div class="arctic-timeline" aria-hidden="true"><span></span></div>
+    </div>
+    <div class="arctic-reading"><article class="arctic-step" id="arctic-chapter-0" data-arctic-step="0" data-kind="Illustrated sea-ice processes">
+  <img class="arctic-still" src="assets/arctic/chapter-0.webp" width="1280" height="670" loading="eager" decoding="async" alt="Water-level view of a thick ice floe with a two-peaked iceberg on the horizon.">
+  <div class="arctic-step-copy"><span class="arctic-kind">Illustrated sea-ice processes</span><h3>At the ice edge</h3><div class="arctic-caption"><p>Sea ice floats on the Arctic Ocean, with most of its thickness below the surface. Follow the edge to see how a warming atmosphere and ocean affect it.</p></div></div>
+</article>
+<article class="arctic-step" id="arctic-chapter-1" data-arctic-step="1" data-kind="Illustrated sea-ice processes">
+  <img class="arctic-still" src="assets/arctic/chapter-1.webp" width="1280" height="670" loading="lazy" decoding="async" alt="Blue ice below the waterline, with a narrow seam ahead.">
+  <div class="arctic-step-copy"><span class="arctic-kind">Illustrated sea-ice processes</span><h3>Heat beneath the surface</h3><div class="arctic-caption"><p>Burning coal, oil and gas adds heat-trapping gases to the atmosphere. The ocean takes up much of that extra heat, so warming reaches the ice from the water as well as the air.</p></div></div>
+</article>
+<article class="arctic-step" id="arctic-chapter-2" data-arctic-step="2" data-kind="Illustrated sea-ice processes">
+  <img class="arctic-still" src="assets/arctic/chapter-2.webp" width="1280" height="670" loading="lazy" decoding="async" alt="A close passage between matching fractured edges of two ice floes.">
+  <div class="arctic-step-copy"><span class="arctic-kind">Illustrated sea-ice processes</span><h3>More open water</h3><div class="arctic-caption"><p>Sea ice reflects sunlight. When it retreats, darker water absorbs more energy and reinforces warming. This opening illustrates that feedback; the satellite record in the next chapter shows the measured change.</p></div></div>
+</article>
+<article class="arctic-step" id="arctic-chapter-3" data-arctic-step="3" data-kind="Satellite observations">
+  <div class="arctic-map-fallback"><figure><img class="arctic-still" id="arctic-reader-map" src="assets/arctic/record-map.svg" width="800" height="800" loading="lazy" alt="Arctic coastline and September 2026 monthly sea-ice extent."><figcaption>September monthly mean extent. NSIDC ice edges, Natural Earth coastline. Polar stereographic north.</figcaption></figure></div>
+  <div class="arctic-step-copy"><span class="arctic-kind">Satellite observations</span><h3>1979 onward</h3><div class="arctic-caption"><p>From a single crack to the whole Arctic. Satellites reveal a long decline in September sea-ice extent, with increases in some individual years. Explore the record below.</p></div></div><div class="arctic-explorer" id="arctic-explorer">
+  <div class="arctic-data-heading"><h4>September, year by year</h4><span>Monthly mean extent</span></div>
+  <div class="arctic-year-readout"><output id="arctic-year-output" for="arctic-year">1979</output><strong><output id="arctic-extent-output" for="arctic-year">7.05</output> <span>million km²</span></strong></div>
+  <label for="arctic-year">Choose a September</label><div class="arctic-year-control"><button type="button" id="arctic-year-previous" aria-label="Previous year">−</button><input id="arctic-year" type="range" min="1979" max="2026" value="1979" step="1" aria-describedby="arctic-year-change"><button type="button" id="arctic-year-next" aria-label="Next year">+</button></div>
+  <div class="arctic-chart"><span class="arctic-axis-max" aria-hidden="true">9</span><img id="arctic-chart-image" src="assets/arctic/september-chart.svg" width="720" height="270" alt="September monthly sea-ice extent from 1979 to 2026. The record declines overall, with year-to-year increases including 2013." loading="lazy"><span class="arctic-axis-min" aria-hidden="true">0</span></div>
+  <p id="arctic-year-change" role="status">Explore the full satellite record, including years with more ice than the year before.</p>
+  <p class="arctic-data-credit"><a href="assets/data/arctic-september-original.csv" download>NSIDC data (CSV)</a> · Extent counts ocean with at least 15% ice cover.</p>
+</div>
+</article>
+<article class="arctic-step" id="arctic-chapter-4" data-arctic-step="4" data-kind="Daily observation">
+  <img class="arctic-still" src="assets/arctic/record-map.svg" width="800" height="800" loading="lazy" decoding="async" alt="Arctic September 2026 monthly sea-ice map, paired with the separate daily minimum observation.">
+  <div class="arctic-step-copy"><span class="arctic-kind">Daily observation</span><h3>September 2026</h3><div class="arctic-caption"><p>Estimated Arctic sea-ice extent at its annual minimum, 12 September 2026.</p><strong class="arctic-minimum">4.60 <span>million km²</span></strong><a class="arctic-source-link" href="https://nsidc.org/news-analyses/news-stories/arctic-sea-ice-has-reached-minimum-extent-2026-antarctic-sea-ice-maximum-most-likely-reached-well" target="_blank" rel="noopener noreferrer">NSIDC minimum estimate</a><small class="arctic-daily-note">Daily minimum; the September monthly mean is 4.81 million km².</small></div></div>
+</article>
+<article class="arctic-step" id="arctic-chapter-5" data-arctic-step="5" data-kind="Projection · IPCC AR6">
+  <img class="arctic-still" src="assets/arctic/chapter-5.webp" width="1280" height="670" loading="lazy" decoding="async" alt="Open water from the opening viewpoint; the same distant iceberg remains.">
+  <div class="arctic-step-copy"><span class="arctic-kind">Projection · IPCC AR6</span><h3>Before 2050</h3><div class="arctic-caption"><p>Across the assessed emissions scenarios, the Arctic is likely to experience at least one practically ice-free September before 2050.</p><p>Practically ice-free means less than one million square kilometres of sea-ice area.</p><p class="arctic-closing-line">How often that September returns depends on how much more the world warms.</p><a class="arctic-source-link" href="https://www.ipcc.ch/report/ar6/wg1/chapter/chapter-9/" target="_blank" rel="noopener noreferrer">IPCC AR6 Working Group I, Chapter 9</a><a class="arctic-action" href="#solutions">Take action</a></div></div>
+</article></div>
+  </div>
+  <details class="arctic-method"><summary>About the illustration and data</summary><div><p>The close-up environment illustrates sea-ice processes. The floes, crack and iceberg are not a reconstruction of a specific place or a sequence of annual measurements. The opening and closing use the same camera position and landmark.</p><p>The satellite record uses NSIDC Sea Ice Index Version 4 September monthly means in million km², preserved in the original downloadable CSV. Natural Earth land and NSIDC ice-edge outlines use polar stereographic north (Hughes 1980). The 2026 daily minimum is a separate NSIDC estimate; it is not a September average.</p><p>Sea-ice extent and sea-ice area are different measures. The IPCC’s practically ice-free threshold refers to area. The projection is not a prediction that every September will be ice-free from a fixed date.</p><p><a href="https://nsidc.org/learn/parts-cryosphere/sea-ice/why-sea-ice-matters" target="_blank" rel="noopener noreferrer">Sea ice and the climate</a> · <a href="https://science.nasa.gov/earth/explore/earth-indicators/ocean-warming/" target="_blank" rel="noopener noreferrer">Ocean warming</a> · <a href="https://nsidc.org/data/g02135/versions/4" target="_blank" rel="noopener noreferrer">NSIDC Sea Ice Index</a> · <a href="https://www.naturalearthdata.com/about/terms-of-use/" target="_blank" rel="noopener noreferrer">Natural Earth</a> · <a href="https://www.ipcc.ch/report/ar6/wg1/chapter/chapter-9/" target="_blank" rel="noopener noreferrer">IPCC AR6 WGI, Chapter 9</a></p></div></details>
+  <div class="arctic-end"><p>The choices behind the view are still ours.</p><a class="btn" href="#solutions">Explore ways to take action</a></div>
+</section>
 
       <section class="section cities-section" id="cities" aria-labelledby="cities-title">
         <div class="section-heading">
@@ -1005,6 +806,6 @@
       </div>
     </div>
     <script src="assets/data/weather-snapshot.js" defer></script>
-    <script src="site.js?v=d14daba00d" defer></script>
+    <script src="site.js?v=e8dbd8896b" defer></script>
   </body>
 </html>

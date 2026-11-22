@@ -42,3 +42,17 @@ test('source edits refresh the bundle and cache version; daily weather stays ind
     assert.doesNotMatch(fs.readFileSync(path.join(root, 'site.js'), 'utf8'), /Source: green-city\.js/);
   } finally { fs.rmSync(root, {recursive:true, force:true}); }
 });
+
+test('Arctic camera and renderer edits refresh the lazy story import transitively',()=>{
+  const root=fs.mkdtempSync(path.join(os.tmpdir(),'coil-arctic-cache-'));
+  try{
+    fs.writeFileSync(path.join(root,'arctic-model.js'),'// camera one\n');
+    fs.writeFileSync(path.join(root,'arctic-world.js'),'// renderer one\n');
+    fs.writeFileSync(path.join(root,'arctic-story.js'),"import './arctic-model.js';import('./arctic-world.js');\n");
+    fs.writeFileSync(path.join(root,'script.js'),"import('./arctic-story.js');\n");
+    updateGameCache(root);const before=fs.readFileSync(path.join(root,'script.js'),'utf8');
+    fs.appendFileSync(path.join(root,'arctic-model.js'),'// camera changed\n');updateGameCache(root);
+    assert.notEqual(fs.readFileSync(path.join(root,'script.js'),'utf8'),before);
+    const stable=fs.readFileSync(path.join(root,'script.js'),'utf8');updateGameCache(root);assert.equal(fs.readFileSync(path.join(root,'script.js'),'utf8'),stable);
+  }finally{fs.rmSync(root,{recursive:true,force:true});}
+});

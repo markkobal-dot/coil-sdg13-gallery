@@ -1,0 +1,16 @@
+Ice004 and Snow001 by ambientCG.com
+Creative Commons CC0 1.0 Universal
+https://docs.ambientcg.com/license/
+https://creativecommons.org/publicdomain/zero/1.0/
+
+The source assets can be copied, modified and redistributed, including raw project files. Credit is appreciated but not required.
+
+Sources:
+https://ambientcg.com/a/Ice004
+https://ambientcg.com/a/Snow001
+
+These materials were created procedurally (PBRProcedural), not photographed. Original source maps were 2048 x 2048. Optimized files retain 2048 x 2048; mobile files are downscaled to 1024 x 1024.
+
+Snow Field 2 (Pure Sky), by Jarod Guest and Sergej Majboroda, from Poly Haven, CC0.
+https://polyhaven.com/a/snow_field_2_puresky
+Tonemapped source downscaled to2048/1024px WebP.

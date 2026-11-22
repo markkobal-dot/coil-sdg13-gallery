@@ -1,0 +1,41 @@
+{
+  "license": "Creative Commons CC0 1.0 Universal",
+  "licenseUrl": "https://docs.ambientcg.com/license/",
+  "cc0Url": "https://creativecommons.org/publicdomain/zero/1.0/",
+  "retrieved": "2026-11-22",
+  "assets": [
+    {
+      "id": "Ice004",
+      "sourceUrl": "https://ambientcg.com/a/Ice004",
+      "downloadUrl": "https://ambientcg.com/get?file=Ice004_2K-JPG.zip",
+      "creationMethod": "PBRProcedural"
+    },
+    {
+      "id": "Snow001",
+      "sourceUrl": "https://ambientcg.com/a/Snow001",
+      "downloadUrl": "https://ambientcg.com/get?file=Snow001_2K-JPG.zip",
+      "creationMethod": "PBRProcedural"
+    },
+    {
+      "id": "snow_field_2_puresky",
+      "sourceUrl": "https://polyhaven.com/a/snow_field_2_puresky",
+      "authors": [
+        "Jarod Guest",
+        "Sergej Majboroda"
+      ],
+      "license": "CC0",
+      "downloadUrl": "https://dl.polyhaven.org/file/ph-assets/HDRIs/extra/Tonemapped%20JPG/snow_field_2_puresky.jpg",
+      "processing": "Tonemapped equirectangular source downscaled to2048px and1024px WebP; LDR sky/environment texture, not HDR."
+    }
+  ],
+  "processing": "Original 2048px JPG maps converted to WebP, with 1024px mobile variants; OpenGL normals retained; no upscaling.",
+  "metadataUrl": "https://ambientcg.com/api/v2/full_json?id=Ice004,Snow001&include=downloadData,displayData,dimensionsData",
+  "sizes": {
+    "desktopSurfaces": 4025306,
+    "mobileSurfaces": 944868,
+    "desktopSky": 23372,
+    "mobileSky": 8926,
+    "desktopTotal": 4048678,
+    "mobileTotal": 953794
+  }
+}

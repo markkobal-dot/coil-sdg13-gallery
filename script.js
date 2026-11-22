@@ -553,7 +553,7 @@ document.addEventListener('visibilitychange', () => {
     home: { title: 'Where’s the shade?', sections: ['home'] },
     gallery: { title: 'The gallery', sections: ['gallery'] },
     problem: { title: 'The evidence', sections: ['problem', 'slovenia-data'] },
-    'climate-story': { title: 'The climate story', sections: ['climate-story'] },
+    'climate-story': { title: 'The Arctic in September', sections: ['climate-story'] },
     cities: { title: 'Cities in transition', sections: ['cities'] },
     solutions: { title: 'Take action', sections: ['solutions', 'closing'] },
     game: { title: 'Build Your Green City', sections: ['game'] },
@@ -683,149 +683,15 @@ document.addEventListener('visibilitychange', () => {
   targets.forEach((target) => observer.observe(target));
 })();
 
-// Keep chapter changes tied to the text without a continuously running animation.
+// The Arctic renderer is loaded only when its route is visited. Still views work without WebGL.
 (() => {
-  const scene = document.querySelector('.climate-scene');
-  const steps = [...document.querySelectorAll('.shift-step')];
-  const chapterButtons = [...document.querySelectorAll('[data-story-stage]')];
-  const previous = document.getElementById('story-previous');
-  const next = document.getElementById('story-next');
-  const progress = document.getElementById('story-progress');
-  const compact = matchMedia('(max-width: 900px)');
-  const reducedMotion = matchMedia('(prefers-reduced-motion: reduce)');
-  const chapters = [
-    {
-      label: 'Where the smoke begins',
-      energy: 'Fossil fuels',
-      streets: 'Exposed paving',
-      focus: 'Emissions'
-    },
-    {
-      label: 'A warming neighbourhood',
-      energy: 'Fossil fuels',
-      streets: 'Heat retained',
-      focus: 'Heat stress'
-    },
-    {
-      label: 'A neighbourhood ready for heat',
-      energy: 'Renewable power',
-      streets: 'More shade',
-      focus: 'Act & adapt'
-    }
-  ];
-  let activeIndex = 0;
-  let scrollScheduled = false;
-  let requestedChapter = null;
-  let chapterSettleTimer = null;
-
-  function releaseChapterSelection() {
-    requestedChapter = null;
-    window.clearTimeout(chapterSettleTimer);
+  let loading;
+  function loadArctic(){
+    if(document.body.dataset.view!=='climate-story'||loading)return;
+    loading=import('./arctic-story.js?v=6fba2fcea4').catch(error=>{console.warn('Using Arctic still views:',error);loading=null;});
   }
-
-  function activate(index) {
-    activeIndex = Math.max(0, Math.min(steps.length - 1, index));
-    const chapter = chapters[activeIndex];
-    scene.dataset.state = steps[activeIndex].dataset.sceneState;
-    scene.querySelector('.scene-label').textContent = chapter.label;
-    scene.querySelector('.scene-stage').textContent =
-      String(activeIndex + 1).padStart(2, '0') + ' / 03';
-    document.getElementById('story-energy').textContent = chapter.energy;
-    document.getElementById('story-streets').textContent = chapter.streets;
-    document.getElementById('story-focus').textContent = chapter.focus;
-    document.querySelector('.story-progress-fill').style.transform =
-      'scaleX(' + ((activeIndex + 1) / steps.length) + ')';
-    steps.forEach((step, position) => {
-      step.classList.toggle('is-active', position === activeIndex);
-    });
-    chapterButtons.forEach((button, position) => {
-      button.setAttribute('aria-pressed', String(position === activeIndex));
-    });
-    previous.disabled = activeIndex === 0;
-    next.disabled = activeIndex === steps.length - 1;
-    progress.textContent = 'Stage ' + (activeIndex + 1) + ' of ' + steps.length;
-  }
-
-  function syncWithScroll() {
-    scrollScheduled = false;
-    if (compact.matches || document.body.dataset.view !== 'climate-story') return;
-    const readingLine = window.innerHeight * 0.53;
-    if (requestedChapter !== null) {
-      const target = steps[requestedChapter].getBoundingClientRect();
-      const targetDistance = Math.abs((target.top + target.bottom) / 2 - readingLine);
-      if (targetDistance > Math.max(45, window.innerHeight * 0.1)) return;
-      releaseChapterSelection();
-    }
-    let nearest = 0;
-    let smallestDistance = Infinity;
-    steps.forEach((step, index) => {
-      const bounds = step.getBoundingClientRect();
-      const distance = Math.abs((bounds.top + bounds.bottom) / 2 - readingLine);
-      if (distance < smallestDistance) {
-        smallestDistance = distance;
-        nearest = index;
-      }
-    });
-    if (nearest !== activeIndex) activate(nearest);
-  }
-
-  function scheduleScrollSync() {
-    if (compact.matches || document.body.dataset.view !== 'climate-story' || scrollScheduled) return;
-    scrollScheduled = true;
-    requestAnimationFrame(syncWithScroll);
-  }
-
-  chapterButtons.forEach((button, index) => {
-    button.addEventListener('click', () => {
-      if (compact.matches) {
-        activate(index);
-      } else {
-        releaseChapterSelection();
-        activate(index);
-        if (!reducedMotion.matches) {
-          requestedChapter = index;
-          chapterSettleTimer = window.setTimeout(() => {
-            releaseChapterSelection();
-            scheduleScrollSync();
-          }, 1100);
-        }
-        steps[index].scrollIntoView({
-          block: 'center',
-          behavior: reducedMotion.matches ? 'instant' : 'smooth'
-        });
-        scheduleScrollSync();
-      }
-    });
-  });
-  previous.addEventListener('click', () => activate(activeIndex - 1));
-  next.addEventListener('click', () => activate(activeIndex + 1));
-  function resumeReading() {
-    if (requestedChapter === null) return;
-    releaseChapterSelection();
-    scheduleScrollSync();
-  }
-  compact.addEventListener('change', () => {
-    releaseChapterSelection();
-    scheduleScrollSync();
-  });
-  window.addEventListener('wheel', resumeReading, { passive: true });
-  window.addEventListener('touchstart', resumeReading, { passive: true });
-  window.addEventListener('keydown', (event) => {
-    if (['ArrowDown', 'ArrowUp', 'PageDown', 'PageUp', 'Home', 'End', ' '].includes(event.key)) {
-      resumeReading();
-    }
-  });
-  window.addEventListener('resize', scheduleScrollSync, { passive: true });
-  window.addEventListener('scroll', scheduleScrollSync, { passive: true });
-  window.addEventListener('app:view', (event) => {
-    releaseChapterSelection();
-    if (event.detail.id === 'climate-story') {
-      // The router restores the scroll position after this event.
-      activate(0);
-    }
-  });
-  activate(Number.isInteger(reloadContext?.chapter) ? reloadContext.chapter : 0);
-  scheduleScrollSync();
+  window.addEventListener('app:view',loadArctic);
+  loadArctic();
 })();
 
 // Native controls support mouse, touch and keyboard without an animation loop.
@@ -905,6 +771,7 @@ document.addEventListener('visibilitychange', () => {
       history.replaceState({ ...history.state,
         coilContext: {
           hash: location.hash, city, chapter, openDetails,
+          arcticProgress: Number(document.getElementById('climate-story')?.dataset.progress) || 0,
           category: activeCategory,
           comparison: Number(document.getElementById('paris-comparison')?.value)
         }
