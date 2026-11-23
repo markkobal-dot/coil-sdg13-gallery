@@ -497,6 +497,27 @@
 .gc-local-residents>strong{font-size:10px;letter-spacing:.05em;color:#4d6b47}
 .gc-placement-hint{display:flex;align-items:center;gap:11px;padding:12px 16px;background:#edf3e4;border-top:1px solid #d8e3ca;color:#425e3c;flex-shrink:0;pointer-events:none}
 .gc-placement-hint[hidden]{display:none}
+.gc-workspace { --gc-placement-height: 148px; }
+@media (min-width: 1001px) {
+  .gc-shell:not(.gc-expanded) .gc-workspace:has(.gc-placement-hint:not([hidden])) {
+    height: calc(min(76vh, 820px) + var(--gc-placement-height));
+    min-height: calc(610px + var(--gc-placement-height));
+  }
+}
+.gc-shell:not(.gc-expanded) .gc-placement-hint:not([hidden]) {
+  box-sizing: border-box;
+  block-size: var(--gc-placement-height);
+  align-items: flex-start;
+}
+.gc-shell:not(.gc-expanded) .gc-placement-hint > div {
+  max-block-size: 100%;
+  overflow: auto;
+  pointer-events: auto;
+  scrollbar-gutter: stable;
+}
+.gc-shell:not(.gc-expanded) .gc-placement-hint > span { margin-top: 5px; }
+.gc-placement-hint .gc-build-forecast p { margin: 5px 0 0; }
+.gc-intro h3[tabindex="-1"]:focus { outline: none; }
 .gc-placement-hint>span{width:7px;height:7px;border-radius:50%;background:#6e975b;flex-shrink:0;box-shadow:0 0 0 4px #6e975b18}
 .gc-placement-hint strong{display:block;font-size:11px;font-weight:600;line-height:1.4}
 .gc-placement-hint p{font-size:10px;line-height:1.6;margin:3px 0 0;color:#65765a}

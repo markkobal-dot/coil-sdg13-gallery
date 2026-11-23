@@ -108,7 +108,14 @@ function renderSelection(){
   renderPlacement(focus);
   renderInspector();
 }
+let placementTimer;
+function queuePlacement(i){
+  clearTimeout(placementTimer);
+  if(i<0)renderPlacement(focus);
+  else placementTimer=setTimeout(()=>renderPlacement(i),110);
+}
 function renderPlacement(i){
+  clearTimeout(placementTimer);
   const plan=buildDraft?C.planTiles(state,buildDraft.type,buildDraft.cells):mode==='road'&&lineStart!==null?C.planTiles(state,'road',C.line(lineStart,i>=0?i:focus)):null;
   planning?.preview(buildDraft?.locked?{mode:'batch',type:buildDraft.type,cells:buildDraft.cells,i:focus}:mode==='road'||buildDraft?{mode:'inspect'}:{mode,type:selected,i:i>=0?i:focus,rotation,source,start:lineStart});
   if(plan){renderBuildDraft(plan,!!buildDraft?.locked);return;}world?.setBuildDraft(null);cancelPlan.hidden=lineStart===null;
@@ -257,8 +264,8 @@ function renderLifeStatus({walkers,services,riding=0,driving=0,parked=0,parking=
 }
 async function initWorld(){
   if(world){world.setActive(visibleGame());return;}if(worldPromise||!visibleGame()||fallback)return;
-  worldPromise=import('./green-city-world.js?v=61e54362cb').then(({CityWorld})=>{
-    world=new CityWorld($('board'),{onDraw:drawPlan,onSelect:(i,apply)=>{selectTile(i,apply||mode==='road'||mode==='build'&&selected==='tree');if(!apply)announce('Preview at '+C.label(i)+'. '+(actionInfo().error||'Check the forecast, then confirm below.'));},onResident:actor=>planning?.openResident(actor),onFollowStop:()=>planning?.stopFollowing(),onNeighbourhood:i=>experience?.openNeighbourhood(i),onHover:i=>{renderPlacement(i);if(i<0)return;const cell=state.cells[i];$('hover').textContent=C.label(i)+' / '+(cell?C.types[cell.type].name:C.terrainAt(state,i)==='water'?'Open water':globalThis.GreenCityPlanning.district(C,i));},onError:announce,onLife:renderLifeStatus,onDaylight:renderDaylight});
+  worldPromise=import('./green-city-world.js?v=85ba649b73').then(({CityWorld})=>{
+    world=new CityWorld($('board'),{onDraw:drawPlan,onSelect:(i,apply)=>{selectTile(i,apply||mode==='road'||mode==='build'&&selected==='tree');if(!apply)announce('Preview at '+C.label(i)+'. '+(actionInfo().error||'Check the forecast, then confirm below.'));},onResident:actor=>planning?.openResident(actor),onFollowStop:()=>planning?.stopFollowing(),onNeighbourhood:i=>experience?.openNeighbourhood(i),onHover:i=>{if(['build','move','road','land','upgrade'].includes(mode))queuePlacement(i);if(i<0)return;const cell=state.cells[i];$('hover').textContent=C.label(i)+' / '+(cell?C.types[cell.type].name:C.terrainAt(state,i)==='water'?'Open water':globalThis.GreenCityPlanning.district(C,i));},onError:announce,onLife:renderLifeStatus,onDaylight:renderDaylight});
     world.setState(state,analysis);if(!viewSettings.cycle&&viewSettings.night)world.toggleNight();world.setCycle(viewSettings.cycle);world.setTool(mode,selected,focus,source,lineStart,rotation);world.setActive(visibleGame());$('loading').hidden=true;
   }).catch(()=>{fallback=true;$('loading').hidden=true;$('board').hidden=true;$('fallback').hidden=false;renderFallback();announce('3D graphics are unavailable in this browser. The planning grid is ready; all city tools and simulation features still work.');});
 }

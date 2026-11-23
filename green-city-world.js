@@ -896,7 +896,33 @@ export class CityWorld {
     this.overlayMesh.instanceColor.needsUpdate=true;
   }
   setOverlay(value){this.overlay=value;this.updateOverlay();this.updateLabels();this.dirty=true;this.schedule();}
-  resize(){const rect=this.canvas.parentElement.getBoundingClientRect();if(rect.width<2||rect.height<2)return;this.renderer.setSize(rect.width,rect.height,false);const aspect=rect.width/rect.height,half=viewHalf;this.camera.left=-half*aspect;this.camera.right=half*aspect;this.camera.top=half;this.camera.bottom=-half;if(!this.initialFit){this.camera.zoom=Math.min(1.35,aspect*1.2);this.initialFit=true;}this.camera.updateProjectionMatrix();this.syncLife();this.dirty=true;this.updateLabels();this.schedule();}
+  resize(){
+    this.resizePending=true;
+    this.schedule();
+  }
+  applySize(){
+    this.resizePending=false;
+    const rect=this.canvas.parentElement.getBoundingClientRect();
+    const width=Math.round(rect.width),height=Math.round(rect.height);
+    if(width<2||height<2||(width===this.viewWidth&&height===this.viewHeight))return;
+    const mobileChanged=this.viewWidth!==undefined&&(width<600)!==(this.viewWidth<600);
+    this.viewWidth=width;
+    this.viewHeight=height;
+    this.renderer.setSize(width,height,false);
+    const aspect=width/height;
+    this.camera.left=-viewHalf*aspect;
+    this.camera.right=viewHalf*aspect;
+    this.camera.top=viewHalf;
+    this.camera.bottom=-viewHalf;
+    if(!this.initialFit){
+      this.camera.zoom=Math.min(1.35,aspect*1.2);
+      this.initialFit=true;
+    }
+    this.camera.updateProjectionMatrix();
+    if(mobileChanged)this.syncLife();
+    this.updateLabels();
+    this.dirty=true;
+  }
   zoomBy(factor){this.camera.zoom=THREE.MathUtils.clamp(this.camera.zoom*factor,.55,3.7);this.camera.updateProjectionMatrix();this.controls.update();this.updateLabels();this.dirty=true;this.schedule();}
   rotateBy(direction){const offset=this.camera.position.clone().sub(this.controls.target);offset.applyAxisAngle(new THREE.Vector3(0,1,0),direction*Math.PI/4);this.camera.position.copy(this.controls.target).add(offset);this.controls.update();this.updateLabels();this.dirty=true;this.schedule();}
   focusCell(i){const target=new THREE.Vector3(i%mapSize-center,.5,Math.floor(i/mapSize)-center);this.camera.position.add(target.clone().sub(this.controls.target));this.controls.target.copy(target);this.controls.update();this.updateLabels();this.dirty=true;this.schedule();}
@@ -915,7 +941,7 @@ export class CityWorld {
   toggleNight(){this.cycleEnabled=false;this.daySeconds=this.night?0:90;this.lifeSeconds=this.daySeconds;this.applyDaylight(this.night?0:1);this.reportDaylight();this.schedule();return this.night;}
 
   toggleGrid(){this.grid.visible=!this.grid.visible;this.dirty=true;this.schedule();return this.grid.visible;}
-  photo(){this.renderer.render(this.scene,this.camera);return this.canvas.toDataURL('image/png');}
+  photo(){if(this.resizePending)this.applySize();this.renderer.render(this.scene,this.camera);return this.canvas.toDataURL('image/png');}
   pick(event){const rect=this.canvas.getBoundingClientRect();this.pointer.set((event.clientX-rect.left)/rect.width*2-1,-(event.clientY-rect.top)/rect.height*2+1);this.ray.setFromCamera(this.pointer,this.camera);const hit=this.ray.intersectObjects(this.pickTargets,false)[0];if(hit&&!(this.mode==='build'||this.mode==='road'||this.mode==='land'||(this.mode==='move'&&this.source!==null)))return hit.object.userData.cell;if(!this.ray.ray.intersectPlane(this.plane,this.intersection))return -1;const c=Math.floor(this.intersection.x+mapSize/2),r=Math.floor(this.intersection.z+mapSize/2);return r>=0&&r<mapSize&&c>=0&&c<mapSize?r*mapSize+c:-1;}
   bindInput(){
     const pointers=new Set();let start=null,multi=false;
@@ -988,7 +1014,8 @@ export class CityWorld {
   frame(timestamp){
     this.raf=0;if(!this.active)return;
     const animate=!this.reduced.matches;
-    if(timestamp-this.lastFrame<(animate?32:1000)){this.schedule();return;}
+    if(timestamp-this.lastFrame<(animate?32:1000)&&!this.resizePending&&(animate||!this.dirty)){this.schedule();return;}
+    if(this.resizePending)this.applySize();
     const elapsed=Math.max(0,(timestamp-(this.lastFrame||timestamp))/1000),dt=Math.min(.07,elapsed);this.lastFrame=timestamp;
     this.lifeSeconds=((this.lifeSeconds??this.daySeconds)+Math.min(1,elapsed))%180;
     if(this.cycleEnabled){this.daySeconds=(this.daySeconds+Math.min(1,elapsed))%180;this.lifeSeconds=this.daySeconds;const phase=P.daylight(this.daySeconds);this.applyDaylight(this.reduced.matches?(phase.darkness>=.5?1:0):phase.darkness);this.reportDaylight();if(this.reduced.matches)this.life?.update(this.time,true,this.analysis?.transport.roadLoads,this.lifeSeconds??this.daySeconds);}
