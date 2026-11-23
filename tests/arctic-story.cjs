@@ -51,6 +51,25 @@ test('wheel smoothing settles exactly and reverses without overshooting',()=>{
     assert.equal(p,target);
   }
 });
+
+test('the orbital handoff fades continuously after the camera rises and reverses exactly',()=>{
+  for(const portrait of [false,true]){
+    let previous=0,previousCover=0;let blended=0;
+    for(let i=5100;i<=6700;i++){
+      const frame=M.frameAt(i/10000,portrait),blend=frame.mapBlend;
+      assert.ok(blend>=previous&&blend<=1);
+      assert.ok(blend-previous<.005,'satellite transition jumped');
+      assert.ok(frame.orbitCover>=previousCover&&frame.orbitCover<=1);
+      assert.ok(frame.orbitCover-previousCover<.01,'orbital backdrop jumped');
+      if(blend>.15)assert.equal(frame.orbitCover,1,'ice overlapped the revealed map');
+      if(blend>0&&blend<1){blended++;assert.ok(frame.camera[1]>25,'map appeared before the pullback');}
+      M.frameAt(.9,portrait);assert.equal(M.frameAt(i/10000,portrait).mapBlend,blend);
+      previous=blend;previousCover=frame.orbitCover;
+    }
+    assert.ok(blended>300);assert.equal(previous,1);
+    assert.equal(M.frameAt(.51,portrait).mapBlend,0);assert.equal(M.frameAt(1,portrait).mapBlend,0);
+  }
+});
 test('wildlife fades with scroll, returns on reversal and stays absent from the closing frame',()=>{
   assert.equal(M.frameAt(0).wildlife,1);assert.equal(M.frameAt(.06).wildlife,1);
   let previous=1;for(let i=0;i<=100;i++){const value=M.frameAt(i/100).wildlife;assert.ok(value>=0&&value<=previous);previous=value;}

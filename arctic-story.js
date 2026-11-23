@@ -1,4 +1,4 @@
-import './arctic-model.js?v=624a0f81cf';
+import './arctic-model.js?v=bb114c9100';
 
 const root=document.getElementById('climate-story');
 const M=globalThis.ArcticModel;
@@ -11,7 +11,7 @@ if(root&&M){
   const reduced=matchMedia('(prefers-reduced-motion: reduce)');
   // Start the module download beside the data requests, rather than after them.
   let worldModule=null;
-  const loadWorld=()=>worldModule||(worldModule=import('./arctic-world.js?v=068d8acdb5'));
+  const loadWorld=()=>worldModule||(worldModule=import('./arctic-world.js?v=6dd7cf9646'));
   let world=null,worldPromise=null,data=null,mapData=null,live=false,visible=true,raf=0,active=-1,selectedYear=1979,manualStill=false,lastProgress=0,disposed=false;
   let route=document.body.dataset.view==='climate-story',pendingChapter=null,hasActivated=false,renderProgress=null,lastFrameTime=0,assetsReady=false,activation=0;
   const top=()=>['.nav','.view-bar'].reduce((height,selector)=>{const el=document.querySelector(selector);return height+(el&&['sticky','fixed'].includes(getComputedStyle(el).position)?el.getBoundingClientRect().height:0);},0);
@@ -30,7 +30,7 @@ if(root&&M){
     stage.querySelector('#arctic-stage-kind').textContent=steps[active].dataset.kind;
     stage.querySelector('#arctic-stage-date').textContent=steps[active].querySelector('h3').textContent;
     stage.querySelector('#arctic-stage-caption').replaceChildren(...[...steps[active].querySelector('.arctic-caption').childNodes].map(n=>n.cloneNode(true)));
-    if(hadChapter&&!reduced.matches){for(const el of [stage.querySelector('.arctic-stage-heading'),stage.querySelector('#arctic-stage-caption')])el.animate([{opacity:0},{opacity:1}],{duration:260,easing:'ease-out'});}
+    if(hadChapter&&!reduced.matches&&active!==3){for(const el of [stage.querySelector('.arctic-stage-heading'),stage.querySelector('#arctic-stage-caption')])el.animate([{opacity:0},{opacity:1}],{duration:260,easing:'ease-out'});}
     buttons.forEach((b,i)=>b.setAttribute('aria-pressed',String(i===active)));
     stage.querySelector('#arctic-previous').disabled=active===0;
     stage.querySelector('#arctic-next').disabled=active===steps.length-1;
@@ -50,8 +50,10 @@ if(root&&M){
     stage.dataset.aboveWater=String(frame.camera[1]>1);
     root.dataset.progress=lastProgress.toFixed(6);stage.style.setProperty('--progress',lastProgress);stage.style.setProperty('--underwater',frame.underwater);
     root.dataset.renderProgress=renderProgress.toFixed(6);
+    stage.style.setProperty('--satellite-reveal',frame.mapBlend);
+    explorer.inert=frame.chapter!==3||frame.mapBlend<.95;
     syncChapter(frame);
-    const note=stage.querySelector('#arctic-map-note');note.hidden=frame.map<.65;
+    const note=stage.querySelector('#arctic-map-note');note.hidden=frame.mapBlend<.95;
     note.textContent='Ice: September '+(active===3?selectedYear:2026)+' · NSIDC. Land: NASA Blue Marble.';
     if(assetsReady&&world)world.render(frame);
     else{
@@ -106,7 +108,7 @@ if(root&&M){
     if(raf)cancelAnimationFrame(raf);raf=0;
     const prior=active<0?0:active;live=false;assetsReady=false;root.classList.remove('arctic-live','arctic-loading');root.dataset.renderer='still';stage.hidden=true;
     steps.forEach(step=>{step.querySelector('.arctic-step-copy').inert=false;});
-    navHome.after(nav);explorerHome.after(explorer);explorer.hidden=false;
+    navHome.after(nav);explorerHome.after(explorer);explorer.hidden=false;explorer.inert=false;
     if(world){world.dispose();world=null;}worldPromise=null;
     mode.hidden=false;mode.textContent=reduced.matches?'Still views · reduced motion':'Use 3D walkthrough';mode.disabled=reduced.matches;
     if(route&&prior>0)steps[prior].scrollIntoView({block:'start',behavior:'instant'});

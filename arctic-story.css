@@ -36,6 +36,8 @@
 .arctic-water-tint{position:absolute;inset:0;pointer-events:none;background:#436778;opacity:calc(var(--underwater,0)*.08);mix-blend-mode:color}
 .arctic-stage::after{content:'';position:absolute;inset:40% 0 0;z-index:0;background:linear-gradient(transparent,#071d29b8);pointer-events:none}
 .arctic-stage:is([data-chapter='3'],[data-chapter='4'])::before{content:'';position:absolute;inset:52px 0 48% 0;z-index:1;background:linear-gradient(#061c318f,transparent);pointer-events:none}
+.arctic-stage:is([data-chapter='3'],[data-chapter='4'])::before{opacity:var(--satellite-reveal,1)}
+.arctic-live .arctic-stage[data-chapter='3'] :is(.arctic-stage-heading,.arctic-explorer){opacity:var(--satellite-reveal,1)}
 .arctic-live .arctic-stage{position:sticky;top:var(--arctic-top);z-index:1}
 .arctic-live .arctic-reading{margin-top:calc(-1 * max(530px,var(--arctic-height)));pointer-events:none}
 .arctic-live .arctic-step{display:block;height:130svh;min-height:640px;padding:0;background:none;pointer-events:none}

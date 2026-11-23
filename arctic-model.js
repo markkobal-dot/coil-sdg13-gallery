@@ -32,10 +32,10 @@ function frameAt(raw,portrait=false){
 const p=clamp(Number.isFinite(raw)?raw:0);let i=keys.findIndex((_,j)=>j<keys.length-1&&p<=keys[j+1][0]);if(i<0)i=keys.length-2;
 const h=keys[i+1][0]-keys[i][0],t=clamp((p-keys[i][0])/h),t2=t*t,t3=t2*t;
 const v=values[i].map((a,d)=>(2*t3-3*t2+1)*a+(t3-2*t2+t)*h*slopes[i][d]+(-2*t3+3*t2)*values[i+1][d]+(t3-t2)*h*slopes[i+1][d]);
-let camera=v.slice(0,3),target=v.slice(3,6);const map=clamp(v[7]);
+let camera=v.slice(0,3),target=v.slice(3,6);const map=clamp(v[7]),handoff=ease((map-.12)/.78);
 if(portrait){camera=[camera[0]*.5,camera[1]+190*map,camera[2]+4*(1-map)+80*map];camera[0]*=1-map;target=[target[0]*.3*(1-map),target[1]-.25*(1-map),target[2]+80*map];}
 let chapter=0;for(let j=1;j<chapters.length;j++)if(p>=(chapters[j-1]+chapters[j])/2)chapter=j;
-return {progress:p,portrait,chapter,camera,target,fov:portrait?54:opening.fov,gap:v[6],map,drift:clamp(v[8]),underwater:ease((.08-camera[1])/.4),wildlife:1-ease((p-.07)/.13)};
+return {progress:p,portrait,chapter,camera,target,fov:portrait?54:opening.fov,gap:v[6],map,orbitCover:ease(handoff/.45),mapBlend:ease((handoff-.3)/.7),drift:clamp(v[8]),underwater:ease((.08-camera[1])/.4),wildlife:1-ease((p-.07)/.13)};
 }
 function progressAt(scrollY,start,trackHeight,stageHeight){return clamp((scrollY-start)/Math.max(1,trackHeight-stageHeight));}
 function follow(current,target,dt){const d=target-current;return Math.abs(d)<.000003?target:current+d*(1-Math.exp(-Math.min(50,dt)/65));}

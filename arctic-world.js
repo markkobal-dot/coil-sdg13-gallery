@@ -57,6 +57,25 @@ const waterFragment=[
 '}'
 ].join('\n');
 
+// A separately framed polar view dissolves over the rising camera. The data is
+// never enlarged into a low-altitude ice texture during the handoff.
+const orbitalVertex='varying vec2 vUv;void main(){vUv=uv;gl_Position=projectionMatrix*modelViewMatrix*vec4(position,1.);}';
+const orbitalFragment=[
+'varying vec2 vUv;uniform sampler2D polarMap;uniform float reveal;uniform float mapVisibility;uniform vec2 resolution;',
+'float starHash(vec2 cell){return fract(sin(dot(cell,vec2(127.1,311.7)))*43758.5453);}',
+'void main(){vec2 screen=gl_FragCoord.xy/resolution.y;vec2 grid=screen*60.;vec2 cell=floor(grid);',
+'float stars=step(.992,starHash(cell))*(1.-smoothstep(.025,.07,length(fract(grid)-.5)));',
+'vec3 space=vec3(.001,.003,.009)+vec3(.002,.006,.014)*exp(-length(screen-vec2(.4,.6))*1.7)+vec3(.38,.47,.62)*stars;',
+'vec2 uv=(vUv-.5)*(1600./260.)+.5;float radius=length(uv-.5);',
+'float rim=exp(-pow((radius-.495)/.012,2.));space+=vec3(.009,.065,.12)*rim*mapVisibility;',
+'vec4 polar=texture2D(polarMap,clamp(uv,vec2(0.),vec2(1.)));',
+'float inside=step(0.,uv.x)*step(uv.x,1.)*step(0.,uv.y)*step(uv.y,1.);',
+'vec3 surface=polar.rgb*(1.-.12*smoothstep(.28,.5,radius));',
+'gl_FragColor=vec4(mix(space,surface,polar.a*inside*mapVisibility),reveal);',
+'#include <colorspace_fragment>',
+'}'
+].join('\n');
+
 export class ArcticWorld{
   constructor(canvas,mapData,year){
     this.canvas=canvas;this.disposed=false;this.low=innerWidth<701;this.textures={};
@@ -92,9 +111,11 @@ export class ArcticWorld{
     this.dust=new THREE.Points(dustGeometry,this.dustMaterial);this.dust.visible=false;this.closeScene.add(this.dust);
     this.mapCanvas=document.createElement('canvas');this.mapCanvas.width=this.mapCanvas.height=this.low?1024:2048;
     this.mapTexture=new THREE.CanvasTexture(this.mapCanvas);this.mapTexture.colorSpace=THREE.SRGBColorSpace;
-    // A geographic overlay must never be clipped by the depth of the illustrative floes or water.
-    this.mapMaterial=new THREE.MeshBasicMaterial({map:this.mapTexture,transparent:true,opacity:0,depthTest:false,depthWrite:false,fog:false,toneMapped:false});
-    this.mapPlane=new THREE.Mesh(new THREE.PlaneGeometry(260,260),this.mapMaterial);this.mapPlane.rotation.x=-Math.PI/2;this.mapPlane.position.y=.1;this.mapPlane.renderOrder=10;this.scene.add(this.mapPlane);
+    this.mapScene=new THREE.Scene();this.mapCamera=new THREE.PerspectiveCamera(43,1,.01,1800);
+    this.mapViews=[false,true].map(portrait=>globalThis.ArcticModel.frameAt(.67,portrait));
+    this.mapMaterial=new THREE.ShaderMaterial({transparent:true,depthTest:false,depthWrite:false,toneMapped:false,uniforms:{polarMap:{value:this.mapTexture},reveal:{value:0},mapVisibility:{value:0},resolution:{value:new THREE.Vector2(1,1)}},vertexShader:orbitalVertex,fragmentShader:orbitalFragment});
+    this.mapPlane=new THREE.Mesh(new THREE.PlaneGeometry(1600,1600),this.mapMaterial);this.mapPlane.rotation.x=-Math.PI/2;this.mapPlane.position.y=.1;this.mapScene.add(this.mapPlane);
+    this.frameMap(false);
     this.mapData=mapData;this.setYear(year);
     this.basemapReady=new Promise(resolve=>{
       const image=new Image();image.decoding='async';
@@ -117,6 +138,8 @@ export class ArcticWorld{
       this.wildlife.update(globalThis.ArcticModel.frameAt(0));
       await this.renderer.compileAsync(this.scene,this.camera);
       if(this.disposed)return;
+      await this.renderer.compileAsync(this.mapScene,this.mapCamera);
+      if(this.disposed)return;
       // Warm the clipped reflection variant before revealing the canvas.
       const clipping=this.renderer.clippingPlanes;this.renderer.clippingPlanes=this.waterClip;this.water.visible=false;
       try{await this.renderer.compileAsync(this.scene,this.reflectionCamera);}finally{this.renderer.clippingPlanes=clipping;this.water.visible=true;}
@@ -133,12 +156,13 @@ export class ArcticWorld{
     path(this.mapData.coast);ctx.fillStyle='#70837c';ctx.fill('evenodd');
     if(this.basemapImage){ctx.save();ctx.clip('evenodd');ctx.drawImage(this.basemapImage,0,0,size,size);ctx.restore();}
     path(this.mapData.coast);ctx.strokeStyle='#a4b4aa';ctx.lineWidth=.6*scale;ctx.stroke();
-    ctx.globalCompositeOperation='destination-in';const gradient=ctx.createRadialGradient(size/2,size/2,size*.42,size/2,size/2,size*.499);gradient.addColorStop(0,'#fff');gradient.addColorStop(1,'#fff0');ctx.fillStyle=gradient;ctx.fillRect(0,0,size,size);ctx.globalCompositeOperation='source-over';
+    ctx.globalCompositeOperation='destination-in';const gradient=ctx.createRadialGradient(size/2,size/2,size*.485,size/2,size/2,size*.499);gradient.addColorStop(0,'#fff');gradient.addColorStop(1,'#fff0');ctx.fillStyle=gradient;ctx.fillRect(0,0,size,size);ctx.globalCompositeOperation='source-over';
     this.mapTexture.needsUpdate=true;
   }
   resize(width,height){
     const ratio=Math.min(Math.max(devicePixelRatio||1,this.low?1:1.5),this.low?1.5:2,Math.sqrt((this.low?1800000:12000000)/(width*height)));
     this.renderer.setPixelRatio(ratio);this.renderer.setSize(width,height,false);this.camera.aspect=width/height;this.camera.updateProjectionMatrix();
+    this.mapCamera.aspect=width/height;this.mapCamera.updateProjectionMatrix();this.renderer.getDrawingBufferSize(this.mapMaterial.uniforms.resolution.value);
     const reflectionScale=Math.min(ratio,(this.low?768:2048)/Math.max(width,height));
     this.reflectionTarget.setSize(Math.max(1,Math.round(width*reflectionScale)),Math.max(1,Math.round(height*reflectionScale)));
   }
@@ -151,26 +175,39 @@ export class ArcticWorld{
     this.renderer.setRenderTarget(this.reflectionTarget);this.renderer.render(this.scene,mirror);this.renderer.setRenderTarget(null);
     this.renderer.clippingPlanes=clipping;this.water.visible=true;this.renderer.shadowMap.needsUpdate=false;
   }
+  frameMap(portrait){
+    const view=this.mapViews[portrait?1:0];
+    this.mapCamera.position.fromArray(view.camera);this.mapCamera.fov=view.fov;this.mapCamera.lookAt(...view.target);this.mapCamera.updateProjectionMatrix();
+  }
   render(frame){
     if(this.disposed)return;
     this.camera.position.fromArray(frame.camera);this.camera.fov=frame.fov;this.camera.lookAt(...frame.target);this.camera.updateProjectionMatrix();
-    this.closeScene.visible=frame.map<.3;
+    this.closeScene.visible=frame.orbitCover<1;
     this.wildlife.update(frame);this.renderer.shadowMap.needsUpdate=this.closeScene.visible;
     this.fragments.material.opacity=1-frame.drift;
     this.floes.forEach((f,i)=>{const direction=i===0?-1:1;f.position.set(direction*(frame.gap/2+frame.drift*85),frame.drift*-.15,frame.drift*22);f.rotation.y=direction*frame.drift*.28;});
-    this.mapPlane.visible=frame.map>.001;this.mapMaterial.opacity=globalThis.ArcticModel.ease(frame.map/.3);
+    this.mapMaterial.uniforms.reveal.value=frame.orbitCover;this.mapMaterial.uniforms.mapVisibility.value=frame.mapBlend;
     this.waterMaterial.uniforms.eye.value.copy(this.camera.position);this.waterMaterial.uniforms.progress.value=frame.progress;
     this.waterMaterial.uniforms.gap.value=frame.gap;this.waterMaterial.uniforms.drift.value=frame.drift;
     this.skyMaterial.uniforms.underwater.value=frame.underwater;
     this.dust.visible=frame.underwater>.05;this.dustMaterial.uniforms.opacity.value=frame.underwater*.18;
     this.scene.fog.color.set('#b2d2e4').lerp(this.underwaterFog,frame.underwater);this.scene.fog.density=.0016+frame.underwater*.022;
-    const reflectionBlend=frame.map<.3?THREE.MathUtils.smoothstep(this.camera.position.y,.04,.24):0;
+    const reflectionBlend=(1-frame.orbitCover)*THREE.MathUtils.smoothstep(this.camera.position.y,.04,.24);
     this.waterMaterial.uniforms.hasReflection.value=reflectionBlend;
     if(reflectionBlend>0)this.reflectWater();
-    this.renderer.render(this.scene,this.camera);
+    if(frame.orbitCover<1)this.renderer.render(this.scene,this.camera);
+    if(frame.orbitCover>0){
+      this.frameMap(frame.portrait);
+      const autoClear=this.renderer.autoClear;
+      try{
+        this.renderer.autoClear=frame.orbitCover===1?autoClear:false;
+        if(frame.orbitCover<1)this.renderer.clearDepth();
+        this.renderer.render(this.mapScene,this.mapCamera);
+      }finally{this.renderer.autoClear=autoClear;}
+    }
   }
   dispose(){
-    this.disposed=true;this.landmark.userData.disposed=true;this.scene.traverse(object=>{object.geometry?.dispose();if(object.material){for(const m of Array.isArray(object.material)?object.material:[object.material])m.dispose();}});
+    this.disposed=true;this.landmark.userData.disposed=true;for(const scene of [this.scene,this.mapScene])scene.traverse(object=>{object.geometry?.dispose();if(object.material){for(const m of Array.isArray(object.material)?object.material:[object.material])m.dispose();}});
     this.sun.shadow.map?.dispose();this.sun.shadow.mapPass?.dispose();this.wildlife.dispose();Object.values(this.textures).forEach(t=>t.dispose());this.emptyTexture.dispose();this.environment?.dispose();this.reflectionTarget.dispose();this.mapTexture.dispose();this.renderer.dispose();
   }
 }

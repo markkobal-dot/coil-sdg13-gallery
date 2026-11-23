@@ -890,7 +890,7 @@ document.addEventListener('visibilitychange', () => {
   let loading;
   function loadArctic(){
     if(document.body.dataset.view!=='climate-story'||loading)return;
-    loading=import('./arctic-story.js?v=e7e29e62b2').catch(error=>{console.warn('Using Arctic still views:',error);loading=null;});
+    loading=import('./arctic-story.js?v=8a61a63a0a').catch(error=>{console.warn('Using Arctic still views:',error);loading=null;});
   }
   window.addEventListener('app:view',loadArctic);
   loadArctic();
