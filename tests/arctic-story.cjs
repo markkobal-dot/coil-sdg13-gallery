@@ -20,7 +20,7 @@ test('scroll reversal recovers an identical pose without a time-dependent simula
 test('the camera crosses the waterline and passes between the separated matching floes',()=>{
   assert.ok(M.frameAt(.125).camera[1]>0);assert.ok(M.frameAt(.21).camera[1]<0);
   const crack=M.frameAt(.415);assert.ok(crack.gap>=3);assert.ok(Math.abs(crack.camera[0])<crack.gap/2);
-  assert.ok(M.frameAt(.455).camera[1]>0);assert.ok(M.frameAt(.67).camera[1]>300);
+  assert.ok(M.frameAt(.455).camera[1]>0);assert.ok(M.frameAt(M.chapters[3]).camera[1]>300);
 });
 test('camera velocity stays continuous across waypoints without easing to a stop at every join',()=>{
   const h=.0000001;
@@ -55,19 +55,51 @@ test('wheel smoothing settles exactly and reverses without overshooting',()=>{
 test('the orbital handoff fades continuously after the camera rises and reverses exactly',()=>{
   for(const portrait of [false,true]){
     let previous=0,previousCover=0;let blended=0;
-    for(let i=5100;i<=6700;i++){
+    for(let i=5100;i<=7100;i++){
       const frame=M.frameAt(i/10000,portrait),blend=frame.mapBlend;
       assert.ok(blend>=previous&&blend<=1);
       assert.ok(blend-previous<.005,'satellite transition jumped');
       assert.ok(frame.orbitCover>=previousCover&&frame.orbitCover<=1);
       assert.ok(frame.orbitCover-previousCover<.01,'orbital backdrop jumped');
-      if(blend>.15)assert.equal(frame.orbitCover,1,'ice overlapped the revealed map');
+      if(blend>.15)assert.ok(frame.orbitCover>.999,'ice overlapped the revealed map');
       if(blend>0&&blend<1){blended++;assert.ok(frame.camera[1]>25,'map appeared before the pullback');}
       M.frameAt(.9,portrait);assert.equal(M.frameAt(i/10000,portrait).mapBlend,blend);
       previous=blend;previousCover=frame.orbitCover;
     }
-    assert.ok(blended>300);assert.equal(previous,1);
+    assert.ok(blended>1100,'satellite dissolve was compressed into too little scrolling');assert.equal(previous,1);
     assert.equal(M.frameAt(.51,portrait).mapBlend,0);assert.equal(M.frameAt(1,portrait).mapBlend,0);
+  }
+});
+
+test('orbital wheel steps are cushioned and settle without overshooting',()=>{
+  let p=.55,previous=p;
+  for(let i=0;i<150;i++){
+    p=M.follow(p,M.chapters[3],16);
+    assert.ok(p>=previous&&p<=M.chapters[3]);
+    assert.ok(p-previous<.018,'orbital motion advanced too far in one frame');
+    previous=p;
+  }
+  assert.equal(p,M.chapters[3]);
+  let peakMapStep=0,previousBlend=M.frameAt(.59).mapBlend;
+  for(let i=5901;i<=7100;i++){
+    const blend=M.frameAt(i/10000).mapBlend;
+    peakMapStep=Math.max(peakMapStep,blend-previousBlend);previousBlend=blend;
+  }
+  assert.ok(peakMapStep<.0013,'visible map contrast changed too quickly');
+});
+
+test('the orbital sphere has a tangent horizon inside the actual polar map coverage',()=>{
+  assert.deepEqual(M.globeSample(0,0).uv,[.5,.5]);assert.equal(M.globeSample(1.01,0),null);
+  for(let i=0;i<=100;i++)for(let j=0;j<64;j++){
+    const r=i/100,angle=j*Math.PI/32,sample=M.globeSample(r*Math.cos(angle),r*Math.sin(angle));
+    assert.ok(sample.point.every(Number.isFinite)&&sample.uv.every(Number.isFinite));
+    assert.ok(Math.abs(Math.hypot(...sample.point)-1)<1e-6);
+    assert.ok(Math.hypot(sample.uv[0]-.5,sample.uv[1]-.5)<.485,'globe sampled the cropped map boundary');
+    assert.ok(sample.latitude>55*Math.PI/180);
+    if(i===100){
+      const view=sample.point.map((v,k)=>(k===2?M.globe.distance:0)-v);
+      assert.ok(Math.abs(sample.point.reduce((sum,v,k)=>sum+v*view[k],0))<1e-6,'horizon is not tangent to the surface');
+    }
   }
 });
 test('wildlife fades with scroll, returns on reversal and stays absent from the closing frame',()=>{
@@ -82,15 +114,15 @@ test('textured bear GLBs are self-contained, valid and substantially lighter on 
     const bytes=fs.readFileSync(path.join(root,'assets/arctic/models',file));
     assert.equal(bytes.readUInt32LE(0),0x46546c67);assert.equal(bytes.readUInt32LE(4),2);assert.equal(bytes.readUInt32LE(8),bytes.length);
     const jsonLength=bytes.readUInt32LE(12),doc=JSON.parse(bytes.subarray(20,20+jsonLength).toString());
-    const bin=bytes.subarray(28+jsonLength);assert.equal(doc.asset.version,'2.0');assert.ok(!doc.extensionsRequired?.length);
+    const bin=bytes.subarray(28+jsonLength);assert.equal(doc.asset.version,'2.0');assert.ok((doc.extensionsRequired||[]).every(e=>e==='KHR_mesh_quantization'));
     assert.ok(doc.buffers.every(b=>!b.uri));assert.ok(doc.images.length>=2&&doc.images.every(i=>i.bufferView!==undefined&&!i.uri));
     let triangles=0;
     const values=index=>{
       const a=doc.accessors[index],v=doc.bufferViews[a.bufferView],components={SCALAR:1,VEC2:2,VEC3:3,VEC4:4}[a.type];
-      const read={5123:['readUInt16LE',2],5125:['readUInt32LE',4],5126:['readFloatLE',4]}[a.componentType];assert.ok(read);
+      const read={5122:['readInt16LE',2,32767],5123:['readUInt16LE',2,65535],5125:['readUInt32LE',4],5126:['readFloatLE',4]}[a.componentType];assert.ok(read);
       const [method,size]=read,stride=v.byteStride||components*size,offset=(v.byteOffset||0)+(a.byteOffset||0),out=[];
       assert.ok(offset+(a.count-1)*stride+components*size<=bin.length);
-      for(let i=0;i<a.count;i++)for(let c=0;c<components;c++)out.push(bin[method](offset+i*stride+c*size));return out;
+      for(let i=0;i<a.count;i++)for(let c=0;c<components;c++){const value=bin[method](offset+i*stride+c*size);out.push(a.normalized?Math.max(-1,value/read[2]):value);}return out;
     };
     for(const mesh of doc.meshes)for(const p of mesh.primitives){
       const positions=values(p.attributes.POSITION),normals=values(p.attributes.NORMAL),uv=values(p.attributes.TEXCOORD_0),indices=values(p.indices);
@@ -100,6 +132,11 @@ test('textured bear GLBs are self-contained, valid and substantially lighter on 
       assert.ok(doc.materials[p.material].pbrMetallicRoughness.baseColorTexture);
     }
     results.push({bytes:bytes.length,triangles});
+    if(doc.extensionsRequired?.includes('KHR_mesh_quantization')){
+      assert.ok(doc.nodes[0].scale.every(v=>v>0&&v===doc.nodes[0].scale[0]));
+      assert.ok(doc.asset.extras.maxPositionError<.00002);
+      assert.match(fs.readFileSync(path.join(root,'assets/vendor/three/GLTFLoader.js'),'utf8'),/KHR_mesh_quantization/);
+    }
   }
   assert.ok(results[0].triangles<85000);assert.ok(results[1].triangles<results[0].triangles*.5);assert.ok(results[1].bytes<results[0].bytes*.5);
   assert.match(fs.readFileSync(path.join(root,'assets/arctic/models/LICENSE.txt'),'utf8'),/CC0/);
@@ -187,6 +224,21 @@ test('every measured year has finite, closed, sourced polar outline rings',()=>{
   const map=JSON.parse(fs.readFileSync(path.join(root,'assets/data/arctic-map.json'),'utf8'));
   assert.equal(map.projection,'EPSG:3411');assert.equal(Object.keys(map.years).length,48);
   for(const row of series.rows){assert.ok(map.years[row.year].length>0);for(const ring of map.years[row.year]){assert.deepEqual(ring[0],ring.at(-1));assert.ok(ring.length>=4);assert.ok(ring.every(p=>p.length===2&&p.every(Number.isFinite)));}}
+});
+
+test('display ice contours round the grid without mutating data or materially changing its footprint',()=>{
+  const map=JSON.parse(fs.readFileSync(path.join(root,'assets/data/arctic-map.json'),'utf8')),before=JSON.stringify(map.years);
+  const area=ring=>Math.abs(ring.slice(1).reduce((sum,p,i)=>sum+ring[i][0]*p[1]-p[0]*ring[i][1],0)/2);
+  for(const rings of Object.values(map.years)){
+    let original=0,display=0;
+    for(const ring of rings){
+      const smooth=M.smoothIceRing(ring);assert.deepEqual(smooth[0],smooth.at(-1));
+      assert.ok(smooth.every(p=>p.every(Number.isFinite)));assert.equal(M.smoothIceRing(ring),smooth);
+      original+=area(ring);display+=area(smooth);
+    }
+    assert.ok(Math.abs(display-original)/original<.005,'smoothed footprint changed by over 0.5%');
+  }
+  assert.equal(JSON.stringify(map.years),before);
 });
 test('all six fallback views and the original route remain available without WebGL',()=>{
   const html=fs.readFileSync(path.join(root,'index.html'),'utf8');assert.match(html,/id="climate-story"/);

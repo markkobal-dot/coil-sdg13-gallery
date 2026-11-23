@@ -4,7 +4,7 @@
   "license": "CC0-1.0",
   "retrieved": "2026-11-23",
   "origin": "AI-assisted source, generated with Meshy and cleaned up, scaled, textured and checked in Blender by Grab3D. See LICENSE.txt.",
-  "processing": "Offline attribute-aware meshoptimizer simplification; UVs, normals and authored material textures retained. Standard uncompressed glTF: no runtime decoder or external service.",
+  "processing": "Offline attribute-aware meshoptimizer simplification, followed by 16-bit KHR_mesh_quantization and exact encoded-vertex deduplication. Original triangle counts and JPEG bytes retained. Built-in local glTF loader support; no runtime decoder or external service.",
   "variants": [
     {
       "file": "polar-bear.glb",

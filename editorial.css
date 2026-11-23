@@ -1455,13 +1455,6 @@ main {
 main:focus {
   outline: none;
 }
-main > section {
-  animation: destination-enter 280ms ease both;
-}
-@keyframes destination-enter {
-  from { opacity: 0; transform: translateY(8px); }
-  to { opacity: 1; transform: none; }
-}
 .nav {
   min-height: 84px;
 }

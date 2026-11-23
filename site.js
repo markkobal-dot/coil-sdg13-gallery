@@ -734,7 +734,7 @@ document.addEventListener('visibilitychange', () => {
     loading = (async () => {
       await import('./green-city-development.js?v=5d7445afae');
       await Promise.all([import('./green-city-core.js?v=6cda2938bb'), import('./green-city-art.js?v=ca8be4039d')]);
-      await import('./green-city.js?v=9debdbabc7');
+      await import('./green-city.js?v=eb231c342f');
     })();
     try { await loading; }
     catch { document.getElementById('gc-start-status').hidden = false; }
@@ -890,7 +890,7 @@ document.addEventListener('visibilitychange', () => {
   let loading;
   function loadArctic(){
     if(document.body.dataset.view!=='climate-story'||loading)return;
-    loading=import('./arctic-story.js?v=8a61a63a0a').catch(error=>{console.warn('Using Arctic still views:',error);loading=null;});
+    loading=import('./arctic-story.js?v=ab3a153043').catch(error=>{console.warn('Using Arctic still views:',error);loading=null;});
   }
   window.addEventListener('app:view',loadArctic);
   loadArctic();

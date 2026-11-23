@@ -32,11 +32,9 @@
 #home .home-photo-observation{display:block;color:var(--color-ink);font-size:16px;font-weight:400;line-height:1.55;letter-spacing:-.01em}
 #home .home-photo-grid .image-open{display:none}
 #home .home-photo>strong{font-size:24px;line-height:1.25}
-.photo-reveal-ready{transition:opacity .55s ease,transform .55s cubic-bezier(.2,.6,.2,1)}
-.photo-reveal-ready:not(.is-visible){opacity:0;transform:translateY(14px)}
+.photo-reveal-ready{transition:transform .26s ease-out}
+.photo-reveal-ready:not(.is-visible){transform:translateY(4px)}
 @media(hover:hover) and (pointer:fine) and (min-width:701px){.home-cover-photo:hover img{transform:scale(1.025)}.home-cover-photo:hover .home-cover-view{color:var(--color-ink);text-decoration-thickness:2px}}
-@media(min-width:701px){body[data-view=home] .home-cover-heading{animation:cover-arrival .5s ease both}body[data-view=home] .home-cover-pair{animation:cover-arrival .65s .08s ease both}}
-@keyframes cover-arrival{from{opacity:.35;transform:translateY(10px)}to{opacity:1;transform:none}}
 @media(min-width:701px) and (max-width:1000px){#home .home-cover{padding-top:30px}.home-cover-heading{grid-template-columns:1.1fr 1fr;gap:24px}#home .home-cover-heading h1{font-size:clamp(60px,8vw,80px)}#home .home-cover-deck p{font-size:16px}.home-cover-caption{gap:10px}.home-cover-view{display:none}.home-cover-image{aspect-ratio:23/15}.home-cover-pair figure:nth-child(2) .home-cover-image{aspect-ratio:17/15}}
 @media(max-width:700px){
  #home .home-cover{padding:26px 24px 0}
@@ -47,7 +45,7 @@
  #home .home-cover-deck .btn{font-size:16px;min-height:48px}
  .home-cover-pair{grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
  .home-cover-image{height:clamp(200px,46vw,300px)}
- .home-cover-image img{transform:scale(1.8);transform-origin:center 66%;transition:none}
+ .home-cover-image img{transition:none}
  .home-cover-caption{display:block;padding-top:11px}
  .home-cover-caption strong{font-size:18px}
  .home-cover-caption small{font-size:14px;line-height:1.45}

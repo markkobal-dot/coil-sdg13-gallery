@@ -3,7 +3,7 @@ import { createDevelopment, createMonthlyReport } from './green-city-development
 let development=null;
 import { createExperience, glyph } from './green-city-experience.js?v=73071ee085';
 import { createPlanning } from './green-city-planning-ui.js?v=4770b4ce7c';
-import { createIntroduction } from './green-city-intro-ui.js?v=b1d8edac01';
+import { createIntroduction } from './green-city-intro-ui.js?v=243a564fa4';
 let experience=null;
 let planning=null;
 let introduction=null;
@@ -12,6 +12,10 @@ const C=globalThis.GreenCity, A=globalThis.GreenCityArt;
 const root=document.querySelector('.green-city-section');
 const $=id=>document.getElementById(id==='game-sound'?id:'gc-'+id);
 const shell=$('shell'), storageKey='coil-green-city-v3';
+function showWelcome(show){
+  $('onboarding').hidden=!show;
+  $('world-wrap').inert=show;
+}
 const escape=text=>String(text).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const format=n=>Math.round(n).toLocaleString('en-GB');
 const money=n=>n.toLocaleString('en-GB',{maximumFractionDigits:2});
@@ -182,7 +186,6 @@ function minimap(){
 function render(){
   analysis=C.analyse(state);
   $('budget').innerHTML=format(state.cash)+' <small>EP</small>';$('balance').textContent=(analysis.net>=0?'+':'')+format(analysis.net)+' EP / month';$('balance').classList.toggle('gc-negative',analysis.net<0);
-  $('onboarding-copy').textContent='You have '+format(state.cash)+' Eco Points and the city starts paused. Meet a resident, preview nearby greenery, then build and see the result in the optional introduction.';
   $('population').textContent=format(state.population);$('capacity').textContent=format(analysis.capacity)+' housing capacity';
   $('date').textContent='Month '+state.month;$('season').textContent=['Spring','Summer','Autumn','Winter'][Math.floor((state.month-1)%12/3)]+' / Year '+(Math.floor((state.month-1)/12)+1);
   $('challenge').value=state.challenge;$('undo').disabled=!undo.length;$('redo').disabled=!redo.length;
@@ -202,12 +205,12 @@ function commit(result){
   if(mission.reward){announce(mission.reward.name+' completed · +'+mission.reward.reward+' EP!');if(!introduction?.ownsReward(mission.reward))experience?.notifyMission(mission.reward);}
   return true;
 }
-function choose(type){discardBuildDraft();syncClock();rotation=0;selected=type;category=C.upgrades[type].category;mode='build';source=null;lineStart=null;renderCatalogue();renderSelection();if(innerWidth<=1000)setPanel('none');$('onboarding').hidden=true;announce(meta().name+' selected. '+meta().description);}
+function choose(type){discardBuildDraft();syncClock();rotation=0;selected=type;category=C.upgrades[type].category;mode='build';source=null;lineStart=null;renderCatalogue();renderSelection();if(innerWidth<=1000)setPanel('none');announce(meta().name+' selected. '+meta().description);}
 function startLand(){
   const first=C.terrainFor(state).findIndex((t,i)=>t==='water'&&!C.canReclaim(state,i,analysis));
   setPanel('none');setMode('land');if(first>=0){selectTile(first,false);world?.focusCell(first);}
 }
-function setMode(next){discardBuildDraft();syncClock();mode=next;if(mode==='build'&&!C.rotatable(selected))rotation=0;source=null;lineStart=null;$('onboarding').hidden=true;renderSelection();announce({land:'Build land · '+format(C.reclamationCost)+' EP per tile. Select water touching owned land, then confirm. Shortcut L. Undo restores the shoreline.',inspect:'Select a tile to inspect its building and local conditions.',build:meta().name+' selected. Choose a suitable plot.',road:'Choose the start of your road route, then its end. The full cost is shown before you build.',upgrade:'Select a building to upgrade. Each improvement has up to three levels.',move:'Select the building you want to relocate.',demolish:'Select an improvement to remove. You receive 50% salvage; Undo can reverse the action.'}[mode]);}
+function setMode(next){discardBuildDraft();syncClock();mode=next;if(mode==='build'&&!C.rotatable(selected))rotation=0;source=null;lineStart=null;renderSelection();announce({land:'Build land · '+format(C.reclamationCost)+' EP per tile. Select water touching owned land, then confirm. Shortcut L. Undo restores the shoreline.',inspect:'Select a tile to inspect its building and local conditions.',build:meta().name+' selected. Choose a suitable plot.',road:'Choose the start of your road route, then its end. The full cost is shown before you build.',upgrade:'Select a building to upgrade. Each improvement has up to three levels.',move:'Select the building you want to relocate.',demolish:'Select an improvement to remove. You receive 50% salvage; Undo can reverse the action.'}[mode]);}
 function selectTile(i,apply=true,confirm=false){
   focus=mode==='build'||mode==='road'||mode==='land'||(mode==='move'&&source!==null)?i:C.anchorAt(state,i);if(!apply&&buildDraft?.locked&&mode==='road')buildDraft={type:'road',cells:C.line(lineStart,i),locked:true};renderSelection();minimap();if(!apply)return;
   if(confirm&&buildDraft?.locked){confirmBuildDraft();return;}
@@ -228,12 +231,12 @@ function selectTile(i,apply=true,confirm=false){
 function undoAction(){discardBuildDraft();syncClock();if(!undo.length){renderSelection();return;}redo.push(state);state=undo.pop();source=null;lineStart=null;save();render();announce('Last city action undone. Budget and city state restored.');}
 function redoAction(){discardBuildDraft();syncClock();if(!redo.length){renderSelection();return;}undo.push(state);state=redo.pop();source=null;lineStart=null;save();render();announce('City action restored.');}
 function step(){if(buildDraft||lineStart!==null){announce('Confirm or cancel your building plan before advancing the month.');return;}if(state.event&&!state.event.choice){playing=false;syncClock();experience?.openDecision();return;}source=null;lineStart=null;if(commit(C.advance(state))){monthly?.notify();if(state.event&&!state.event.choice){playing=false;syncClock();experience?.openDecision();}}}
-function hasOverlay(){return ['monthly-report','development','results','confirm','finance','decision','commands','residents','transport','mission-completion'].some(name=>$(name)?.open);}
+function hasOverlay(){return !$('onboarding').hidden||['monthly-report','development','results','confirm','finance','decision','commands','residents','transport','mission-completion'].some(name=>$(name)?.open);}
 function visibleGame(){return document.body.dataset.view==='game'&&!document.hidden;}
 function renderClock(){const running=playing&&visibleGame()&&!hasOverlay()&&!buildDraft&&lineStart===null;$('play').innerHTML=glyph(playing?'pause':'play');$('play').setAttribute('aria-pressed',String(playing));$('play').setAttribute('aria-label',playing?'Pause the monthly simulation':'Run the monthly simulation');$('speed').textContent=speed+'×';$('city-status').innerHTML='<i></i> CITY SIMULATION '+(running?'RUNNING':'PAUSED');$('city-status').classList.toggle('gc-running',running);}
 function syncClock(){clearInterval(timer);timer=null;if(playing&&visibleGame()&&!hasOverlay()&&!buildDraft&&lineStart===null)timer=setInterval(step,12000/speed);renderClock();}
 function confirmAction(title,text,action){pending=action;$('confirm-title').textContent=title;$('confirm-message').textContent=text;$('confirm').showModal();syncClock();}
-function reset(challenge){discardBuildDraft();development?.close();monthly?.close();introduction?.reset();experience?.closeOverlays();playing=false;syncClock();state=C.fresh(challenge);undo=[];redo=[];rotation=0;selected='tree';category='Nature';mode='inspect';focus=8*C.size+8;source=null;lineStart=null;$('search').value='';$('onboarding').hidden=false;save();render();world?.resetView();announce('A new city is ready. '+C.challenges[challenge].goal);}
+function reset(challenge){discardBuildDraft();development?.close();monthly?.close();introduction?.reset();experience?.closeOverlays();playing=false;syncClock();state=C.fresh(challenge);undo=[];redo=[];rotation=0;selected='tree';category='Nature';mode='inspect';focus=8*C.size+8;source=null;lineStart=null;$('search').value='';showWelcome(true);save();render();world?.resetView();$('welcome-start').focus();announce('A new city is ready. '+C.challenges[challenge].goal);}
 function download(name,blob){const url=URL.createObjectURL(blob),link=document.createElement('a');link.href=url;link.download=name;link.click();setTimeout(()=>URL.revokeObjectURL(url),1000);}
 function evaluate(){
   const a=analysis,goals=C.goals(state,a),completed=goals.filter(g=>g.lower?g.value<=g.target:g.value>=g.target).length;
@@ -297,8 +300,17 @@ root.querySelectorAll('[data-gc-camera]').forEach(button=>button.addEventListene
 $('overlay').addEventListener('change',()=>{const value=$('overlay').value;world?.setOverlay(value);$('overlay-legend').hidden=value==='city';$('overlay-name').textContent=$('overlay').selectedOptions[0].textContent;$('overlay-scale').textContent=value==='housing'?'Vacant → Occupied · grey: other plots':value==='staffing'?'Unstaffed → Filled · grey: other plots':value==='power'?'Imported grid power → Local clean supply':value==='noise'?'Louder places → Quieter streets':value==='traffic'?'Congested roads → Flowing traffic':value==='neighbourhood'?'Priority needs → Better supported homes':'Needs attention → Better prepared';});
 $('minimap').addEventListener('click',event=>{const rect=$('minimap').getBoundingClientRect(),col=Math.min(C.size-1,Math.floor((event.clientX-rect.left)/rect.width*C.size)),row=Math.min(C.size-1,Math.floor((event.clientY-rect.top)/rect.height*C.size));selectTile(row*C.size+col,false);world?.focusCell(focus);});$('minimap').addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();world?.focusCell(focus);}});
 $('welcome-start').addEventListener('click',()=>introduction?.start());
-$('dismiss-tutorial').addEventListener('click',()=>{$('onboarding').hidden=true;try{localStorage.setItem('coil-green-city-guide-dismissed','1');}catch{}});
-try{$('onboarding').hidden=restored||localStorage.getItem('coil-green-city-guide-dismissed')==='1';}catch{}
+function dismissWelcome(){
+  showWelcome(false);
+  try { localStorage.setItem('coil-green-city-guide-dismissed', '1'); } catch {}
+}
+$('dismiss-tutorial').addEventListener('click', () => {
+  dismissWelcome();
+  root.querySelector('[data-gc-tool="inspect"]').focus();
+});
+let welcomeDismissed=false;
+try { welcomeDismissed=localStorage.getItem('coil-green-city-guide-dismissed')==='1'; } catch {}
+showWelcome(!restored&&!welcomeDismissed);
 // Local music remains opt-in and stops when the game or document is hidden.
 const music=new Audio('assets/audio/climate-mission.wav');music.id='gc-music';music.hidden=true;music.loop=true;music.preload='none';music.volume=.32;root.append(music);
 let musicEnabled=false,musicToken=0;
@@ -309,7 +321,7 @@ window.addEventListener('app:view',syncView);document.addEventListener('visibili
 document.addEventListener('keydown',e=>{if(!visibleGame()||hasOverlay())return;if(e.key==='Escape'&&(buildDraft||lineStart!==null)){e.preventDefault();cancelBuildPlan();return;}if(/INPUT|SELECT|TEXTAREA/.test(e.target.tagName))return;if(e.key==='Escape'){source=null;lineStart=null;shell.dataset.panel='none';if(shell.classList.contains('gc-expanded'))setExpanded(false);renderSelection();return;}if(e.ctrlKey||e.metaKey){if(e.key.toLowerCase()==='z'){e.preventDefault();e.shiftKey?redoAction():undoAction();}if(e.key.toLowerCase()==='y'){e.preventDefault();redoAction();}return;}if(['q','e'].includes(e.key.toLowerCase())){e.preventDefault();rotateBuilding(e.key.toLowerCase()==='q'?-1:1);return;}const tools={l:'land',i:'inspect',b:'build',r:'road',u:'upgrade',m:'move',x:'demolish'};if(tools[e.key.toLowerCase()]){e.preventDefault();setMode(tools[e.key.toLowerCase()]);}});
 experience=createExperience({getState:()=>state,getAnalysis:()=>analysis,focusTile:(i,overlay)=>{setMode('inspect');selectTile(i,false);world?.focusCell(i);if(overlay){$('overlay').value=overlay;$('overlay').dispatchEvent(new Event('change'));}},focusPlan:i=>{selectTile(i,false);world?.focusCell(i);},commit,announce,setMode,choose,setPanel,openPanel:panel=>{if(shell.dataset.panel!==panel)setPanel(panel);},syncClock,hasOverlay,confirmAction,evaluate,step,undo:undoAction,redo:redoAction,resize:()=>world?.resize()});
 planning=createPlanning({getState:()=>state,getAnalysis:()=>analysis,getWorld:()=>world,getMode:()=>mode,setMode,announce,inspectTile:i=>selectTile(i,false),closePanels:()=>setPanel('none'),openNeighbourhood:i=>experience?.openNeighbourhood(i)});
-introduction=createIntroduction({getState:()=>state,getAnalysis:()=>analysis,planning:()=>planning,commit,setMode,announce,dismissWelcome:()=>$('dismiss-tutorial').click(),pause:()=>{playing=false;syncClock();},closePanels:()=>setPanel('none'),showHome:i=>{selectTile(i,false);world?.focusCell(i);},openGoals:()=>setPanel('goals'),openNeighbourhood:i=>experience?.openNeighbourhood(i),previewPlan:plan=>{if(plan.kind==='upgrade')setMode('upgrade');else choose(plan.type);selectTile(plan.target,false);world?.focusCell(plan.target);if(world&&world.camera.zoom<1.8)world.zoomBy(1.8/world.camera.zoom);},executePlan:plan=>{if(plan.kind==='upgrade')setMode('upgrade');else choose(plan.type);selectTile(plan.target,true,true);}});
+introduction=createIntroduction({getState:()=>state,getAnalysis:()=>analysis,planning:()=>planning,commit,setMode,announce,dismissWelcome,pause:()=>{playing=false;syncClock();},closePanels:()=>setPanel('none'),showHome:i=>{selectTile(i,false);world?.focusCell(i);},openGoals:()=>setPanel('goals'),openNeighbourhood:i=>experience?.openNeighbourhood(i),previewPlan:plan=>{if(plan.kind==='upgrade')setMode('upgrade');else choose(plan.type);selectTile(plan.target,false);world?.focusCell(plan.target);if(world&&world.camera.zoom<1.8)world.zoomBy(1.8/world.camera.zoom);},executePlan:plan=>{if(plan.kind==='upgrade')setMode('upgrade');else choose(plan.type);selectTile(plan.target,true,true);}});
 window.addEventListener('app:view',()=>{if(document.body.dataset.view!=='game'){discardBuildDraft();planning.close();syncClock();}});
 development=createDevelopment({getState:()=>state,getAnalysis:()=>analysis,commit,syncClock,announce,choose,startLand,openBuild:()=>setPanel('build'),openFinance:()=>experience.openFinance(),showHome:i=>experience.openNeighbourhood(i)});
 monthly=createMonthlyReport({getState:()=>state,getAnalysis:()=>analysis,syncClock,inspect:i=>{setMode('inspect');selectTile(i,false);world?.focusCell(i);if(shell.dataset.panel!=='city')setPanel('city');}});

@@ -2,7 +2,7 @@
 (function(host){
 'use strict';
 const clamp=x=>Math.max(0,Math.min(1,x)),ease=x=>{x=clamp(x);return x*x*(3-2*x);};
-const chapters=[0,.22,.415,.67,.79,.98],opening={camera:[-8,3.1,22],target:[-.5,1,-17],fov:43};
+const chapters=[0,.22,.415,.71,.82,.98],opening={camera:[-8,3.1,22],target:[-.5,1,-17],fov:43};
 const keys=[
 [0,opening.camera,opening.target,.35,0,0],
 [.11,[-19,1.8,24],[-7,.1,2],.45,0,0],
@@ -12,10 +12,10 @@ const keys=[
 [.46,[.3,.7,-9],[.3,.2,-26],3.3,0,0],
 [.51,[0,7,-18],[0,0,-26],3.4,0,0],
 [.56,[0,25,-4],[0,0,-7],3.4,.08,0],
-[.61,[20,120,.1],[20,0,0],3.4,.55,0],
-[.65,[65,320,.12],[65,0,0],3.4,1,0],
-[.80,[65,320,.12],[65,0,0],3.4,1,0],
-[.85,[30,160,15],[30,0,0],3.4,.65,0],
+[.62,[20,120,.1],[20,0,0],3.4,.55,0],
+[.71,[65,320,.12],[65,0,0],3.4,1,0],
+[.82,[65,320,.12],[65,0,0],3.4,1,0],
+[.865,[30,160,15],[30,0,0],3.4,.65,0],
 [.935,opening.camera,opening.target,3.4,0,0],
 [.955,opening.camera,opening.target,7,0,.18],
 [1,opening.camera,opening.target,8,0,1]
@@ -32,14 +32,48 @@ function frameAt(raw,portrait=false){
 const p=clamp(Number.isFinite(raw)?raw:0);let i=keys.findIndex((_,j)=>j<keys.length-1&&p<=keys[j+1][0]);if(i<0)i=keys.length-2;
 const h=keys[i+1][0]-keys[i][0],t=clamp((p-keys[i][0])/h),t2=t*t,t3=t2*t;
 const v=values[i].map((a,d)=>(2*t3-3*t2+1)*a+(t3-2*t2+t)*h*slopes[i][d]+(-2*t3+3*t2)*values[i+1][d]+(t3-t2)*h*slopes[i+1][d]);
-let camera=v.slice(0,3),target=v.slice(3,6);const map=clamp(v[7]),handoff=ease((map-.12)/.78);
+let camera=v.slice(0,3),target=v.slice(3,6);const map=clamp(v[7]);
+// Use the full scroll interval once: nested easing previously squeezed the
+// visible dissolve into a few wheel ticks. Space arrives before the map detail.
+const orbitCover=ease((p-.52)/.10)*(1-ease((p-.88)/.055));
+const mapBlend=ease((p-.59)/.12)*(1-ease((p-.84)/.08));
 if(portrait){camera=[camera[0]*.5,camera[1]+190*map,camera[2]+4*(1-map)+80*map];camera[0]*=1-map;target=[target[0]*.3*(1-map),target[1]-.25*(1-map),target[2]+80*map];}
 let chapter=0;for(let j=1;j<chapters.length;j++)if(p>=(chapters[j-1]+chapters[j])/2)chapter=j;
-return {progress:p,portrait,chapter,camera,target,fov:portrait?54:opening.fov,gap:v[6],map,orbitCover:ease(handoff/.45),mapBlend:ease((handoff-.3)/.7),drift:clamp(v[8]),underwater:ease((.08-camera[1])/.4),wildlife:1-ease((p-.07)/.13)};
+return {progress:p,portrait,chapter,camera,target,fov:portrait?54:opening.fov,gap:v[6],map,orbitCover,mapBlend,drift:clamp(v[8]),underwater:ease((.08-camera[1])/.4),wildlife:1-ease((p-.07)/.13)};
 }
 function progressAt(scrollY,start,trackHeight,stageHeight){return clamp((scrollY-start)/Math.max(1,trackHeight-stageHeight));}
-function follow(current,target,dt){const d=target-current;return Math.abs(d)<.000003?target:current+d*(1-Math.exp(-Math.min(50,dt)/65));}
+function follow(current,target,dt){const d=target-current,orbital=ease((current-.48)/.04)*(1-ease((current-.74)/.04)),response=65+85*orbital;return Math.abs(d)<.000003?target:current+d*(1-Math.exp(-Math.min(50,dt)/response));}
 function chartPoint(row,index,count){return [48+index/Math.max(1,count-1)*624,226-row.extent/9*194];}
-const api={chapters,opening,frameAt,progressAt,chartPoint,clamp,ease,follow,waypoints:keys.map(k=>k[0])};
+// NSIDC EPSG:3411, Hughes 1980. Keep the sampled polar cap inside the bundled
+// map's real coverage rather than cutting its outer coastlines into a disc.
+// https://nsidc.org/data/user-resources/help-center/guide-nsidcs-polar-stereographic-projection
+const eccentricity=Math.sqrt(1-(6356889.449/6378273)**2),standard=70*Math.PI/180;
+const polarT=latitude=>Math.tan(Math.PI/4-latitude/2)/Math.pow((1-eccentricity*Math.sin(latitude))/(1+eccentricity*Math.sin(latitude)),eccentricity/2);
+const globe={distance:1.19,eccentricity,polarScale:6378273*Math.cos(standard)/Math.sqrt(1-eccentricity**2*Math.sin(standard)**2)/polarT(standard)/8000000};
+function globeSample(x,y){
+  if(x*x+y*y>1+1e-12)return null;
+  const cone=1/Math.sqrt(globe.distance**2-1),length=Math.hypot(x*cone,y*cone,1),ray=[x*cone/length,y*cone/length,-1/length];
+  const b=globe.distance*ray[2],distance=-b-Math.sqrt(Math.max(0,b*b-globe.distance**2+1));
+  const point=[ray[0]*distance,ray[1]*distance,globe.distance+ray[2]*distance],s=Math.max(-1,Math.min(1,point[2])),rho=globe.polarScale*Math.sqrt((1-s)/(1+s))/Math.pow((1-eccentricity*s)/(1+eccentricity*s),eccentricity/2),radial=Math.max(1e-9,Math.hypot(point[0],point[1]));
+  return {point,uv:[.5+point[0]/radial*rho,.5+point[1]/radial*rho],latitude:Math.asin(s)};
+}
+const contourCache=new WeakMap();
+function smoothIceRing(ring){
+  if(contourCache.has(ring))return contourCache.get(ring);
+  let points=ring.slice(0,-1).map(p=>p.slice());
+  // Round the grid-cell corners for display, with each cut limited to half a
+  // 25 km cell. The measured outlines and CSV values remain untouched.
+  for(let pass=0;pass<2;pass++){
+    const rounded=[];
+    for(let i=0;i<points.length;i++){
+      const a=points[i],b=points[(i+1)%points.length],length=Math.hypot(b[0]-a[0],b[1]-a[1]),t=length?Math.min(.25,12500/length):0;
+      rounded.push([a[0]+(b[0]-a[0])*t,a[1]+(b[1]-a[1])*t],[a[0]+(b[0]-a[0])*(1-t),a[1]+(b[1]-a[1])*(1-t)]);
+    }
+    points=rounded;
+  }
+  if(points.length)points.push(points[0].slice());
+  contourCache.set(ring,points);return points;
+}
+const api={chapters,opening,frameAt,progressAt,chartPoint,clamp,ease,follow,globe,globeSample,smoothIceRing,waypoints:keys.map(k=>k[0])};
 if(typeof module==='object'&&module.exports)module.exports=api;else host.ArcticModel=api;
 })(globalThis);

@@ -7,7 +7,7 @@ const storeKey='coil-green-city-introduction-v1';
 export function createIntroduction(api){
   const shell=document.getElementById('gc-shell'),coach=document.createElement('section');coach.className='gc-intro';coach.hidden=true;coach.setAttribute('role','region');coach.setAttribute('aria-labelledby','gc-intro-title');
   const map=shell.querySelector('.gc-world-wrap');map.before(coach);
-  const launch=document.createElement('button');launch.type='button';launch.className='gc-intro-launch';launch.textContent='Guided introduction';document.getElementById('gc-tab-help').querySelector('h3').after(launch);
+  const launch=document.createElement('button');launch.type='button';launch.className='gc-intro-launch';launch.textContent='Shade challenge';document.getElementById('gc-tab-help').querySelector('h3').after(launch);
   const residentNext=document.createElement('button');residentNext.type='button';residentNext.className='gc-intro-person-next';residentNext.hidden=true;residentNext.textContent='Continue: plan more shade';shell.querySelector('.gc-person-note').before(residentNext);
   let session=null,plan=null,lastResult=null,blocked=null,lastStage=null;
   try{session=I.restore(C,api.getState(),JSON.parse(localStorage.getItem(storeKey)),api.getAnalysis());}catch{}
@@ -82,7 +82,7 @@ export function createIntroduction(api){
       }
     }
     const hadFocus=coach.contains(document.activeElement);
-    coach.hidden=false;coach.dataset.stage=String(stage);coach.innerHTML=`<header><span>OPTIONAL INTRODUCTION · ${stage} / 4</span><button type="button" data-intro-skip aria-label="Skip guided introduction">×</button></header><ol class="gc-intro-steps" aria-label="Introduction steps">${['Meet','Plan','Build','Result'].map((name,n)=>`<li${stage===n+1?' aria-current="step"':''} class="${stage>n+1?'is-done':''}">${stage>n+1?'✓':n+1} ${name}</li>`).join('')}</ol><h3 id="gc-intro-title" tabindex="-1">${escape(title)}</h3><p>${escape(copy)}</p>${facts}<div class="gc-intro-actions"><button type="button" id="gc-intro-next" ${disabled?'disabled':''}>${escape(button)}</button>${stage===3?'<button type="button" data-intro-replan>Recheck plan</button>':''}<button type="button" data-intro-skip>${stage===4?'Close introduction':'Skip introduction'}</button></div>`;
+    coach.hidden=false;coach.dataset.stage=String(stage);coach.innerHTML=`<header><span>COOL THE BLOCK · ${stage} / 4</span><button type="button" data-intro-skip aria-label="Skip guided introduction">×</button></header><ol class="gc-intro-steps" aria-label="Introduction steps">${['Meet','Plan','Build','Result'].map((name,n)=>`<li${stage===n+1?' aria-current="step"':''} class="${stage>n+1?'is-done':''}">${stage>n+1?'✓':n+1} ${name}</li>`).join('')}</ol><h3 id="gc-intro-title" tabindex="-1">${escape(title)}</h3><p>${escape(copy)}</p>${facts}<div class="gc-intro-actions"><button type="button" id="gc-intro-next" ${disabled?'disabled':''}>${escape(button)}</button>${stage===3?'<button type="button" data-intro-replan>Recheck plan</button>':''}<button type="button" data-intro-skip>${stage===4?'Close introduction':'Skip introduction'}</button></div>`;
     if(session)persist();
     if(hadFocus)coach.querySelector('#gc-intro-next').focus({preventScroll:true});
     if(stage===4&&lastStage!==4)focusCoach();

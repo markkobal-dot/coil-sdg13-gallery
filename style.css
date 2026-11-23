@@ -2220,7 +2220,6 @@ footer {
   body[data-mobile-view="climate-story"] .shift-step.is-active {
     display: block;
     border-left-color: #e58a65;
-    animation: mobile-view-enter .22s ease both;
   }
   .story-controls {
     display: flex;
@@ -2268,9 +2267,6 @@ footer {
   }
   body[data-mobile-view="home"] main > #home, body[data-mobile-view="home"] main > #problem, body[data-mobile-view="home"] main > #slovenia-data, body[data-mobile-view="problem"] main > #problem, body[data-mobile-view="problem"] main > #slovenia-data, body[data-mobile-view="climate-story"] main > #climate-story, body[data-mobile-view="gallery"] main > #gallery, body[data-mobile-view="game"] main > #game, body[data-mobile-view="solutions"] main > #solutions, body[data-mobile-view="journey"] main > #journey, body[data-mobile-view="team"] main > #team {
     display: block;
-  }
-  body[data-mobile-view] main > section {
-    animation: mobile-view-enter .24s ease both;
   }
   .mobile-view-bar {
     display: flex;
@@ -2358,16 +2354,6 @@ footer {
   }
   body[data-mobile-view="climate-story"] .shift-step.is-active {
     animation: none !important;
-  }
-}
-@keyframes mobile-view-enter {
-  from {
-    opacity: 0;
-    transform: translateY(8px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
   }
 }
 .climate-photo {

@@ -3,13 +3,15 @@ import {GLTFLoader} from './assets/vendor/three/GLTFLoader.js';
 import './arctic-ice.js?v=b990c3418e';
 const I=globalThis.ArcticIce;
 
-// Bundled CC0 maps; phone variants use a quarter of the pixels.
+// Bundled CC0 maps. Fine snow normals/roughness use the 1K variants on both
+// layouts; the unused ice displacement map is never requested.
 export async function loadSurfaceTextures(low=false){
   const loader=new THREE.TextureLoader(),base=new URL('./assets/arctic/textures/'+(low?'mobile/':''),import.meta.url);
   const textures={};
-  await Promise.all(['snow-color','snow-normal','snow-roughness','snow-height','ice-color','ice-normal','ice-roughness','ice-height','sky'].map(async name=>{
+  await Promise.all(['snow-color','snow-normal','snow-roughness','snow-height','ice-color','ice-normal','ice-roughness','sky'].map(async name=>{
     try{
-      const t=await loader.loadAsync(new URL(name+'.webp',base).href);
+      const textureBase=!low&&['snow-normal','snow-roughness'].includes(name)?new URL('mobile/',base):base;
+      const t=await loader.loadAsync(new URL(name+'.webp',textureBase).href);
       t.colorSpace=name.endsWith('color')||name==='sky'?THREE.SRGBColorSpace:THREE.NoColorSpace;
       t.wrapS=t.wrapT=THREE.RepeatWrapping;t.anisotropy=low?2:8;
       textures[name]=t;
@@ -20,7 +22,7 @@ export async function loadSurfaceTextures(low=false){
 export function iceMaterial(){
   const snow=new THREE.MeshStandardMaterial({color:'#f3faff',roughness:.9,vertexColors:true,dithering:true});
   // Opaque scattering avoids glass transmission's screen-space refraction artefacts.
-  const blue=new THREE.MeshPhysicalMaterial({color:'#c2e1e9',roughness:.48,vertexColors:true,clearcoat:.1,clearcoatRoughness:.4,ior:1.31,dithering:true});
+  const blue=new THREE.MeshPhysicalMaterial({color:'#c8e0e7',roughness:.56,vertexColors:true,clearcoat:.06,clearcoatRoughness:.48,ior:1.31,dithering:true});
   for(const [index,material] of [snow,blue].entries()){
     material.onBeforeCompile=shader=>{
       shader.vertexShader='varying vec3 vIcePoint;varying vec3 vIceNormal;\n'+shader.vertexShader.replace('#include <begin_vertex>','#include <begin_vertex>\nvIcePoint=position;vIceNormal=normal;');
@@ -32,7 +34,7 @@ export function iceMaterial(){
         shader.fragmentShader=shader.fragmentShader.replace('#include <map_fragment>','#ifdef USE_MAP\nvec3 weights=pow(abs(normalize(vIceNormal)),vec3(4.));weights/=max(dot(weights,vec3(1.)),.0001);vec3 p=vIcePoint*.24;vec3 detail=iceDetail(p.zy)*weights.x+iceDetail(p.xz)*weights.y+iceDetail(p.xy)*weights.z;diffuseColor.rgb*=mix(vec3(1.),detail,.38);\n#endif');
       }
       shader.fragmentShader=shader.fragmentShader.replace('#include <color_fragment>','#include <color_fragment>\nfloat wetBand=1.-smoothstep(.015,.17,abs(vIcePoint.y));diffuseColor.rgb*=1.-wetBand*.1;\n'+(index===1?'float frost=smoothstep(-.12,.72,vIcePoint.y);diffuseColor.rgb=mix(diffuseColor.rgb,vec3(.82,.91,.94),frost*.58);':''));
-      if(index===1)shader.fragmentShader=shader.fragmentShader.replace('#include <emissivemap_fragment>','#include <emissivemap_fragment>\nfloat scatter=exp(-abs(vIcePoint.y+.5)*.38);totalEmissiveRadiance+=vec3(.008,.065,.09)*scatter;');
+      if(index===1)shader.fragmentShader=shader.fragmentShader.replace('#include <emissivemap_fragment>','#include <emissivemap_fragment>\nfloat scatter=exp(-abs(vIcePoint.y+.35)*.54);totalEmissiveRadiance+=vec3(.009,.043,.065)*scatter;');
     };
   }
   return [snow,blue];
@@ -62,7 +64,7 @@ export function makeFloe(side,materials,low=false){
     if(j===0)normals.setXYZ(data.wallStart+n,normal.x,normal.y,normal.z);
   }
   const group=new THREE.Group(),mesh=new THREE.Mesh(geometry,materials);mesh.castShadow=mesh.receiveShadow=true;group.add(mesh);
-  const chipMaterial=new THREE.MeshPhysicalMaterial({color:'#f4fbff',roughness:.52,clearcoat:.14,vertexColors:true});group.userData.rubbleMaterial=chipMaterial;
+  const chipMaterial=new THREE.MeshStandardMaterial({color:'#f4fbff',roughness:.76,vertexColors:true});group.userData.rubbleMaterial=chipMaterial;
   const pose=new THREE.Object3D(),perVariant=low?10:17;
   // Fewer weathered pieces, partly embedded in snow, with varied rounded outlines.
   for(let variant=0;variant<5;variant++){

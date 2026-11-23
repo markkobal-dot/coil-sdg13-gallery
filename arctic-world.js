@@ -1,5 +1,5 @@
 import * as THREE from './assets/vendor/three/three.module.js';
-import {iceMaterial,makeFloe,iceberg,fragments,loadSurfaceTextures,applyTextures} from './arctic-surfaces.js?v=6eda190933';
+import {iceMaterial,makeFloe,iceberg,fragments,loadSurfaceTextures,applyTextures} from './arctic-surfaces.js?v=c2d57c4fa1';
 import {ArcticWildlife} from './arctic-wildlife.js?v=a16811df99';
 const skyVertex='varying vec3 vP;void main(){vP=position;gl_Position=projectionMatrix*modelViewMatrix*vec4(position,1.);}';
 const skyFragment=[
@@ -61,17 +61,23 @@ const waterFragment=[
 // never enlarged into a low-altitude ice texture during the handoff.
 const orbitalVertex='varying vec2 vUv;void main(){vUv=uv;gl_Position=projectionMatrix*modelViewMatrix*vec4(position,1.);}';
 const orbitalFragment=[
-'varying vec2 vUv;uniform sampler2D polarMap;uniform float reveal;uniform float mapVisibility;uniform vec2 resolution;',
+'varying vec2 vUv;uniform sampler2D polarMap;uniform float reveal;uniform float mapVisibility;uniform vec2 resolution;uniform float orbitalDistance;uniform float polarScale;uniform float eccentricity;',
 'float starHash(vec2 cell){return fract(sin(dot(cell,vec2(127.1,311.7)))*43758.5453);}',
 'void main(){vec2 screen=gl_FragCoord.xy/resolution.y;vec2 grid=screen*60.;vec2 cell=floor(grid);',
 'float stars=step(.992,starHash(cell))*(1.-smoothstep(.025,.07,length(fract(grid)-.5)));',
 'vec3 space=vec3(.001,.003,.009)+vec3(.002,.006,.014)*exp(-length(screen-vec2(.4,.6))*1.7)+vec3(.38,.47,.62)*stars;',
-'vec2 uv=(vUv-.5)*(1600./260.)+.5;float radius=length(uv-.5);',
-'float rim=exp(-pow((radius-.495)/.012,2.));space+=vec3(.009,.065,.12)*rim*mapVisibility;',
-'vec4 polar=texture2D(polarMap,clamp(uv,vec2(0.),vec2(1.)));',
-'float inside=step(0.,uv.x)*step(uv.x,1.)*step(0.,uv.y)*step(uv.y,1.);',
-'vec3 surface=polar.rgb*(1.-.12*smoothstep(.28,.5,radius));',
-'gl_FragColor=vec4(mix(space,surface,polar.a*inside*mapVisibility),reveal);',
+'vec2 q=(vUv-.5)*(3200./187.2);float radius=length(q);float edge=max(fwidth(radius),.0001);float coverage=1.-smoothstep(1.-edge,1.+edge,radius);',
+// Intersect an orbital camera ray with a real sphere, then project that surface
+// point into the existing NSIDC map. Coastlines curve toward a smooth horizon.
+'vec3 eye=vec3(0.,0.,orbitalDistance);vec3 ray=normalize(vec3(q/sqrt(orbitalDistance*orbitalDistance-1.),-1.));',
+'float b=dot(eye,ray);float hit=-b-sqrt(max(0.,b*b-orbitalDistance*orbitalDistance+1.));vec3 point=eye+ray*hit;vec3 normal=normalize(point);',
+'float s=clamp(normal.z,-.9999999,1.);float rho=polarScale*sqrt(max(0.,(1.-s)/(1.+s)))/pow((1.-eccentricity*s)/(1.+eccentricity*s),eccentricity*.5);',
+'vec2 uv=.5+normal.xy/max(length(normal.xy),.000001)*rho;vec3 polar=texture2D(polarMap,clamp(uv,vec2(0.),vec2(1.))).rgb;',
+'vec3 light=normalize(vec3(-.5,.65,1.1));float daylight=.15+.85*pow(max(dot(normal,light),0.),.7);vec3 surface=polar*daylight;',
+'float limb=pow(1.-max(dot(normal,normalize(eye-point)),0.),3.);surface=mix(surface,vec3(.055,.15,.23),limb*.28);',
+'float atmosphere=exp(-pow((radius-1.)/.012,2.));space+=vec3(.003,.014,.027)*atmosphere*mapVisibility;',
+'surface+=vec3(.004,.012,.02)*limb;',
+'gl_FragColor=vec4(mix(space,surface,coverage*mapVisibility),reveal);',
 '#include <colorspace_fragment>',
 '}'
 ].join('\n');
@@ -109,11 +115,13 @@ export class ArcticWorld{
     const dustGeometry=new THREE.BufferGeometry();dustGeometry.setAttribute('position',new THREE.Float32BufferAttribute(dustPositions,3));
     this.dustMaterial=new THREE.ShaderMaterial({transparent:true,depthWrite:false,uniforms:{opacity:{value:0}},vertexShader:'void main(){vec4 p=modelViewMatrix*vec4(position,1.);gl_Position=projectionMatrix*p;gl_PointSize=clamp(11./max(1.,-p.z),.7,2.4);}',fragmentShader:'uniform float opacity;void main(){float r=length(gl_PointCoord-.5)*2.;if(r>1.)discard;gl_FragColor=vec4(.5,.82,.9,(1.-r*r)*opacity);}'});
     this.dust=new THREE.Points(dustGeometry,this.dustMaterial);this.dust.visible=false;this.closeScene.add(this.dust);
-    this.mapCanvas=document.createElement('canvas');this.mapCanvas.width=this.mapCanvas.height=this.low?1024:2048;
+    this.mapCanvas=document.createElement('canvas');this.mapCanvas.width=this.mapCanvas.height=Math.min(this.renderer.capabilities.maxTextureSize,this.low?1536:3072);this.mapPaths=new Map();
     this.mapTexture=new THREE.CanvasTexture(this.mapCanvas);this.mapTexture.colorSpace=THREE.SRGBColorSpace;
+    this.mapTexture.anisotropy=Math.min(this.renderer.capabilities.getMaxAnisotropy(),this.low?4:8);
     this.mapScene=new THREE.Scene();this.mapCamera=new THREE.PerspectiveCamera(43,1,.01,1800);
-    this.mapViews=[false,true].map(portrait=>globalThis.ArcticModel.frameAt(.67,portrait));
-    this.mapMaterial=new THREE.ShaderMaterial({transparent:true,depthTest:false,depthWrite:false,toneMapped:false,uniforms:{polarMap:{value:this.mapTexture},reveal:{value:0},mapVisibility:{value:0},resolution:{value:new THREE.Vector2(1,1)}},vertexShader:orbitalVertex,fragmentShader:orbitalFragment});
+    this.mapViews=[false,true].map(portrait=>globalThis.ArcticModel.frameAt(globalThis.ArcticModel.chapters[3],portrait));
+    const globe=globalThis.ArcticModel.globe;
+    this.mapMaterial=new THREE.ShaderMaterial({transparent:true,depthTest:false,depthWrite:false,toneMapped:false,uniforms:{polarMap:{value:this.mapTexture},reveal:{value:0},mapVisibility:{value:0},resolution:{value:new THREE.Vector2(1,1)},orbitalDistance:{value:globe.distance},polarScale:{value:globe.polarScale},eccentricity:{value:globe.eccentricity}},vertexShader:orbitalVertex,fragmentShader:orbitalFragment});
     this.mapPlane=new THREE.Mesh(new THREE.PlaneGeometry(1600,1600),this.mapMaterial);this.mapPlane.rotation.x=-Math.PI/2;this.mapPlane.position.y=.1;this.mapScene.add(this.mapPlane);
     this.frameMap(false);
     this.mapData=mapData;this.setYear(year);
@@ -149,13 +157,17 @@ export class ArcticWorld{
     if(this.year===year&&!force)return;this.year=year;
     const ctx=this.mapCanvas.getContext('2d'),size=this.mapCanvas.width,scale=size/1024;
     ctx.clearRect(0,0,size,size);ctx.fillStyle='#173c48';ctx.fillRect(0,0,size,size);
-    const path=rings=>{ctx.beginPath();for(const ring of rings||[]){ring.forEach(([x,y],i)=>{const px=size/2+x/8000000*size,py=size/2-y/8000000*size;i?ctx.lineTo(px,py):ctx.moveTo(px,py);});ctx.closePath();}};
+    const path=(key,rings,smooth=false)=>{
+      if(this.mapPaths.has(key))return this.mapPaths.get(key);
+      const outline=new Path2D();for(const raw of rings||[]){const ring=smooth?globalThis.ArcticModel.smoothIceRing(raw):raw;ring.forEach(([x,y],i)=>{const px=size/2+x/8000000*size,py=size/2-y/8000000*size;i?outline.lineTo(px,py):outline.moveTo(px,py);});outline.closePath();}
+      this.mapPaths.set(key,outline);return outline;
+    };
     ctx.strokeStyle='#aec6c729';ctx.lineWidth=scale;for(const radius of [.125,.25,.375]){ctx.beginPath();ctx.arc(size/2,size/2,size*radius,0,Math.PI*2);ctx.stroke();}
-    path(this.mapData.years[String(year)]);ctx.fillStyle='#edf2e9';ctx.fill('evenodd');ctx.strokeStyle='#c9e0e1';ctx.lineWidth=.5*scale;ctx.stroke();
+    const ice=path(year,this.mapData.years[String(year)],true);ctx.fillStyle='#edf2e9';ctx.fill(ice,'evenodd');ctx.strokeStyle='#c9e0e1';ctx.lineWidth=.5*scale;ctx.stroke(ice);
     // Land covers the extent grid's coastal cells, so land snow is never presented as sea ice.
-    path(this.mapData.coast);ctx.fillStyle='#70837c';ctx.fill('evenodd');
-    if(this.basemapImage){ctx.save();ctx.clip('evenodd');ctx.drawImage(this.basemapImage,0,0,size,size);ctx.restore();}
-    path(this.mapData.coast);ctx.strokeStyle='#a4b4aa';ctx.lineWidth=.6*scale;ctx.stroke();
+    const coast=path('coast',this.mapData.coast);ctx.fillStyle='#70837c';ctx.fill(coast,'evenodd');
+    if(this.basemapImage){ctx.save();ctx.clip(coast,'evenodd');ctx.drawImage(this.basemapImage,0,0,size,size);ctx.restore();}
+    ctx.strokeStyle='#a4b4aa';ctx.lineWidth=.6*scale;ctx.stroke(coast);
     ctx.globalCompositeOperation='destination-in';const gradient=ctx.createRadialGradient(size/2,size/2,size*.485,size/2,size/2,size*.499);gradient.addColorStop(0,'#fff');gradient.addColorStop(1,'#fff0');ctx.fillStyle=gradient;ctx.fillRect(0,0,size,size);ctx.globalCompositeOperation='source-over';
     this.mapTexture.needsUpdate=true;
   }

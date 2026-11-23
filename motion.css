@@ -67,13 +67,6 @@ html[data-motion="on"] .hero-landscape {
   from { transform: scale(1); }
   to { transform: scale(1.045); }
 }
-html[data-motion="on"] main > section {
-  animation: climate-destination 520ms cubic-bezier(.16, 1, .3, 1) both;
-}
-@keyframes climate-destination {
-  from { opacity: .2; transform: translateY(16px); }
-  to { opacity: 1; transform: none; }
-}
 .effects-toggle {
   position: fixed;
   right: 18px;
@@ -127,7 +120,6 @@ body.effects-paused .hero-landscape { animation-play-state: paused; }
   .climate-leaf:nth-child(n+7) { display: none; }
   .climate-leaf { width: 19px; }
   .effects-toggle { right: 12px; bottom: max(12px, env(safe-area-inset-bottom)); }
-  html[data-motion="on"] main > section { animation-duration: 380ms; }
 }
 @media (prefers-reduced-motion: reduce) {
   .climate-atmosphere, .climate-heat { display: none; }

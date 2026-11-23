@@ -1,4 +1,4 @@
-import './arctic-model.js?v=bb114c9100';
+import './arctic-model.js?v=c154fe78a5';
 
 const root=document.getElementById('climate-story');
 const M=globalThis.ArcticModel;
@@ -11,7 +11,7 @@ if(root&&M){
   const reduced=matchMedia('(prefers-reduced-motion: reduce)');
   // Start the module download beside the data requests, rather than after them.
   let worldModule=null;
-  const loadWorld=()=>worldModule||(worldModule=import('./arctic-world.js?v=6dd7cf9646'));
+  const loadWorld=()=>worldModule||(worldModule=import('./arctic-world.js?v=41c8bbe547'));
   let world=null,worldPromise=null,data=null,mapData=null,live=false,visible=true,raf=0,active=-1,selectedYear=1979,manualStill=false,lastProgress=0,disposed=false;
   let route=document.body.dataset.view==='climate-story',pendingChapter=null,hasActivated=false,renderProgress=null,lastFrameTime=0,assetsReady=false,activation=0;
   const top=()=>['.nav','.view-bar'].reduce((height,selector)=>{const el=document.querySelector(selector);return height+(el&&['sticky','fixed'].includes(getComputedStyle(el).position)?el.getBoundingClientRect().height:0);},0);
@@ -30,13 +30,14 @@ if(root&&M){
     stage.querySelector('#arctic-stage-kind').textContent=steps[active].dataset.kind;
     stage.querySelector('#arctic-stage-date').textContent=steps[active].querySelector('h3').textContent;
     stage.querySelector('#arctic-stage-caption').replaceChildren(...[...steps[active].querySelector('.arctic-caption').childNodes].map(n=>n.cloneNode(true)));
+    syncSelectedSeptember();
     if(hadChapter&&!reduced.matches&&active!==3){for(const el of [stage.querySelector('.arctic-stage-heading'),stage.querySelector('#arctic-stage-caption')])el.animate([{opacity:0},{opacity:1}],{duration:260,easing:'ease-out'});}
     buttons.forEach((b,i)=>b.setAttribute('aria-pressed',String(i===active)));
     stage.querySelector('#arctic-previous').disabled=active===0;
     stage.querySelector('#arctic-next').disabled=active===steps.length-1;
     stage.querySelector('#arctic-progress').textContent=(active+1)+' / '+steps.length;
     explorer.hidden=active!==3;
-    if(world)world.setYear(active===3?selectedYear:2026);
+    if(world)world.setYear(selectedYear);
     // Keep the selected chapter visible in the horizontally scrollable mobile strip.
     const b=buttons[active],left=b.offsetLeft-nav.clientWidth/2+b.offsetWidth/2;
     nav.scrollLeft=Math.max(0,left);
@@ -54,7 +55,7 @@ if(root&&M){
     explorer.inert=frame.chapter!==3||frame.mapBlend<.95;
     syncChapter(frame);
     const note=stage.querySelector('#arctic-map-note');note.hidden=frame.mapBlend<.95;
-    note.textContent='Ice: September '+(active===3?selectedYear:2026)+' · NSIDC. Land: NASA Blue Marble.';
+    note.textContent='Ice: September '+selectedYear+' · NSIDC. Land: NASA Blue Marble.';
     if(assetsReady&&world)world.render(frame);
     else{
       const poster=root.querySelector('#arctic-poster'),image=steps[frame.chapter].querySelector('img');
@@ -80,12 +81,21 @@ if(root&&M){
     const delta=previous?row.extent-previous.extent:null;
     root.querySelector('#arctic-year-change').textContent=previous?(delta>0?'Up ':'Down ')+Math.abs(delta).toFixed(2)+' million km² from '+previous.year+'. The long-term trend is downward.':'The first complete September in this satellite record.';
     const dot=root.querySelector('#arctic-chart-dot');if(dot){const [x,y]=M.chartPoint(row,rows.indexOf(row),rows.length);dot.setAttribute('cx',x);dot.setAttribute('cy',y);}
-    if(world&&active===3){world.setYear(selectedYear);schedule();}
+    buttons[4].textContent=live?String(selectedYear):'2026';
+    syncSelectedSeptember();
+    if(world){world.setYear(selectedYear);schedule();}
     updateReaderMap();
+  }
+  function syncSelectedSeptember(){
+    if(active!==4||!data)return;
+    const row=data.rows.find(r=>r.year===selectedYear);
+    stage.querySelector('#arctic-stage-kind').textContent='Your selected September';
+    stage.querySelector('#arctic-stage-date').textContent='September '+selectedYear;
+    stage.querySelector('#arctic-stage-caption').innerHTML=`<p>Arctic sea-ice extent in the September you selected.</p><strong class="arctic-minimum">${row.extent.toFixed(2)}<span>million km²</span></strong><span class="arctic-daily-note">Monthly mean extent. Ocean with at least 15% ice cover.</span><a class="arctic-source-link" href="assets/data/arctic-september-original.csv" target="_blank" rel="noopener noreferrer">NSIDC monthly data (CSV)</a>`;
   }
   function updateReaderMap(){
     const svg=root.querySelector('#arctic-reader-svg');if(!svg||!mapData)return;
-    const path=rings=>(rings||[]).map(r=>r.map(([x,y],i)=>(i?'L':'M')+(400+x/10000).toFixed(1)+' '+(400-y/10000).toFixed(1)).join('')+'Z').join('');
+    const path=rings=>(rings||[]).map(r=>M.smoothIceRing(r).map(([x,y],i)=>(i?'L':'M')+(400+x/10000).toFixed(1)+' '+(400-y/10000).toFixed(1)).join('')+'Z').join('');
     svg.querySelector('[data-map-ice]').setAttribute('d',path(mapData.years[String(selectedYear)]));
     svg.setAttribute('aria-label','Arctic coastline and September '+selectedYear+' monthly sea-ice extent, '+data.rows.find(r=>r.year===selectedYear).extent.toFixed(2)+' million square kilometres.');
   }
@@ -108,12 +118,13 @@ if(root&&M){
     if(raf)cancelAnimationFrame(raf);raf=0;
     const prior=active<0?0:active;live=false;assetsReady=false;root.classList.remove('arctic-live','arctic-loading');root.dataset.renderer='still';stage.hidden=true;
     steps.forEach(step=>{step.querySelector('.arctic-step-copy').inert=false;});
-    navHome.after(nav);explorerHome.after(explorer);explorer.hidden=false;explorer.inert=false;
+    navHome.after(nav);explorerHome.after(explorer);explorer.hidden=false;explorer.inert=false;buttons[4].textContent='2026';
     if(world){world.dispose();world=null;}worldPromise=null;
     mode.hidden=false;mode.textContent=reduced.matches?'Still views · reduced motion':'Use 3D walkthrough';mode.disabled=reduced.matches;
     if(route&&prior>0)steps[prior].scrollIntoView({block:'start',behavior:'instant'});
   }
   function prepareLive(){
+    buttons[4].textContent=String(selectedYear);
     stage.hidden=false;stage.append(nav,explorer);root.classList.add('arctic-live','arctic-loading');root.dataset.renderer='loading';live=true;
     steps.forEach(step=>{step.querySelector('.arctic-step-copy').inert=true;});
     mode.hidden=false;mode.disabled=false;mode.textContent='Use still views';active=-1;syncChapter(M.frameAt(0));syncSize();
