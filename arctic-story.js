@@ -1,4 +1,4 @@
-import './arctic-model.js?v=7204ff257c';
+import './arctic-model.js?v=624a0f81cf';
 
 const root=document.getElementById('climate-story');
 const M=globalThis.ArcticModel;
@@ -9,8 +9,11 @@ if(root&&M){
   const navHome=document.createComment('chapter navigation'),explorerHome=document.createComment('September explorer');
   nav.before(navHome);explorer.before(explorerHome);
   const reduced=matchMedia('(prefers-reduced-motion: reduce)');
+  // Start the module download beside the data requests, rather than after them.
+  let worldModule=null;
+  const loadWorld=()=>worldModule||(worldModule=import('./arctic-world.js?v=b546026ca1'));
   let world=null,worldPromise=null,data=null,mapData=null,live=false,visible=true,raf=0,active=-1,selectedYear=1979,manualStill=false,lastProgress=0,disposed=false;
-  let route=document.body.dataset.view==='climate-story',pendingChapter=null,hasActivated=false,renderProgress=null,lastFrameTime=0;
+  let route=document.body.dataset.view==='climate-story',pendingChapter=null,hasActivated=false,renderProgress=null,lastFrameTime=0,assetsReady=false,activation=0;
   const top=()=>['.nav','.view-bar'].reduce((height,selector)=>{const el=document.querySelector(selector);return height+(el&&['sticky','fixed'].includes(getComputedStyle(el).position)?el.getBoundingClientRect().height:0);},0);
   const bounds=()=>({start:journey.getBoundingClientRect().top+scrollY,height:journey.offsetHeight,stage:stage.offsetHeight});
   const progress=()=>{const b=bounds();return M.progressAt(scrollY,b.start,b.height,b.stage);};
@@ -39,7 +42,7 @@ if(root&&M){
     nav.scrollLeft=Math.max(0,left);
   }
   function draw(timestamp){
-    raf=0;if(!live||!world||!route||!visible||document.hidden)return;
+    raf=0;if(!live||!route||!visible||document.hidden)return;
     lastProgress=progress();
     const dt=lastFrameTime?timestamp-lastFrameTime:16;lastFrameTime=timestamp;
     renderProgress=renderProgress===null?lastProgress:M.follow(renderProgress,lastProgress,dt);
@@ -49,15 +52,20 @@ if(root&&M){
     root.dataset.renderProgress=renderProgress.toFixed(6);
     syncChapter(frame);
     const note=stage.querySelector('#arctic-map-note');note.hidden=frame.map<.65;
-    note.textContent='Map: September '+(active===3?selectedYear:2026)+' monthly mean · NSIDC / Natural Earth';
-    world.render(frame);
+    note.textContent='Ice: September '+(active===3?selectedYear:2026)+' · NSIDC. Land: NASA Blue Marble.';
+    if(assetsReady&&world)world.render(frame);
+    else{
+      const poster=root.querySelector('#arctic-poster'),image=steps[frame.chapter].querySelector('img');
+      const source=frame.portrait&&frame.chapter===0?'assets/arctic/chapter-0-portrait.webp':image?.getAttribute('src')||'assets/arctic/record-map.svg';
+      if(poster.getAttribute('src')!==source)poster.src=source;
+    }
     if(renderProgress!==lastProgress)schedule();
   }
   function schedule(){if(!raf&&live&&route&&visible&&!document.hidden)raf=requestAnimationFrame(draw);}
-  function go(index){
+  function go(index,instant=false){
     index=Math.max(0,Math.min(steps.length-1,index));
-    if(!live)pendingChapter=index;
-    if(live){const b=bounds();window.scrollTo({top:b.start+M.chapters[index]*(b.height-b.stage),behavior:reduced.matches?'instant':'smooth'});schedule();}
+    if(!world||!assetsReady)pendingChapter=index;
+    if(live){const b=bounds();window.scrollTo({top:b.start+M.chapters[index]*(b.height-b.stage),behavior:reduced.matches||instant?'instant':'smooth'});schedule();}
     else{steps[index].scrollIntoView({block:'start',behavior:'instant'});buttons.forEach((b,i)=>b.setAttribute('aria-pressed',String(i===index)));}
   }
   function updateYear(){
@@ -87,38 +95,50 @@ if(root&&M){
     if(mapData){
       const map=document.createElementNS('http://www.w3.org/2000/svg','svg');map.id='arctic-reader-svg';map.setAttribute('viewBox','0 0 800 800');map.setAttribute('role','img');map.style.width='100%';
       const coast=mapData.coast.map(r=>r.map(([x,y],i)=>(i?'L':'M')+(400+x/10000).toFixed(1)+' '+(400-y/10000).toFixed(1)).join('')+'Z').join('');
-      map.innerHTML=`<defs><clipPath id="arctic-map-clip"><circle cx="400" cy="400" r="394"/></clipPath></defs><g clip-path="url(#arctic-map-clip)"><rect width="800" height="800" fill="#173c48"/><path d="${coast}" fill="#70837c" stroke="#9eaaa3" stroke-width="1" fill-rule="evenodd"/><path data-map-ice fill="#edf2e9" stroke="#ccdddd" stroke-width=".6" fill-rule="evenodd"/></g>`;
+      const basemap='assets/arctic/'+(innerWidth<701?'polar-land-mobile.webp':'polar-land.webp');
+      map.innerHTML=`<defs><clipPath id="arctic-map-clip"><circle cx="400" cy="400" r="394"/></clipPath><clipPath id="arctic-land-clip"><path d="${coast}" clip-rule="evenodd"/></clipPath></defs><g clip-path="url(#arctic-map-clip)"><rect width="800" height="800" fill="#102b42"/><path data-map-ice fill="#edf2e9" stroke="#ccdddd" stroke-width=".6" fill-rule="evenodd"/><path d="${coast}" fill="#70837c" fill-rule="evenodd"/><image href="${basemap}" width="800" height="800" clip-path="url(#arctic-land-clip)"/><path d="${coast}" fill="none" stroke="#9eaaa3" stroke-width=".6"/></g>`;
       root.querySelector('#arctic-reader-map').replaceWith(map);
     }
     updateYear();
   }
   function stillViews(){
+    activation++;
     if(raf)cancelAnimationFrame(raf);raf=0;
-    const prior=active<0?0:active;live=false;root.classList.remove('arctic-live');root.dataset.renderer='still';stage.hidden=true;
+    const prior=active<0?0:active;live=false;assetsReady=false;root.classList.remove('arctic-live','arctic-loading');root.dataset.renderer='still';stage.hidden=true;
     steps.forEach(step=>{step.querySelector('.arctic-step-copy').inert=false;});
     navHome.after(nav);explorerHome.after(explorer);explorer.hidden=false;
     if(world){world.dispose();world=null;}worldPromise=null;
     mode.hidden=false;mode.textContent=reduced.matches?'Still views · reduced motion':'Use 3D walkthrough';mode.disabled=reduced.matches;
     if(route&&prior>0)steps[prior].scrollIntoView({block:'start',behavior:'instant'});
   }
+  function prepareLive(){
+    stage.hidden=false;stage.append(nav,explorer);root.classList.add('arctic-live','arctic-loading');root.dataset.renderer='loading';live=true;
+    steps.forEach(step=>{step.querySelector('.arctic-step-copy').inert=true;});
+    mode.hidden=false;mode.disabled=false;mode.textContent='Use still views';active=-1;syncChapter(M.frameAt(0));syncSize();
+  }
   async function liveViews(){
     if(reduced.matches||manualStill||world||worldPromise||disposed)return;
-    worldPromise=import('./arctic-world.js?v=614eb5d5aa').then(async({ArcticWorld})=>{
-      if(disposed||reduced.matches||manualStill)return;
+    const attempt=++activation;
+    if(!live){if(hasActivated&&pendingChapter===null)pendingChapter=Math.max(0,active);prepareLive();}
+    worldPromise=loadWorld().then(async({ArcticWorld})=>{
+      if(attempt!==activation||disposed||reduced.matches||manualStill)return;
       const candidate=new ArcticWorld(canvas,mapData,selectedYear);
       if(disposed||reduced.matches||manualStill){candidate.dispose();return;}
       world=candidate;
-      candidate.ready.then(()=>{if(world===candidate)schedule();}).catch(error=>console.warn('Arctic lighting upgrade unavailable:',error));
-      stage.hidden=false;stage.append(nav,explorer);root.classList.add('arctic-live');root.dataset.renderer='webgl';live=true;active=-1;renderProgress=null;lastFrameTime=0;
-      steps.forEach(step=>{step.querySelector('.arctic-step-copy').inert=true;});
-      mode.hidden=false;mode.disabled=false;mode.textContent='Use still views';syncSize();
+      candidate.basemapReady.then(()=>{if(world===candidate)schedule();});
+      candidate.resize(stage.clientWidth,stage.clientHeight);
+      await candidate.ready;
+      if(world!==candidate||manualStill||reduced.matches)return;
+      assetsReady=true;active=-1;renderProgress=null;lastFrameTime=0;
       const saved=history.state?.coilContext;
-      if(pendingChapter!==null){const selected=pendingChapter;pendingChapter=null;go(selected);}
+      if(pendingChapter!==null){const selected=pendingChapter;pendingChapter=null;go(selected,true);}
       else if(!hasActivated&&performance.getEntriesByType('navigation')[0]?.type==='reload'&&saved?.hash==='#climate-story'&&Number.isFinite(saved.arcticProgress)){
         const b=bounds();window.scrollTo({top:b.start+M.clamp(saved.arcticProgress)*(b.height-b.stage),behavior:'instant'});
       }
-      hasActivated=true;visible=true;schedule();
-    }).catch(error=>{console.warn('Arctic still views remain available:',error);stillViews();}).finally(()=>{worldPromise=null;});
+      hasActivated=true;visible=true;draw(performance.now());
+      // Reveal only after a fully textured frame exists, with no layout change.
+      root.classList.remove('arctic-loading');root.dataset.renderer='webgl';schedule();
+    }).catch(error=>{if(attempt===activation){console.warn('Arctic still views remain available:',error);stillViews();}}).finally(()=>{if(attempt===activation)worldPromise=null;});
     return worldPromise;
   }
   buttons.forEach((button,index)=>{
@@ -149,7 +169,8 @@ if(root&&M){
   const observer=new IntersectionObserver(entries=>{visible=entries[0].isIntersecting;if(visible)schedule();else if(raf){cancelAnimationFrame(raf);raf=0;}},{rootMargin:'80px'});observer.observe(journey);
   window.addEventListener('pagehide',()=>{if(raf)cancelAnimationFrame(raf);raf=0;});
   syncSize();
+  if(!reduced.matches){prepareLive();loadWorld().catch(()=>{});}
   Promise.all([fetch(new URL('./assets/data/arctic-september.json',import.meta.url)).then(r=>{if(!r.ok)throw Error('Missing sea-ice record');return r.json();}),fetch(new URL('./assets/data/arctic-map.json',import.meta.url)).then(r=>{if(!r.ok)throw Error('Missing coastlines');return r.json();})]).then(([series,map])=>{
     data=series;mapData=map;makeDataViews();if(reduced.matches)stillViews();else liveViews();
-  }).catch(error=>{console.warn('Using the complete static Arctic story:',error);mode.hidden=true;});
+  }).catch(error=>{console.warn('Using the complete static Arctic story:',error);stillViews();});
 }

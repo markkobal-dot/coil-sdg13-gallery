@@ -1,0 +1,11 @@
+Files: sculpted-iceberg.glb and sculpted-iceberg-mobile.glb
+
+Derived from Coastal Cliff 02 by Rob Tuytel / Poly Haven.
+Source: https://polyhaven.com/a/coastal_cliff_02
+License: Creative Commons CC0 1.0 Universal
+https://creativecommons.org/publicdomain/zero/1.0/
+https://polyhaven.com/license
+
+The original natural rock scan was reshaped, simplified and recoloured as an
+illustrative ice form. It is not a scan of an actual iceberg. Original rock
+photographs and textures are not included. See sculpted-iceberg-sources.json.

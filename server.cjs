@@ -8,7 +8,7 @@ const { DatabaseSync } = require('node:sqlite');
 const { buildSiteBundle } = require('./scripts/build-site-bundle.cjs');
 
 const choices = ['Shade', 'Cool spaces', 'Buildings'];
-const mime = { '.json':'application/json; charset=utf-8', '.html':'text/html; charset=utf-8', '.css':'text/css; charset=utf-8', '.js':'text/javascript; charset=utf-8', '.svg':'image/svg+xml', '.webp':'image/webp', '.png':'image/png', '.jpg':'image/jpeg', '.jpeg':'image/jpeg', '.ico':'image/x-icon', '.mp3':'audio/mpeg', '.ogg':'audio/ogg', '.woff2':'font/woff2' };
+const mime = { '.json':'application/json; charset=utf-8', '.html':'text/html; charset=utf-8', '.css':'text/css; charset=utf-8', '.js':'text/javascript; charset=utf-8', '.glb':'model/gltf-binary', '.svg':'image/svg+xml', '.webp':'image/webp', '.png':'image/png', '.jpg':'image/jpeg', '.jpeg':'image/jpeg', '.ico':'image/x-icon', '.mp3':'audio/mpeg', '.ogg':'audio/ogg', '.woff2':'font/woff2' };
 
 function createSiteServer({ root = __dirname, databasePath = path.join(__dirname, '.local-data', 'poll.sqlite') } = {}) {
   buildSiteBundle(root);

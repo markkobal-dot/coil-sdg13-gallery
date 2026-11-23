@@ -85,6 +85,9 @@ test('only public website files are served; Git, database and server source stay
     for(const file of ['/','/index.html','/site.js','/assets/data/weather-snapshot.js','/assets/brand/favicon.svg']) {
       assert.equal((await fetch(url+file)).status,200,file);
     }
+    const model=await fetch(url+'/assets/arctic/models/polar-bear-mobile.glb');
+    assert.equal(model.status,200);assert.equal(model.headers.get('content-type'),'model/gltf-binary');
+    assert.equal(Buffer.from(await model.arrayBuffer()).readUInt32LE(0),0x46546c67);
     for(const file of ['/.git/config','/.local-data/poll.sqlite','/server.cjs','/tests/poll-server.cjs','/package.json','/assets/%2e%2e%5c.git/config']) {
       assert.equal((await fetch(url+file)).status,404,file);
     }

@@ -30,6 +30,20 @@ test('camera velocity stays continuous across waypoints without easing to a stop
   }
   assert.ok(Math.abs((M.frameAt(.23001).camera[0]-M.frameAt(.22999).camera[0])/.00002)>20);
 });
+
+test('underwater tint stays active through the ripple band and fades continuously on resurfacing',()=>{
+  for(const portrait of [false,true]){
+    let previous=M.frameAt(.4,portrait).underwater;
+    for(let i=4001;i<=4700;i++){
+      const frame=M.frameAt(i/10000,portrait),tint=frame.underwater;
+      assert.ok(tint>=0&&tint<=previous);
+      assert.ok(previous-tint<.02,'waterline colour jumped');
+      if(frame.camera[1]<=.053)assert.ok(tint>0,'tint vanished before clearing the waves');
+      if(frame.camera[1]>=.08)assert.equal(tint,0);
+      previous=tint;
+    }
+  }
+});
 test('wheel smoothing settles exactly and reverses without overshooting',()=>{
   let p=.15;
   for(const target of [.4,.13,.9,0,1]){
@@ -43,15 +57,51 @@ test('wildlife fades with scroll, returns on reversal and stays absent from the 
   const halfway=M.frameAt(.13).wildlife;assert.ok(halfway>0&&halfway<1);
   M.frameAt(.8);assert.equal(M.frameAt(.13).wildlife,halfway);assert.equal(M.frameAt(.22).wildlife,0);assert.equal(M.frameAt(1).wildlife,0);
 });
-test('the continuous bear skin has finite unit normals and a lighter phone mesh',async()=>{
-  const {continuousBearSkin}=await import('../arctic-wildlife.js');
-  const desktop=continuousBearSkin(),phone=continuousBearSkin(true);
-  assert.ok(phone.attributes.position.count<desktop.attributes.position.count*.5);
-  for(const geometry of [desktop,phone]){
-    assert.ok(geometry.attributes.position.count<180000);assert.ok(geometry.attributes.position.array.every(Number.isFinite));
-    const n=geometry.attributes.normal.array;for(let i=0;i<n.length;i+=3)assert.ok(Math.abs(Math.hypot(n[i],n[i+1],n[i+2])-1)<.001);
-    geometry.computeBoundingBox();assert.ok(geometry.boundingBox.min.y>-.1);assert.ok(geometry.boundingBox.max.y<2.1);
+test('textured bear GLBs are self-contained, valid and substantially lighter on phones',()=>{
+  const results=[];
+  for(const file of ['polar-bear.glb','polar-bear-mobile.glb']){
+    const bytes=fs.readFileSync(path.join(root,'assets/arctic/models',file));
+    assert.equal(bytes.readUInt32LE(0),0x46546c67);assert.equal(bytes.readUInt32LE(4),2);assert.equal(bytes.readUInt32LE(8),bytes.length);
+    const jsonLength=bytes.readUInt32LE(12),doc=JSON.parse(bytes.subarray(20,20+jsonLength).toString());
+    const bin=bytes.subarray(28+jsonLength);assert.equal(doc.asset.version,'2.0');assert.ok(!doc.extensionsRequired?.length);
+    assert.ok(doc.buffers.every(b=>!b.uri));assert.ok(doc.images.length>=2&&doc.images.every(i=>i.bufferView!==undefined&&!i.uri));
+    let triangles=0;
+    const values=index=>{
+      const a=doc.accessors[index],v=doc.bufferViews[a.bufferView],components={SCALAR:1,VEC2:2,VEC3:3,VEC4:4}[a.type];
+      const read={5123:['readUInt16LE',2],5125:['readUInt32LE',4],5126:['readFloatLE',4]}[a.componentType];assert.ok(read);
+      const [method,size]=read,stride=v.byteStride||components*size,offset=(v.byteOffset||0)+(a.byteOffset||0),out=[];
+      assert.ok(offset+(a.count-1)*stride+components*size<=bin.length);
+      for(let i=0;i<a.count;i++)for(let c=0;c<components;c++)out.push(bin[method](offset+i*stride+c*size));return out;
+    };
+    for(const mesh of doc.meshes)for(const p of mesh.primitives){
+      const positions=values(p.attributes.POSITION),normals=values(p.attributes.NORMAL),uv=values(p.attributes.TEXCOORD_0),indices=values(p.indices);
+      assert.ok(positions.every(Number.isFinite)&&normals.every(Number.isFinite)&&uv.every(Number.isFinite));
+      for(let i=0;i<normals.length;i+=3)assert.ok(Math.abs(Math.hypot(...normals.slice(i,i+3))-1)<.02);
+      assert.ok(indices.every(i=>i>=0&&i<positions.length/3));assert.equal(indices.length%3,0);triangles+=indices.length/3;
+      assert.ok(doc.materials[p.material].pbrMetallicRoughness.baseColorTexture);
+    }
+    results.push({bytes:bytes.length,triangles});
   }
+  assert.ok(results[0].triangles<85000);assert.ok(results[1].triangles<results[0].triangles*.5);assert.ok(results[1].bytes<results[0].bytes*.5);
+  assert.match(fs.readFileSync(path.join(root,'assets/arctic/models/LICENSE.txt'),'utf8'),/CC0/);
+});
+test('the sculpted iceberg has finite geometry, valid indices and a smaller phone version',()=>{
+  const variants=[];
+  for(const file of ['sculpted-iceberg.glb','sculpted-iceberg-mobile.glb']){
+    const bytes=fs.readFileSync(path.join(root,'assets/arctic/models',file)),length=bytes.readUInt32LE(12);
+    assert.equal(bytes.readUInt32LE(0),0x46546c67);assert.equal(bytes.readUInt32LE(8),bytes.length);
+    const doc=JSON.parse(bytes.subarray(20,20+length)),bin=bytes.subarray(28+length),primitive=doc.meshes[0].primitives[0];
+    for(const attribute of ['POSITION','NORMAL','COLOR_0','TEXCOORD_0']){
+      const a=doc.accessors[primitive.attributes[attribute]],v=doc.bufferViews[a.bufferView];assert.equal(a.componentType,5126);
+      assert.ok(v.byteOffset+v.byteLength<=bin.length);
+      for(let i=0;i<v.byteLength;i+=4)assert.ok(Number.isFinite(bin.readFloatLE(v.byteOffset+i)));
+    }
+    const position=doc.accessors[primitive.attributes.POSITION];assert.ok(position.min[1]>=-.6&&position.max[1]>9);assert.ok(position.max[0]-position.min[0]>20);
+    const a=doc.accessors[primitive.indices],v=doc.bufferViews[a.bufferView],size=a.componentType===5123?2:4,read=size===2?'readUInt16LE':'readUInt32LE';
+    for(let i=0;i<a.count;i++)assert.ok(bin[read](v.byteOffset+i*size)<position.count);
+    assert.equal(a.count%3,0);variants.push({triangles:a.count/3,bytes:bytes.length});
+  }
+  assert.ok(variants[0].triangles<=32000);assert.ok(variants[1].triangles<variants[0].triangles*.5);assert.ok(variants[1].bytes<variants[0].bytes*.5);
 });
 test('both ice halves share an organic crack, with finite detailed relief and upward-facing caps',()=>{
   const a=Ice.outline(0).slice(0,161),b=Ice.outline(1).slice(0,161).reverse();assert.deepEqual(a,b);

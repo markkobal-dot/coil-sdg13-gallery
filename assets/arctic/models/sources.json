@@ -1,0 +1,25 @@
+{
+  "source": "https://grab3d.com/models/animals/polar-bear/",
+  "download": "https://grab3d.com/dl/polar-bear/polar-bear-light.glb",
+  "license": "CC0-1.0",
+  "retrieved": "2026-11-23",
+  "origin": "AI-assisted source, generated with Meshy and cleaned up, scaled, textured and checked in Blender by Grab3D. See LICENSE.txt.",
+  "processing": "Offline attribute-aware meshoptimizer simplification; UVs, normals and authored material textures retained. Standard uncompressed glTF: no runtime decoder or external service.",
+  "variants": [
+    {
+      "file": "polar-bear.glb",
+      "triangles": 79995,
+      "textureSize": 1024
+    },
+    {
+      "file": "polar-bear-mobile.glb",
+      "triangles": 29996,
+      "textureSize": 768
+    }
+  ],
+  "loader": {
+    "source": "https://github.com/mrdoob/three.js/tree/r187/examples/jsm",
+    "license": "MIT",
+    "localChanges": "Relative imports to existing bundled Three.js r187."
+  }
+}

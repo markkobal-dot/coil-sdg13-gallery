@@ -542,6 +542,51 @@ a, button {
 .bar-latest {
   background: #c3d390;
 }
+.temperature-month-update {
+  margin-top: 22px;
+  padding-top: 18px;
+  border-top: 1px solid var(--line);
+}
+.temperature-month-heading {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 16px;
+}
+.temperature-month-heading h4 {
+  margin: 0;
+  font-size: 18px;
+}
+.temperature-month-heading > strong {
+  color: var(--green);
+  font-size: 30px;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+.temperature-month-heading > strong span {
+  font-size: 18px;
+}
+.temperature-month-update p, .temperature-data-notes {
+  color: var(--muted);
+  font-size: 13px;
+  line-height: 1.65;
+}
+.temperature-month-update p {
+  margin: 6px 0 8px;
+}
+.temperature-data-notes {
+  margin-top: 18px;
+}
+.temperature-data-notes summary {
+  cursor: pointer;
+  text-underline-offset: 3px;
+}
+.temperature-data-notes summary:hover {
+  text-decoration: underline;
+}
+.temperature-data-notes p {
+  margin: 10px 0 0;
+}
 .glacier-card, .flood-card {
   padding: 40px;
   border: 1px solid var(--line);

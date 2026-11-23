@@ -67,7 +67,7 @@
     <link rel="stylesheet" href="site-polish.css?v=a52a281be9">
     <link rel="stylesheet" href="design-tokens.css?v=2e57de22aa">
     <link rel="stylesheet" href="refined-ui.css?v=b5a6dab33a">
-    <link rel="stylesheet" href="arctic-story.css?v=d4226be817">
+    <link rel="stylesheet" href="arctic-story.css?v=8e463499fa">
     <link rel="stylesheet" href="home-cover.css?v=6e2ae5299b">
   </head>
 
@@ -284,7 +284,7 @@
               Open a topic to see the measurements, photographs and sources we used.
             </p>
           </div>
-          <details class="evidence-detail " id="evidence-trend"><summary><strong>Follow the long-term trend</strong><small>ARSO data & annual comparison</small></summary><div class="evidence-detail-body"><div class="slovenia-data-grid">
+          <details class="evidence-detail " id="evidence-trend"><summary><strong>Follow the long-term trend</strong><small>ARSO annual data & 2026 update</small></summary><div class="evidence-detail-body"><div class="slovenia-data-grid">
             <article class="slovenia-longtrend">
               <span class="small-tag">Since 1970</span><strong>~2.7<span>°C</span></strong>
               <h3>
@@ -299,12 +299,9 @@
             </article>
             <figure class="temperature-chart">
               <figcaption>
-                <strong>Recent years compared with the 1991–2020 average</strong><span>Annual temperature anomaly (°C)</span>
+                <strong>Recent years compared with the 1991–2020 average</strong><span>Slovenia · Annual temperature anomaly (°C)</span>
               </figcaption>
               <ol class="temperature-bars" aria-label="Annual temperature anomalies in Slovenia compared with the 1991 to 2020 average">
-                <li>
-                  <span class="bar-value">+1.3°</span><span class="bar-track"><span class="bar-fill" style="--bar-height:72%"></span></span><span class="bar-year">2022</span>
-                </li>
                 <li>
                   <span class="bar-value">+1.3°</span><span class="bar-track"><span class="bar-fill" style="--bar-height:72%"></span></span><span class="bar-year">2023</span>
                 </li>
@@ -312,15 +309,28 @@
                   <span class="bar-value">+1.8°</span><span class="bar-track"><span class="bar-fill bar-record" style="--bar-height:100%"></span></span><span class="bar-year">2024</span>
                 </li>
                 <li>
-                  <span class="bar-value">+1.1°</span><span class="bar-track"><span class="bar-fill bar-latest" style="--bar-height:61%"></span></span><span class="bar-year">2025*</span>
+                  <span class="bar-value">+1.1°</span><span class="bar-track"><span class="bar-fill bar-latest" style="--bar-height:61%"></span></span><span class="bar-year">2025</span>
                 </li>
               </ol>
               <p class="chart-note">
-                *2025 is preliminary. Values show how far each year was above the 1991–2020 national average.
+                Each bar covers January–December, including all of 2025.
               </p>
-              <a class="chart-source" href="https://meteo.arso.gov.si/met/sl/climate/current/climate_year/" target="_blank" rel="noopener noreferrer">
-              Source: Slovenian Environment Agency (ARSO)
+              <a class="chart-source" href="https://meteo.arso.gov.si/uploads/probase/www/climate/text/sl/climate/archive/2025/2026_01-Podnebne%20znacilnosti%20leta%202025.pdf" target="_blank" rel="noopener noreferrer">
+              ARSO: 2025 annual report ↗
               </a>
+              <div class="temperature-month-update" aria-labelledby="temperature-month-title">
+                <div class="temperature-month-heading">
+                  <h4 id="temperature-month-title">October 2026</h4>
+                  <strong>+0.5<span>°C</span></strong>
+                </div>
+                <p>Latest published month: above the October 1991–2020 average. This is a monthly figure, not a full-year result.</p>
+                <a class="chart-source" href="https://meteo.arso.gov.si/met/sl/climate/current/climate_month/" target="_blank" rel="noopener noreferrer">ARSO: monthly report ↗</a>
+              </div>
+              <details class="temperature-data-notes">
+                <summary>About these figures</summary>
+                <p>National temperature anomalies from the Slovenian Environment Agency (ARSO). The 2025 report covers all twelve months, but ARSO still describes its estimates as provisional; the October 2026 estimate is also provisional. Monthly and annual figures use their respective 1991–2020 averages.</p>
+                <p>Sources checked on <time datetime="2026-11-23">23 November 2026</time>. The latest monthly report was published on 4 November 2026.</p>
+              </details>
             </figure>
           </div>
           </div></details>
@@ -435,27 +445,27 @@
   <nav class="arctic-chapters" aria-label="Arctic story chapters"><button type="button" data-arctic-go="0" data-story-stage="0" aria-controls="arctic-chapter-0" aria-pressed="true">Ice edge</button><button type="button" data-arctic-go="1" data-story-stage="1" aria-controls="arctic-chapter-1" aria-pressed="false">Ocean heat</button><button type="button" data-arctic-go="2" data-story-stage="2" aria-controls="arctic-chapter-2" aria-pressed="false">Open water</button><button type="button" data-arctic-go="3" data-story-stage="3" aria-controls="arctic-chapter-3" aria-pressed="false">Satellite record</button><button type="button" data-arctic-go="4" data-story-stage="4" aria-controls="arctic-chapter-4" aria-pressed="false">2026</button><button type="button" data-arctic-go="5" data-story-stage="5" aria-controls="arctic-chapter-5" aria-pressed="false">Before 2050</button></nav>
   <div class="arctic-journey" id="arctic-journey">
     <div class="arctic-stage" id="arctic-stage" hidden>
-      <canvas id="arctic-canvas" aria-hidden="true"></canvas><div class="arctic-water-tint" aria-hidden="true"></div>
+      <img class="arctic-poster" id="arctic-poster" src="assets/arctic/chapter-0.webp" width="1920" height="1005" decoding="async" alt="" aria-hidden="true"><canvas id="arctic-canvas" aria-hidden="true"></canvas><div class="arctic-water-tint" aria-hidden="true"></div>
       <div class="arctic-stage-heading"><span id="arctic-stage-kind">Illustrated sea-ice processes</span><h3 id="arctic-stage-date">At the ice edge</h3></div>
-      <div class="arctic-stage-caption" id="arctic-stage-caption"></div>
+      <div class="arctic-stage-caption" id="arctic-stage-caption"><p>Polar bears use sea ice as a hunting ground. As the ice retreats, their habitat changes.</p></div>
       <p class="arctic-map-note" id="arctic-map-note" hidden>Map: September monthly mean · NSIDC / Natural Earth</p>
       <div class="arctic-stage-controls" aria-label="Story controls"><button type="button" id="arctic-previous" aria-label="Previous chapter">Previous</button><span id="arctic-progress" role="status">1 / 6</span><button type="button" id="arctic-next" aria-label="Next chapter">Next</button></div>
       <div class="arctic-timeline" aria-hidden="true"><span></span></div>
     </div>
     <div class="arctic-reading"><article class="arctic-step" id="arctic-chapter-0" data-arctic-step="0" data-kind="Illustrated sea-ice processes">
-  <img class="arctic-still" src="assets/arctic/chapter-0.webp" width="1280" height="670" loading="eager" decoding="async" alt="A polar bear and cub stand on ridged sea ice, with two ringed seals across a narrow opening and an iceberg on the horizon.">
-  <div class="arctic-step-copy"><span class="arctic-kind">Illustrated sea-ice processes</span><h3>At the ice edge</h3><div class="arctic-caption"><p>Polar bears hunt from sea ice. Seals rest on it. As the ice retreats, their habitat changes.</p></div></div>
+  <img class="arctic-still" src="assets/arctic/chapter-0.webp" width="1920" height="1005" loading="eager" decoding="async" alt="Two polar bears on ridged sea ice, with an iceberg on the horizon.">
+  <div class="arctic-step-copy"><span class="arctic-kind">Illustrated sea-ice processes</span><h3>At the ice edge</h3><div class="arctic-caption"><p>Polar bears use sea ice as a hunting ground. As the ice retreats, their habitat changes.</p></div></div>
 </article>
 <article class="arctic-step" id="arctic-chapter-1" data-arctic-step="1" data-kind="Illustrated sea-ice processes">
-  <img class="arctic-still" src="assets/arctic/chapter-1.webp" width="1280" height="670" loading="lazy" decoding="async" alt="Blue ice below the waterline, with a narrow seam ahead.">
+  <img class="arctic-still" src="assets/arctic/chapter-1.webp" width="1920" height="1005" loading="lazy" decoding="async" alt="Blue ice below the waterline, with a narrow seam ahead.">
   <div class="arctic-step-copy"><span class="arctic-kind">Illustrated sea-ice processes</span><h3>Heat beneath the surface</h3><div class="arctic-caption"><p>A warming atmosphere and ocean reach the ice from both sides, melting it above and below the surface.</p></div></div>
 </article>
 <article class="arctic-step" id="arctic-chapter-2" data-arctic-step="2" data-kind="Illustrated sea-ice processes">
-  <img class="arctic-still" src="assets/arctic/chapter-2.webp" width="1280" height="670" loading="lazy" decoding="async" alt="A close passage between matching fractured edges of two ice floes.">
+  <img class="arctic-still" src="assets/arctic/chapter-2.webp" width="1920" height="1005" loading="lazy" decoding="async" alt="A close passage between matching fractured edges of two ice floes.">
   <div class="arctic-step-copy"><span class="arctic-kind">Illustrated sea-ice processes</span><h3>More open water</h3><div class="arctic-caption"><p>White ice reflects sunlight. Dark water absorbs more of it, reinforcing warming as the opening widens.</p></div></div>
 </article>
 <article class="arctic-step" id="arctic-chapter-3" data-arctic-step="3" data-kind="Satellite observations">
-  <div class="arctic-map-fallback"><figure><img class="arctic-still" id="arctic-reader-map" src="assets/arctic/record-map.svg" width="800" height="800" loading="lazy" alt="Arctic coastline and September 2026 monthly sea-ice extent."><figcaption>September monthly mean extent. NSIDC ice edges, Natural Earth coastline. Polar stereographic north.</figcaption></figure></div>
+  <div class="arctic-map-fallback"><figure><img class="arctic-still" id="arctic-reader-map" src="assets/arctic/record-map.svg" width="800" height="800" loading="lazy" alt="Arctic coastline and September 2026 monthly sea-ice extent."><figcaption>NSIDC September ice extent over NASA Blue Marble land imagery. Polar stereographic north.</figcaption></figure></div>
   <div class="arctic-step-copy"><span class="arctic-kind">Satellite observations</span><h3>1979 onward</h3><div class="arctic-caption"><p>From a single crack to the whole Arctic. Satellites reveal a long decline in September sea-ice extent, with increases in some individual years. Explore the record below.</p></div></div><div class="arctic-explorer" id="arctic-explorer">
   <div class="arctic-data-heading"><h4>September, year by year</h4><span>Monthly mean extent</span></div>
   <div class="arctic-year-readout"><output id="arctic-year-output" for="arctic-year">1979</output><strong><output id="arctic-extent-output" for="arctic-year">7.05</output> <span>million km²</span></strong></div>
@@ -470,11 +480,11 @@
   <div class="arctic-step-copy"><span class="arctic-kind">Daily observation</span><h3>September 2026</h3><div class="arctic-caption"><p>Estimated Arctic sea-ice extent at its annual minimum, 12 September 2026.</p><strong class="arctic-minimum">4.60 <span>million km²</span></strong><a class="arctic-source-link" href="https://nsidc.org/news-analyses/news-stories/arctic-sea-ice-has-reached-minimum-extent-2026-antarctic-sea-ice-maximum-most-likely-reached-well" target="_blank" rel="noopener noreferrer">NSIDC minimum estimate</a><small class="arctic-daily-note">Daily minimum; the September monthly mean is 4.81 million km².</small></div></div>
 </article>
 <article class="arctic-step" id="arctic-chapter-5" data-arctic-step="5" data-kind="Projection · IPCC AR6">
-  <img class="arctic-still" src="assets/arctic/chapter-5.webp" width="1280" height="670" loading="lazy" decoding="async" alt="Open water from the opening viewpoint; the same distant iceberg remains.">
+  <img class="arctic-still" src="assets/arctic/chapter-5.webp" width="1920" height="1005" loading="lazy" decoding="async" alt="Open water from the opening viewpoint; the same distant iceberg remains.">
   <div class="arctic-step-copy"><span class="arctic-kind">Projection · IPCC AR6</span><h3>Before 2050</h3><div class="arctic-caption"><p>Across the assessed emissions scenarios, the Arctic is likely to experience at least one practically ice-free September before 2050.</p><p>Practically ice-free means less than one million square kilometres of sea-ice area.</p><p class="arctic-closing-line">How often that September returns depends on how much more the world warms.</p><a class="arctic-source-link" href="https://www.ipcc.ch/report/ar6/wg1/chapter/chapter-9/" target="_blank" rel="noopener noreferrer">IPCC AR6 Working Group I, Chapter 9</a><a class="arctic-action" href="#solutions">Take action</a></div></div>
 </article></div>
   </div>
-  <details class="arctic-method"><summary>About the illustration and data</summary><div><p>The close-up illustrates sea-ice habitat and change. The animals fade as the camera moves on; this is not a dated population record. The opening and closing use the same camera position and landmark.</p><p>The satellite record uses NSIDC Sea Ice Index Version 4 September monthly means in million km², preserved in the original downloadable CSV. Natural Earth land and NSIDC ice-edge outlines use polar stereographic north (Hughes 1980). The 2026 daily minimum is a separate NSIDC estimate; it is not a September average.</p><p>Sea-ice extent and sea-ice area are different measures. The IPCC’s practically ice-free threshold refers to area. The projection is not a prediction that every September will be ice-free from a fixed date.</p><p><a href="https://nsidc.org/learn/parts-cryosphere/sea-ice/why-sea-ice-matters" target="_blank" rel="noopener noreferrer">Sea ice and the climate</a> · <a href="https://www.usgs.gov/centers/alaska-science-center/science/health-and-energetics-polar-bears" target="_blank" rel="noopener noreferrer">Sea ice and polar bears</a> · <a href="https://science.nasa.gov/earth/explore/earth-indicators/ocean-warming/" target="_blank" rel="noopener noreferrer">Ocean warming</a> · <a href="https://nsidc.org/data/g02135/versions/4" target="_blank" rel="noopener noreferrer">NSIDC Sea Ice Index</a> · <a href="https://www.naturalearthdata.com/about/terms-of-use/" target="_blank" rel="noopener noreferrer">Natural Earth</a> · <a href="https://www.ipcc.ch/report/ar6/wg1/chapter/chapter-9/" target="_blank" rel="noopener noreferrer">IPCC AR6 WGI, Chapter 9</a></p></div></details>
+  <details class="arctic-method"><summary>About the illustration and data</summary><div><p>The close-up illustrates sea-ice habitat and change. The animals fade as the camera moves on; this is not a dated population record. The opening and closing use the same camera position and landmark.</p><p>The satellite record uses NSIDC Sea Ice Index Version 4 September monthly means in million km², preserved in the original downloadable CSV. NASA Blue Marble supplies the land colours and relief, from its September 2004 composite. It is a fixed land basemap, not a photograph of the selected year. Natural Earth land and NSIDC ice-edge outlines use polar stereographic north (Hughes 1980). The 2026 daily minimum is a separate NSIDC estimate; it is not a September average.</p><p>Sea-ice extent and sea-ice area are different measures. The IPCC’s practically ice-free threshold refers to area. The projection is not a prediction that every September will be ice-free from a fixed date.</p><p><a href="https://nsidc.org/learn/parts-cryosphere/sea-ice/why-sea-ice-matters" target="_blank" rel="noopener noreferrer">Sea ice and the climate</a> · <a href="https://www.usgs.gov/centers/alaska-science-center/science/health-and-energetics-polar-bears" target="_blank" rel="noopener noreferrer">Sea ice and polar bears</a> · <a href="https://science.nasa.gov/earth/explore/earth-indicators/ocean-warming/" target="_blank" rel="noopener noreferrer">Ocean warming</a> · <a href="https://nsidc.org/data/g02135/versions/4" target="_blank" rel="noopener noreferrer">NSIDC Sea Ice Index</a> · <a href="https://science.nasa.gov/earth/earth-observatory/blue-marble-next-generation/base-topography/" target="_blank" rel="noopener noreferrer">NASA Blue Marble · NASA Earth Observatory / Reto Stöckli</a> · <a href="https://www.naturalearthdata.com/about/terms-of-use/" target="_blank" rel="noopener noreferrer">Natural Earth</a> · <a href="https://www.ipcc.ch/report/ar6/wg1/chapter/chapter-9/" target="_blank" rel="noopener noreferrer">IPCC AR6 WGI, Chapter 9</a></p></div></details>
   <div class="arctic-end"><p>The choices behind the view are still ours.</p><a class="btn" href="#solutions">Explore ways to take action</a></div>
 </section>
 
@@ -806,6 +816,6 @@
       </div>
     </div>
     <script src="assets/data/weather-snapshot.js" defer></script>
-    <script src="site.js?v=c7efa72dc2" defer></script>
+    <script src="site.js?v=43b7660b2a" defer></script>
   </body>
 </html>

@@ -2,7 +2,7 @@
 (function(host){
 'use strict';
 const clamp=x=>Math.max(0,Math.min(1,x)),ease=x=>{x=clamp(x);return x*x*(3-2*x);};
-const chapters=[0,.22,.415,.67,.79,.98],opening={camera:[-9,3.6,23],target:[-1,.8,-14],fov:43};
+const chapters=[0,.22,.415,.67,.79,.98],opening={camera:[-8,3.1,22],target:[-.5,1,-17],fov:43};
 const keys=[
 [0,opening.camera,opening.target,.35,0,0],
 [.11,[-19,1.8,24],[-7,.1,2],.45,0,0],
@@ -35,7 +35,7 @@ const v=values[i].map((a,d)=>(2*t3-3*t2+1)*a+(t3-2*t2+t)*h*slopes[i][d]+(-2*t3+3
 let camera=v.slice(0,3),target=v.slice(3,6);const map=clamp(v[7]);
 if(portrait){camera=[camera[0]*.5,camera[1]+190*map,camera[2]+4*(1-map)+80*map];camera[0]*=1-map;target=[target[0]*.3*(1-map),target[1]-.25*(1-map),target[2]+80*map];}
 let chapter=0;for(let j=1;j<chapters.length;j++)if(p>=(chapters[j-1]+chapters[j])/2)chapter=j;
-return {progress:p,portrait,chapter,camera,target,fov:portrait?54:opening.fov,gap:v[6],map,drift:clamp(v[8]),underwater:ease(-camera[1]/.32),wildlife:1-ease((p-.07)/.13)};
+return {progress:p,portrait,chapter,camera,target,fov:portrait?54:opening.fov,gap:v[6],map,drift:clamp(v[8]),underwater:ease((.08-camera[1])/.4),wildlife:1-ease((p-.07)/.13)};
 }
 function progressAt(scrollY,start,trackHeight,stageHeight){return clamp((scrollY-start)/Math.max(1,trackHeight-stageHeight));}
 function follow(current,target,dt){const d=target-current;return Math.abs(d)<.000003?target:current+d*(1-Math.exp(-Math.min(50,dt)/65));}

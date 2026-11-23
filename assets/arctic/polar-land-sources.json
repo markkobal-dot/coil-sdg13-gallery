@@ -1,0 +1,17 @@
+{
+  "title": "NASA Blue Marble Next Generation, September 2004, topographic composite",
+  "source": "https://assets.science.nasa.gov/content/dam/science/esd/eo/images/bmng/bmng-topography/september/world.topo.200409.3x5400x2700.jpg",
+  "sourcePage": "https://science.nasa.gov/earth/earth-observatory/blue-marble-next-generation/base-topography/",
+  "credit": "NASA Earth Observatory / Reto Stöckli (NASA/GSFC)",
+  "usage": "NASA educational/informational media usage guidelines",
+  "usageUrl": "https://www.nasa.gov/nasa-brand-center/images-and-media/",
+  "retrieved": "2026-11-23",
+  "projection": "EPSG:3411",
+  "bounds": [
+    -4000000,
+    -4000000,
+    4000000,
+    4000000
+  ],
+  "processing": "Bilinear inverse polar stereographic reprojection using the Hughes 1980 ellipsoid. Displayed only inside Natural Earth land polygons. Sea-ice extent is drawn separately from the selected NSIDC year. The basemap is not a current satellite photograph."
+}
