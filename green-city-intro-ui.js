@@ -4,14 +4,14 @@ import './green-city-planning.js?v=1a80a074c1';
 const C=globalThis.GreenCity,I=globalThis.GreenCityIntro,L=globalThis.GreenCityLife,P=globalThis.GreenCityPlanning;
 const escape=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const storeKey='coil-green-city-introduction-v1';
-export function createIntroduction(api){
+export function createIntroduction(api,{persistent=true}={}){
   const shell=document.getElementById('gc-shell'),coach=document.createElement('section');coach.className='gc-intro';coach.hidden=true;coach.setAttribute('role','region');coach.setAttribute('aria-labelledby','gc-intro-title');
   const map=shell.querySelector('.gc-world-wrap');map.before(coach);
   const launch=document.createElement('button');launch.type='button';launch.className='gc-intro-launch';launch.textContent='Shade challenge';document.getElementById('gc-tab-help').querySelector('h3').after(launch);
   const residentNext=document.createElement('button');residentNext.type='button';residentNext.className='gc-intro-person-next';residentNext.hidden=true;residentNext.textContent='Continue: plan more shade';shell.querySelector('.gc-person-note').before(residentNext);
   let session=null,plan=null,lastResult=null,blocked=null,lastStage=null;
-  try{session=I.restore(C,api.getState(),JSON.parse(localStorage.getItem(storeKey)),api.getAnalysis());}catch{}
-  function persist(status='active'){try{localStorage.setItem(storeKey,JSON.stringify({status,...(session?{home:session.home,baseline:session.baseline,started:session.started,stage:session.stage}:{})}));}catch{}}
+  if(persistent)try{session=I.restore(C,api.getState(),JSON.parse(localStorage.getItem(storeKey)),api.getAnalysis());}catch{}
+  function persist(status='active'){if(!persistent)return;try{localStorage.setItem(storeKey,JSON.stringify({status,...(session?{home:session.home,baseline:session.baseline,started:session.started,stage:session.stage}:{})}));}catch{}}
   function hide(status='skipped'){
     persist(status);session=null;plan=null;blocked=null;coach.hidden=true;residentNext.hidden=true;api.planning().close();api.setMode('inspect');
     api.announce(status==='complete'?'Introduction finished. Keep shaping your city.':'Introduction skipped. Continue your mission in Goals or keep building freely.');

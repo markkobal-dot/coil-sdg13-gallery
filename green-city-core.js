@@ -9,6 +9,7 @@
   const clamp = (value, low = 0, high = 100) => Math.max(low, Math.min(high, value));
   const policyDefaults = { tax:'balanced', freeTransit:false, cleanIndustry:false, residentialTax:10, businessTax:10, transitFare:2, utilityTariff:1, serviceBudget:100 };
   const policyRanges = { residentialTax:[6,18,1], businessTax:[5,18,1], transitFare:[0,5,.5], utilityTariff:[0,4,.5], serviceBudget:[70,140,5] };
+  const regionalFleet = new Set(['airport', 'internationalairport', 'cargoport', 'containerport']);
   function policies(raw = {}) {
     const rate={low:8,balanced:10,high:14}[raw.tax] || 10;
     const p={tax:raw.tax||'balanced',cleanIndustry:raw.cleanIndustry??false,residentialTax:raw.residentialTax??rate,businessTax:raw.businessTax??rate,transitFare:raw.transitFare??(raw.freeTransit?0:2),utilityTariff:raw.utilityTariff??1,serviceBudget:raw.serviceBudget??100};
@@ -150,10 +151,16 @@
     put(14, 14, 'factory'); put(16, 14, 'factory'); put(16, 16, 'coal');
     return cells;
   }
-  function fresh(challenge = 'revolution') {
+  const cityNameLimit = 48;
+  function cityName(value) {
+    if (typeof value !== 'string') return 'New Terra';
+    return value.replace(/\s+/gu, ' ').trim().slice(0, cityNameLimit).trim() || 'New Terra';
+  }
+  function fresh(challenge = 'revolution', name) {
     if (!owns(challenges, challenge)) challenge = 'revolution';
-    return { version: 3, challenge, cells: starter(), cash: challenges[challenge].budget, population: 220, month: 1,cityLevel:1,affluentPopulation:0,districts:challenge==='sandbox'?D.districts.map(d=>d.id):['central'],
-      policies: policies(), routes:[], loan:null, grants: [], event: null, history: [], log: ['The council has approved your opening grant. Welcome to New Terra.'] };
+    name = cityName(name);
+    return { version: 3, name, challenge, cells: starter(), cash: challenges[challenge].budget, population: 220, month: 1,cityLevel:1,affluentPopulation:0,districts:challenge==='sandbox'?D.districts.map(d=>d.id):['central'],
+      policies: policies(), routes:[], loan:null, grants: [], event: null, history: [], log: ['The council has approved your opening grant.'] };
   }
   function connectedRoads(cells) {
     // The harbour entrance is the fixed connection to the regional road network.
@@ -352,7 +359,8 @@
         if (meta.jobs && !greenTypes.has(type)) jobs += meta.jobs * factor;
         extraResilience += (meta.resilience || 0) * factor;
         extraDemand += (meta.powerDemand || 0) * factor;
-        extraEmissions += (meta.emissions||0)*factor;
+        const emissionFactor=state.climateProgram && regionalFleet.has(type) ? .3 : 1;
+        extraEmissions += (meta.emissions||0)*factor*emissionFactor;
         if(meta.noise)noiseSources.push({i,type,factor,strength:meta.noise,plots});
         if (meta.amenity) services.push({ i, type, factor, strength:meta.amenity, radius:meta.radius, need:meta.need });
       }
@@ -455,15 +463,18 @@
     const income = regionalGrant+residentialRevenue+businessRevenue+fareRevenue+Math.max(0,utilityMargin)+regionalRevenue+tourismRevenue;
     const gridCost = Math.round(Math.max(0,demand-cleanPower)*.8*(state.event?.type==='energy'?1.8-.8*protection:1));
     const loanPayment=state.loan?Math.min(state.loan.payment,state.loan.balance):0;
-    const expenses = assetUpkeep+transitSupport+industryStandards+gridCost+Math.max(0,-utilityMargin)+loanPayment+transport.upkeep, net=income-expenses;
+    const climateProgram=state.climateProgram?90:0;
+    const expenses = assetUpkeep+transitSupport+industryStandards+climateProgram+gridCost+Math.max(0,-utilityMargin)+loanPayment+transport.upkeep, net=income-expenses;
     const completed = state.challenge==='revolution' ? overall>=70&&wellbeing>=60&&state.population>=350 : state.challenge==='carbon' ? pollution<=20&&energy>=75&&mobility>=65&&state.population>=300 : state.challenge==='future' ? state.population>=650&&overall>=75&&(counts.park||0)>=5&&(counts.solar||0)>=3&&(counts.bus||0)+(counts.tram||0)+(counts.metro||0)>=2 : false;
-    return { beachAccess,tourism,scores, overall, pollution, wellbeing, happiness:wellbeing,nextPopulation,life,society,housing,workforce,workplaces,infrastructurePenalty,homeProfiles,neighbourhoods,connections,transport,localSources:{nature:greens,transit,noise:noiseSources,industry:industrySources},noiseExposure:Math.round(noiseExposure),capacity:Math.round(capacity), jobs:Math.round(jobs), employment, roads, counts, income, expenses, net, cleanPower:Math.round(cleanPower), demand, shadeCoverage:Math.round(shadeCoverage), mobilityCoverage:Math.round(mobilityCoverage), serviceCoverage:Math.round(serviceCoverage),ridership,policy:p,budget:{tourismRevenue,grant:regionalGrant,filledJobs:Math.round(filledJobs),residentialRevenue,businessRevenue,specialistTax,fareRevenue,utilities:Math.max(0,utilityMargin),regionalRevenue,routeUpkeep:transport.upkeep,assetUpkeep,transitSupport,industryStandards,gridCost,utilitySubsidy:Math.max(0,-utilityMargin),loanPayment}, completed, upgrades:state.cells.filter(c=>c&&c.paid>0).length, tier:D.level(state,{overall,happiness:wellbeing}) };
+    return { beachAccess,tourism,scores, overall, pollution, wellbeing, happiness:wellbeing,nextPopulation,life,society,housing,workforce,workplaces,infrastructurePenalty,homeProfiles,neighbourhoods,connections,transport,localSources:{nature:greens,transit,noise:noiseSources,industry:industrySources},noiseExposure:Math.round(noiseExposure),capacity:Math.round(capacity), jobs:Math.round(jobs), employment, roads, counts, income, expenses, net, cleanPower:Math.round(cleanPower), demand, shadeCoverage:Math.round(shadeCoverage), mobilityCoverage:Math.round(mobilityCoverage), serviceCoverage:Math.round(serviceCoverage),ridership,policy:p,budget:{tourismRevenue,grant:regionalGrant,filledJobs:Math.round(filledJobs),residentialRevenue,businessRevenue,specialistTax,fareRevenue,utilities:Math.max(0,utilityMargin),regionalRevenue,routeUpkeep:transport.upkeep,assetUpkeep,transitSupport,industryStandards,climateProgram,gridCost,utilitySubsidy:Math.max(0,-utilityMargin),loanPayment}, completed, upgrades:state.cells.filter(c=>c&&c.paid>0).length, tier:D.level(state,{overall,happiness:wellbeing}) };
   }
   function residentLife(a){
     const {state,p,capacity,employment,air,greenness,mobility,serviceCoverage,healthCoverage,safetyCoverage,noiseExposure,baseWellbeing}=a;
     const room=capacity?Math.max(0,capacity-state.population)/Math.max(1,capacity):0;
+    // Co-ops make vacant homes more accessible while housing shortages still lower the score.
+    const housingScore=capacity?clamp(Math.round(35+room*(state.climateProgram?260:90))):0;
     const needs=[
-      {id:'housing',name:'Housing',score:capacity?clamp(Math.round(35+room*90)):0,detail:Math.max(0,capacity-state.population)+' places available',tip:'Build or upgrade homes beside connected roads.',build:'house'},
+      {id:'housing',name:'Housing',score:housingScore,detail:Math.max(0,capacity-state.population)+' places available'+(state.climateProgram?' · Housing co-ops':''),tip:'Build or upgrade homes beside connected roads.',build:'house'},
       {id:'jobs',name:'Jobs & opportunity',score:employment,detail:employment+'% local employment',tip:'Add connected workplaces before removing old industry.',build:'office'},
       {id:'services',name:'Health & services',score:clamp(Math.round(25+serviceCoverage*.52+healthCoverage*.2+safetyCoverage*.15)),detail:Math.round(healthCoverage)+' healthcare · '+Math.round(safetyCoverage)+' emergency cover',tip:healthCoverage<20?'Put a clinic or hospital near homes, with road access.':safetyCoverage<20?'Add fire and rescue cover near homes.':'Bring learning and community services closer to homes.',build:healthCoverage<20?'clinic':safetyCoverage<20?'firestation':'library'},
       {id:'environment',name:'Environment & quiet',score:clamp(Math.round(air*.65+greenness*.35-noiseExposure*.5)),detail:Math.round(noiseExposure)+'/100 average noise exposure',tip:'Separate homes from airports and freight docks; add shade and clean power.',build:'park'},
@@ -753,6 +764,7 @@
     const integer=(n,min,max)=>Number.isInteger(n)&&n>=min&&n<=max;
     if(!integer(raw.cash,0,10000000)||!integer(raw.population,0,maxPopulation)||!integer(raw.month,1,10000))throw new Error('Invalid city finances or calendar');
     if(raw.cityLevel!==undefined&&!integer(raw.cityLevel,1,4))throw new Error('Invalid development level');
+    if(raw.climateProgram!==undefined&&typeof raw.climateProgram!=='boolean')throw new Error('Invalid climate programme');
     if(raw.affluentPopulation!==undefined&&!integer(raw.affluentPopulation,0,raw.population))throw new Error('Invalid household population');
     if(raw.districts!==undefined&&(!Array.isArray(raw.districts)||!raw.districts.includes('central')||new Set(raw.districts).size!==raw.districts.length||raw.districts.some(id=>!D.districts.some(d=>d.id===id))))throw new Error('Invalid land ownership');
     restoreReclaimed(raw);const terrain=terrainFor(raw);
@@ -784,9 +796,9 @@
     if(raw.routes!==undefined){if(!Array.isArray(raw.routes)||raw.routes.length>12||new Set(raw.routes.map(r=>r?.id)).size!==raw.routes.length)throw new Error('Invalid transport lines');routes=raw.routes.map(r=>{if(!validRoute(r,raw)||!integer(r.id,1,12))throw new Error('Invalid transport line');return {id:r.id,name:r.name.trim(),type:r.type,colour:r.colour,enabled:r.enabled,stops:[...r.stops]};});}
     const log=(Array.isArray(raw.log)?raw.log:[]).filter(s=>typeof s==='string'&&s.length<=400).slice(0,16);
     const missions=restoreMissions(raw.missions,raw.month,raw),occupancy=D.restoreOccupancy(api,{...raw,cells}),monthlyReport=D.restoreMonthly(api,raw);
-    return {version:3,challenge:raw.challenge,cells,...(raw.reclaimed!==undefined?{reclaimed:[...raw.reclaimed]}:{}),cash:raw.cash,population:raw.population,month:raw.month,cityLevel:raw.cityLevel||1,affluentPopulation:raw.affluentPopulation||0,districts,policies:restoredPolicies,routes,loan,grants:[...raw.grants],event,history,log,...(missions?{missions}:{}),...(occupancy?{occupancy}:{}),...(monthlyReport?{monthlyReport}:{})};
+    return {version:3,name:cityName(raw.name),challenge:raw.challenge,cells,...(raw.reclaimed!==undefined?{reclaimed:[...raw.reclaimed]}:{}),...(raw.climateProgram?{climateProgram:true}:{}),cash:raw.cash,population:raw.population,month:raw.month,cityLevel:raw.cityLevel||1,affluentPopulation:raw.affluentPopulation||0,districts,policies:restoredPolicies,routes,loan,grants:[...raw.grants],event,history,log,...(missions?{missions}:{}),...(occupancy?{occupancy}:{}),...(monthlyReport?{monthlyReport}:{})};
   }
   const api={size,terrain,metrics,upgrades,types,challenges,planTiles,buildTiles,localNeeds,homeFeedback,neighbourhoodInfo,routeColours,roadPath,routeInfo,setRoute,removeRoute,setRouteEnabled,roadTypes,buildingTypes,greenTypes,fresh,board,remaining,score,analyse,neighbours,distance,rowLabel,label,rotatable,dimensions,footprint,anchorAt,coastal,canPlace,place,upgrade,upgradeCost,demolish,relocate,moveCost,line,buildLine,grantDefs,grant,events,respond,policies,policyRanges,setPolicies,setPolicy,borrow,repayLoan,advance,goals,tileInfo,restore};
-  Object.assign(api,{seaRoute,terrainFor,terrainAt,reclamationCost,canReclaim,reclaimLand,rotateRoadItem,neighbourhoodMissionDefs,neighbourhoodMissions,startNeighbourhoodMission,leaveNeighbourhoodMission,awardNeighbourhoodMission,purchaseLand,ownsLand:(state,i)=>D.owned(state,i,size),landReports:(state,a=analyse(state))=>D.landReports(api,state,a),developmentLevels:D.levels,homeHappiness:D.homeHappiness,migrationReasons:D.migrationReasons});
+  Object.assign(api,{cityName,seaRoute,terrainFor,terrainAt,reclamationCost,canReclaim,reclaimLand,rotateRoadItem,neighbourhoodMissionDefs,neighbourhoodMissions,startNeighbourhoodMission,leaveNeighbourhoodMission,awardNeighbourhoodMission,purchaseLand,ownsLand:(state,i)=>D.owned(state,i,size),landReports:(state,a=analyse(state))=>D.landReports(api,state,a),developmentLevels:D.levels,homeHappiness:D.homeHappiness,migrationReasons:D.migrationReasons});
   if(typeof module==='object'&&module.exports)module.exports=api;else host.GreenCity=api;
 })(globalThis);

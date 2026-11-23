@@ -23,9 +23,11 @@ export function createResidents(api,glyph){
   const state=api.getState(),a=api.getAnalysis(),life=a.life;
   population.setAttribute('aria-label','Resident happiness '+life.happiness+' out of 100. Open resident report.');
   population.querySelector(':scope>span').textContent='RESIDENTS · '+face(life.happiness)+' '+life.happiness+'%';
-  card.innerHTML=`<span class="gc-resident-card-face" aria-hidden="true">${face(life.happiness)}</span><span><small>RESIDENT HAPPINESS</small><strong>${life.happiness}<em>/100 · ${life.mood}</em></strong><span>${life.priorities[0].score<65?life.priorities[0].name+' needs attention':'Residents feel well supported'}</span></span><b aria-hidden="true">↗</b>`;
+  card.innerHTML=`<span class="gc-resident-card-face" aria-hidden="true">${face(life.happiness)}</span><span><small>CITYWIDE HAPPINESS</small><strong>${life.happiness}<em>/100 · ${life.mood}</em></strong><span>${life.priorities[0].score<65?life.priorities[0].name+' needs attention':'Residents feel well supported'}</span></span><b aria-hidden="true">↗</b>`;
   card.setAttribute('aria-label','Open resident report. Happiness '+life.happiness+' out of 100. '+life.mood+'.');
-  const localCount=a.neighbourhoods.filter(h=>h.needs.length).length;localButton.innerHTML='<span>'+localCount+' home plots need attention</span><b>Explore neighbourhoods ↗</b>';
+  const localCount=a.neighbourhoods.filter(h=>h.needs.length).length;
+  const localStatus=localCount?localCount+' of '+a.neighbourhoods.length+' home plots need attention':'No home plots flagged';
+  localButton.innerHTML='<span>'+localStatus+'</span><b>Explore neighbourhoods ↗</b>';
   if(!dialog.open&&!force)return;if(view==='neighbourhoods'){neighbourhoods.render();return;}
   const next=a.nextPopulation-state.population;
   $('resident-summary').innerHTML=`<span class="gc-resident-face" aria-hidden="true">${face(life.happiness)}</span><span class="gc-overline">RESIDENT HAPPINESS</span><strong class="gc-happiness-value">${life.happiness}<small>/100</small></strong><span class="gc-resident-mood">${life.mood}</span><div class="gc-resident-summary-stats"><div><span>People living here</span><strong>${number(state.population)}</strong></div><div><span>Available homes</span><strong>${number(Math.max(0,a.capacity-state.population))}</strong></div><div><span>Population forecast</span><strong>${signed(next)} <small>next month</small></strong></div><div><span>Noise at homes</span><strong>${a.noiseExposure}<small>/100</small></strong></div></div>`;

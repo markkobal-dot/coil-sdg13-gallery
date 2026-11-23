@@ -926,7 +926,7 @@ export class CityWorld {
   zoomBy(factor){this.camera.zoom=THREE.MathUtils.clamp(this.camera.zoom*factor,.55,3.7);this.camera.updateProjectionMatrix();this.controls.update();this.updateLabels();this.dirty=true;this.schedule();}
   rotateBy(direction){const offset=this.camera.position.clone().sub(this.controls.target);offset.applyAxisAngle(new THREE.Vector3(0,1,0),direction*Math.PI/4);this.camera.position.copy(this.controls.target).add(offset);this.controls.update();this.updateLabels();this.dirty=true;this.schedule();}
   focusCell(i){const target=new THREE.Vector3(i%mapSize-center,.5,Math.floor(i/mapSize)-center);this.camera.position.add(target.clone().sub(this.controls.target));this.controls.target.copy(target);this.controls.update();this.updateLabels();this.dirty=true;this.schedule();}
-  resetView(){this.controls.target.set(0,.5,0);this.camera.position.set(27,31,27);const rect=this.canvas.parentElement.getBoundingClientRect();this.camera.zoom=Math.min(1,rect.width/rect.height*.98);this.camera.updateProjectionMatrix();this.controls.update();this.updateLabels();this.dirty=true;this.schedule();}
+  resetView(){this.controls.target.set(0,.5,0);this.camera.position.set(27,31,27);const rect=this.canvas.parentElement.getBoundingClientRect();if(rect.width>=2&&rect.height>=2){this.camera.zoom=Math.min(1,rect.width/rect.height*.98);this.initialFit=true;}this.camera.updateProjectionMatrix();this.controls.update();this.updateLabels();this.dirty=true;this.schedule();}
   applyDaylight(darkness){
     this.darkness=darkness;this.night=darkness>=.5;this.waterMaterial.uniforms.uNight.value=darkness;
     this.scene.background.copy(new THREE.Color('#d4e4dd').lerp(new THREE.Color('#172d38'),darkness));this.scene.fog.color.copy(this.scene.background);

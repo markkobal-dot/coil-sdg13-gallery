@@ -1,5 +1,57 @@
 /* City workspace / system typography, glass surfaces, clear command hierarchy. */
 .gc-intro[hidden],.gc-intro-person-next[hidden]{display:none}
+.gc-page-heading { flex-wrap: wrap; align-items: center; gap: 12px 24px; }
+.gc-page-heading #gc-page-description {
+  margin: 6px 0 0;
+  color: #566158;
+  font-size: 14px;
+}
+#gc-presentation-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 44px;
+  padding: 8px 14px;
+  border: 1px solid #a6bca7;
+  border-radius: 8px;
+  background: #f7faf3;
+  color: #254b37;
+  font-size: 14px;
+  font-weight: 650;
+  text-decoration: none;
+}
+#gc-presentation-link:hover, #gc-presentation-link:focus-visible { background: #e9f0e3; }
+.gc-settings-return { display: block; padding: 10px 12px; font-size: 13px; color: #254b37; }
+.gc-city-name-field {
+  display: grid;
+  gap: 5px;
+  width: min(100%, 270px);
+  margin-top: 12px;
+  color: #315440;
+  font-size: 13px;
+  font-weight: 600;
+}
+.gc-city-name-field input {
+  width: 100%;
+  min-height: 42px;
+  padding: 8px 10px;
+  border: 1px solid #acbda8;
+  border-radius: 7px;
+  background: #fcfdf9;
+  color: #21392b;
+  font: inherit;
+}
+.gc-city-name-field[hidden], #gc-presentation-badge[hidden],
+.gc-settings #gc-reset[hidden], .gc-settings #gc-import[hidden], .gc-settings label[hidden] { display: none; }
+.gc-city-brand > div { min-width: 0; }
+.gc-city-brand .gc-city-emblem { flex-shrink: 0; }
+#gc-city-name, #gc-map-city-name {
+  max-width: min(24vw, 200px);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+#gc-map-city-name { text-transform: uppercase; }
 .gc-intro{position:absolute;right:68px;top:80px;width:min(300px,calc(100% - 80px));max-height:calc(100% - 130px);overflow:auto;overscroll-behavior:contain;margin:0;padding:16px;border:1px solid #cbdcc0;border-radius:14px;background:#f8fbf2;color:#304a36;box-shadow:0 5px 22px #173a2910;flex-shrink:0;z-index:8}
 .gc-intro>header{display:flex;align-items:center;justify-content:space-between;gap:10px}.gc-intro>header>span{font-size:9px;letter-spacing:.08em;color:#657a5d}.gc-shell .gc-intro>header>button{min-height:30px;min-width:30px;padding:2px;font-size:19px}
 .gc-intro-steps{display:flex;gap:7px;justify-content:space-between;margin:12px 0;padding:0;list-style:none;font-size:10px;color:#84927a}.gc-intro-steps li{padding-bottom:5px;border-bottom:2px solid #dce5d4;flex:1}.gc-intro-steps [aria-current]{color:#244f36;border-color:#668d4d;font-weight:650}.gc-intro-steps .is-done{color:#668d4d;border-color:#b7cf9f}
