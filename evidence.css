@@ -9,7 +9,7 @@
 }
 #evidence-weather .ce-card { animation: none; }
 .evidence-europe-chart {
-  max-width: 780px;
+  max-width: 520px;
   margin: 0 auto;
 }
 .evidence-europe-chart .chart-open, .evidence-europe-chart img {
