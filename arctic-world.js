@@ -1,6 +1,6 @@
 import * as THREE from './assets/vendor/three/three.module.js';
-import {iceMaterial,makeFloe,iceberg,fragments,loadSurfaceTextures,applyTextures} from './arctic-surfaces.js?v=588409c7a3';
-import {ArcticWildlife} from './arctic-wildlife.js?v=6e5fba698e';
+import {iceMaterial,makeFloe,iceberg,fragments,loadSurfaceTextures,applyTextures} from './arctic-surfaces.js?v=6eda190933';
+import {ArcticWildlife} from './arctic-wildlife.js?v=a16811df99';
 const skyVertex='varying vec3 vP;void main(){vP=position;gl_Position=projectionMatrix*modelViewMatrix*vec4(position,1.);}';
 const skyFragment=[
 'varying vec3 vP;uniform float underwater;uniform sampler2D sky;uniform float hasSky;',

@@ -1,6 +1,6 @@
 import * as THREE from './assets/vendor/three/three.module.js';
 import {GLTFLoader} from './assets/vendor/three/GLTFLoader.js';
-import './arctic-ice.js?v=00c14636b7';
+import './arctic-ice.js?v=b990c3418e';
 const I=globalThis.ArcticIce,templates=new Map();
 async function bearTemplate(low){
   if(!templates.has(low)){

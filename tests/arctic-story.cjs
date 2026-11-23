@@ -119,6 +119,14 @@ test('both ice halves share an organic crack, with finite detailed relief and up
     // A wall triangle must not interpolate from the end of the entire UV unwrap back to zero.
     const wallEnd=d.indices.length-d.ring.length*3;
     for(let q=d.topCount;q<wallEnd;q+=3){const u=d.indices.slice(q,q+3).map(i=>d.uv[i*2]);assert.ok(Math.max(...u)-Math.min(...u)<.5,'stretched UV seam');}
+    for(let k=0;k<=d.wallLayers;k++){
+      const first=(d.wallStart+k*d.wallStride)*3,last=first+d.ring.length*3;
+      assert.deepEqual(d.positions.slice(first,first+3),d.positions.slice(last,last+3),'open wall seam');
+    }
+    for(let j=0;j<d.ring.length;j++){
+      const cap=(1+(d.radials-1)*d.ring.length+j)*3,wall=(d.wallStart+j)*3;
+      for(let axis=0;axis<3;axis++)assert.ok(Math.abs(d.positions[cap+axis]-d.positions[wall+axis])<1e-6,'gap between snow cap and ice wall');
+    }
   }
   assert.ok(M.frameAt(.415,true).underwater>.5);
 });

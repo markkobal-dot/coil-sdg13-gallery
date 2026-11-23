@@ -2,6 +2,7 @@
 (function(host){
   'use strict';
   const mix=(a,b,t)=>a+(b-a)*t;
+  const smooth=(a,b,x)=>{const t=Math.max(0,Math.min(1,(x-a)/(b-a)));return t*t*(3-2*t);};
   const hash=(x,y)=>{const n=Math.sin(x*127.1+y*311.7)*43758.5453123;return n-Math.floor(n);};
   function noise(x,y){const ix=Math.floor(x),iy=Math.floor(y);let u=x-ix,v=y-iy;u=u*u*(3-2*u);v=v*v*(3-2*v);return mix(mix(hash(ix,iy),hash(ix+1,iy),u),mix(hash(ix,iy+1),hash(ix+1,iy+1),u),v);}
   function fbm(x,y){let value=0,amplitude=.55;for(let i=0;i<4;i++){value+=amplitude*noise(x,y);x=x*2.03+11.7;y=y*2.03-7.1;amplitude*=.47;}return value;}
@@ -47,9 +48,11 @@
     const push=(x,y,z,c,u,v)=>{positions.push(x,y,z);colors.push(...c);uv.push(u,v);};
     push(center[0],top(...center),center[1],[.88,.94,.94],center[0]*.15,center[1]*.15);
     for(let r=1;r<=radials;r++)for(let j=0;j<n;j++){
-      const t=r/radials,x=mix(center[0],ring[j][0],t),z=mix(center[1],ring[j][1],t),weather=fbm(x*.27,z*.27),c=.89+weather*.1;
-      const bevel=Math.max(0,Math.min(1,(t-.94)/.06));
-      push(x,top(x,z)-.26*bevel*bevel,z,[c,c+.035,c+.03],x*.15,z*.15);
+      // Concentrate existing vertices at the close-up rim, not the distant centre.
+      const t=1-Math.pow(1-r/radials,1.7),x=mix(center[0],ring[j][0],t),z=mix(center[1],ring[j][1],t),weather=fbm(x*.27,z*.27),c=.89+weather*.1;
+      const edgeDistance=(1-t)*Math.hypot(ring[j][0]-center[0],ring[j][1]-center[1]);
+      const shoulder=.26*(1-smooth(0,.72,edgeDistance));
+      push(x,top(x,z)-shoulder,z,[c,c+.035,c+.03],x*.15,z*.15);
     }
     for(let j=0;j<n;j++)indices.push(0,1+j,1+(j+1)%n);
     for(let r=1;r<radials;r++)for(let j=0;j<n;j++){
@@ -59,16 +62,18 @@
     const stride=n+1;
     // Duplicate the closing vertex so the UV seam does not stretch the entire texture into one triangle.
     for(let k=0;k<=layers;k++)for(let j=0;j<=n;j++){
-      const t=k/layers,p=ring[j%n],depth=4+.9*fbm(p[0]*.2,p[1]*.2),taper=1-.09*t-.025*Math.exp(-Math.pow((t-.2)/.13,2)),rough=Math.sin(t*Math.PI)*(.07*Math.sin(p[0]*2.3+p[1]*1.8+t*17)+.055*Math.sin(p[1]*4.1+t*9));
-      const x=center[0]+(p[0]-center[0])*taper+rough,z=center[1]+(p[1]-center[1])*taper+rough*.6,y=mix(top(...p)-.26,-depth,t),blue=Math.min(1,t*3),shade=.98-.28*t;
-      push(x,y,z,[mix(.91,.42,blue)*shade,mix(.97,.62,blue)*shade,mix(.97,.7,blue)*shade],distance[j]/5,y*.28);
+      const t=k/layers,p=ring[j%n],depth=4+.9*fbm(p[0]*.2,p[1]*.2),along=p[0]*.61+p[1]*.79,taper=1-(.045+.025*noise(along*.17,3))*t;
+      // Coherent melt relief avoids the repeated horizontal sine-wave shelves.
+      const relief=Math.sin(t*Math.PI)*(.65*(fbm(along*.48,t*3.3)-.45)+.13*(noise(along*1.6,t*.7)-.5));
+      const x=center[0]+(p[0]-center[0])*taper+relief,z=center[1]+(p[1]-center[1])*taper+relief*.6,y=mix(top(...p)-.26,-depth,t),blue=smooth(0,.48,t),shade=1-.2*t;
+      push(x,y,z,[mix(.94,.57,blue)*shade,mix(.97,.77,blue)*shade,mix(.98,.85,blue)*shade],distance[j]/2.2,y*.55);
     }
     for(let k=0;k<layers;k++)for(let j=0;j<n;j++){
       const a=wallStart+k*stride+j,b=a+1,c=a+stride,d=c+1;indices.push(a,d,b,a,c,d);
     }
     const bottom=positions.length/3;push(center[0],-4.8,center[1],[.28,.4,.47],0,0);
     for(let j=0;j<n;j++)indices.push(bottom,wallStart+layers*stride+j+1,wallStart+layers*stride+j);
-    return {positions,colors,uv,indices,topCount,ring,center};
+    return {positions,colors,uv,indices,topCount,ring,center,radials,wallStart,wallStride:stride,wallLayers:layers};
   }
   const api={noise,fbm,seam,top,outline,build};if(typeof module==='object'&&module.exports)module.exports=api;else host.ArcticIce=api;
 })(globalThis);

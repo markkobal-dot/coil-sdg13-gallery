@@ -11,7 +11,7 @@ if(root&&M){
   const reduced=matchMedia('(prefers-reduced-motion: reduce)');
   // Start the module download beside the data requests, rather than after them.
   let worldModule=null;
-  const loadWorld=()=>worldModule||(worldModule=import('./arctic-world.js?v=b546026ca1'));
+  const loadWorld=()=>worldModule||(worldModule=import('./arctic-world.js?v=068d8acdb5'));
   let world=null,worldPromise=null,data=null,mapData=null,live=false,visible=true,raf=0,active=-1,selectedYear=1979,manualStill=false,lastProgress=0,disposed=false;
   let route=document.body.dataset.view==='climate-story',pendingChapter=null,hasActivated=false,renderProgress=null,lastFrameTime=0,assetsReady=false,activation=0;
   const top=()=>['.nav','.view-bar'].reduce((height,selector)=>{const el=document.querySelector(selector);return height+(el&&['sticky','fixed'].includes(getComputedStyle(el).position)?el.getBoundingClientRect().height:0);},0);
