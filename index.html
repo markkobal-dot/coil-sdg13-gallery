@@ -70,7 +70,7 @@
     <link rel="stylesheet" href="site-polish.css?v=3843662de0">
     <link rel="stylesheet" href="design-tokens.css?v=2e57de22aa">
     <link rel="stylesheet" href="refined-ui.css?v=b5a6dab33a">
-    <link rel="stylesheet" href="arctic-story.css?v=4e58cdd2cb">
+    <link rel="stylesheet" href="arctic-story.css?v=10fb84d5a8">
     <link rel="stylesheet" href="home-cover.css?v=2d4d44b2e6">
   </head>
 
@@ -457,7 +457,7 @@
   <div class="arctic-step-copy"><span class="arctic-kind">Satellite observations</span><h3>1979 onward</h3><div class="arctic-caption"><p>From a single crack to the whole Arctic. Satellites reveal a long decline in September sea-ice extent, with increases in some individual years. Explore the record below.</p></div></div><div class="arctic-explorer" id="arctic-explorer">
   <div class="arctic-data-heading"><h4>September, year by year</h4><span>Monthly mean extent</span></div>
   <div class="arctic-year-readout"><output id="arctic-year-output" for="arctic-year">1979</output><strong><output id="arctic-extent-output" for="arctic-year">7.05</output> <span>million km²</span></strong></div>
-  <label for="arctic-year">Choose a September</label><div class="arctic-year-control"><button type="button" id="arctic-year-previous" aria-label="Previous year">−</button><input id="arctic-year" type="range" min="1979" max="2026" value="1979" step="1" aria-describedby="arctic-year-change"><button type="button" id="arctic-year-next" aria-label="Next year">+</button></div>
+  <div class="arctic-year-heading"><label for="arctic-year">Choose a September</label><button class="arctic-history-open" id="arctic-history-open" type="button" aria-haspopup="dialog" hidden>Before 1979</button></div><div class="arctic-year-control"><button type="button" id="arctic-year-previous" aria-label="Previous year">−</button><input id="arctic-year" type="range" min="1979" max="2026" value="1979" step="1" aria-describedby="arctic-year-change"><button type="button" id="arctic-year-next" aria-label="Next year">+</button></div>
   <div class="arctic-chart"><span class="arctic-axis-max" aria-hidden="true">9</span><img id="arctic-chart-image" src="assets/arctic/september-chart.svg" width="720" height="270" alt="September monthly sea-ice extent from 1979 to 2026. The record declines overall, with year-to-year increases including 2013." loading="lazy"><span class="arctic-axis-min" aria-hidden="true">0</span></div>
   <p id="arctic-year-change" role="status">Explore the full satellite record, including years with more ice than the year before.</p>
   <p class="arctic-data-credit"><a href="assets/data/arctic-september-original.csv" download>NSIDC data (CSV)</a> · Extent counts ocean with at least 15% ice cover.</p>
@@ -472,6 +472,28 @@
   <div class="arctic-step-copy"><span class="arctic-kind">Projection · IPCC AR6</span><h3>Before 2050</h3><div class="arctic-caption"><p>Across the assessed emissions scenarios, the Arctic is likely to experience at least one practically ice-free September before 2050.</p><p>Practically ice-free means less than one million square kilometres of sea-ice area.</p><p class="arctic-closing-line">How often that September returns depends on how much more the world warms.</p><a class="arctic-source-link" href="https://www.ipcc.ch/report/ar6/wg1/chapter/chapter-9/" target="_blank" rel="noopener noreferrer">IPCC AR6 Working Group I, Chapter 9</a><a class="arctic-action" href="#solutions">Take action</a></div></div>
 </article></div>
   </div>
+  <dialog class="arctic-history" id="arctic-history" aria-labelledby="arctic-history-title">
+    <header class="arctic-history-header"><h3 id="arctic-history-title">Before 1979</h3><form method="dialog"><button type="submit" autofocus>Close</button></form></header>
+    <div class="arctic-history-layout">
+      <div class="arctic-history-map" id="arctic-history-map"></div>
+      <div class="arctic-history-copy">
+        <p>Researchers used ice charts and other historical observations to reconstruct the Arctic ice edge before the continuous satellite record.</p>
+        <label for="arctic-history-year">September snapshot</label>
+        <select id="arctic-history-year" aria-describedby="arctic-history-coverage" disabled></select>
+        <output id="arctic-history-extent" for="arctic-history-year" aria-live="polite">Loading historical maps…</output>
+        <p class="arctic-history-note" id="arctic-history-coverage" aria-live="polite" hidden></p>
+        <p class="arctic-history-note">These estimates represent mid-September conditions. Extent counts ocean cells with at least 15% ice cover.</p>
+        <p class="arctic-history-note"><a href="https://doi.org/10.7265/jj4s-tq79" target="_blank" rel="noopener noreferrer">Historical data · Walsh et al. (2019), NSIDC</a></p>
+      </div>
+    </div>
+    <section class="arctic-industry" aria-labelledby="arctic-industry-title">
+      <h4 id="arctic-industry-title">When did fossil-fuel use take off?</h4>
+      <div>
+        <p><strong>Late 1700s</strong> Coal-powered machinery helped launch Britain’s Industrial Revolution. Coal use spread as factories and railways expanded through the 1800s. <a href="https://www.ipcc.ch/report/ar6/wg1/chapter/chapter-1/" target="_blank" rel="noopener noreferrer">IPCC</a></p>
+        <p><strong>Around 1950</strong> Global CO₂ emissions from fossil fuels began rising much faster as industry, power generation and transport expanded. The resulting warming contributes to Arctic sea-ice loss. <a href="https://gml.noaa.gov/ccgg/carbontracker/CT2026_doc.pdf" target="_blank" rel="noopener noreferrer">NOAA</a> · <a href="https://www.ipcc.ch/report/ar6/wg1/chapter/chapter-3/#3.4.1.1" target="_blank" rel="noopener noreferrer">IPCC on sea ice</a></p>
+      </div>
+    </section>
+  </dialog>
   <details class="arctic-method"><summary>About the illustration and data</summary><div><p>The close-up illustrates sea-ice habitat and change. The animals fade as the camera moves on; this is not a dated population record. The opening and closing use the same camera position and landmark.</p><p>The satellite record uses NSIDC Sea Ice Index Version 4 September monthly means in million km², preserved in the original downloadable CSV. NASA Blue Marble supplies the land colours and relief, from its September 2004 composite. It is a fixed land basemap, not a photograph of the selected year. Natural Earth land and NSIDC ice-edge outlines use polar stereographic north (Hughes 1980). The displayed ice boundary is gently rounded to soften the grid-cell steps; the original outlines and chart measurements are unchanged. The 3D view uses illustrative ice textures and lighting. Its palette changes with September extent, and the dashed line traces the edge from September 1979. The 2026 daily minimum is a separate NSIDC estimate; it is not a September average.</p><p>Sea-ice extent and sea-ice area are different measures. The IPCC’s practically ice-free threshold refers to area. The projection is not a prediction that every September will be ice-free from a fixed date.</p><p><a href="https://nsidc.org/learn/parts-cryosphere/sea-ice/why-sea-ice-matters" target="_blank" rel="noopener noreferrer">Sea ice and the climate</a> · <a href="https://www.usgs.gov/centers/alaska-science-center/science/health-and-energetics-polar-bears" target="_blank" rel="noopener noreferrer">Sea ice and polar bears</a> · <a href="https://science.nasa.gov/earth/explore/earth-indicators/ocean-warming/" target="_blank" rel="noopener noreferrer">Ocean warming</a> · <a href="https://nsidc.org/data/g02135/versions/4" target="_blank" rel="noopener noreferrer">NSIDC Sea Ice Index</a> · <a href="https://science.nasa.gov/earth/earth-observatory/blue-marble-next-generation/base-topography/" target="_blank" rel="noopener noreferrer">NASA Blue Marble · NASA Earth Observatory / Reto Stöckli</a> · <a href="https://www.naturalearthdata.com/about/terms-of-use/" target="_blank" rel="noopener noreferrer">Natural Earth</a> · <a href="https://www.ipcc.ch/report/ar6/wg1/chapter/chapter-9/" target="_blank" rel="noopener noreferrer">IPCC AR6 WGI, Chapter 9</a></p></div></details>
   <div class="arctic-end"><p>Closer to home, see how cities are making streets cooler as temperatures rise.</p><a class="btn" href="#cities">See what cities are doing</a></div>
 </section>
@@ -831,6 +853,6 @@
       </div>
     </div>
     <script src="assets/data/weather-snapshot.js" defer></script>
-    <script src="site.js?v=8891b3525d" defer></script>
+    <script src="site.js?v=63d6278de7" defer></script>
   </body>
 </html>

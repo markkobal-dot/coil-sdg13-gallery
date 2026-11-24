@@ -7,6 +7,9 @@ if(root&&M){
   const steps=[...root.querySelectorAll('[data-arctic-step]')],nav=root.querySelector('.arctic-chapters'),buttons=[...nav.querySelectorAll('button')];
   const explorer=root.querySelector('#arctic-explorer'),mode=root.querySelector('#arctic-mode'),poster=root.querySelector('#arctic-poster');
   const note=stage.querySelector('#arctic-map-note'),timeline=stage.querySelector('.arctic-timeline span');
+  const historyButton=root.querySelector('#arctic-history-open'),historyDialog=root.querySelector('#arctic-history');
+  const historicalYear=historyDialog.querySelector('#arctic-history-year'),historicalExtent=historyDialog.querySelector('#arctic-history-extent');
+  const historicalCoverage=historyDialog.querySelector('#arctic-history-coverage');
   const navHome=document.createComment('chapter navigation'),explorerHome=document.createComment('September explorer');
   nav.before(navHome);explorer.before(explorerHome);
   const reduced=matchMedia('(prefers-reduced-motion: reduce)');
@@ -121,7 +124,19 @@ if(root&&M){
     stage.querySelector('#arctic-stage-date').textContent='September '+selectedYear;
     stage.querySelector('#arctic-stage-caption').innerHTML=`<p>Arctic sea-ice extent in the September you selected.</p><strong class="arctic-minimum">${row.extent.toFixed(2)}<span>million km²</span></strong><span class="arctic-daily-note">Monthly mean extent. Ocean with at least 15% ice cover.</span><a class="arctic-source-link" href="assets/data/arctic-september-original.csv" target="_blank" rel="noopener noreferrer">NSIDC monthly data (CSV)</a>`;
   }
-  const mapIcePath=rings=>(rings||[]).map(r=>M.smoothIceRing(r).map(([x,y],i)=>(i?'L':'M')+(400+x/10000).toFixed(1)+' '+(400-y/10000).toFixed(1)).join('')+'Z').join('');
+  const polarPath=rings=>rings.map(r=>r.map(([x,y],i)=>(i?'L':'M')+(400+x/10000).toFixed(1)+' '+(400-y/10000).toFixed(1)).join('')+'Z').join('');
+  const mapIcePath=rings=>polarPath((rings||[]).map(M.smoothIceRing));
+  function makePolarMap(id,reference){
+    const map=document.createElementNS('http://www.w3.org/2000/svg','svg');
+    map.id=id;
+    map.setAttribute('viewBox','0 0 800 800');
+    map.setAttribute('role','img');
+    map.style.width='100%';
+    const coast=polarPath(mapData.coast),basemap='assets/arctic/'+(innerWidth<701?'polar-land-mobile.webp':'polar-land.webp');
+    const comparison=reference?`<path data-map-reference d="${reference}" fill="none" stroke="#8ca8c5" stroke-width="1.6" stroke-dasharray="6 5"/>`:'';
+    map.innerHTML=`<defs><clipPath id="${id}-rim"><circle cx="400" cy="400" r="394"/></clipPath><clipPath id="${id}-land"><path d="${coast}" clip-rule="evenodd"/></clipPath></defs><g clip-path="url(#${id}-rim)"><rect width="800" height="800" fill="#102b42"/><path data-map-ice fill="#edf2e9" stroke="#ccdddd" stroke-width=".6" fill-rule="evenodd"/>${comparison}<path d="${coast}" fill="#70837c" fill-rule="evenodd"/><image href="${basemap}" width="800" height="800" clip-path="url(#${id}-land)"/><path d="${coast}" fill="none" stroke="#9eaaa3" stroke-width=".6"/></g>`;
+    return map;
+  }
   function updateReaderMap(){
     const svg=root.querySelector('#arctic-reader-svg');if(!svg||!mapData)return;
     const firstYear=data.rows[0].year;
@@ -137,14 +152,43 @@ if(root&&M){
     chart.innerHTML=`<g fill="none" stroke="#d5dcd4" stroke-width="1"><path d="M48 32H672M48 96.7H672M48 161.3H672M48 226H672"/></g><path id="arctic-chart-marker" fill="none" stroke-width="2" stroke-dasharray="5 5"/><path d="M${points.join('L')}" fill="none" stroke="#52645a" stroke-width="3" stroke-linejoin="round"/><g fill="#52645a" font-family="Arial,sans-serif" font-size="24"><text x="10" y="40">9</text><text x="10" y="234">0</text><text x="48" y="264">1979</text><text x="608" y="264">2026</text></g><circle id="arctic-chart-dot" r="8" stroke="#fff" stroke-width="3"/>`;
     root.querySelector('#arctic-chart-image').replaceWith(chart);
     if(mapData){
-      const map=document.createElementNS('http://www.w3.org/2000/svg','svg');map.id='arctic-reader-svg';map.setAttribute('viewBox','0 0 800 800');map.setAttribute('role','img');map.style.width='100%';
-      const coast=mapData.coast.map(r=>r.map(([x,y],i)=>(i?'L':'M')+(400+x/10000).toFixed(1)+' '+(400-y/10000).toFixed(1)).join('')+'Z').join('');
-      const basemap='assets/arctic/'+(innerWidth<701?'polar-land-mobile.webp':'polar-land.webp');
-      map.innerHTML=`<defs><clipPath id="arctic-map-clip"><circle cx="400" cy="400" r="394"/></clipPath><clipPath id="arctic-land-clip"><path d="${coast}" clip-rule="evenodd"/></clipPath></defs><g clip-path="url(#arctic-map-clip)"><rect width="800" height="800" fill="#102b42"/><path data-map-ice fill="#edf2e9" stroke="#ccdddd" stroke-width=".6" fill-rule="evenodd"/><path data-map-reference d="${mapIcePath(mapData.years[String(rows[0].year)])}" fill="none" stroke="#8ca8c5" stroke-width="1.6" stroke-dasharray="6 5"/><path d="${coast}" fill="#70837c" fill-rule="evenodd"/><image href="${basemap}" width="800" height="800" clip-path="url(#arctic-land-clip)"/><path d="${coast}" fill="none" stroke="#9eaaa3" stroke-width=".6"/></g>`;
+      const map=makePolarMap('arctic-reader-svg',mapIcePath(mapData.years[String(rows[0].year)]));
       root.querySelector('#arctic-reader-map').replaceWith(map);
+      historyButton.hidden=false;
     }
     updateYear();
   }
+  let historyRequest=null,historicalMap=null,historicalSnapshots=null;
+  function showHistoricalYear(){
+    const snapshot=historicalSnapshots.find(entry=>entry.year===Number(historicalYear.value));
+    historicalMap.querySelector('[data-map-ice]').setAttribute('d',polarPath(snapshot.rings));
+    historicalMap.setAttribute('aria-label','Reconstructed Arctic sea-ice extent in mid-September '+snapshot.year);
+    historicalExtent.textContent='About '+snapshot.extent.toFixed(1)+' million km²';
+    const gapFill=snapshot.gapFillPercent;
+    historicalCoverage.textContent=gapFill?'About '+gapFill+'% of the mapped ice extent comes from areas where researchers filled gaps in the record.':'';
+    historicalCoverage.hidden=!gapFill;
+  }
+  historicalYear.addEventListener('change',showHistoricalYear);
+  historyButton.addEventListener('click',()=>{
+    historyDialog.showModal();
+    if(historyRequest)return;
+    historicalExtent.textContent='Loading historical maps…';
+    historyRequest=fetch(new URL('./assets/data/arctic-history.json',import.meta.url),{cache:'no-cache'}).then(response=>{
+      if(!response.ok)throw new Error('Historical maps are unavailable');
+      return response.json();
+    }).then(archive=>{
+      historicalSnapshots=archive.snapshots;
+      historicalYear.replaceChildren(...historicalSnapshots.map(({year})=>new Option(String(year),String(year))));
+      historicalYear.value=String(historicalSnapshots.at(-1).year);
+      historicalMap=makePolarMap('arctic-history-svg');
+      showHistoricalYear();
+      root.querySelector('#arctic-history-map').replaceChildren(historicalMap);
+      historicalYear.disabled=false;
+    }).catch(()=>{
+      historicalExtent.textContent='Could not load the maps. Reopen this window to try again.';
+      historyRequest=null;
+    });
+  });
   function stillViews(){
     activation++;
     if(raf)cancelAnimationFrame(raf);raf=0;
@@ -216,6 +260,7 @@ if(root&&M){
   document.addEventListener('visibilitychange',()=>{if(document.hidden&&raf){cancelAnimationFrame(raf);raf=0;}else schedule();});
   window.addEventListener('app:view',event=>{
     route=event.detail.id==='climate-story';
+    if(!route&&historyDialog.open)historyDialog.close();
     if(!route&&raf){cancelAnimationFrame(raf);raf=0;}
     if(route){renderProgress=null;lastFrameTime=0;syncSize();positionLive();}
   });

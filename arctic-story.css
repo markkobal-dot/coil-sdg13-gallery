@@ -78,6 +78,9 @@
 .arctic-year-readout strong{font-size:26px;font-variant-numeric:tabular-nums}
 .arctic-year-readout strong>span{font-size:14px;font-weight:400}
 .arctic-explorer label{font-size:14px;display:block;margin-bottom:5px}
+.arctic-year-heading{display:flex;align-items:baseline;justify-content:space-between;gap:10px}
+.arctic-history-open{padding:4px 0;border:0;background:none;color:var(--ice-accent);font:inherit;font-size:13px;white-space:nowrap;text-decoration:underline;text-underline-offset:3px;cursor:pointer}
+.arctic-stage .arctic-history-open:focus-visible{outline-color:var(--color-focus)}
 .arctic-year-control{display:flex;align-items:center;gap:12px}
 .arctic-year-control input{width:100%;min-width:0;min-height:44px;accent-color:var(--ice-accent)}
 .arctic-year-control button{background:none;border:1px solid var(--line);color:var(--color-ink);min-width:44px;min-height:44px;font:inherit;font-size:22px;cursor:pointer}
@@ -95,6 +98,32 @@
 .arctic-map-fallback img{width:100%;height:auto}
 .arctic-map-fallback figcaption{font-size:14px;line-height:1.5;color:var(--color-muted);margin-top:12px}
 .arctic-live .arctic-map-fallback{display:none}
+.arctic-history{width:min(900px,calc(100% - 32px));max-height:calc(100% - 32px);padding:clamp(20px,4vw,44px);border:1px solid var(--line);background:var(--color-paper);color:var(--color-ink);overflow:auto;overscroll-behavior:contain}
+.arctic-history::backdrop{background:#061423d4}
+.arctic-history-header{display:flex;align-items:center;justify-content:space-between;gap:16px;margin-bottom:24px;padding-bottom:14px;border-bottom:1px solid var(--line)}
+#climate-story .arctic-history-header h3{font-size:clamp(30px,5vw,56px);line-height:1.05;letter-spacing:-.045em;margin:0}
+.arctic-history-header button,.arctic-history-copy select{min-height:44px;padding:8px 14px;font:inherit;color:var(--color-action);background:var(--color-paper);border:1px solid var(--line);cursor:pointer}
+.arctic-history-layout{display:grid;grid-template-columns:1.25fr 1fr;gap:clamp(22px,5vw,50px);align-items:center}
+.arctic-history-map{aspect-ratio:1;min-width:0;background:#102b42;border-radius:50%;overflow:hidden}
+.arctic-history-map svg{display:block;width:100%}
+#climate-story .arctic-history-copy p{font-size:16px;line-height:1.55;margin:0 0 16px}
+.arctic-history-copy label{display:block;margin-bottom:5px;font-size:14px;font-weight:600}
+.arctic-history-copy select{width:100%;max-width:220px}
+.arctic-history-copy select:focus-visible{outline:3px solid var(--color-focus);outline-offset:4px}
+.arctic-history-copy output{display:block;margin:15px 0;font-size:18px;font-weight:650;font-variant-numeric:tabular-nums}
+#climate-story .arctic-history-copy .arctic-history-note{font-size:13px;color:var(--color-muted)}
+.arctic-history-note a{color:var(--color-action);text-underline-offset:3px}
+.arctic-industry{margin-top:24px;padding-top:18px;border-top:1px solid var(--line)}
+#climate-story .arctic-industry h4{margin:0 0 10px;font-size:19px;line-height:1.25}
+.arctic-industry>div{display:grid;grid-template-columns:1fr 1fr;gap:12px 24px}
+#climate-story .arctic-industry p{margin:0;font-size:14px;line-height:1.55}
+.arctic-industry strong{display:block}
+.arctic-industry a{color:var(--color-action);text-underline-offset:3px}
+@media(max-width:640px){
+ .arctic-history-layout{grid-template-columns:1fr}
+ .arctic-history-copy{grid-row:1}
+ .arctic-industry>div{grid-template-columns:1fr}
+}
 .arctic-method{margin:36px var(--gutter);border-block:1px solid var(--line);padding:0}
 .arctic-method summary{font-size:16px;min-height:56px;padding-block:17px;cursor:pointer}
 .arctic-method>div{max-width:82ch;padding-bottom:20px}
