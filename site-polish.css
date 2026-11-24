@@ -102,7 +102,6 @@
  .gc-expanded .gc-history-buttons{position:absolute;right:0;bottom:calc(100% + 8px);padding:3px;gap:2px;border:1px solid #ffffffa0;border-radius:12px;background:#f7faefe8;backdrop-filter:blur(20px)}
  .gc-expanded .gc-history-buttons>button{width:40px;min-height:40px;padding:8px}
  .gc-expanded .gc-world-caption>span{font-size:11px}
- .gc-page-heading .kicker{font-size:10px}
  .gc-expanded .gc-panel-toggles>button{font-size:11px;min-height:36px;padding:7px}
  .gc-expanded .gc-world-top .gc-overlay-control select{font-size:11px;min-height:36px;max-width:125px}
  .gc-shell .gc-message{font-size:12px}

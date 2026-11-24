@@ -1,2 +1,3 @@
 # Local classroom votes stay on the host computer, outside Git.
 .local-data/
+/node_modules/

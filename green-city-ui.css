@@ -1,26 +1,5 @@
 /* City workspace / system typography, glass surfaces, clear command hierarchy. */
 .gc-intro[hidden],.gc-intro-person-next[hidden]{display:none}
-.gc-page-heading { flex-wrap: wrap; align-items: center; gap: 12px 24px; }
-.gc-page-heading #gc-page-description {
-  margin: 6px 0 0;
-  color: #566158;
-  font-size: 14px;
-}
-#gc-presentation-link {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  min-height: 44px;
-  padding: 8px 14px;
-  border: 1px solid #a6bca7;
-  border-radius: 8px;
-  background: #f7faf3;
-  color: #254b37;
-  font-size: 14px;
-  font-weight: 650;
-  text-decoration: none;
-}
-#gc-presentation-link:hover, #gc-presentation-link:focus-visible { background: #e9f0e3; }
 .gc-settings-return { display: block; padding: 10px 12px; font-size: 13px; color: #254b37; }
 .gc-city-name-field {
   display: grid;

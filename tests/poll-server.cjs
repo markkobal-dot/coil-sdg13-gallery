@@ -88,6 +88,12 @@ test('only public website files are served; Git, database and server source stay
     const model=await fetch(url+'/assets/arctic/models/polar-bear-mobile.glb');
     assert.equal(model.status,200);assert.equal(model.headers.get('content-type'),'model/gltf-binary');
     assert.equal(Buffer.from(await model.arrayBuffer()).readUInt32LE(0),0x46546c67);
+    const soundtrack=await fetch(url+'/assets/audio/climate-mission.wav');
+    assert.equal(soundtrack.status,200);
+    assert.equal(soundtrack.headers.get('content-type'),'audio/wav');
+    const wav=Buffer.from(await soundtrack.arrayBuffer());
+    assert.equal(wav.toString('ascii',0,4),'RIFF');
+    assert.equal(wav.toString('ascii',8,12),'WAVE');
     for(const file of ['/.git/config','/.local-data/poll.sqlite','/server.cjs','/tests/poll-server.cjs','/package.json','/assets/%2e%2e%5c.git/config']) {
       assert.equal((await fetch(url+file)).status,404,file);
     }

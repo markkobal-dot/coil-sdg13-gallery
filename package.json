@@ -5,7 +5,13 @@
     "build": "node scripts/build-site-bundle.cjs",
     "start": "node server.cjs",
     "start:lan": "node server.cjs --lan",
-    "test:poll": "node --test tests/poll-server.cjs"
+    "test:poll": "node --test tests/poll-server.cjs",
+    "test:presentation": "node --test tests/green-city-presentation.spec.cjs"
   },
-  "engines": { "node": ">=24" }
+  "engines": {
+    "node": ">=24"
+  },
+  "devDependencies": {
+    "playwright": "1.65.1"
+  }
 }

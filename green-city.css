@@ -1,11 +1,6 @@
 /* New Terra / an interactive city lab. */
-.green-city-section{max-width:none;padding:24px clamp(10px,2.2vw,40px) 50px;background:#e8eee4;color:#284b39}
 .green-city-section [hidden]{display:none!important}
 .green-city-section .sr-only{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap}
-.gc-page-heading{max-width:1740px;margin:0 auto 24px;display:flex;align-items:end;justify-content:space-between;gap:25px}
-.green-city-section .gc-page-heading h2{margin:10px 0 0;font:500 clamp(28px,3vw,43px)/1.12 Manrope,Arial,sans-serif;letter-spacing:-.06em}
-.gc-page-heading .kicker{font-size:10px;letter-spacing:.13em}
-.gc-page-heading>p{margin:0;color:#566158;font-size:12px;line-height:1.7}
 .gc-shell{max-width:1740px;margin:auto;background:#f6f7ed;border:1px solid #bccbb8;border-radius:6px;overflow:hidden;box-shadow:0 20px 70px #29493214}
 .gc-shell :is(button,input,select),.gc-dialog button{font-family:'DM Sans',Arial,sans-serif}
 .gc-shell button{min-height:36px;padding:6px 9px;border:1px solid #d0daca;border-radius:3px;background:#f8f8ef;color:#496a4c;font-size:11px;line-height:1.4;cursor:pointer;transition:background 150ms,border-color 150ms}
@@ -222,7 +217,6 @@ body.gc-game-expanded{overflow:hidden}
 @media(min-width:1650px){.gc-workspace{grid-template-columns:242px minmax(0,1fr) 280px}.gc-build-panel{padding-inline:17px}.gc-dashboard{padding-inline:20px}.gc-building-name{font-size:12px}.gc-building-card>strong{font-size:18px}.gc-tool-switcher span{font-size:11px}.gc-metric>div:first-child{font-size:12px}.gc-live-stats>div,.gc-live-stats strong{font-size:11px}}
 @media(max-width:1270px) and (min-width:1001px){.gc-topbar{gap:12px;padding-inline:14px}.gc-city-brand{min-width:135px}.gc-city-brand strong{font-size:17px}.gc-top-stat{padding-left:12px;min-width:95px}.gc-top-stat>strong{font-size:23px}.gc-window-controls>button{padding-inline:7px}.gc-time-controls{gap:3px}.gc-time-controls>div{margin-right:4px}.gc-workspace{grid-template-columns:204px minmax(0,1fr) 236px}.gc-dashboard{padding-inline:12px}.gc-tool-switcher>button{padding:5px}.gc-tool-switcher span{display:none}.gc-current-tool .gc-change-tool{display:none}.gc-contextbar{gap:6px;padding-inline:8px}.gc-contextbar>.gc-action-button{padding-inline:10px;font-size:10px}}
 @media(max-width:1000px){
- .green-city-section{padding:20px 13px 36px}.gc-page-heading{margin-bottom:19px}.gc-page-heading>p{font-size:11px}.gc-page-heading .kicker{font-size:9px}.green-city-section .gc-page-heading h2{font-size:32px}
  .gc-topbar{gap:12px;flex-wrap:wrap;padding:13px 15px}.gc-city-brand{min-width:140px;margin-right:auto}.gc-top-stat{padding-left:13px;min-width:106px}.gc-time-controls{margin-left:0;flex:1}.gc-window-controls{margin-left:auto}
  .gc-workspace{display:block;height:auto;min-height:0}.gc-map-panel{overflow:visible}.gc-world-wrap{height:500px;flex:none}.gc-map-toolbar{padding:8px 11px}.gc-tool-switcher{flex:1;gap:5px;justify-content:space-between}.gc-tool-switcher>button{padding:5px 7px;font-size:17px}.gc-tool-switcher span{font-size:10px}
  .gc-build-panel,.gc-dashboard{display:none;position:absolute;z-index:10;bottom:45px;left:8px;right:8px;max-height:78%;padding:16px 18px 22px;overflow:auto;border:1px solid #bbd0aa;border-radius:6px;background:#f5f7e9f5;box-shadow:0 -10px 40px #36562e33;backdrop-filter:blur(12px)}
@@ -236,7 +230,7 @@ body.gc-game-expanded{overflow:hidden}
  .gc-expanded{inset:0!important;border-radius:0!important}.gc-expanded .gc-workspace{display:flex;flex-direction:column;overflow:hidden}.gc-expanded .gc-map-panel{flex:1}.gc-expanded .gc-world-wrap{height:auto;flex:1}.gc-expanded .gc-build-panel,.gc-expanded .gc-dashboard{max-height:80%;bottom:45px}
 }
 @media(max-width:600px){
- .green-city-section{padding:17px 8px 28px}.gc-page-heading>p{display:none}.gc-page-heading{padding:0 6px;margin-bottom:17px}.gc-page-heading .kicker{font-size:8px}.green-city-section .gc-page-heading h2{font-size:30px}.gc-shell{border-radius:4px}
+ .gc-shell{border-radius:4px}
  .gc-topbar{display:grid;grid-template-columns:minmax(0,1fr) minmax(75px,.9fr) auto;gap:12px 5px;padding:12px 10px}.gc-city-brand{min-width:0;margin:0;gap:7px}.gc-city-emblem{width:27px;height:33px;font-size:20px}.gc-city-brand strong{font-size:15px}.gc-city-brand>div>span{font-size:6px;letter-spacing:.04em;margin-top:3px}
  .gc-top-stat{padding-left:11px;min-width:0}.gc-top-stat>span{font-size:7px;letter-spacing:.07em}.gc-top-stat>strong{font-size:24px;white-space:nowrap}.gc-top-stat>small{font-size:8px;white-space:normal}
  .gc-population-stat{grid-column:1;grid-row:2;display:flex;align-items:center;flex-wrap:wrap;column-gap:6px;padding-left:0;border:0}.gc-population-stat>span{flex:1 1 100%;font-size:7px}.gc-population-stat>strong{font-size:22px}.gc-population-stat>small{display:none}

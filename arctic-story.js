@@ -122,7 +122,7 @@ if(root&&M){
     const row=data.rows.find(r=>r.year===selectedYear);
     stage.querySelector('#arctic-stage-kind').textContent='Your selected September';
     stage.querySelector('#arctic-stage-date').textContent='September '+selectedYear;
-    stage.querySelector('#arctic-stage-caption').innerHTML=`<p>Arctic sea-ice extent in the September you selected.</p><strong class="arctic-minimum">${row.extent.toFixed(2)}<span>million km²</span></strong><span class="arctic-daily-note">Monthly mean extent. Ocean with at least 15% ice cover.</span><a class="arctic-source-link" href="assets/data/arctic-september-original.csv" target="_blank" rel="noopener noreferrer">NSIDC monthly data (CSV)</a>`;
+    stage.querySelector('#arctic-stage-caption').innerHTML=`<p>Arctic sea-ice extent in the September you selected.</p><strong class="arctic-minimum">${row.extent.toFixed(2)}<span>million km²</span></strong><span class="arctic-daily-note">Monthly mean extent. Ocean with at least 15% ice cover.</span><a class="arctic-source-link" href="https://noaadata.apps.nsidc.org/NOAA/G02135/north/monthly/data/" target="_blank" rel="noopener noreferrer">NSIDC monthly archive</a>`;
   }
   const polarPath=rings=>rings.map(r=>r.map(([x,y],i)=>(i?'L':'M')+(400+x/10000).toFixed(1)+' '+(400-y/10000).toFixed(1)).join('')+'Z').join('');
   const mapIcePath=rings=>polarPath((rings||[]).map(M.smoothIceRing));

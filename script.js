@@ -575,7 +575,6 @@ document.addEventListener('visibilitychange', () => {
     'slovenia-data': 'problem', 'evidence-glacier': 'problem', 'evidence-flood': 'problem',
     journey: 'team', closing: 'solutions'
   };
-  const navDestination = (id) => id === 'game' ? 'solutions' : id;
   let currentView = null;
 
   function setMenuOpen(opening) {
@@ -603,8 +602,9 @@ document.addEventListener('visibilitychange', () => {
     if (summary) target.open = true;
     viewBar.hidden = id === 'home';
     viewTitle.textContent = view.title;
+    const activeNav = id === 'game' ? 'solutions' : id;
     for (const link of nav.querySelectorAll('a')) {
-      const active = link.hash === '#' + navDestination(id);
+      const active = link.hash === '#' + activeNav;
       if (active) link.setAttribute('aria-current', 'page');
       else link.removeAttribute('aria-current');
     }
@@ -706,7 +706,7 @@ document.addEventListener('visibilitychange', () => {
   let loading;
   function loadArctic() {
     if (loading) return;
-    loading=import('./arctic-story.js?v=4b668dc7d2').catch(error=>{console.warn('Using Arctic still views:',error);loading=null;});
+    loading=import('./arctic-story.js?v=ee5883c2f5').catch(error=>{console.warn('Using Arctic still views:',error);loading=null;});
   }
   function warmArctic() {
     const connection = navigator.connection;

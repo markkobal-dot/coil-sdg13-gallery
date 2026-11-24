@@ -1,16 +1,10 @@
 /* Arctic journey: native scrolling, one sticky scene, complete still-view reader. */
 #climate-story.arctic-story{padding:0;background:var(--color-paper);border:0;color:var(--color-ink);max-width:none;overflow:visible;overflow-anchor:none;--arctic-top:82px;--arctic-height:calc(100svh - var(--arctic-top))}
-.arctic-intro{display:grid;grid-template-columns:1.2fr 1fr;gap:64px;align-items:end;padding:60px var(--gutter) 48px}
-#climate-story .arctic-eyebrow{font-size:14px;margin:0 0 20px;color:var(--color-muted)}
-#climate-story .arctic-intro h2{font-family:var(--font-display);font-size:clamp(52px,6.5vw,104px);letter-spacing:-.065em;line-height:.98;margin:0}
-#climate-story .arctic-intro>div:last-child{max-width:42ch;justify-self:end}
-#climate-story .arctic-intro p{font-size:18px;line-height:1.6;margin:0 0 14px}
-#climate-story .arctic-intro .arctic-intro-note{font-size:14px;color:var(--color-muted)}
-.arctic-mode{background:none;border:0;padding:8px 0;font:inherit;font-size:14px;color:var(--color-action);text-decoration:underline;text-underline-offset:4px;min-height:44px;cursor:pointer}
 .arctic-chapters{display:flex;gap:0;padding:0 var(--gutter);border-block:1px solid var(--line);background:var(--color-paper);overflow-x:auto;scrollbar-width:none}
 .arctic-chapters::-webkit-scrollbar{display:none}
 .arctic-chapters button{flex:1;white-space:nowrap;padding:15px 16px;border:0;border-bottom:3px solid transparent;background:none;font:inherit;font-size:14px;color:var(--color-muted);min-height:52px;cursor:pointer}
 .arctic-chapters button[aria-pressed=true]{border-bottom-color:var(--color-action);color:var(--color-ink);font-weight:650}
+.arctic-chapters button:hover{color:var(--color-action)}
 .arctic-chapters button:last-child{border-left:1px dashed var(--color-muted)}
 .arctic-journey{position:relative}
 .arctic-reading{position:relative}
@@ -43,7 +37,7 @@
 .arctic-live .arctic-step{display:block;height:130svh;min-height:640px;padding:0;background:none;pointer-events:none}
 .arctic-live .arctic-step>.arctic-still{display:none}
 .arctic-live .arctic-step-copy{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
-.arctic-live .arctic-chapters{position:absolute;inset:0 0 auto;z-index:4;background:#f5f3eeed;border-color:#b5c3c3;padding-inline:20px}
+.arctic-live .arctic-chapters{position:absolute;inset:0 0 auto;z-index:4}
 .arctic-stage-heading{position:absolute;right:var(--gutter);top:90px;z-index:2;max-width:49%;text-align:right;color:#133440;text-shadow:0 1px 12px #eef6f4a6}
 .arctic-stage-heading>span{font-size:14px;line-height:1.5;display:block;margin-bottom:10px}
 #climate-story .arctic-stage-heading h3{font-size:clamp(32px,4vw,64px);line-height:1.06;letter-spacing:-.05em;font-weight:650;margin:0}
@@ -141,10 +135,6 @@
  .arctic-live #arctic-year-change{margin:8px 0;min-height:0}
 }
 @media(max-width:700px){
- .arctic-intro{display:block;padding:34px 24px 30px}
- #climate-story .arctic-intro h2{font-size:clamp(48px,13vw,70px)}
- #climate-story .arctic-intro>div:last-child{margin-top:25px;max-width:38ch}
- #climate-story .arctic-intro p{font-size:16px}
  .arctic-chapters{padding:0 12px}.arctic-chapters button{flex:none;padding-inline:14px;font-size:14px}
  .arctic-stage{min-height:520px}
  .arctic-live .arctic-reading{margin-top:calc(-1 * max(520px,var(--arctic-height)))}

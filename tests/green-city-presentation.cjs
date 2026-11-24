@@ -1,9 +1,16 @@
 'use strict';
 const test = require('node:test');
 const assert = require('node:assert/strict');
+const fs = require('node:fs');
+const path = require('node:path');
 const C = require('../green-city-core.js');
 const Life = require('../green-city-life.js');
 const createPresentationCity = require('../assets/data/green-city-presentation.js');
+
+test('the game page has the description that presentation mode updates', () => {
+  const html = fs.readFileSync(path.join(__dirname, '..', 'index.html'), 'utf8');
+  assert.match(html, /\bid="gc-page-description"/);
+});
 
 test('the presentation island starts fully owned, connected and operational', () => {
   const city = createPresentationCity(C);

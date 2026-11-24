@@ -60,17 +60,17 @@
     <link rel="stylesheet" href="style.css?v=a5503eeb38">
     <link rel="stylesheet" href="editorial.css?v=ee23a2b05d">
     <link rel="stylesheet" href="evidence.css?v=2b8e16abf0">
-    <link rel="stylesheet" href="green-city.css?v=9e43faded8">
-    <link rel="stylesheet" href="green-city-ui.css?v=624bec8ac3">
+    <link rel="stylesheet" href="green-city.css?v=425fbc5047">
+    <link rel="stylesheet" href="green-city-ui.css?v=529b104103">
     <link rel="stylesheet" href="motion.css?v=2307b37ce2">
     <link rel="stylesheet" href="green-city-transport.css?v=a1c7e303b5">
     <link rel="stylesheet" href="green-city-neighbourhoods.css?v=08608267c9">
     <link rel="stylesheet" href="green-city-missions.css?v=86f350ff2d">
     <link rel="stylesheet" href="home-experience.css?v=63710de0a0">
-    <link rel="stylesheet" href="site-polish.css?v=3843662de0">
+    <link rel="stylesheet" href="site-polish.css?v=4024c71df4">
     <link rel="stylesheet" href="design-tokens.css?v=2e57de22aa">
-    <link rel="stylesheet" href="refined-ui.css?v=b5a6dab33a">
-    <link rel="stylesheet" href="arctic-story.css?v=10fb84d5a8">
+    <link rel="stylesheet" href="refined-ui.css?v=8dbfda6880">
+    <link rel="stylesheet" href="arctic-story.css?v=5cc9871776">
     <link rel="stylesheet" href="home-cover.css?v=2d4d44b2e6">
   </head>
 
@@ -161,7 +161,7 @@
       </section>
 
       <section class="section gallery-section" id="gallery">
-        <div class="section-heading">
+        <div class="section-heading page-intro">
           <div>
             <h2>
               Our 12 photographs
@@ -182,7 +182,7 @@
       </section>
 
       <section class="section intro" id="problem">
-        <div class="section-heading">
+        <div class="section-heading page-intro">
           <div>
             <h2>
               How is Slovenia’s climate changing?
@@ -429,7 +429,7 @@
         </div>
       </section>
       <section class="arctic-story" id="climate-story" aria-labelledby="climate-story-title">
-  <header class="arctic-intro"><div><p class="arctic-eyebrow">COIL · Climate action</p><h2 id="climate-story-title">The Arctic<br>in September.</h2></div><div><p>Warming affects snowy mountains as well as Arctic sea ice. Follow the ice edge from water level up to the September satellite record.</p><p class="arctic-intro-note">Scroll at your own pace, or choose a chapter.</p><button class="arctic-mode" id="arctic-mode" type="button" hidden>Use still views</button></div></header>
+  <header class="page-intro"><div><h2 id="climate-story-title">The Arctic in September</h2></div><div class="page-intro-copy"><p>Follow the Arctic ice edge from water level to the September satellite record.</p><button class="page-intro-action" id="arctic-mode" type="button" hidden>Use still views</button></div></header>
   <nav class="arctic-chapters" aria-label="Arctic story chapters"><button type="button" data-arctic-go="0" data-story-stage="0" aria-controls="arctic-chapter-0" aria-pressed="true">Ice edge</button><button type="button" data-arctic-go="1" data-story-stage="1" aria-controls="arctic-chapter-1" aria-pressed="false">Ocean heat</button><button type="button" data-arctic-go="2" data-story-stage="2" aria-controls="arctic-chapter-2" aria-pressed="false">Open water</button><button type="button" data-arctic-go="3" data-story-stage="3" aria-controls="arctic-chapter-3" aria-pressed="false">Satellite record</button><button type="button" data-arctic-go="4" data-story-stage="4" aria-controls="arctic-chapter-4" aria-pressed="false">2026</button><button type="button" data-arctic-go="5" data-story-stage="5" aria-controls="arctic-chapter-5" aria-pressed="false">Before 2050</button></nav>
   <div class="arctic-journey" id="arctic-journey">
     <div class="arctic-stage" id="arctic-stage" hidden>
@@ -460,7 +460,7 @@
   <div class="arctic-year-heading"><label for="arctic-year">Choose a September</label><button class="arctic-history-open" id="arctic-history-open" type="button" aria-haspopup="dialog" hidden>Before 1979</button></div><div class="arctic-year-control"><button type="button" id="arctic-year-previous" aria-label="Previous year">−</button><input id="arctic-year" type="range" min="1979" max="2026" value="1979" step="1" aria-describedby="arctic-year-change"><button type="button" id="arctic-year-next" aria-label="Next year">+</button></div>
   <div class="arctic-chart"><span class="arctic-axis-max" aria-hidden="true">9</span><img id="arctic-chart-image" src="assets/arctic/september-chart.svg" width="720" height="270" alt="September monthly sea-ice extent from 1979 to 2026. The record declines overall, with year-to-year increases including 2013." loading="lazy"><span class="arctic-axis-min" aria-hidden="true">0</span></div>
   <p id="arctic-year-change" role="status">Explore the full satellite record, including years with more ice than the year before.</p>
-  <p class="arctic-data-credit"><a href="assets/data/arctic-september-original.csv" download>NSIDC data (CSV)</a> · Extent counts ocean with at least 15% ice cover.</p>
+  <p class="arctic-data-credit"><a href="https://noaadata.apps.nsidc.org/NOAA/G02135/north/monthly/data/" target="_blank" rel="noopener noreferrer">NSIDC monthly archive</a> · Extent counts ocean with at least 15% ice cover.</p>
 </div>
 </article>
 <article class="arctic-step" id="arctic-chapter-4" data-arctic-step="4" data-kind="Daily observation">
@@ -494,12 +494,12 @@
       </div>
     </section>
   </dialog>
-  <details class="arctic-method"><summary>About the illustration and data</summary><div><p>The close-up illustrates sea-ice habitat and change. The animals fade as the camera moves on; this is not a dated population record. The opening and closing use the same camera position and landmark.</p><p>The satellite record uses NSIDC Sea Ice Index Version 4 September monthly means in million km², preserved in the original downloadable CSV. NASA Blue Marble supplies the land colours and relief, from its September 2004 composite. It is a fixed land basemap, not a photograph of the selected year. Natural Earth land and NSIDC ice-edge outlines use polar stereographic north (Hughes 1980). The displayed ice boundary is gently rounded to soften the grid-cell steps; the original outlines and chart measurements are unchanged. The 3D view uses illustrative ice textures and lighting. Its palette changes with September extent, and the dashed line traces the edge from September 1979. The 2026 daily minimum is a separate NSIDC estimate; it is not a September average.</p><p>Sea-ice extent and sea-ice area are different measures. The IPCC’s practically ice-free threshold refers to area. The projection is not a prediction that every September will be ice-free from a fixed date.</p><p><a href="https://nsidc.org/learn/parts-cryosphere/sea-ice/why-sea-ice-matters" target="_blank" rel="noopener noreferrer">Sea ice and the climate</a> · <a href="https://www.usgs.gov/centers/alaska-science-center/science/health-and-energetics-polar-bears" target="_blank" rel="noopener noreferrer">Sea ice and polar bears</a> · <a href="https://science.nasa.gov/earth/explore/earth-indicators/ocean-warming/" target="_blank" rel="noopener noreferrer">Ocean warming</a> · <a href="https://nsidc.org/data/g02135/versions/4" target="_blank" rel="noopener noreferrer">NSIDC Sea Ice Index</a> · <a href="https://science.nasa.gov/earth/earth-observatory/blue-marble-next-generation/base-topography/" target="_blank" rel="noopener noreferrer">NASA Blue Marble · NASA Earth Observatory / Reto Stöckli</a> · <a href="https://www.naturalearthdata.com/about/terms-of-use/" target="_blank" rel="noopener noreferrer">Natural Earth</a> · <a href="https://www.ipcc.ch/report/ar6/wg1/chapter/chapter-9/" target="_blank" rel="noopener noreferrer">IPCC AR6 WGI, Chapter 9</a></p></div></details>
+  <details class="arctic-method"><summary>About the illustration and data</summary><div><p>The close-up illustrates sea-ice habitat and change. The animals fade as the camera moves on; this is not a dated population record. The opening and closing use the same camera position and landmark.</p><p>The satellite record uses NSIDC Sea Ice Index Version 4 September monthly means in million km². The monthly archive lists the September series as N_09_extent_v4.0.csv. NASA Blue Marble supplies the land colours and relief, from its September 2004 composite. It is a fixed land basemap, not a photograph of the selected year. Natural Earth land and NSIDC ice-edge outlines use polar stereographic north (Hughes 1980). The displayed ice boundary is gently rounded to soften the grid-cell steps; the original outlines and chart measurements are unchanged. The 3D view uses illustrative ice textures and lighting. Its palette changes with September extent, and the dashed line traces the edge from September 1979. The 2026 daily minimum is a separate NSIDC estimate; it is not a September average.</p><p>Sea-ice extent and sea-ice area are different measures. The IPCC’s practically ice-free threshold refers to area. The projection is not a prediction that every September will be ice-free from a fixed date.</p><p><a href="https://nsidc.org/learn/parts-cryosphere/sea-ice/why-sea-ice-matters" target="_blank" rel="noopener noreferrer">Sea ice and the climate</a> · <a href="https://www.usgs.gov/centers/alaska-science-center/science/health-and-energetics-polar-bears" target="_blank" rel="noopener noreferrer">Sea ice and polar bears</a> · <a href="https://science.nasa.gov/earth/explore/earth-indicators/ocean-warming/" target="_blank" rel="noopener noreferrer">Ocean warming</a> · <a href="https://nsidc.org/data/g02135/versions/4" target="_blank" rel="noopener noreferrer">NSIDC Sea Ice Index</a> · <a href="https://science.nasa.gov/earth/earth-observatory/blue-marble-next-generation/base-topography/" target="_blank" rel="noopener noreferrer">NASA Blue Marble · NASA Earth Observatory / Reto Stöckli</a> · <a href="https://www.naturalearthdata.com/about/terms-of-use/" target="_blank" rel="noopener noreferrer">Natural Earth</a> · <a href="https://www.ipcc.ch/report/ar6/wg1/chapter/chapter-9/" target="_blank" rel="noopener noreferrer">IPCC AR6 WGI, Chapter 9</a></p></div></details>
   <div class="arctic-end"><p>Closer to home, see how cities are making streets cooler as temperatures rise.</p><a class="btn" href="#cities">See what cities are doing</a></div>
 </section>
 
       <section class="section cities-section" id="cities" aria-labelledby="cities-title">
-        <div class="section-heading">
+        <div class="section-heading page-intro">
           <div><h2 id="cities-title">What three cities are doing</h2></div>
           <p>A school street in Paris, an expanding business area in Ajdovščina and the shade gap in Phoenix.</p>
         </div>
@@ -601,7 +601,7 @@
       </section>
 
       <section class="section action-section" id="solutions">
-        <div class="section-heading">
+        <div class="section-heading page-intro">
           <div>
             <h2>
               What helps on hot days?
@@ -700,13 +700,13 @@
       </section>
 
       <section class="section game-section green-city-section" id="game" aria-labelledby="gc-title">
-        <div class="gc-page-heading">
-          <div>
-            <h2 id="gc-title">Build your green city</h2>
+        <header class="page-intro">
+          <div><h2 id="gc-title">Build your green city</h2></div>
+          <div class="page-intro-copy">
             <p id="gc-page-description">Start by making one neighbourhood cooler.</p>
+            <a class="page-intro-action" id="gc-presentation-link" href="?city=presentation#game">Open presentation city <span aria-hidden="true">↗</span></a>
           </div>
-          <a id="gc-presentation-link" href="?city=presentation#game">Open presentation city <span aria-hidden="true">↗</span></a>
-        </div>
+        </header>
         <div id="gc-start-status" hidden role="status"><p>The city tools could not load. Reload the page to try again.</p><button id="gc-reload" class="btn" type="button">Reload game</button></div>
         <div class="gc-shell" id="gc-shell" data-panel="none">
           <section class="gc-game-entry" id="gc-onboarding" aria-labelledby="gc-welcome-title" hidden>
@@ -776,7 +776,7 @@
         </dialog>
       </section>
       <section class="section team-section" id="team">
-        <div class="section-heading">
+        <div class="section-heading page-intro">
           <div>
             <h2>
               Mark &amp; Lovro
@@ -853,6 +853,6 @@
       </div>
     </div>
     <script src="assets/data/weather-snapshot.js" defer></script>
-    <script src="site.js?v=63d6278de7" defer></script>
+    <script src="site.js?v=79f0d115c2" defer></script>
   </body>
 </html>
