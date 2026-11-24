@@ -5,13 +5,16 @@ const M=globalThis.ArcticModel;
 if(root&&M){
   const journey=root.querySelector('#arctic-journey'),stage=root.querySelector('#arctic-stage'),canvas=root.querySelector('#arctic-canvas');
   const steps=[...root.querySelectorAll('[data-arctic-step]')],nav=root.querySelector('.arctic-chapters'),buttons=[...nav.querySelectorAll('button')];
-  const explorer=root.querySelector('#arctic-explorer'),mode=root.querySelector('#arctic-mode');
+  const explorer=root.querySelector('#arctic-explorer'),mode=root.querySelector('#arctic-mode'),poster=root.querySelector('#arctic-poster');
   const navHome=document.createComment('chapter navigation'),explorerHome=document.createComment('September explorer');
   nav.before(navHome);explorer.before(explorerHome);
   const reduced=matchMedia('(prefers-reduced-motion: reduce)');
   // Start the module download beside the data requests, rather than after them.
   let worldModule=null;
-  const loadWorld=()=>worldModule||(worldModule=import('./arctic-world.js?v=41c8bbe547'));
+  const loadWorld=()=>worldModule||(worldModule=import('./arctic-world.js?v=df8d39088e'));
+  const posterSources=steps.map(step=>step.querySelector('img')?.getAttribute('src')||'assets/arctic/record-map.svg');
+  const portraitPoster='assets/arctic/chapter-0-portrait.webp';
+  const availablePosters=new Set([poster.getAttribute('src')]);
   let world=null,worldPromise=null,data=null,mapData=null,live=false,visible=true,raf=0,active=-1,selectedYear=1979,manualStill=false,lastProgress=0,disposed=false;
   let route=document.body.dataset.view==='climate-story',pendingChapter=null,hasActivated=false,renderProgress=null,lastFrameTime=0,assetsReady=false,activation=0;
   const top=()=>['.nav','.view-bar'].reduce((height,selector)=>{const el=document.querySelector(selector);return height+(el&&['sticky','fixed'].includes(getComputedStyle(el).position)?el.getBoundingClientRect().height:0);},0);
@@ -19,7 +22,7 @@ if(root&&M){
   const progress=()=>{const b=bounds();return M.progressAt(scrollY,b.start,b.height,b.stage);};
   function syncSize(){
     root.style.setProperty('--arctic-top',top()+'px');
-    if(world&&live)world.resize(stage.clientWidth,stage.clientHeight);
+    if(world&&live&&route)world.resize(stage.clientWidth,stage.clientHeight);
     schedule();
   }
   function syncChapter(frame){
@@ -56,20 +59,24 @@ if(root&&M){
     syncChapter(frame);
     const note=stage.querySelector('#arctic-map-note');note.hidden=frame.mapBlend<.95;
     note.textContent='Ice: September '+selectedYear+' · NSIDC. Land: NASA Blue Marble.';
-    if(assetsReady&&world)world.render(frame);
+    if(assetsReady&&world){
+      world.render(frame);
+      if(root.dataset.renderer==='loading'){
+        root.classList.remove('arctic-loading');
+        root.dataset.renderer='webgl';
+      }
+    }
     else{
-      const poster=root.querySelector('#arctic-poster'),image=steps[frame.chapter].querySelector('img');
-      const source=frame.portrait&&frame.chapter===0?'assets/arctic/chapter-0-portrait.webp':image?.getAttribute('src')||'assets/arctic/record-map.svg';
-      if(poster.getAttribute('src')!==source)poster.src=source;
+      const source=frame.portrait&&frame.chapter===0?portraitPoster:posterSources[frame.chapter];
+      if(availablePosters.has(source)&&poster.getAttribute('src')!==source)poster.src=source;
     }
     if(renderProgress!==lastProgress)schedule();
   }
   function schedule(){if(!raf&&live&&route&&visible&&!document.hidden)raf=requestAnimationFrame(draw);}
   function go(index,instant=false){
     index=Math.max(0,Math.min(steps.length-1,index));
-    if(!world||!assetsReady)pendingChapter=index;
     if(live){const b=bounds();window.scrollTo({top:b.start+M.chapters[index]*(b.height-b.stage),behavior:reduced.matches||instant?'instant':'smooth'});schedule();}
-    else{steps[index].scrollIntoView({block:'start',behavior:'instant'});buttons.forEach((b,i)=>b.setAttribute('aria-pressed',String(i===index)));}
+    else{pendingChapter=index;steps[index].scrollIntoView({block:'start',behavior:'instant'});buttons.forEach((b,i)=>b.setAttribute('aria-pressed',String(i===index)));}
   }
   function updateYear(){
     if(!data)return;
@@ -117,6 +124,7 @@ if(root&&M){
     activation++;
     if(raf)cancelAnimationFrame(raf);raf=0;
     const prior=active<0?0:active;live=false;assetsReady=false;root.classList.remove('arctic-live','arctic-loading');root.dataset.renderer='still';stage.hidden=true;
+    renderProgress=null;lastFrameTime=0;
     steps.forEach(step=>{step.querySelector('.arctic-step-copy').inert=false;});
     navHome.after(nav);explorerHome.after(explorer);explorer.hidden=false;explorer.inert=false;buttons[4].textContent='2026';
     if(world){world.dispose();world=null;}worldPromise=null;
@@ -128,6 +136,16 @@ if(root&&M){
     stage.hidden=false;stage.append(nav,explorer);root.classList.add('arctic-live','arctic-loading');root.dataset.renderer='loading';live=true;
     steps.forEach(step=>{step.querySelector('.arctic-step-copy').inert=true;});
     mode.hidden=false;mode.disabled=false;mode.textContent='Use still views';active=-1;syncChapter(M.frameAt(0));syncSize();
+    positionLive();
+  }
+  function positionLive(){
+    if(!route||!live)return;
+    const saved=history.state?.coilContext;
+    if(pendingChapter!==null){const selected=pendingChapter;pendingChapter=null;go(selected,true);}
+    else if(!hasActivated&&performance.getEntriesByType('navigation')[0]?.type==='reload'&&saved?.hash==='#climate-story'&&Number.isFinite(saved.arcticProgress)){
+      const b=bounds();window.scrollTo({top:b.start+M.clamp(saved.arcticProgress)*(b.height-b.stage),behavior:'instant'});
+    }
+    hasActivated=true;
   }
   async function liveViews(){
     if(reduced.matches||manualStill||world||worldPromise||disposed)return;
@@ -138,19 +156,11 @@ if(root&&M){
       const candidate=new ArcticWorld(canvas,mapData,selectedYear);
       if(disposed||reduced.matches||manualStill){candidate.dispose();return;}
       world=candidate;
-      candidate.basemapReady.then(()=>{if(world===candidate)schedule();});
-      candidate.resize(stage.clientWidth,stage.clientHeight);
+      syncSize();
       await candidate.ready;
       if(world!==candidate||manualStill||reduced.matches)return;
-      assetsReady=true;active=-1;renderProgress=null;lastFrameTime=0;
-      const saved=history.state?.coilContext;
-      if(pendingChapter!==null){const selected=pendingChapter;pendingChapter=null;go(selected,true);}
-      else if(!hasActivated&&performance.getEntriesByType('navigation')[0]?.type==='reload'&&saved?.hash==='#climate-story'&&Number.isFinite(saved.arcticProgress)){
-        const b=bounds();window.scrollTo({top:b.start+M.clamp(saved.arcticProgress)*(b.height-b.stage),behavior:'instant'});
-      }
-      hasActivated=true;visible=true;draw(performance.now());
-      // Reveal only after a fully textured frame exists, with no layout change.
-      root.classList.remove('arctic-loading');root.dataset.renderer='webgl';schedule();
+      assetsReady=true;
+      schedule();
     }).catch(error=>{if(attempt===activation){console.warn('Arctic still views remain available:',error);stillViews();}}).finally(()=>{if(attempt===activation)worldPromise=null;});
     return worldPromise;
   }
@@ -178,11 +188,25 @@ if(root&&M){
   canvas.addEventListener('webglcontextlost',event=>{event.preventDefault();if(live)stillViews();});
   window.addEventListener('scroll',schedule,{passive:true});window.addEventListener('resize',syncSize,{passive:true});
   document.addEventListener('visibilitychange',()=>{if(document.hidden&&raf){cancelAnimationFrame(raf);raf=0;}else schedule();});
-  window.addEventListener('app:view',event=>{route=event.detail.id==='climate-story';if(!route&&raf){cancelAnimationFrame(raf);raf=0;}if(route){syncSize();requestAnimationFrame(schedule);}});
+  window.addEventListener('app:view',event=>{
+    route=event.detail.id==='climate-story';
+    if(!route&&raf){cancelAnimationFrame(raf);raf=0;}
+    if(route){renderProgress=null;lastFrameTime=0;syncSize();positionLive();}
+  });
   const observer=new IntersectionObserver(entries=>{visible=entries[0].isIntersecting;if(visible)schedule();else if(raf){cancelAnimationFrame(raf);raf=0;}},{rootMargin:'80px'});observer.observe(journey);
   window.addEventListener('pagehide',()=>{if(raf)cancelAnimationFrame(raf);raf=0;});
   syncSize();
-  if(!reduced.matches){prepareLive();loadWorld().catch(()=>{});}
+  if(!reduced.matches){
+    prepareLive();
+    loadWorld().catch(()=>{});
+    for(const source of new Set([...posterSources,portraitPoster])){
+      if(availablePosters.has(source))continue;
+      const image=new Image();
+      image.fetchPriority='low';
+      image.src=source;
+      image.decode().then(()=>{availablePosters.add(source);if(!assetsReady)schedule();}).catch(()=>{});
+    }
+  }
   Promise.all([fetch(new URL('./assets/data/arctic-september.json',import.meta.url)).then(r=>{if(!r.ok)throw Error('Missing sea-ice record');return r.json();}),fetch(new URL('./assets/data/arctic-map.json',import.meta.url)).then(r=>{if(!r.ok)throw Error('Missing coastlines');return r.json();})]).then(([series,map])=>{
     data=series;mapData=map;makeDataViews();if(reduced.matches)stillViews();else liveViews();
   }).catch(error=>{console.warn('Using the complete static Arctic story:',error);stillViews();});

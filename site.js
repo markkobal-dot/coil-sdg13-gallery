@@ -42,7 +42,8 @@ const galleryPhotos = [ {
   fullSrc: "assets/images/triglav-hike-lovro.webp",
   title: "Triglav Glacier, summer 2025",
   caption: "Triglav, Slovenia · Summer 2025",
-  description: "Rock dominates this summer view of the Triglav Glacier. Very little ice is visible. Compare it with the mapped areas from 1946 and 2024 in The evidence.",
+  description: "Rock dominates this summer view of the Triglav Glacier. Very little ice is visible.",
+  evidence: { id: "evidence-glacier", label: "See the glacier measurements" },
   action: "Compare this local mountain landscape with the glacier measurements and climate data in our Slovenia section.",
   category: "challenge",
   photographer: "lovro",
@@ -77,6 +78,7 @@ const galleryPhotos = [ {
   title: "Extreme rainfall and floods",
   caption: "Moste pri Komendi, Slovenia · August 2023",
   description: "Floodwater covers a street in Moste pri Komendi during the August 2023 floods in Slovenia.",
+  evidence: { id: "evidence-flood", label: "Read about flood risk" },
   action: "We can find out how our community prepares for heavy rain and keep drains clear where it is safe to do so.",
   category: "challenge",
   photographer: "lovro",
@@ -216,6 +218,14 @@ let activeCategory = ['all', 'challenge', 'solutions'].includes(reloadContext?.c
 let visiblePhotoIndices = galleryPhotos.map((_, index) => index);
 const mediaType = (photo) => photo.src.endsWith('.svg') ? 'study' : 'photograph';
 
+function photoEvidenceLink(evidence) {
+  const link = document.createElement('a');
+  link.className = 'text-link';
+  link.href = '#' + evidence.id;
+  link.textContent = evidence.label + ' ↗';
+  return link;
+}
+
 galleryPhotos.forEach((photo, index) => {
   const card = document.createElement('article');
   card.className = 'photo-card';
@@ -262,6 +272,7 @@ galleryPhotos.forEach((photo, index) => {
     note.textContent = photo.description;
     information.append(note);
   }
+  if (photo.evidence) information.append(photoEvidenceLink(photo.evidence));
   card.append(button, information);
   galleryGrid.append(card);
   galleryCards.push(card);
@@ -308,6 +319,7 @@ const viewerImage = document.getElementById('lightbox-image');
 const viewerTitle = document.getElementById('lightbox-title');
 const viewerDescription = document.getElementById('lightbox-description');
 const viewerCaption = document.getElementById('lightbox-caption');
+const viewerEvidence = document.getElementById('lightbox-evidence');
 const viewerCounter = document.getElementById('lightbox-counter');
 const viewerType = document.getElementById('lightbox-type');
 const viewerClose = document.getElementById('lightbox-close');
@@ -357,6 +369,8 @@ function showViewerItem(photo) {
     viewerCaption.append(document.createTextNode(' · '), source);
   }
   viewerCaption.hidden = !viewerCaption.textContent;
+  viewerEvidence.replaceChildren(...(photo.evidence ? [photoEvidenceLink(photo.evidence)] : []));
+  viewerEvidence.hidden = !photo.evidence;
   viewerType.textContent = viewerIndex === null ? 'THE EVIDENCE' :
     mediaType(photo) === 'study' ? 'VISUAL STUDY' : 'FROM OUR COLLECTION';
   const hasNeighbours = viewerIndex !== null && viewerSequence.length > 1;
@@ -761,7 +775,10 @@ document.addEventListener('visibilitychange', () => {
     game: { title: 'Build Your Green City', sections: ['game'] },
     team: { title: 'About us', sections: ['team', 'journey'] }
   };
-  const aliases = { 'slovenia-data': 'problem', journey: 'team', closing: 'solutions' };
+  const aliases = {
+    'slovenia-data': 'problem', 'evidence-glacier': 'problem', 'evidence-flood': 'problem',
+    journey: 'team', closing: 'solutions'
+  };
   const navDestination = (id) => id === 'game' ? 'solutions' : id;
   let currentView = null;
 
@@ -781,10 +798,13 @@ document.addEventListener('visibilitychange', () => {
     const requested = hash.replace(/^#/, '') || 'home';
     const id = aliases[requested] || (views[requested] ? requested : 'home');
     const view = views[id];
+    const target = aliases[requested] ? document.getElementById(requested) : null;
+    const summary = target?.matches('details') ? target.querySelector('summary') : null;
     closePhoto(false);
     closeMenu();
     document.body.dataset.view = id;
     for (const section of sections) section.hidden = !view.sections.includes(section.id);
+    if (summary) target.open = true;
     viewBar.hidden = id === 'home';
     viewTitle.textContent = view.title;
     for (const link of nav.querySelectorAll('a')) {
@@ -798,16 +818,16 @@ document.addEventListener('visibilitychange', () => {
     requestAnimationFrame(() => {
       if (preserveScroll) {
         // Browser scroll restoration runs after the correct sections are visible.
-      } else if (aliases[requested]) {
-        document.getElementById(requested)?.scrollIntoView({ behavior: 'instant', block: 'start' });
+      } else if (target) {
+        target.scrollIntoView({ behavior: 'instant', block: 'start' });
       } else {
         window.scrollTo({ top: 0, behavior: 'instant' });
       }
       if (focus) {
-        const heading = document.querySelector('#' + view.sections[0] + ' h1, #' + view.sections[0] + ' h2');
-        if (heading) {
-          heading.setAttribute('tabindex', '-1');
-          heading.focus({ preventScroll: true });
+        const focusTarget = summary || document.querySelector('#' + view.sections[0] + ' h1, #' + view.sections[0] + ' h2');
+        if (focusTarget) {
+          if (!summary) focusTarget.setAttribute('tabindex', '-1');
+          focusTarget.focus({ preventScroll: true });
         }
       }
       updateProgress();
@@ -819,7 +839,7 @@ document.addEventListener('visibilitychange', () => {
   });
   document.addEventListener('click', (event) => {
     const link = event.target.closest('a[href^="#"]');
-    if (link) {
+    if (link && event.button === 0 && !event.ctrlKey && !event.metaKey && !event.shiftKey && !event.altKey) {
       const hash = link.getAttribute('href');
       const id = hash.slice(1);
       if (views[id] || aliases[id]) {
@@ -885,15 +905,37 @@ document.addEventListener('visibilitychange', () => {
   targets.forEach((target) => observer.observe(target));
 })();
 
-// The Arctic renderer is loaded only when its route is visited. Still views work without WebGL.
+// Warm the Arctic after the homepage has loaded, or as soon as a visitor heads there.
 (() => {
   let loading;
-  function loadArctic(){
-    if(document.body.dataset.view!=='climate-story'||loading)return;
-    loading=import('./arctic-story.js?v=ab3a153043').catch(error=>{console.warn('Using Arctic still views:',error);loading=null;});
+  function loadArctic() {
+    if (loading) return;
+    loading=import('./arctic-story.js?v=0e4f0ce6a3').catch(error=>{console.warn('Using Arctic still views:',error);loading=null;});
   }
-  window.addEventListener('app:view',loadArctic);
-  loadArctic();
+  function warmArctic() {
+    const connection = navigator.connection;
+    if (document.hidden || matchMedia('(prefers-reduced-motion: reduce)').matches ||
+        connection?.saveData || /2g$/.test(connection?.effectiveType || '')) return;
+    loadArctic();
+  }
+  function queueWarmup() {
+    const warmHomepage = () => {
+      if (document.body.dataset.view === 'home') warmArctic();
+    };
+    if ('requestIdleCallback' in window) window.requestIdleCallback(warmHomepage, { timeout: 1500 });
+    else window.setTimeout(warmHomepage, 300);
+  }
+  window.addEventListener('app:view', event => {
+    if (event.detail.id === 'climate-story') loadArctic();
+  });
+  if (document.body.dataset.view === 'climate-story') loadArctic();
+  for (const event of ['pointerover', 'focusin']) {
+    document.addEventListener(event, ({ target }) => {
+      if (target.closest?.('a[href="#climate-story"]')) warmArctic();
+    }, { passive: true });
+  }
+  if (document.readyState === 'complete') queueWarmup();
+  else window.addEventListener('load', queueWarmup, { once: true });
 })();
 
 // Native controls support mouse, touch and keyboard without an animation loop.

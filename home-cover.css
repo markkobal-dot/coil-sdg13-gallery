@@ -14,7 +14,8 @@
 /* Keep each crop proportional to its column, independent of window height. */
 .home-cover-image{position:relative;display:block;width:100%;aspect-ratio:2/1;overflow:hidden;background:#cfdbd7}
 .home-cover-pair figure:nth-child(2) .home-cover-image{aspect-ratio:34/23}
-.home-cover-image img{position:absolute;inset:0;display:block;width:100%;height:100%;object-fit:cover;transition:transform .45s cubic-bezier(.2,.6,.2,1)}
+.home-cover-image img{position:absolute;inset:0;display:block;width:100%;height:100%;object-fit:cover;object-position:center 69%;transition:transform .45s cubic-bezier(.2,.6,.2,1)}
+.home-cover-pair figure:nth-child(2) img{object-position:center 72%}
 .home-cover-caption{display:flex;align-items:start;justify-content:space-between;gap:16px;padding-top:14px;line-height:1.45}
 .home-cover-caption strong{font-size:18px;font-weight:650;letter-spacing:-.025em}
 .home-cover-caption small{display:block;margin-top:4px;font-size:14px;color:var(--color-muted);letter-spacing:0}
@@ -44,8 +45,9 @@
  #home .home-cover-deck p{font-size:16px;line-height:1.55;margin-bottom:16px}
  #home .home-cover-deck .btn{font-size:16px;min-height:48px}
  .home-cover-pair{grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
- .home-cover-image{height:clamp(200px,46vw,300px)}
- .home-cover-image img{transition:none}
+ .home-cover-pair .home-cover-image,.home-cover-pair figure:nth-child(2) .home-cover-image{aspect-ratio:4/3}
+ .home-cover-image img{object-position:center 74%;transition:none}
+ .home-cover-pair figure:nth-child(2) img{object-position:center 76%}
  .home-cover-caption{display:block;padding-top:11px}
  .home-cover-caption strong{font-size:18px}
  .home-cover-caption small{font-size:14px;line-height:1.45}

@@ -141,7 +141,7 @@ export class ArcticWorld{
         const pmrem=new THREE.PMREMGenerator(this.renderer);this.environment=pmrem.fromEquirectangular(textures.sky);this.scene.environment=this.environment.texture;this.scene.environmentIntensity=.55;pmrem.dispose();
       }
     });
-    this.ready=Promise.all([surfacesReady,this.wildlife.ready,this.landmark.ready]).then(async()=>{
+    this.ready=Promise.all([surfacesReady,this.wildlife.ready,this.landmark.ready,this.basemapReady]).then(async()=>{
       if(this.disposed)return;
       this.wildlife.update(globalThis.ArcticModel.frameAt(0));
       await this.renderer.compileAsync(this.scene,this.camera);
@@ -172,7 +172,10 @@ export class ArcticWorld{
     this.mapTexture.needsUpdate=true;
   }
   resize(width,height){
+    if(!width||!height)return;
     const ratio=Math.min(Math.max(devicePixelRatio||1,this.low?1:1.5),this.low?1.5:2,Math.sqrt((this.low?1800000:12000000)/(width*height)));
+    if(this.width===width&&this.height===height&&this.pixelRatio===ratio)return;
+    this.width=width;this.height=height;this.pixelRatio=ratio;
     this.renderer.setPixelRatio(ratio);this.renderer.setSize(width,height,false);this.camera.aspect=width/height;this.camera.updateProjectionMatrix();
     this.mapCamera.aspect=width/height;this.mapCamera.updateProjectionMatrix();this.renderer.getDrawingBufferSize(this.mapMaterial.uniforms.resolution.value);
     const reflectionScale=Math.min(ratio,(this.low?768:2048)/Math.max(width,height));
