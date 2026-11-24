@@ -61,7 +61,7 @@ const waterFragment=[
 // never enlarged into a low-altitude ice texture during the handoff.
 const orbitalVertex='varying vec2 vUv;void main(){vUv=uv;gl_Position=projectionMatrix*modelViewMatrix*vec4(position,1.);}';
 const orbitalFragment=[
-'varying vec2 vUv;uniform sampler2D polarMap;uniform sampler2D polarIce;uniform float reveal;uniform float mapVisibility;uniform vec2 resolution;uniform float orbitalDistance;uniform float polarScale;uniform float eccentricity;',
+'varying vec2 vUv;uniform sampler2D polarMap;uniform sampler2D polarIce;uniform float iceLoss;uniform float reveal;uniform float mapVisibility;uniform vec2 resolution;uniform float orbitalDistance;uniform float polarScale;uniform float eccentricity;',
 'float starHash(vec2 cell){return fract(sin(dot(cell,vec2(127.1,311.7)))*43758.5453);}',
 'float grainHash(vec2 cell){vec3 p=fract(cell.xyx*.1031);p+=dot(p,p.yzx+33.33);return fract((p.x+p.y)*p.z);}',
 'float surfaceNoise(vec2 p){',
@@ -77,7 +77,7 @@ const orbitalFragment=[
 'float b=dot(eye,ray);float hit=-b-sqrt(max(0.,b*b-orbitalDistance*orbitalDistance+1.));vec3 point=eye+ray*hit;vec3 normal=normalize(point);',
 'float s=clamp(normal.z,-.9999999,1.);float rho=polarScale*sqrt(max(0.,(1.-s)/(1.+s)))/pow((1.-eccentricity*s)/(1.+eccentricity*s),eccentricity*.5);',
 'vec2 uv=.5+normal.xy/max(length(normal.xy),.000001)*rho;',
-'vec4 land=texture2D(polarMap,uv);float extent=texture2D(polarIce,uv).a;',
+'vec4 land=texture2D(polarMap,uv);vec2 ice=texture2D(polarIce,uv).rg;',
 // Use broad bands of snow and blue ice, with finer floes inside the observed edge.
 'float drift=surfaceNoise(uv*9.+vec2(5.,3.));',
 'float shear=surfaceNoise(uv*12.+vec2(-4.,11.));',
@@ -85,7 +85,7 @@ const orbitalFragment=[
 'float bands=surfaceNoise(flow*vec2(35.,67.));',
 'float fragments=surfaceNoise(flow*vec2(135.,180.)+vec2(bands*2.,drift*3.));',
 'float grain=surfaceNoise(uv*380.);',
-'float packInterior=smoothstep(.48,.99,texture2D(polarIce,uv,4.5).a);',
+'float packInterior=smoothstep(.48,.99,texture2D(polarIce,uv,4.5).r);',
 'float snow=smoothstep(.23,.78,drift*.34+shear*.22+bands*.34+grain*.10);',
 'vec3 pack=mix(vec3(.29,.49,.65),vec3(.94,.96,.96),.31+.69*snow);',
 'float floeCover=smoothstep(.34,.69,fragments*.76+bands*.24);',
@@ -93,21 +93,26 @@ const orbitalFragment=[
 'vec3 seaIce=mix(looseIce,pack,packInterior);',
 'float shore=texture2D(polarMap,uv,3.5).a;',
 'vec3 ocean=mix(vec3(.006,.025,.056),vec3(.013,.070,.108),drift*.68);',
+'ocean=mix(ocean,ocean*vec3(2.5,.67,1.27),iceLoss);',
 'ocean+=shore*vec3(.008,.071,.075);',
 'vec3 view=normalize(eye-point);',
 'float daylight=.34+.66*max(dot(normal,light),0.);',
 'float glint=pow(max(dot(normal,normalize(light+view)),0.),27.);',
 'ocean+=vec3(.055,.077,.085)*glint*(.42+grain*.58);',
-'vec3 surface=mix(mix(ocean,seaIce,extent),land.rgb,land.a)*daylight;',
+'vec3 surface=mix(mix(ocean,seaIce,ice.r),land.rgb,land.a)*daylight;',
 'float limb=pow(1.-max(dot(normal,view),0.),3.);',
-'return mix(surface,vec3(.020,.082,.155),limb*.31)+vec3(.004,.018,.041)*limb;}',
+'surface=mix(surface,vec3(.020,.082,.155),limb*.31)+vec3(.004,.018,.041)*limb;',
+'vec3 reference=mix(vec3(.43,.77,.83),vec3(.66,.51,.91),iceLoss);',
+'return mix(surface,reference,ice.g*(1.-land.a)*mix(.76,.38,ice.r));}',
 'void main(){vec2 screen=gl_FragCoord.xy/resolution.y;vec2 grid=screen*60.;vec2 cell=floor(grid);',
 'float stars=step(.992,starHash(cell))*(1.-smoothstep(.025,.07,length(fract(grid)-.5)));',
 'vec3 space=vec3(.001,.003,.009)+vec3(.002,.006,.014)*exp(-length(screen-vec2(.4,.6))*1.7)+vec3(.38,.47,.62)*stars;',
 'vec2 q=(vUv-.5)*(3200./187.2);float radius=length(q);float edge=max(fwidth(radius),.0001);float coverage=1.-smoothstep(1.-edge,1.+edge,radius);',
 'vec3 light=normalize(vec3(-.72,.58,.92));',
 'float atmosphere=exp(-pow((radius-1.)/.015,2.));',
-'space+=vec3(.004,.022,.056)*atmosphere*(.4+.6*clamp(.5+dot(q,light.xy)*.5,0.,1.))*mapVisibility;',
+'vec3 rim=mix(vec3(.004,.022,.056),vec3(.050,.015,.081),iceLoss);',
+'space+=rim*atmosphere*(.4+.6*clamp(.5+dot(q,light.xy)*.5,0.,1.))*mapVisibility;',
+'space+=vec3(.035,.007,.039)*iceLoss*exp(-2.3*radius*radius)*mapVisibility;',
 // Leave neighboring pixels available for the texture derivatives at the limb.
 'if(mapVisibility>0. && radius<1.+3.*edge)space=mix(space,shadeGlobe(q,light),coverage*mapVisibility);',
 'gl_FragColor=vec4(space,reveal);',
@@ -116,7 +121,7 @@ const orbitalFragment=[
 ].join('\n');
 
 export class ArcticWorld{
-  constructor(canvas,mapData,year){
+  constructor(canvas,mapData,year,iceLoss){
     this.canvas=canvas;this.disposed=false;this.low=innerWidth<701;this.textures={};
     this.renderer=new THREE.WebGLRenderer({canvas,antialias:true,alpha:false,powerPreference:'default',preserveDrawingBuffer:false});
     this.renderer.shadowMap.enabled=true;this.renderer.shadowMap.type=THREE.PCFShadowMap;this.renderer.shadowMap.autoUpdate=false;
@@ -158,10 +163,10 @@ export class ArcticWorld{
     this.mapScene=new THREE.Scene();this.mapCamera=new THREE.PerspectiveCamera(43,1,.01,1800);
     this.mapViews=[false,true].map(portrait=>globalThis.ArcticModel.frameAt(globalThis.ArcticModel.chapters[3],portrait));
     const globe=globalThis.ArcticModel.globe;
-    this.mapMaterial=new THREE.ShaderMaterial({transparent:true,depthTest:false,depthWrite:false,toneMapped:false,uniforms:{polarMap:{value:this.mapTexture},polarIce:{value:this.iceTexture},reveal:{value:0},mapVisibility:{value:0},resolution:{value:new THREE.Vector2(1,1)},orbitalDistance:{value:globe.distance},polarScale:{value:globe.polarScale},eccentricity:{value:globe.eccentricity}},vertexShader:orbitalVertex,fragmentShader:orbitalFragment});
+    this.mapMaterial=new THREE.ShaderMaterial({transparent:true,depthTest:false,depthWrite:false,toneMapped:false,uniforms:{polarMap:{value:this.mapTexture},polarIce:{value:this.iceTexture},iceLoss:{value:0},reveal:{value:0},mapVisibility:{value:0},resolution:{value:new THREE.Vector2(1,1)},orbitalDistance:{value:globe.distance},polarScale:{value:globe.polarScale},eccentricity:{value:globe.eccentricity}},vertexShader:orbitalVertex,fragmentShader:orbitalFragment});
     this.mapPlane=new THREE.Mesh(new THREE.PlaneGeometry(1600,1600),this.mapMaterial);this.mapPlane.rotation.x=-Math.PI/2;this.mapPlane.position.y=.1;this.mapScene.add(this.mapPlane);
     this.frameMap(false);
-    this.mapData=mapData;this.paintPolarLand();this.setYear(year);
+    this.mapData=mapData;this.paintPolarLand();this.setYear(year,iceLoss);
     this.basemapReady=new Promise(resolve=>{
       const image=new Image();image.decoding='async';
       image.onload=()=>{if(!this.disposed)this.paintPolarLand(image);resolve();};
@@ -221,15 +226,28 @@ export class ArcticWorld{
     }
     this.mapTexture.needsUpdate=true;
   }
-  setYear(year){
+  setYear(year,iceLoss){
     if(this.year===year)return;
     this.year=year;
+    this.mapMaterial.uniforms.iceLoss.value=iceLoss;
     const canvas=this.iceTexture.image;
     const ctx=canvas.getContext('2d');
     ctx.setTransform(canvas.width,0,0,canvas.height,0,0);
-    ctx.clearRect(0,0,1,1);
-    ctx.fillStyle='#fff';
+    // Share one texture between the selected extent (red) and reference edge (green).
+    ctx.fillStyle='#000';
+    ctx.fillRect(0,0,1,1);
+    ctx.fillStyle='#f00';
     ctx.fill(this.mapOutline(year,this.mapData.years[String(year)],true),'evenodd');
+    if(year!==1979){
+      ctx.save();
+      ctx.globalCompositeOperation='lighter';
+      ctx.strokeStyle='#0f0';
+      ctx.lineWidth=.002;
+      ctx.lineJoin='round';
+      ctx.setLineDash([.008,.006]);
+      ctx.stroke(this.mapOutline(1979,this.mapData.years['1979'],true));
+      ctx.restore();
+    }
     this.iceTexture.needsUpdate=true;
   }
   resize(width,height){

@@ -910,7 +910,7 @@ document.addEventListener('visibilitychange', () => {
   let loading;
   function loadArctic() {
     if (loading) return;
-    loading=import('./arctic-story.js?v=e523eaa333').catch(error=>{console.warn('Using Arctic still views:',error);loading=null;});
+    loading=import('./arctic-story.js?v=8fc6182f4b').catch(error=>{console.warn('Using Arctic still views:',error);loading=null;});
   }
   function warmArctic() {
     const connection = navigator.connection;

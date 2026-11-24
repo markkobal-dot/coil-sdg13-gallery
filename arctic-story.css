@@ -65,23 +65,28 @@
 .arctic-timeline span{display:block;width:100%;height:100%;transform:scaleX(0);transform-origin:left;background:var(--color-accent)}
 .arctic-timeline::after{content:'';position:absolute;inset:0 0 0 90%;border-top:3px dashed #e7efdf;background:#173a46}
 .arctic-map-note{position:absolute;left:var(--gutter);bottom:22px;z-index:3;font-size:13px;line-height:1.5;color:#e0e8e1;max-width:42ch;margin:0;text-shadow:0 1px 4px #041a2a,0 0 12px #041a2a}
-.arctic-explorer{padding:24px;border:1px solid var(--line);background:var(--color-paper);color:var(--color-ink);grid-column:1/-1;max-width:680px;width:100%;justify-self:center}
+.arctic-explorer{--ice-accent:#21586e;--ice-paper:#f1f7f9;padding:24px;border:1px solid var(--line);border-top:3px solid var(--ice-accent);background:var(--ice-paper);color:var(--color-ink);grid-column:1/-1;max-width:680px;width:100%;justify-self:center;transition:background-color .16s ease,border-top-color .16s ease}
+@supports(color:color-mix(in srgb,white,black)){
+ .arctic-explorer{--ice-accent:color-mix(in srgb,#21586e,#794f83 var(--ice-loss,0%));--ice-paper:color-mix(in srgb,#f1f7f9,#f5edf8 var(--ice-loss,0%))}
+}
 .arctic-live .arctic-explorer{position:absolute;right:var(--gutter);bottom:83px;width:min(39vw,480px);z-index:3;padding:22px;max-height:calc(100% - 170px);overflow:auto;box-shadow:0 16px 60px #071c2e25}
 .arctic-data-heading{display:flex;gap:16px;align-items:baseline;justify-content:space-between;flex-wrap:wrap}
 #climate-story .arctic-data-heading h4{margin:0;font-size:22px;letter-spacing:-.025em;line-height:1.2}
 .arctic-data-heading>span{font-size:13px;color:var(--color-muted)}
 .arctic-year-readout{display:flex;align-items:baseline;justify-content:space-between;gap:16px;margin:18px 0}
-.arctic-year-readout>output{font-size:30px;font-weight:600}
+.arctic-year-readout>output{font-size:30px;font-weight:600;color:var(--ice-accent);font-variant-numeric:tabular-nums}
 .arctic-year-readout strong{font-size:26px;font-variant-numeric:tabular-nums}
 .arctic-year-readout strong>span{font-size:14px;font-weight:400}
 .arctic-explorer label{font-size:14px;display:block;margin-bottom:5px}
 .arctic-year-control{display:flex;align-items:center;gap:12px}
-.arctic-year-control input{width:100%;min-width:0;min-height:44px;accent-color:var(--color-action)}
+.arctic-year-control input{width:100%;min-width:0;min-height:44px;accent-color:var(--ice-accent)}
 .arctic-year-control button{background:none;border:1px solid var(--line);color:var(--color-ink);min-width:44px;min-height:44px;font:inherit;font-size:22px;cursor:pointer}
 .arctic-year-control button:disabled{opacity:.4}
 .arctic-chart{position:relative;margin-top:12px}
 .arctic-chart>img,.arctic-chart>svg{display:block;width:100%;height:auto}
 .arctic-chart>span{display:none}
+#arctic-chart-marker{stroke:var(--ice-accent);opacity:.55}
+#arctic-chart-dot{fill:var(--ice-accent)}
 #climate-story #arctic-year-change{font-size:14px;line-height:1.5;margin:12px 0;min-height:3em}
 #climate-story .arctic-data-credit{font-size:13px;line-height:1.6;margin:0;color:var(--color-muted)}
 .arctic-data-credit a{color:var(--color-action);text-underline-offset:3px}
