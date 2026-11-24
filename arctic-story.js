@@ -6,12 +6,13 @@ if(root&&M){
   const journey=root.querySelector('#arctic-journey'),stage=root.querySelector('#arctic-stage'),canvas=root.querySelector('#arctic-canvas');
   const steps=[...root.querySelectorAll('[data-arctic-step]')],nav=root.querySelector('.arctic-chapters'),buttons=[...nav.querySelectorAll('button')];
   const explorer=root.querySelector('#arctic-explorer'),mode=root.querySelector('#arctic-mode'),poster=root.querySelector('#arctic-poster');
+  const note=stage.querySelector('#arctic-map-note'),timeline=stage.querySelector('.arctic-timeline span');
   const navHome=document.createComment('chapter navigation'),explorerHome=document.createComment('September explorer');
   nav.before(navHome);explorer.before(explorerHome);
   const reduced=matchMedia('(prefers-reduced-motion: reduce)');
   // Start the module download beside the data requests, rather than after them.
   let worldModule=null;
-  const loadWorld=()=>worldModule||(worldModule=import('./arctic-world.js?v=df8d39088e'));
+  const loadWorld=()=>worldModule||(worldModule=import('./arctic-world.js?v=e37d269843'));
   const posterSources=steps.map(step=>step.querySelector('img')?.getAttribute('src')||'assets/arctic/record-map.svg');
   const portraitPoster='assets/arctic/chapter-0-portrait.webp';
   const availablePosters=new Set([poster.getAttribute('src')]);
@@ -40,7 +41,6 @@ if(root&&M){
     stage.querySelector('#arctic-next').disabled=active===steps.length-1;
     stage.querySelector('#arctic-progress').textContent=(active+1)+' / '+steps.length;
     explorer.hidden=active!==3;
-    if(world)world.setYear(selectedYear);
     // Keep the selected chapter visible in the horizontally scrollable mobile strip.
     const b=buttons[active],left=b.offsetLeft-nav.clientWidth/2+b.offsetWidth/2;
     nav.scrollLeft=Math.max(0,left);
@@ -50,16 +50,25 @@ if(root&&M){
     lastProgress=progress();
     const dt=lastFrameTime?timestamp-lastFrameTime:16;lastFrameTime=timestamp;
     renderProgress=renderProgress===null?lastProgress:M.follow(renderProgress,lastProgress,dt);
-    const frame=M.frameAt(renderProgress,stage.clientWidth<701||stage.clientWidth/stage.clientHeight<1.2);
-    stage.dataset.aboveWater=String(frame.camera[1]>1);
-    root.dataset.progress=lastProgress.toFixed(6);stage.style.setProperty('--progress',lastProgress);stage.style.setProperty('--underwater',frame.underwater);
-    root.dataset.renderProgress=renderProgress.toFixed(6);
+    const width=stage.clientWidth;
+    const frame=M.frameAt(renderProgress,width<701||width/stage.clientHeight<1.2);
+    const aboveWater=String(frame.camera[1]>1),documentProgress=lastProgress.toFixed(6),sceneProgress=renderProgress.toFixed(6);
+    if(stage.dataset.aboveWater!==aboveWater)stage.dataset.aboveWater=aboveWater;
+    if(root.dataset.progress!==documentProgress){
+      root.dataset.progress=documentProgress;
+      timeline.style.transform='scaleX('+documentProgress+')';
+    }
+    if(root.dataset.renderProgress!==sceneProgress)root.dataset.renderProgress=sceneProgress;
+    stage.style.setProperty('--underwater',frame.underwater);
     stage.style.setProperty('--satellite-reveal',frame.mapBlend);
-    explorer.inert=frame.chapter!==3||frame.mapBlend<.95;
+    const mapVisible=frame.mapBlend>=.95;
+    const canUseExplorer=frame.chapter===3&&mapVisible;
+    if(explorer.inert===canUseExplorer)explorer.inert=!canUseExplorer;
     syncChapter(frame);
-    const note=stage.querySelector('#arctic-map-note');note.hidden=frame.mapBlend<.95;
-    note.textContent='Ice: September '+selectedYear+' · NSIDC. Land: NASA Blue Marble.';
+    if(note.hidden===mapVisible)note.hidden=!mapVisible;
     if(assetsReady&&world){
+      // Only commit the latest year once per frame while the slider is dragged.
+      world.setYear(selectedYear);
       world.render(frame);
       if(root.dataset.renderer==='loading'){
         root.classList.remove('arctic-loading');
@@ -89,9 +98,9 @@ if(root&&M){
     root.querySelector('#arctic-year-change').textContent=previous?(delta>0?'Up ':'Down ')+Math.abs(delta).toFixed(2)+' million km² from '+previous.year+'. The long-term trend is downward.':'The first complete September in this satellite record.';
     const dot=root.querySelector('#arctic-chart-dot');if(dot){const [x,y]=M.chartPoint(row,rows.indexOf(row),rows.length);dot.setAttribute('cx',x);dot.setAttribute('cy',y);}
     buttons[4].textContent=live?String(selectedYear):'2026';
+    note.textContent='Ice: September '+selectedYear+' · NSIDC. Land: NASA Blue Marble.';
     syncSelectedSeptember();
-    if(world){world.setYear(selectedYear);schedule();}
-    updateReaderMap();
+    if(live)schedule();else updateReaderMap();
   }
   function syncSelectedSeptember(){
     if(active!==4||!data)return;
@@ -127,6 +136,7 @@ if(root&&M){
     renderProgress=null;lastFrameTime=0;
     steps.forEach(step=>{step.querySelector('.arctic-step-copy').inert=false;});
     navHome.after(nav);explorerHome.after(explorer);explorer.hidden=false;explorer.inert=false;buttons[4].textContent='2026';
+    updateReaderMap();
     if(world){world.dispose();world=null;}worldPromise=null;
     mode.hidden=false;mode.textContent=reduced.matches?'Still views · reduced motion':'Use 3D walkthrough';mode.disabled=reduced.matches;
     if(route&&prior>0)steps[prior].scrollIntoView({block:'start',behavior:'instant'});
