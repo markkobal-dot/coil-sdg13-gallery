@@ -701,7 +701,7 @@ document.addEventListener('visibilitychange', () => {
   targets.forEach((target) => observer.observe(target));
 })();
 
-// Warm the Arctic after the homepage has loaded, or as soon as a visitor heads there.
+// Warm the Arctic once the homepage DOM is ready, even while photographs are loading.
 (() => {
   let loading;
   function loadArctic() {
@@ -715,6 +715,7 @@ document.addEventListener('visibilitychange', () => {
     loadArctic();
   }
   function queueWarmup() {
+    if (loading) return;
     const warmHomepage = () => {
       if (document.body.dataset.view === 'home') warmArctic();
     };
@@ -723,6 +724,7 @@ document.addEventListener('visibilitychange', () => {
   }
   window.addEventListener('app:view', event => {
     if (event.detail.id === 'climate-story') loadArctic();
+    else if (event.detail.id === 'home') queueWarmup();
   });
   if (document.body.dataset.view === 'climate-story') loadArctic();
   for (const event of ['pointerover', 'focusin']) {
@@ -730,8 +732,7 @@ document.addEventListener('visibilitychange', () => {
       if (target.closest?.('a[href="#climate-story"]')) warmArctic();
     }, { passive: true });
   }
-  if (document.readyState === 'complete') queueWarmup();
-  else window.addEventListener('load', queueWarmup, { once: true });
+  if (document.body.dataset.view === 'home') queueWarmup();
 })();
 
 // Native controls support mouse, touch and keyboard without an animation loop.

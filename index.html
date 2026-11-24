@@ -41,6 +41,26 @@
           : Object.prototype.hasOwnProperty.call(routes, requested) ? requested : 'home';
         const root = document.documentElement;
         root.dataset.initialView = view;
+        const connection = navigator.connection;
+        const arcticPreview = view === 'home' && !document.hidden &&
+          !matchMedia('(prefers-reduced-motion: reduce)').matches &&
+          !connection?.saveData && !/2g$/.test(connection?.effectiveType || '');
+        if (arcticPreview) {
+          for (const [href, rel] of [
+            ['./arctic-story.js?v=ee5883c2f5', 'modulepreload'],
+            ['./arctic-world.js?v=4d3ef47f14', 'modulepreload'],
+            ['assets/data/arctic-september.json', 'preload'],
+            ['assets/data/arctic-map.json', 'preload']
+          ]) {
+            const hint = document.createElement('link');
+            hint.rel = rel;
+            if (rel === 'preload') hint.as = 'fetch';
+            hint.crossOrigin = 'anonymous';
+            hint.fetchPriority = 'low';
+            hint.href = href;
+            document.head.append(hint);
+          }
+        }
         const style = document.createElement('style');
         style.textContent = 'html[data-initial-view] main > section' +
           routes[view].map(id => ':not(#' + id + ')').join('') +
@@ -853,6 +873,6 @@
       </div>
     </div>
     <script src="assets/data/weather-snapshot.js" defer></script>
-    <script src="site.js?v=79f0d115c2" defer></script>
+    <script src="site.js?v=5ba53955a8" defer></script>
   </body>
 </html>
